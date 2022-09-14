@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.teraenergy.springbootillegalpaking.model.mapper.illegalzone.repository.IllegalZoneRepository">
+
+    <select id="findById" resultType="com.teraenergy.springbootillegalpaking.model.mapper.illegalzone.domain.IllegalZone">
+        SELECT Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, DongSeq, StartTime, EndTime FROM illegal_zone where ZoneSeq = #{zoneSeq};
+    </select>
+
+    <select id="findByIdDong" resultType="com.teraenergy.springbootillegalpaking.model.mapper.illegalzone.domain.IllegalZone">
+        SELECT Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, DongSeq, StartTime, EndTime FROM illegal_zone where dongSeq = #{dongSeq};
+    </select>
+
+    <select id="findAll" resultType="com.teraenergy.springbootillegalpaking.model.mapper.illegalzone.domain.IllegalZone">
+        SELECT Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, DongSeq, StartTime, EndTime FROM illegal_zone;
+    </select>
+
+    <insert id="save" useGeneratedKeys="false">
+         INSERT INTO illegal_zone (Name, Polygon, isDel, TypeSeq, DongSeq, StartTime, EndTime) values (#{name}, POLYGONFROMTEXT(#{polygon}), #{isDel}, #{dongSeq}, #{StartTime}, #{EndTime});
+    </insert>
+
+</mapper>
