@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.model.mapper.illegalzone.domain;
+package com.teraenergy.illegalparking.model.entity.illegalzone.domain;
 
 import lombok.Getter;
 import lombok.Setter;

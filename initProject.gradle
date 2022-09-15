@@ -10,12 +10,13 @@ ext.dependenceOnBatch = false                        // whether to use Batch
 ext.dependenceOnQuartz = false                       // whether to use Quartz ( scheduler )
 
 ext.RDMBS = [
-        MYSQL : "MYSQL",
         MSSQL : "MSSQL",
+        MYSQL : "MYSQL",
+        MARIADB : "MARIADB",
         ORACLE: "ORACLE"
 ]
 
-ext.typeOfRDMBS = RDMBS.MYSQL                       // select to RDBMS
+ext.typeOfRDMBS = RDMBS.MARIADB                       // select to RDBMS
 
 ext.hostOfDEBUG = "localhost"                       // database host name for DEBUG Profile
 ext.databaseNameOfDEBUG = ""                        // database name for DEBUG Profile

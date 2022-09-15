@@ -1,7 +1,7 @@
-package com.teraenergy.illegalparking.model.mapper.illegalzone.service;
+package com.teraenergy.illegalparking.model.entity.illegalzone.service;
 
-import com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.mapper.illegalzone.repository.IllegalZoneRepository;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.mapper.IllegalZoneMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,36 +19,36 @@ import java.util.List;
 @Service
 public class IllegalZoneServiceImpl implements IllegalZoneService {
 
-    private final IllegalZoneRepository illegalZoneRepository;
+    private final IllegalZoneMapper illegalZoneMapper;
 
     @Override
     public IllegalZone get(Integer zoneSeq) {
-        return illegalZoneRepository.findById(zoneSeq);
+        return illegalZoneMapper.findById(zoneSeq);
     }
 
     @Override
     public List<IllegalZone> getsByDong(String code) {
-        return illegalZoneRepository.findByIdDong(code);
+        return illegalZoneMapper.findByIdDong(code);
     }
 
     @Override
     public List<IllegalZone> getsByType(Integer typeSeq) {
-        return illegalZoneRepository.findByIdType(typeSeq);
+        return illegalZoneMapper.findByIdType(typeSeq);
     }
 
     @Override
     public List<IllegalZone> getsByTypeAndDong(Integer typeSeq, String code) {
-        return illegalZoneRepository.findByIdTypeAndDong(typeSeq, code);
+        return illegalZoneMapper.findByIdTypeAndDong(typeSeq, code);
     }
 
     @Override
     public List<IllegalZone> gets() {
-        return illegalZoneRepository.findAll();
+        return illegalZoneMapper.findAll();
     }
 
     @Override
     public void set(IllegalZone illegalZone) {
-        illegalZoneRepository.save(illegalZone);
+        illegalZoneMapper.save(illegalZone);
     }
 
     @Override
@@ -58,12 +58,12 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
 
     @Override
     public void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime) {
-        illegalZoneRepository.modify(zoneSeq, typeSeq, startTime, endTime);
+        illegalZoneMapper.modify(zoneSeq, typeSeq, startTime, endTime);
     }
 
     @Override
     public void delete(Integer zoneSeq) {
-        illegalZoneRepository.delete(zoneSeq);
+        illegalZoneMapper.delete(zoneSeq);
     }
 
 }

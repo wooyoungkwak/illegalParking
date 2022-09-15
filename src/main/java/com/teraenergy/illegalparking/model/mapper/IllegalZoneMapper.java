@@ -1,6 +1,6 @@
-package com.teraenergy.illegalparking.model.mapper.illegalzone.repository;
+package com.teraenergy.illegalparking.model.mapper;
 
-import com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 @Mapper
-public interface IllegalZoneRepository {
+public interface IllegalZoneMapper {
 
     IllegalZone findById(Integer zoneSeq);
 

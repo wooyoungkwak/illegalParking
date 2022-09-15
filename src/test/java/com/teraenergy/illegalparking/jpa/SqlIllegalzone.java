@@ -2,8 +2,8 @@ package com.teraenergy.illegalparking.jpa;
 
 
 import com.teraenergy.illegalparking.ApplicationTests;
-import com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.mapper.illegalzone.service.IllegalZoneService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.geom.Coordinate;
@@ -26,7 +26,7 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlIllegalzone {
@@ -41,6 +41,7 @@ public class SqlIllegalzone {
         illegalZone.setName("샘플1");
         illegalZone.setCode("1111100000");
         illegalZone.setIsDel(false);
+        illegalZone.setTypeSeq(1);
         illegalZoneService.set(illegalZone);
     }
 

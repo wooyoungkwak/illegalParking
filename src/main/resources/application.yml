@@ -31,8 +31,9 @@ spring:
     activate:
       on-profile: debug
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
     username: root
     password: tera
@@ -40,6 +41,7 @@ spring:
       jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
       username: root
       password: tera
+
 server:
   port: 8090
   servlet:
@@ -53,13 +55,22 @@ spring:
     activate:
       on-profile: home
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    url: jdbc:mysql://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
-    username:
-    password:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
+    username: wooyoung
+    password: rudnf12dnjf
+    batis:
+      jdbc-url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: wooyoung
+      password: rudnf12dnjf
+#    hikari:
+#      jdbcUrl: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
+#      username: wooyoung
+#      password: rudnf12dnjf
 server:
-  port: 8080
+  port: 8090
   servlet:
     context-path: /
     session:
@@ -71,11 +82,16 @@ spring:
     activate:
       on-profile: release
   jpa:
-    database-platform: ??
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    url: jdbc:mysql://localhost:3306/_____?serverTimezone=Asia/Seoul
-    username:
-    password:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+    username: root
+    password: tera
+    batis:
+      jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: root
+      password: tera
 server:
   port: 80
   servlet:

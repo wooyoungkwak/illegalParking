@@ -51,8 +51,6 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 
-
-
     // batch
     if (dependenceOnBatch != null && dependenceOnBatch) {
         implementation 'org.springframework.boot:spring-boot-starter-batch'
@@ -118,6 +116,10 @@ dependencies {
             case RDMBS.MYSQL:
                 logger.quiet "apply as mysql ... "
                 runtimeOnly 'mysql:mysql-connector-java:8.0.29'
+                break
+            case RDMBS.MARIADB:
+                logger.quiet "apply as mariadb ... "
+                runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:3.0.7'
                 break
             case RDMBS.ORACLE:
                 logger.quiet "apply as oracle ... "

@@ -1,6 +1,6 @@
-package com.teraenergy.illegalparking.model.mapper.illegalzone.service;
+package com.teraenergy.illegalparking.model.entity.illegalzone.service;
 
-import com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 
 import java.util.List;
 

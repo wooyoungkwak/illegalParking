@@ -29,7 +29,7 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlLawDong {
@@ -101,6 +101,7 @@ public class SqlLawDong {
             System.out.println("law_dong size = " + lawDongs.size());
 //            lawDongService.sets(lawDongs);
             lawDongService.set(lawDongs.get(0));
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

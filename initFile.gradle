@@ -184,7 +184,8 @@ task createYML {
                 case RDMBS.MSSQL:
                     content += "  jpa:\n" +
                             "    database-platform: org.hibernate.dialect.SQLServer2012Dialect\n" +
-                            "  datasource:\n"
+                            "  datasource:\n" +
+                            "    driver-class-name: \n"
                     if (hostOfDEBUG != null && hostOfDEBUG != "") {
                         content += "    url: jdbc:sqlserver://" + hostOfDEBUG
                     } else {
@@ -209,7 +210,8 @@ task createYML {
                 case RDMBS.MYSQL:
                     content += "  jpa:\n" +
                             "    database-platform: ??\n" +
-                            "  datasource:\n"
+                            "  datasource:\n" +
+                            "    driver-class-name: \n"
                     if (hostOfDEBUG != null && hostOfDEBUG != "") {
                         content += "    url: jdbc:mysql://" + hostOfDEBUG + ":3306"
                     } else {
@@ -256,7 +258,8 @@ task createYML {
                 case RDMBS.MSSQL:
                     content += "  jpa:\n" +
                             "    database-platform: org.hibernate.dialect.SQLServer2012Dialect\n" +
-                            "  datasource:\n"
+                            "  datasource:\n" +
+                            "    driver-class-name: \n"
                     if (hostOfRELASE != null && hostOfRELASE != "") {
                         content += "    url: jdbc:sqlserver://" + hostOfRELASE
                     } else {
@@ -283,7 +286,8 @@ task createYML {
                 case RDMBS.MYSQL:
                     content += "  jpa:\n" +
                             "    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect\n" +
-                            "  datasource:\n"
+                            "  datasource:\n" +
+                            "    driver-class-name: \n"
                     if (hostOfRELASE != null && hostOfRELASE != "") {
                         content += "    url: jdbc:mysql://" + hostOfRELASE + ":3306"
                     } else {

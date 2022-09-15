@@ -2,25 +2,25 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.teraenergy.illegalparking.model.mapper.illegalzone.repository.IllegalZoneRepository">
+<mapper namespace="com.teraenergy.illegalparking.model.mapper.IllegalZoneMapper">
 
-    <select id="findById" resultType="com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone">
+    <select id="findById" resultType="com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone">
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, Code, StartTime, EndTime FROM illegal_zone where ZoneSeq = #{zoneSeq} and isDel = 0;
     </select>
 
-    <select id="findByIdDong" resultType="com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone">
+    <select id="findByIdDong" resultType="com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone">
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, Code, StartTime, EndTime FROM illegal_zone where Code = #{code} and isDel = 0;
     </select>
 
-    <select id="findByIdType" resultType="com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone">
+    <select id="findByIdType" resultType="com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone">
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, Code, StartTime, EndTime FROM illegal_zone where typeSeq = #{typeSeq} and isDel = 0;
     </select>
 
-    <select id="findByIdTypeAndDong" resultType="com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone">
+    <select id="findByIdTypeAndDong" resultType="com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone">
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, Code, StartTime, EndTime FROM illegal_zone where typeSeq = #{typeSeq} and Code = #{code} and isDel = 0;
     </select>
 
-    <select id="findAll" resultType="com.teraenergy.illegalparking.model.mapper.illegalzone.domain.IllegalZone">
+    <select id="findAll" resultType="com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone">
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, TypeSeq, Code, StartTime, EndTime FROM illegal_zone where isDel = 0;
     </select>
 
