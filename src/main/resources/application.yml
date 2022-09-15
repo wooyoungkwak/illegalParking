@@ -33,10 +33,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    hikari:
-      jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
-      username: root
-      password: tera
+    url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+    username: root
+    password: tera
 server:
   port: 8090
   servlet:
@@ -52,6 +51,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
+    url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
+    username: wooyoung
+    password:
     hikari:
       jdbc-url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
       username: wooyoung
@@ -71,10 +73,9 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    hikari:
-      jdbc-url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
-      username: tera
-      password:
+    url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+    username: tera
+    password:
 server:
   port: 80
   servlet:

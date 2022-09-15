@@ -6,6 +6,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -40,19 +41,23 @@ public class MybatisConfigure {
     @Value("${mybatis.mapper-locations}")
     String mapperPath;
 
-    @Bean
-    @ConfigurationProperties(prefix = "spring.datasource")
-    public DataSource mybatisDatasource(){
-        log.info("configure mybatisDatasource ");
-        return DataSourceBuilder.create().build();
-    }
+/**
+ * application.yml 에서 spring.datasource.hikari 를 지정하여 DB 를 한개 더 연결할때 사용
+ * 주의 : 기존의 datasource 와 충돌이 되지 않도록 설정이 중요.
+ */
+//    @Bean
+//    @ConfigurationProperties(prefix = "spring.datasource.hikari")
+//    public DataSource mybatisDatasource(){
+//        log.info("configure mybatisDatasource ");
+//        return DataSourceBuilder.create().build();
+//    }
 
     @Bean
-    public SqlSessionFactory sqlSessionFactory(DataSource mybatisDatasource) throws Exception {
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
         log.info("configure sqlSessionFactory for mybatisDatasource ");
         SqlSessionFactoryBean sessionFactory = new SqlSessionFactoryBean();
 
-        sessionFactory.setDataSource(mybatisDatasource);
+        sessionFactory.setDataSource(dataSource);
 //        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         // 실제 쿼리가 들어갈 xml 패키지 경로
@@ -62,6 +67,7 @@ public class MybatisConfigure {
         // Mapper의 result, parameterType의 패키지 경로를 클래스만 작성 할 수 있도록 도와줌.
         sessionFactory.setTypeAliasesPackage( "com.teraenergy.illegalparking.model.entity" );
 
+//        ??
 //        sessionFactory.setTypeHandlers(new TypeHandler[]{
 //                new StockType.TypeHandler()
 //        });
@@ -78,8 +84,8 @@ public class MybatisConfigure {
         return sqlSessionTemplate;
     }
 
-    @Bean
-    public DataSourceTransactionManager transactionManager(DataSource mybatisDatasource) {
-        return new DataSourceTransactionManager(mybatisDatasource);
-    }
+//    @Bean
+//    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
+//        return new DataSourceTransactionManager(dataSource);
+//    }
 }
