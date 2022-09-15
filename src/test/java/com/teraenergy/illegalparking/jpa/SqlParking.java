@@ -1,7 +1,6 @@
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
-import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
@@ -36,7 +35,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "home")
+@ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlParking {
@@ -90,8 +89,7 @@ public class SqlParking {
             Resource resource = resourceLoader.getResource(staticPath + fileName);
 
             FileInputStream fis = new FileInputStream(resource.getFile());
-            XSSFWorkbook book = null;
-            book = new XSSFWorkbook(fis);
+            XSSFWorkbook book = new XSSFWorkbook(fis);
             XSSFSheet sheet = book.getSheetAt(0);
             List<Parking> parkings = Lists.newArrayList();
 
@@ -127,12 +125,12 @@ public class SqlParking {
                     parking.setHolidayOperCloseHhmm(getCellData(row.getCell(15)).split(" ")[1]);
                     parking.setParkingchrgeInfo(getCellData(row.getCell(16)));
                     parking.setBasicTime(getCellData(row.getCell(17)));
-                    parking.setBasicCharge((int)Float.parseFloat( getCellData(row.getCell(18)) == "" ? "0" : getCellData(row.getCell(18)) ));
+                    parking.setBasicCharge((int)Float.parseFloat( getCellData(row.getCell(18)).equals("") ? "0" : getCellData(row.getCell(18)) ));
                     parking.setAddUnitTime(getCellData(row.getCell(19)));
-                    parking.setAddUnitCharge((int)Float.parseFloat( getCellData(row.getCell(20)) == "" ? "0" : getCellData(row.getCell(20)) ));
+                    parking.setAddUnitCharge((int)Float.parseFloat( getCellData(row.getCell(20)).equals("") ? "0" : getCellData(row.getCell(20)) ));
                     parking.setDayCmmtktAdjTime(getCellData(row.getCell(21)));
-                    parking.setDayCmmtkt((int)Float.parseFloat( getCellData(row.getCell(22)) == "" ? "0" : getCellData(row.getCell(22)) ));
-                    parking.setMonthCmmtkt((int)Float.parseFloat( getCellData(row.getCell(23)) == "" ? "0" : getCellData(row.getCell(23)) ));
+                    parking.setDayCmmtkt((int)Float.parseFloat( getCellData(row.getCell(22)).equals("") ? "0" : getCellData(row.getCell(22)) ));
+                    parking.setMonthCmmtkt((int)Float.parseFloat( getCellData(row.getCell(23)).equals("") ? "0" : getCellData(row.getCell(23)) ));
                     parking.setMetpay(getCellData(row.getCell(24)));
                     parking.setSpcmnt(getCellData(row.getCell(25)));
                     parking.setInstitutionNm(getCellData(row.getCell(26)));

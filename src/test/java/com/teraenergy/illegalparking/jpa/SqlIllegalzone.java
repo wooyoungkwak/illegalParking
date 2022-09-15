@@ -26,7 +26,7 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "home")
+@ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlIllegalzone {
@@ -63,7 +63,7 @@ public class SqlIllegalzone {
 
             System.out.println(illegalZone.getPolygon());
 
-            Polygon polygon = null;
+            Polygon polygon;
             try {
                 polygon = (Polygon) new WKTReader().read(String.format(illegalZone.getPolygon()));
             } catch (ParseException e) {

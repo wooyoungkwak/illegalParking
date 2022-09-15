@@ -33,15 +33,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
-    username: root
-    password: tera
-    batis:
+    hikari:
       jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
       username: root
       password: tera
-
 server:
   port: 8090
   servlet:
@@ -57,18 +52,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
-    username: wooyoung
-    password: rudnf12dnjf
-    batis:
+    hikari:
       jdbc-url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
       username: wooyoung
-      password: rudnf12dnjf
-#    hikari:
-#      jdbcUrl: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
-#      username: wooyoung
-#      password: rudnf12dnjf
+      password:
 server:
   port: 8090
   servlet:
@@ -84,14 +71,10 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MariaDB103Dialect
   datasource:
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
-    username: root
-    password: tera
-    batis:
-      jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
-      username: root
-      password: tera
+    hikari:
+      jdbc-url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: tera
+      password:
 server:
   port: 80
   servlet:
