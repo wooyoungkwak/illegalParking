@@ -25,5 +25,5 @@ public class IllegalZone {
     String StartTime;    // 탄력 주차 가능 시작 시간
     String EndTime;      // 탄력 주차 가능 종료 시간
     Integer typeSeq;    // 불법 주정차 타입 키
-    Double code;    // 법정동 키
+    String code;    // 법정동 키
 }

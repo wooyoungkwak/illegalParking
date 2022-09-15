@@ -22,12 +22,12 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     private final IllegalZoneRepository illegalZoneRepository;
 
     @Override
-    public IllegalZone get(Integer illegalZoneSeq) {
-        return illegalZoneRepository.findById(illegalZoneSeq);
+    public IllegalZone get(Integer zoneSeq) {
+        return illegalZoneRepository.findById(zoneSeq);
     }
 
     @Override
-    public List<IllegalZone> getsByDong(Double code) {
+    public List<IllegalZone> getsByDong(String code) {
         return illegalZoneRepository.findByIdDong(code);
     }
 
@@ -37,7 +37,7 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     }
 
     @Override
-    public List<IllegalZone> getsByTypeAndDong(Integer typeSeq, Double code) {
+    public List<IllegalZone> getsByTypeAndDong(Integer typeSeq, String code) {
         return illegalZoneRepository.findByIdTypeAndDong(typeSeq, code);
     }
 
@@ -53,7 +53,7 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
 
     @Override
     public void sets(List<IllegalZone> illegalZones) {
-        illegalZoneRepository.saveAll(illegalZones);
+//        illegalZoneRepository.saveAll(illegalZones);
     }
 
     @Override

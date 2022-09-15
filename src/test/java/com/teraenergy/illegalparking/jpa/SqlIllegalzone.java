@@ -38,36 +38,15 @@ public class SqlIllegalzone {
     public void insert() {
         IllegalZone illegalZone = new IllegalZone();
         illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
-        illegalZone.setName("샘플2");
-        illegalZone.setCode(2D);
+        illegalZone.setName("샘플1");
+        illegalZone.setCode("1111100000");
         illegalZone.setIsDel(false);
         illegalZoneService.set(illegalZone);
-
-//        Polygon polygon = null;
-//        try {
-//            polygon = (Polygon) new WKTReader().read(String.format(ilZone.getPolygon()));
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-
-//        Coordinate[] coordinates = polygon.getCoordinates();
-//        for (Coordinate coordinate : coordinates) {
-//            System.out.print(coordinate.getX());
-//            System.out.print(":");
-//            System.out.println(coordinate.getY());
-//        }
-//        IllegalZone illegalZone = new IllegalZone();
-//        illegalZone.setName("샘플");
-//        illegalZone.setLawDongSeq(1);
-//        illegalZone.setPolygon(polygon);
-//        illegalZone.setIsDel(false);
-//        illegalZoneService.set(illegalZone);
     }
 
     @Test
     void select() {
         List<IllegalZone> illegalZones = illegalZoneService.gets();
-//        List<IlZone> illegalZones = iZoneService.gets();
 
         if( !illegalZones.isEmpty()) {
             IllegalZone illegalZone = illegalZones.get(0);

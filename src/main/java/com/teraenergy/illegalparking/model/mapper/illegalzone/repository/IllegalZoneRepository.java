@@ -18,17 +18,17 @@ public interface IllegalZoneRepository {
 
     IllegalZone findById(Integer zoneSeq);
 
-    List<IllegalZone> findByIdDong(Double code);
+    List<IllegalZone> findByIdDong(String code);
 
     List<IllegalZone> findByIdType(Integer typeSeq);
 
-    List<IllegalZone> findByIdTypeAndDong(Integer typeSeq, Double code);
+    List<IllegalZone> findByIdTypeAndDong(Integer typeSeq, String code);
 
     List<IllegalZone> findAll();
 
     void save(IllegalZone illegalZone);
 
-    void saveAll(List<IllegalZone> illegalZones);
+//    void saveAll(List<IllegalZone> illegalZones);
 
     void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime);
 

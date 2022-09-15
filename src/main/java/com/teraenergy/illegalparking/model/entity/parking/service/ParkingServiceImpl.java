@@ -28,7 +28,7 @@ public class ParkingServiceImpl implements ParkingService{
 
     @Override
     public Parking get(Integer prkingSeq) {
-        return parkingRepository.findById(prkingSeq).get();
+        return parkingRepository.findById(prkingSeq).isEmpty() == true ? null : parkingRepository.findById(prkingSeq).get();
     }
 
     @Override

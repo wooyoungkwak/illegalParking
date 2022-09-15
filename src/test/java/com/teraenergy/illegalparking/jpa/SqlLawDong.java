@@ -50,7 +50,7 @@ public class SqlLawDong {
                 value = cell.getCellFormula();
                 break;
             case NUMERIC:
-                value = cell.getNumericCellValue() + "";
+                value = (long)cell.getNumericCellValue() + "";
                 break;
             case STRING:
                 value = cell.getStringCellValue() + "";
@@ -74,8 +74,7 @@ public class SqlLawDong {
             Resource resource = resourceLoader.getResource(staticPath + fileName);
 
             FileInputStream fis = new FileInputStream(resource.getFile());
-            XSSFWorkbook book = null;
-            book = new XSSFWorkbook(fis);
+            XSSFWorkbook book = new XSSFWorkbook(fis);
             XSSFSheet sheet = book.getSheetAt(0);
             List<LawDong> lawDongs = Lists.newArrayList();
 
@@ -93,19 +92,26 @@ public class SqlLawDong {
                 XSSFRow row = sheet.getRow(rowindex);
                 LawDong lawDong = new LawDong();
 
-                lawDong.setCode(Double.parseDouble(getCellData(row.getCell(0))));
+                lawDong.setCode(getCellData(row.getCell(0)));
                 lawDong.setName(getCellData(row.getCell(1)));
                 lawDong.setIsDel(getCellData(row.getCell(2)).trim().equals("존재") ? false : true);
                 lawDongs.add(lawDong);
             }
 
             System.out.println("law_dong size = " + lawDongs.size());
-            lawDongService.sets(lawDongs);
-
+//            lawDongService.sets(lawDongs);
+            lawDongService.set(lawDongs.get(0));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Test
+    public void select(){
+        LawDong lawDong = lawDongService.get("1");
+        if (lawDong == null) {
+            System.out.println(" =============> lawDong is null ");
+        }
+    }
 
 }

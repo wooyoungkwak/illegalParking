@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Project : illegalParking
  * Description :
  */
-public interface LawDongRepository extends JpaRepository<LawDong, Double> {
+public interface LawDongRepository extends JpaRepository<LawDong, Integer> {
 
 }

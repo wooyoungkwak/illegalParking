@@ -17,8 +17,11 @@ import javax.persistence.*;
 @Entity(name = "law_dong")
 public class LawDong {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    Integer dongSeq;
+
     @Column (nullable = false)
-    Double code;
+    String code;
 
     @Column (nullable = false)
     String name;

@@ -1,6 +1,5 @@
 package com.teraenergy.illegalparking;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -16,11 +15,7 @@ import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 @SpringBootApplication
 @EntityScan(
         basePackageClasses = {Jsr310JpaConverters.class},
-        basePackages = {"com.teraenergy.illegalparking.model.entity"}
-)
-@MapperScan(
-        basePackageClasses = {Jsr310JpaConverters.class},
-        basePackages = {"com.teraenergy.illegalparking.model.mapper"}
+        basePackages = {"com.teraenergy.illegalparking.model"}
 )
 public class Application {
 

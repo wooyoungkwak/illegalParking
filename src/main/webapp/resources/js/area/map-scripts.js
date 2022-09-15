@@ -131,7 +131,7 @@ function getDataFromDrawingMap() {
             return false;
         } else {
             // 지도에 가져온 데이터로 도형들을 그립니다
-            zoneInitialize(data);
+            // zoneInitialize(data);
 
             drawingPolygon(param.polygonData, 'drawing');
             // 생성한 폴리곤 삭제
@@ -219,7 +219,7 @@ function displayArea(area) {
     });
 
     // 다각형에 마우스다운 이벤트를 등록합니다
-    var upCount = 0;
+    let upCount = 0;
     kakao.maps.event.addListener(polygon, 'click', function (mouseEvent) {
         var resultDiv = document.getElementById('result');
         resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
@@ -318,12 +318,12 @@ $('#btnUpdate').click(function () {
  * ****** 폴리곤 내부 포함여부 확인 ******
  **************************************/
 kakao.maps.event.addListener(drawingMap, 'click', function (mouseEvent) {
-    var latlng = mouseEvent.latLng;
+    let latlng = mouseEvent.latLng;
     console.log('click! ' + latlng.toString());
     console.log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
     let p = new Point(latlng.getLng(), latlng.getLat());
     let polys = getPolygonData();
-    var len = polys.length;
+    let len = polys.length;
     for (let i = 0; i < len; i++) {
         let onePolygon = polys[i].points;
         let n = onePolygon.length;
@@ -398,24 +398,18 @@ function pathInBounds() {
     let bounds = drawingMap.getBounds();
     let inBoundsPath = [];
 
-    // 영역정보의 남서쪽 정보를 얻어옵니다
-    var swLatLng = bounds.getSouthWest();
-    // var swCoords = swLatLng.toCoords();
-    // var south = swCoords.getY();
-    // var west = swCoords.getX();
-    var south = swLatLng.getLat();
-    var west = swLatLng.getLng();
-
-    // 영역정보의 북동쪽 정보를 얻어옵니다
-    var neLatLng = bounds.getNorthEast();
-    // var neCoords = neLatLng.toCoords();
-    // var north = neCoords.getY();
-    // var east = neCoords.getX();
-    var north = neLatLng.getLat();
-    var east = neLatLng.getLng();
-
-    // 동, 서, 남, 북 좌표
-    console.log(east, west, south, north);
+    // // 영역정보의 남서쪽 정보를 얻어옵니다
+    // var swLatLng = bounds.getSouthWest();
+    // var south = swLatLng.getLat();
+    // var west = swLatLng.getLng();
+    //
+    // // 영역정보의 북동쪽 정보를 얻어옵니다
+    // var neLatLng = bounds.getNorthEast();
+    // var north = neLatLng.getLat();
+    // var east = neLatLng.getLng();
+    //
+    // // 동, 서, 남, 북 좌표
+    // console.log(east, west, south, north);
 
     getPolygonData().filter(function (overlay) {
         let obj = {}, points = [];

@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface LawDongService {
 
-    public LawDong get(Double code);
+    public LawDong get(String code);
 
     public LawDong getFromLnmadr(String Lnmadr);
 

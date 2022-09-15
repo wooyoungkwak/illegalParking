@@ -27,8 +27,11 @@ public class LawDongServiceImpl implements LawDongService{
     private final LawDongRepository lawDongRepository;
 
     @Override
-    public LawDong get(Double code) {
-        return lawDongRepository.findById(code).get();
+    public LawDong get(String code) {
+        JPAQueryFactory query = new JPAQueryFactory(entityManager);
+        return query.selectFrom(QLawDong.lawDong)
+                .where(QLawDong.lawDong.code.eq(code))
+                .fetchOne();
     }
 
     @Override

@@ -117,6 +117,6 @@ public class Parking {
     LocalDate referenceDate;
 
     @Column(nullable = false)
-    Double code;
+    String code;
 
 }

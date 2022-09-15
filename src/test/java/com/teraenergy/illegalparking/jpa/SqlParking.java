@@ -85,12 +85,9 @@ public class SqlParking {
 
     @Test
     public void insert() {
-
         String fileName = "전라남도_광양시_주차장정보_20220324_1648095649855_1146.xlsx";
-
         try {
             Resource resource = resourceLoader.getResource(staticPath + fileName);
-            System.out.println(resource.getFile().toPath());
 
             FileInputStream fis = new FileInputStream(resource.getFile());
             XSSFWorkbook book = null;
@@ -144,14 +141,15 @@ public class SqlParking {
                     parking.setLongitude(Double.parseDouble(getCellData(row.getCell(29))));
                     parking.setReferenceDate(LocalDate.parse(getCellData(row.getCell(30)).split(" ")[0]));
 
-                    LawDong lawDong = lawDongService.getFromLnmadr(parking.getLnmadr());
-                    parking.setCode(lawDong.getCode());
+//                    LawDong lawDong = lawDongService.getFromLnmadr(parking.getLnmadr());
+//                    parking.setCode(lawDong.getCode());
+                    parking.setCode("1111100002");
                     parkings.add(parking);
                 }
             }
 
+            System.out.println("size = " + parkings.size());
             parkingService.sets(parkings);
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
