@@ -1,11 +1,38 @@
-/*!
-    * Start Bootstrap - SB Admin v7.0.4 (https://startbootstrap.com/template/sb-admin)
-    * Copyright 2013-2021 Start Bootstrap
-    * Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-sb-admin/blob/master/LICENSE)
-    */
-    // 
-// Scripts
-// 
+
+$.JJAjax = function (opt) {
+    let result = '';
+
+    if ( opt === undefined) {
+        return result;
+    }
+
+    $.ajax({
+        url: opt.url,
+        type: 'post',
+        async: false,
+        contentType : 'application/json; charset=UTF-8',
+        data: JSON.stringify(opt.data),
+        dataType: "json",
+        beforeSend: function (xhr, options) {
+            xhr.setRequestHeader('AJAX', true);
+        },
+        xhr: function () {
+            let myXhr = $.ajaxSettings.xhr();
+            return myXhr;
+        },
+        error: function (jqXHR, statusCode, errorThrown) {
+
+        },
+        success: function (data, statusCode, jqXHR) {
+            result = data;
+        }
+    });
+
+    return result;
+}
+
+
+
 
 window.addEventListener('DOMContentLoaded', event => {
 
@@ -31,6 +58,7 @@ $(document).ready(function () {
        window.history.back();
    })
 });
+
 
 
 

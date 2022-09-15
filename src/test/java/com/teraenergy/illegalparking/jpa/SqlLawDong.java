@@ -72,7 +72,6 @@ public class SqlLawDong {
         String fileName = "법정동코드_전체자료.xlsx";
         try {
             Resource resource = resourceLoader.getResource(staticPath + fileName);
-            System.out.println(resource.getFile().toPath());
 
             FileInputStream fis = new FileInputStream(resource.getFile());
             XSSFWorkbook book = null;
@@ -100,6 +99,7 @@ public class SqlLawDong {
                 lawDongs.add(lawDong);
             }
 
+            System.out.println("law_dong size = " + lawDongs.size());
             lawDongService.sets(lawDongs);
 
         } catch (IOException e) {

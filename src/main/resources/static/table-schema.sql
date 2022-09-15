@@ -1,14 +1,14 @@
 -- 불법 주정차 데이터 베이스
-CREATE DATABASE illegal_parking;
+CREATE
+DATABASE illegal_parking;
 
 -- 법정동코드
 -- DROP TABLE law_dong;
 CREATE TABLE law_dong
 (
-    DongSeq INT          NOT NULL PRIMARY KEY AUTO_INCREMENT, -- 법정동 코드 키
-    Code    BIGINT       NOT NULL,                            -- 법정동 코드
-    Name    VARCHAR(100) NOT NULL,                            -- 법정동 이름
-    IsDel   BOOLEAN      NOT NULL DEFAULT FALSE               -- 삭제 여부
+    Code  BIGINT       NOT NULL,              -- 법정동 코드
+    Name  VARCHAR(100) NOT NULL,              -- 법정동 이름
+    IsDel BOOLEAN      NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -49,7 +49,7 @@ CREATE TABLE parking
     Longitude            DECIMAL(18, 10),                -- 경도
     ReferenceDate        DATE,                           -- 데이터기준일자
     IsDel                BOOLEAN NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DongSeq              INT                             -- 법정동 코드 키
+    Code                 BIGINT                          -- 법정동 코드 키
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -63,7 +63,7 @@ CREATE TABLE illegal_zone
     IsDel     BOOLEAN NOT NULL DEFAULT FALSE, -- 삭제 여부
     StartTime Datetime NULL,                  -- 시작 시간
     EndTime   Datetime NULL,                  -- 종료 시간
-    DongSeq   INT     NOT NULL,               -- 법정동 코드 키
+    Code      BIGINT  NOT NULL,               -- 법정동 코드 키
     TypeSeq   INT     NOT NULL                -- 타입 키
 ) ENGINE = InnoDB
   CHARSET = utf8;

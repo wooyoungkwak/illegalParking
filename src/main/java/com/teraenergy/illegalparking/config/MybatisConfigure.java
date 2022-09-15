@@ -31,7 +31,7 @@ public class MybatisConfigure {
     String mapperPath;
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource")
+    @ConfigurationProperties(prefix = "spring.datasource.batis")
     public DataSource mybatisDatasource(){
         return DataSourceBuilder.create().build();
     }

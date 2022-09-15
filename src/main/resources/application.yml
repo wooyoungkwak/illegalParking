@@ -33,12 +33,15 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   datasource:
-    jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
     username: root
     password: tera
-
+    batis:
+      jdbc-url: jdbc:mysql://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: root
+      password: tera
 server:
-  port: 8080
+  port: 8090
   servlet:
     context-path: /
     session:

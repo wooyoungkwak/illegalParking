@@ -1,0 +1,7 @@
+.map_wrap {width: 100%;position: relative;}
+.modes {position: absolute;top: 10px;left: 10px;z-index: 1;}
+.getdata{position: absolute;top: 370px;left: 10px;z-index: 1;}
+#drawingMap, #map {width: 100%;height: 600px;}
+#map {margin-top: 10px;}
+
+#timeRow {display: none;}

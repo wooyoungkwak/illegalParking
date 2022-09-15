@@ -2,22 +2,24 @@ let zoneSeq = [];
 let zoneType = [];
 let zonePolygon = [];
 let zoneArea = [];
+let drawingDataTargets = [];
+let searchZoneType = '';
 
 // Drawing Manager로 도형을 그릴 지도 div
-var drawingMapContainer = document.getElementById('drawingMap'),
-    drawingMap = {
-        center: new kakao.maps.LatLng(35.02035492064902, 126.79383256393594), // 지도의 중심좌표
-        level: 3, // 지도의 확대 레벨
-        disableDoubleClickZoom: true
-    };
+let drawingMapContainer = document.getElementById('drawingMap');
+let drawingMap = {
+    center: new kakao.maps.LatLng(35.02035492064902, 126.79383256393594), // 지도의 중심좌표
+    level: 3, // 지도의 확대 레벨
+    disableDoubleClickZoom: true
+};
 
 // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-var drawingMap = new kakao.maps.Map(drawingMapContainer, drawingMap)
+drawingMap = new kakao.maps.Map(drawingMapContainer, drawingMap)
     , overlays = [] // 지도에 그려진 도형을 담을 배열
     , customOverlay = new kakao.maps.CustomOverlay({})
     , infowindow = new kakao.maps.InfoWindow({removable: true});
 
-var options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
+let options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
     map: drawingMap, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
     drawingMode: [ // Drawing Manager로 제공할 그리기 요소 모드입니다
         kakao.maps.drawing.OverlayType.POLYGON
@@ -38,13 +40,26 @@ var options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
 };
 
 // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
-var mouseoverOption = {
+let mouseoverOption = {
     fillColor: '#EFFFED', // 채우기 색깔입니다
     fillOpacity: 0.8 // 채우기 불투명도 입니다
 };
 
 // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
-var manager = new kakao.maps.drawing.DrawingManager(options);
+let manager = new kakao.maps.drawing.DrawingManager(options);
+
+let polygonStyle = {
+    "draggable": true,
+    "removable": true,
+    "editable": true,
+    "strokeColor": "#330000",
+    "strokeWeight": 2,
+    "strokeStyle": "solid",
+    "strokeOpacity": 1,
+    "fillColor": "#000000",
+    "fillOpacity": 0.5
+};
+
 
 // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
 function mouseoutOption(area) {
@@ -72,40 +87,30 @@ var mapContainer = document.getElementById('map'),
     };
 */
 
-function zoneInitialize(data) {
-    zonePolygon = [];
-    zoneSeq = [];
-    zoneType = [];
-    data.polygonList.forEach(function (element) {
-        zonePolygon.push(element.zonePolygon);
-        zoneSeq.push(element.zoneSeq);
-        zoneType.push(element.zoneType);
-    });
-}
 
 // 폴리곤 생성 후 새로 그릴 때 생성된 폴리곤 삭제를 위해 manager 데이터 저장
-let drawingDataTargets = [];
 manager.addListener('drawend', function (data) {
     drawingDataTargets.push(data.target);
 });
 
-let searchZoneType = '';
+//
 $('input:radio[name=searchZoneType]').change(function () {
     searchZoneType = $('input:radio[name=searchZoneType]:checked').val();
-
     searchZone(searchZoneType);
 });
 
-function searchZone(searchZoneType) {
-    let param = {'searchZoneType': searchZoneType}
-    let callBackFn = function (data) {
-        removeOverlays();
-        zoneInitialize(data);
-        drawingPolygon(getPolygonData(), 'load');
-    }
-    commonAjax("/admin/map/polygonList", callBackFn, 'GET', param, '에러');
+//
+function searchZone(typeSeq) {
+    removeOverlays();
+    zoneInitialize({
+        url: $.getContextPath() + '/polygon',
+        data: {
+            select: SELECT_TYPE_AND_DONG,
+            searchZoneType: typeSeq
+        }
+    });
+    drawingPolygon(getPolygonData(), 'load');
 }
-
 
 // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
 // Drawing Manager로 그려진 객체 데이터를 가져와 아래 지도에 표시합니다
@@ -125,10 +130,9 @@ function getDataFromDrawingMap() {
             alert('구역을 지정하시기 바랍니다.');
             return false;
         } else {
-            // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
-            removeOverlays();
             // 지도에 가져온 데이터로 도형들을 그립니다
             zoneInitialize(data);
+
             drawingPolygon(param.polygonData, 'drawing');
             // 생성한 폴리곤 삭제
             removeDrawingOverlays();
@@ -156,6 +160,7 @@ function removeOverlays() {
     overlays = [];
 }
 
+//
 function drawingPolygon(polygons, stat) {
     let areas = getPolygonData();
     if (stat === 'drawing') {
@@ -171,6 +176,7 @@ function drawingPolygon(polygons, stat) {
     }
 }
 
+//
 function fillColorSetting(area) {
     let fillColor;
     if (area.type === 'F') fillColor = '#ffff22';
@@ -223,28 +229,30 @@ function displayArea(area) {
     overlays.push(polygon);
 }
 
+//
 function showModal(seq) {
-    let callBackFn = function (data) {
-        let result = data.result;
+    let result = zoneInitialize({
+        url: '/polygon',
+        data: {
+            'zoneSeq': seq
+        }
+    });
 
-        $('#polySeq').val(result.zoneSeq);
-        let zoneType = result.zoneType;
+    $('#polySeq').val(result.zoneSeq);
+    let zoneType = result.zoneType;
 
-        $('input:radio[name=zoneType]:input[value="' + zoneType + '"]').prop('checked', true);
+    $('input:radio[name=zoneType]:input[value="' + zoneType + '"]').prop('checked', true);
 
-        let checkVal = $('input:radio[name="zoneType"]:checked').val();
-        timeHideAndShow(checkVal);
-        timeSetting(result);
+    let checkVal = $('input:radio[name="zoneType"]:checked').val();
+    timeHideAndShow(checkVal);
+    timeSetting(result);
 
-        // alert(result.zoneSeq);0
-        $('#areaSettingModal').modal('show');
-    }
+    // alert(result.zoneSeq);0
+    $('#areaSettingModal').modal('show');
 
-    let param = {'polySeq': seq};
-    commonAjax("/admin/map/polygonDetail", callBackFn, "GET", param, "서버에러");
 }
 
-
+//
 function timeHideAndShow(checkVal) {
     if (checkVal === 'Y') { //탄력적 가능일 경우
         $('#timeRow').css('display', 'block');
@@ -255,6 +263,7 @@ function timeHideAndShow(checkVal) {
     }
 }
 
+//
 function timeSetting(result) {
     let startTime = result.startTime;
     let endTime = result.endTime;
@@ -271,7 +280,6 @@ $('input:radio[name=zoneType]').click(function () {
     let checkVal = $('input:radio[name=zoneType]:checked').val();
     timeHideAndShow(checkVal);
 });
-
 
 // 폴리곤 삭제
 $('#btnDelete').click(function () {
@@ -445,18 +453,7 @@ function pointsToPath(points) {
     return path;
 }
 
-let polygonStyle = {
-    "draggable": true,
-    "removable": true,
-    "editable": true,
-    "strokeColor": "#330000",
-    "strokeWeight": 2,
-    "strokeStyle": "solid",
-    "strokeOpacity": 1,
-    "fillColor": "#000000",
-    "fillOpacity": 0.5
-};
-
+//
 function getPolygonData() {
     let areas = [];
     for (let j = 0; j < zonePolygon.length; j++) {
@@ -476,18 +473,26 @@ function getPolygonData() {
     return areas;
 }
 
-$(function () {
-    // let zoneSeq = [];
-    // let zoneType = [];
-    // let zonePolygon = [];
-    // let zoneArea = [];
-    let polygonList = `${polygonList}`;
+//
+function zoneInitialize(data) {
+    let result = $.JJAjax(data);
+    if (data.select === undefined) {
+        return result;
+    }
+    zonePolygon = result.zonePolygon;
+    zoneSeq = result.zoneSeq;
+    zoneType = result.zoneType;
+}
 
-    // for( polygon in polygonList ) {
-    // zoneSeq.push(polygon.zoneSeq);
-    // zoneType.push(polygon.zoneType);
-    // zonePolygon.push(polygon.zonePolygon);
-    // }
+
+// jquery 초기화
+$(function () {
+    zoneInitialize({
+        url: $.getContextPath() + '/polygons',
+        data: {
+            select: SELECT_ALL
+        }
+    });
 
     pathInBounds();
 });

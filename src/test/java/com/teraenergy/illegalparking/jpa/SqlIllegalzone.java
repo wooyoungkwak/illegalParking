@@ -39,7 +39,7 @@ public class SqlIllegalzone {
         IllegalZone illegalZone = new IllegalZone();
         illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
         illegalZone.setName("샘플2");
-        illegalZone.setDongSeq(2);
+        illegalZone.setCode(2D);
         illegalZone.setIsDel(false);
         illegalZoneService.set(illegalZone);
 
@@ -66,7 +66,7 @@ public class SqlIllegalzone {
 
     @Test
     void select() {
-        List<IllegalZone> illegalZones = illegalZoneService.gets(1);
+        List<IllegalZone> illegalZones = illegalZoneService.gets();
 //        List<IlZone> illegalZones = iZoneService.gets();
 
         if( !illegalZones.isEmpty()) {

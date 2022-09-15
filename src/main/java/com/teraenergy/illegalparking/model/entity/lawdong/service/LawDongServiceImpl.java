@@ -27,8 +27,8 @@ public class LawDongServiceImpl implements LawDongService{
     private final LawDongRepository lawDongRepository;
 
     @Override
-    public LawDong get(Integer lawDongSeq) {
-        return lawDongRepository.findById(lawDongSeq).get();
+    public LawDong get(Double code) {
+        return lawDongRepository.findById(code).get();
     }
 
     @Override

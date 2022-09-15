@@ -28,6 +28,11 @@
             return location.href.substring(hostIndex, location.href.indexOf('/', hostIndex + 1));
         }
 
+        let SELECT_ALL = "all";
+        let SELECT_TYPE= "type";
+        let SELECT_DONG = "dong";
+        let SELECT_TYPE_AND_DONG = "typeAndDong";
+
         $(document).ready(function () {
             const _contextPath = $.getContextPath();
             $('#navMenu').find('a').removeClass("active");

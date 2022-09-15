@@ -13,11 +13,22 @@ import java.util.List;
  */
 public interface IllegalZoneService {
 
-    public List<IllegalZone> gets(Integer lawDongSeq);
+    public IllegalZone get(Integer illegalZoneSeq);
+
+    public List<IllegalZone> getsByDong(Double code);
+
+    public List<IllegalZone> getsByType(Integer typeSeq);
+
+    public List<IllegalZone> getsByTypeAndDong(Integer typeSeq, Double code);
 
     public List<IllegalZone> gets();
 
     public void set(IllegalZone illegalZone);
 
     public void sets(List<IllegalZone> illegalZones);
+
+    public void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime);
+
+    public void delete(Integer zoneSeq);
+
 }

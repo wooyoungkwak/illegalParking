@@ -16,14 +16,22 @@ import java.util.List;
 @Mapper
 public interface IllegalZoneRepository {
 
-    List<IllegalZone> findById(Integer zoneSeq);
+    IllegalZone findById(Integer zoneSeq);
 
-    List<IllegalZone> findByIdDong(Integer lawDongSeq);
+    List<IllegalZone> findByIdDong(Double code);
+
+    List<IllegalZone> findByIdType(Integer typeSeq);
+
+    List<IllegalZone> findByIdTypeAndDong(Integer typeSeq, Double code);
 
     List<IllegalZone> findAll();
 
     void save(IllegalZone illegalZone);
 
     void saveAll(List<IllegalZone> illegalZones);
+
+    void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime);
+
+    void delete(Integer zoneSeq);
 
 }
