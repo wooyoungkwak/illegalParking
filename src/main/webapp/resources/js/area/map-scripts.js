@@ -225,7 +225,7 @@ function displayArea(area) {
         var resultDiv = document.getElementById('result');
         resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
         coordinatesToDongCodeKakaoApi();
-        console.log("area  = " , JSON.stringify(area));
+        console.log("area  = ", JSON.stringify(area));
         showModal(area.seq);
     });
     overlays.push(polygon);
@@ -300,7 +300,7 @@ $('#btnDelete').click(function () {
             }
         };
         zoneInitialize(opt);
-        
+
         // TODO : zoneSeq 한개만 삭제 -> zonePolygon / typeSeq
         // let index = 0;
         // zoneTypes.forEach(function (zoneSeq) {
@@ -484,7 +484,7 @@ function pointsToPath(points) {
 function getPolygonData() {
     let areas = [];
     [2]
-    [1]
+        [1]
     for (let j = 0; j < zonePolygons.length; j++) {
         let pointsPoly = [], obj = {};
         let zonePolygonArr = zonePolygons[j].split(",");

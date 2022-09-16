@@ -89,6 +89,11 @@ public class AreaAPIController {
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
 
+//                Polygon polygon = (Polygon) new WKTReader().read(stringBuilder.toString());
+//                polygon.getCentroid();
+//                polygon.getEnvelope().getCentroid();
+//                polygon.convexHull().getCentroid();
+
                 stringBuilder.setLength(0);
             }
 
