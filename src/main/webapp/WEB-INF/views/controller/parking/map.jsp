@@ -9,7 +9,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <% String contextPath = request.getContextPath(); %>
 
-<stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
+<stripes:layout-render name="/WEB-INF/views/layout/navMapHtmlLayout.jsp">
 
     <!-- nav -->
     <stripes:layout-component name="nav">
@@ -31,8 +31,11 @@
                 </ol>
 
                 <div class="row">
-                    지도
+                    <div class="col-12">
+                        <div id="drawingMap"></div>
+                    </div>
                 </div>
+
             </div>
         </main>
     </stripes:layout-component>

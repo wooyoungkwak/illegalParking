@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.model.entity.illegalzone.domain;
+package com.teraenergy.illegalparking.model.entity.illegalType.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +18,8 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
-public class illegalType {
+@Entity (name = "illegal_type")
+public class IllegalType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer typeSeq;    // 키

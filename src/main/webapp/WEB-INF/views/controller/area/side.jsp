@@ -14,7 +14,11 @@
                 <div class="sb-sidenav-menu-heading">${subTitle}</div>
                 <a class="nav-link" href="${pageContext.request.contextPath}/area/map">
                     <div class="sb-nav-link-icon"><i class="fas fa-map"></i></div>
-                    지도 보기
+                    구역 보기
+                </a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/area/map">
+                    <div class="sb-nav-link-icon"><i class="fas fa-edit"></i></div>
+                    구역 설정
                 </a>
             </div>
         </div>

@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.jpa;
+package com.teraenergy.illegalparking.mybatis;
 
 
 import com.teraenergy.illegalparking.ApplicationTests;

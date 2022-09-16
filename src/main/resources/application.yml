@@ -56,11 +56,11 @@ spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
     username: wooyoung
-    password:
+    password: rudnf12dnjf
     hikari:
-      connection-timeout: 10 # connection_timeout
-      max-lifetime: 28800 # wait_timeout
-
+      connection-timeout: 30000 # connection_timeout
+      max-lifetime: 1800000 # wait_timeout
+      maximum-pool-size: 30
 server:
   port: 8090
   servlet:
@@ -80,8 +80,8 @@ spring:
     username: tera
     password:
     hikari:
-      connection-timeout: 10 # connection_timeout
-      max-lifetime: 28800 # wait_timeout
+      connection-timeout: 30000 # connection_timeout
+      max-lifetime: 1800000 # wait_timeout
 server:
   port: 80
   servlet:
