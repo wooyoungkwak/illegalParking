@@ -36,6 +36,9 @@ spring:
     url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
     username: root
     password: tera
+    hikari:
+      connection-timeout: 30000 # connection_timeout
+      max-lifetime: 1800000 # wait_timeout
 server:
   port: 8090
   servlet:
@@ -55,9 +58,9 @@ spring:
     username: wooyoung
     password:
     hikari:
-      jdbc-url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
-      username: wooyoung
-      password:
+      connection-timeout: 10 # connection_timeout
+      max-lifetime: 28800 # wait_timeout
+
 server:
   port: 8090
   servlet:
@@ -76,6 +79,9 @@ spring:
     url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
     username: tera
     password:
+    hikari:
+      connection-timeout: 10 # connection_timeout
+      max-lifetime: 28800 # wait_timeout
 server:
   port: 80
   servlet:

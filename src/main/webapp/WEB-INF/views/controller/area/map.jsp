@@ -38,10 +38,10 @@
 							<button onclick="selectOverlay('POLYGON')">구역추가</button>
 							<button onclick="getDataFromDrawingMap()">저장</button>
 							<span>
-								<label><input type="radio" name="searchZoneType" value="" checked>전체</label>
-								<label><input type="radio" name="searchZoneType" value="N">주정차 불가</label>
-								<label><input type="radio" name="searchZoneType" value="Y">탄력적 가능</label>
-								<label><input type="radio" name="searchZoneType" value="F">5분간 가능</label>
+								<label><input type="radio" name="searchTypeSeq" value="" checked>전체</label>
+								<label><input type="radio" name="searchTypeSeq" value="1">주정차 불가</label>
+								<label><input type="radio" name="searchTypeSeq" value="2">탄력적 가능</label>
+								<label><input type="radio" name="searchTypeSeq" value="3">5분간 가능</label>
 							</span>
 						</p>
 					</div>
@@ -52,39 +52,54 @@
 						<div class="modal-dialog" role="document">
 							<div class="modal-content">
 								<form id="formAreaSetting" name="formAreaSetting">
-									<input type="hidden" id="polySeq" name="polySeq" value=""/>
+									<input type="hidden" id="zoneSeq" name="zoneSeq" value=""/>
 									<div class="modal-header">
 										<h5 class="modal-title" id="staticBackdropLabel">구역설정</h5>
 										<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
 										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="radio" name="zoneType" id="zone1" value="N">
+											<input class="form-check-input" type="radio" name="typeSeq" id="zone1" value="1">
 											<label class="form-check-label" for="zone1">불가</label>
 										</div>
 										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="radio" name="zoneType" id="zone2" value="Y">
+											<input class="form-check-input" type="radio" name="typeSeq" id="zone2" value="2">
 											<label class="form-check-label" for="zone2">탄력적 가능</label>
 										</div>
 										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="radio" name="zoneType" id="zone3" value="F">
+											<input class="form-check-input" type="radio" name="typeSeq" id="zone3" value="3">
 											<label class="form-check-label" for="zone3">5분간 가능</label>
 										</div>
+
 
 										<div class="row" id="timeRow">
 											<div class="col">
 												<label for="startTime">시작</label>
 												<select class="form-select" id="startTime" name="startTime" aria-label="Default select example" disabled>
-													<c:forEach var="time" begin="1" end="24" varStatus="status">
-														<option value="${time}">${time}시</option>
+													<c:forEach begin="1" end="24" varStatus="status">
+														<c:choose>
+															<c:when test="${status.index < 10}">
+																<option value="0${status.index}:00">0${status.index}:00</option>
+															</c:when>
+															<c:otherwise>
+																<option value="${status.index}:00">${status.index}:00</option>
+															</c:otherwise>
+														</c:choose>
 													</c:forEach>
 												</select>
 											</div>
 											<div class="col">
 												<label for="endTime">종료</label>
 												<select class="form-select" id="endTime" name="endTime" aria-label="Default select example" disabled>
-													<c:forEach var="time" begin="1" end="24" varStatus="status">
-														<option value="${time}">${time}시</option>
+													<c:forEach begin="1" end="24" varStatus="status">
+														<c:choose>
+															<c:when test="${status.index < 10}">
+																<option value="0${status.index}:00">0${status.index}:00</option>
+															</c:when>
+															<c:otherwise>
+																<option value="${status.index}:00">${status.index}:00</option>
+															</c:otherwise>
+														</c:choose>
 													</c:forEach>
 												</select>
 											</div>

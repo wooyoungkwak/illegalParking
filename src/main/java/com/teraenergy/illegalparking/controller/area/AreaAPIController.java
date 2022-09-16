@@ -68,26 +68,23 @@ public class AreaAPIController {
                 List<Object> pointList = (List<Object>) dataMap.get("points");
                 stringBuilder = new StringBuilder();
                 stringBuilder.append("POLYGON((");
-                int cnt = 1;
-                int size = pointList.size();
+
                 for (Object point : pointList) {
-                    if (cnt != size) {
-                        stringBuilder.append(((Map<String, String>) point).get("x"));
-                        stringBuilder.append(" ");
-                        stringBuilder.append(((Map<String, String>) point).get("y"));
-                        stringBuilder.append(",");
-                    } else {
-                        stringBuilder.append(((Map<String, String>) point).get("x"));
-                        stringBuilder.append(" ");
-                        stringBuilder.append(((Map<String, String>) point).get("y"));
-                        stringBuilder.append("))");
-                    }
+                    stringBuilder.append(((Map<String, Long>) point).get("x"));
+                    stringBuilder.append(" ");
+                    stringBuilder.append(((Map<String, Long>) point).get("y"));
+                    stringBuilder.append(",");
                 }
+
+                stringBuilder.append(((Map<String, Long>) pointList.get(0)).get("x"));
+                stringBuilder.append(" ");
+                stringBuilder.append(((Map<String, Long>) pointList.get(0)).get("y"));
+                stringBuilder.append("))");
 
                 IllegalZone illegalZone = new IllegalZone();
                 illegalZone.setPolygon(stringBuilder.toString());
                 illegalZone.setName("");
-                illegalZone.setTypeSeq(1);
+                illegalZone.setTypeSeq(param.get("typeSeq") == null ? 1 : (Integer) param.get("typeSeq"));
                 illegalZone.setCode("2");
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
@@ -102,14 +99,14 @@ public class AreaAPIController {
             return "fail";
         }
 
-
     }
 
     @PostMapping("/area/polygon/delete")
     @ResponseBody
-    public String deletePolygon(@RequestBody Map<String, Object> paramMap) {
+    public String deletePolygon(@RequestBody String body) {
         try {
-            illegalZoneService.delete((Integer) paramMap.get("zoneSeq"));
+            JsonNode jsonNode = objectMapper.readTree(body);
+            illegalZoneService.delete(jsonNode.get("zoneSeq").asInt());
             return "success";
         } catch (Exception e) {
             return "fail";
@@ -118,21 +115,24 @@ public class AreaAPIController {
 
     @PostMapping("/area/polygon/update")
     @ResponseBody
-    public String updatePolygon(@RequestBody Map<String, Object> paramMap) {
+    public JsonNode updatePolygon(@RequestBody String body) throws Exception {
+        Map<String, String> map = Maps.newHashMap();
         try {
-            illegalZoneService.modify((Integer) paramMap.get("zoneSeq"), (Integer) paramMap.get("zoneType"), (String) paramMap.get("startTime"), (String) paramMap.get("endTime"));
-            Map<String, Object> resultMap = new HashMap<>();
-            return "success";
+            JsonNode jsonNode = objectMapper.readTree(body);
+            illegalZoneService.modify(jsonNode.get("zoneSeq").asInt(), jsonNode.get("typeSeq").asInt(), jsonNode.get("startTime").asText(), jsonNode.get("endTime").asText());
+            map.put("success","true");
         } catch (Exception e) {
-            return "fail";
+            map.put("success","false");
         }
+        String jsonStr = objectMapper.writeValueAsString(map);
+        return objectMapper.readTree(jsonStr);
     }
 
     @PostMapping("/area/polygon")
     @ResponseBody
     public JsonNode polygon(HttpServletRequest request, @RequestBody String body) throws Exception {
-        HashMap<String, Object> hashMap = objectMapper.convertValue(body, HashMap.class);
-        String jsonStr = objectMapper.writeValueAsString(illegalZoneService.get((Integer) hashMap.get("zoneSeq")));
+        JsonNode jsonNode = objectMapper.readTree(body);
+        String jsonStr = objectMapper.writeValueAsString(illegalZoneService.get(jsonNode.get("zoneSeq").asInt()));
         return objectMapper.readTree(jsonStr);
     }
 
@@ -201,9 +201,9 @@ public class AreaAPIController {
         }
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("zonePolygon", polygons);
-        resultMap.put("zoneSeq", zoneSeqs);
-        resultMap.put("zoneType", zonetypes);
+        resultMap.put("zonePolygons", polygons);
+        resultMap.put("zoneSeqs", zoneSeqs);
+        resultMap.put("zoneTypes", zonetypes);
 
         return resultMap;
     }

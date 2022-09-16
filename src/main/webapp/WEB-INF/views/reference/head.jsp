@@ -40,5 +40,7 @@
 
             console.log(_contextPath.replace("/",""));
         });
+
+        let log = console.log;
     </script>
 </head>
