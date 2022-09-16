@@ -53,7 +53,7 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
 
     @Override
     public void sets(List<IllegalZone> illegalZones) {
-//        illegalZoneRepository.saveAll(illegalZones);
+        illegalZoneMapper.saveAll(illegalZones);
     }
 
     @Override

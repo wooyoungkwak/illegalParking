@@ -62,8 +62,8 @@ CREATE TABLE illegal_zone
     Name      VARCHAR(30) NULL,                   -- 불법 구역 이름
     Polygon   POLYGON     NOT NULL,               -- 불법 구역
     IsDel     BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    StartTime Datetime NULL,                      -- 시작 시간
-    EndTime   Datetime NULL,                      -- 종료 시간
+    StartTime VARCHAR(5) NULL,                      -- 시작 시간
+    EndTime   VARCHAR(5) NULL,                      -- 종료 시간
     Code      VARCHAR(10) NOT NULL,               -- 법정동 코드 키
     TypeSeq   INT         NOT NULL                -- 타입 키
 ) ENGINE = InnoDB

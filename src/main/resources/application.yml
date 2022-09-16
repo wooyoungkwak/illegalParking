@@ -23,7 +23,7 @@ file:
   resourceLocation: D:/fileUpload/
   excelPath: D:/fileUpload/excel
 mybatis:
-  mapper-locations: classpath:/mybatis/illegalZone-mapper.xml
+  mapper-locations: classpath:/mybatis/*.xml
 ---
 # debug
 spring:

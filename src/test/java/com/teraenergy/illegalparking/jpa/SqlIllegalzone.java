@@ -4,6 +4,7 @@ package com.teraenergy.illegalparking.jpa;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
+import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.locationtech.jts.geom.Coordinate;
@@ -46,6 +47,41 @@ public class SqlIllegalzone {
     }
 
     @Test
+    public void insertList() {
+        List<IllegalZone> illegalZones = Lists.newArrayList();
+
+        IllegalZone illegalZone = new IllegalZone();
+        illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
+        illegalZone.setName("샘플1");
+        illegalZone.setCode("1111100001");
+        illegalZone.setIsDel(false);
+        illegalZone.setTypeSeq(1);
+
+        IllegalZone illegalZone2 = new IllegalZone();
+        illegalZone2.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
+        illegalZone2.setName("샘플2");
+        illegalZone2.setCode("1111100002");
+        illegalZone2.setIsDel(false);
+        illegalZone2.setTypeSeq(2);
+
+        illegalZones.add(illegalZone);
+        illegalZones.add(illegalZone2);
+
+        illegalZoneService.sets(illegalZones);
+    }
+
+    @Test
+    public void update() {
+        illegalZoneService.modify(6, 3, "10:00", "11:00");
+    }
+
+    @Test
+    public void delete() {
+        illegalZoneService.delete(7);
+    }
+
+
+    @Test
     void select() {
         List<IllegalZone> illegalZones = illegalZoneService.gets();
 
@@ -61,6 +97,7 @@ public class SqlIllegalzone {
             Point polyOuterPoint2 = geometryFactory.createPoint(new Coordinate(126.56652326588099,33.45011835549815));
             Point polyOuterPoint3 = geometryFactory.createPoint(new Coordinate(126.56601552728885,33.450567380165516));
 
+            System.out.println("seq = " + illegalZone.getZoneSeq());
             System.out.println(illegalZone.getPolygon());
 
             Polygon polygon;

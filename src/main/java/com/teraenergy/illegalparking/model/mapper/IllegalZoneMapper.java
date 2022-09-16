@@ -28,7 +28,7 @@ public interface IllegalZoneMapper {
 
     void save(IllegalZone illegalZone);
 
-//    void saveAll(List<IllegalZone> illegalZones);
+    void saveAll(List<IllegalZone> illegalZones);
 
     void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime);
 

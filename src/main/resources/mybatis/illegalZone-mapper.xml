@@ -28,12 +28,13 @@
          INSERT INTO illegal_zone (Name, Polygon, isDel, TypeSeq, Code, StartTime, EndTime) VALUES (#{name}, POLYGONFROMTEXT(#{polygon}), #{isDel}, #{typeSeq}, #{code}, #{StartTime}, #{EndTime});
     </insert>
 
-<!--    <insert id="saveAll" useGeneratedKeys="false">-->
-<!--         INSERT INTO illegal_zone (Name, Polygon, isDel, TypeSeq, Code, StartTime, EndTime) VALUES-->
-<!--                                                                                                <foreach collection="" item="">-->
-<!--                                                                                                (#{name}, POLYGONFROMTEXT(#{polygon}), #{isDel}, #{typeSeq}, #{code}, #{StartTime}, #{EndTime});-->
-<!--                                                                                                </foreach>-->
-<!--    </insert>-->
+    <insert id="saveAll" useGeneratedKeys="false">
+         INSERT INTO illegal_zone (Name, Polygon, isDel, TypeSeq, Code, StartTime, EndTime) VALUES
+        <foreach collection="illegalZones" item="illegalZone" separator=",">
+            (#{illegalZone.name}, POLYGONFROMTEXT(#{illegalZone.polygon}), #{illegalZone.isDel}, #{illegalZone.typeSeq}, #{illegalZone.code}, #{illegalZone.StartTime}, #{illegalZone.EndTime})
+        </foreach>
+        ;
+    </insert>
 
     <update id="modify" useGeneratedKeys="false">
          UPDATE illegal_zone SET TypeSeq = #{typeSeq}, StartTime =#{startTime}, EndTime =#{endTime} WHERE ZoneSeq = #{zoneSeq};
