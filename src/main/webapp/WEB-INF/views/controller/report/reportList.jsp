@@ -26,80 +26,68 @@
     <!-- content -->
     <stripes:layout-component name="contents">
         <main>
-                    <div class="container-fluid px-4">
-                        <h1 class="mt-4">신고목록</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">${subTitle} > 신고목록</li>
-                        </ol>
-                        <div class="card mb-4 shadow-sm rounded">
-                            <div class="card-header">
-                                <i class="fas fa-table me-1"></i>
-                                주차장 정보
-                            </div>
-                            <div class="card-body">
-                                <div class="row mb-3" >
-                                    <div class="col-2">
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option value="1" selected>10</option>
-                                            <option value="2">25</option>
-                                            <option value="3">50</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-5">
-                                    </div>
-                                    <div class="col-5">
-                                        <form class="d-flex">
-                                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                                            <button class="btn btn-outline-success" type="submit">Search</button>
-                                        </form>
-                                    </div>
-                                </div>
-                                <table class="table table-hover table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">#</th>
-                                            <th scope="col">주차장명</th>
-                                            <th scope="col">요금</th>
-                                            <th scope="col">운행요일</th>
-                                            <th scope="col">평일시간</th>
-                                            <th scope="col">주소</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <c:forEach var="parking" items="${parkings}" varStatus="status">
-                                            <tr>
-                                                <td>${parking.prkSeq}</td>
-                                                <td>${parking.prkplceNm}</td>
-                                                <td>${parking.parkingchrgeInfo}</td>
-                                                <td>${parking.operDay}</td>
-                                                <td>${parking.weekdayOperOpenHhmm} ~ ${parking.weekdayOperColseHhmm}</td>
-                                                <td>${parking.rdnmadr}</td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-                                <tags:pageTag pageNumber="1" begin="1" end="3" isBeginOver="false" isEndOver="false"/>
-<%--                                <div class="row">--%>
-<%--                                    <div class="col-5"></div>--%>
-<%--                                    <div class="col-5"></div>--%>
-<%--                                    <div class="col-2">--%>
-<%--                                        <nav aria-label="Page navigation example">--%>
-<%--                                            <ul class="pagination">--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">1</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">2</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">3</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">Next</a></li>--%>
-<%--                                            </ul>--%>
-<%--                                        </nav>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
-                            </div>
-                        </div>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">신고목록</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item active">${subTitle} > 신고목록</li>
+                </ol>
+                <div class="card mb-4 shadow-sm rounded">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        불법 주정차 신고 정보
                     </div>
-                </main>
+                    <div class="card-body">
+                        <form class="row mb-3 g-3">
+                            <div class="col-1">
+                                <tags:selectTag id="rowNumber" title="개수" items="10,25,50" current="${rowNumber}"/>
+                            </div>
+                            <div class="col-1">
+                                <tags:selectTag id="filter" title="필터" items="위반종류,차량번호,접수시간" current="위반종류"/>
+                            </div>
+                            <div class="col-1">
+                                <tags:selectTag id="sort" title="정렬" items="내림차순,오름차순" current="내림차순"/>
+                            </div>
+                            <div class="col-2"></div>
+                            <div class="col-7">
+                                <label for="search" class="form-label">검색</label>
+                                <div class="input-group">
+                                <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                        <table class="table table-hover table-bordered" id="reportList">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">위반종류</th>
+                                    <th scope="col">차량번호</th>
+                                    <th scope="col">접수시간</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:forEach var="sample" begin="1" end="10" varStatus="status">
+                                    <tr>
+                                        <td>${sample}</td>
+                                        <td>5분주정차</td>
+                                        <td>123가1234</td>
+                                        <td>2022-01-01</td>
+                                    </tr>
+                                </c:forEach>
+                            </tbody>
+                        </table>
+                        <tags:pageTag pageNumber="${pageNumber}" begin="${begin}" end="${end}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}"/>
+                    </div>
+                </div>
+            </div>
+        </main>
     </stripes:layout-component>
+
+    <!-- footer -->
+    <stripes:layout-component name="footer">
+        <stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>
+    </stripes:layout-component>
+
 
     <!-- javascript -->
     <stripes:layout-component name="javascript">

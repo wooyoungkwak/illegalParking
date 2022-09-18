@@ -1,13 +1,170 @@
-$(function (callback) {
+$(function () {
+
+    let zoneSeqs = [];
+    let zoneTypes = [];
+    let zonePolygons = [];
+    let overlays = []
+    let drawingDataTargets = [];
+
     let mapId;
     let drawingMap;
     let options;
     let manager;
-    let kakaoEvent;
+    let kakaoEvent = kakao.maps.event;
     let marker;
 
-    // 맵 초기화
-    function initialize() {
+    let polygonStyle = {
+        "draggable": true,
+        "removable": true,
+        "editable": true,
+        "strokeColor": "#330000",
+        "strokeWeight": 2,
+        "strokeStyle": "solid",
+        "strokeOpacity": 1,
+        "fillColor": "#000000",
+        "fillOpacity": 0.5
+    };
+
+    function getPolygonData() {
+        let areas = [];
+        for (let j = 0; j < zonePolygons.length; j++) {
+            let pointsPoly = [], obj = {};
+            let zonePolygonArr = zonePolygons[j].split(",");
+            obj.type = zoneTypes[j];
+            obj.seq = zoneSeqs[j];
+            for (let i = 0; i < zonePolygonArr.length - 1; i++) {
+                let pathPoints = zonePolygonArr[i].split(" ");
+                pointsPoly[i] = new Point(pathPoints[0], pathPoints[1]);
+                obj.points = pointsPoly;
+            }
+            obj.coordinate = 'wgs84';
+            obj.options = polygonStyle;
+            areas.push(obj);
+        }
+        return areas;
+    }
+
+
+    //
+    function fillColorSetting(area) {
+        let fillColor;
+        if (area.type === 3) fillColor = '#ffff22';
+        else if (area.type === 2) fillColor = '#ff6f00';
+        else fillColor = '#FF3333';
+
+        return fillColor;
+    }
+
+    //
+    function pointsToPath(points) {
+        let len = points.length,
+            path = [],
+            i = 0;
+
+        for (; i < len; i++) {
+            let latlng = new kakao.maps.LatLng(points[i].y, points[i].x);
+            path.push(latlng);
+        }
+
+        return path;
+    }
+
+    //
+    function drawingPolygon(polygons, stat) {
+        let areas = getPolygonData();
+        if (stat === 'drawing') {
+            areas.forEach(function (element) {
+                polygons.push(element);
+            })
+        }
+        removeOverlays();
+
+        // 지도에 영역데이터를 폴리곤으로 표시합니다
+        for (let i = 0; i < polygons.length; i++) {
+            displayArea(polygons[i]);
+        }
+    }
+
+
+    // 다각형을 생상하고 이벤트를 등록하는 함수입니다
+    function displayArea(area) {
+
+        let path = pointsToPath(area.points);
+        let style = area.options;
+
+        // 다각형을 생성합니다
+        let polygon = new kakao.maps.Polygon({
+            map: drawingMap, // 다각형을 표시할 지도 객체
+            path: path,
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+            fillColor: fillColorSetting(area),
+            fillOpacity: style.fillOpacity
+        });
+
+        // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
+        setKakaoEvent({
+            target: polygon,
+            event: 'mouseover',
+            func: function (mouseEvent) {
+                // polygon.setOptions(mouseoverOption);
+            }
+        });
+
+        // 커스텀 오버레이를 지도에서 제거합니다
+        setKakaoEvent({
+            target: polygon,
+            event: 'mouseout',
+            func: function (mouseEvent) {
+                // polygon.setOptions(mouseoutOption(area));
+            }
+        });
+
+        // 다각형에 마우스다운 이벤트를 등록합니다
+        let upCount = 0;
+        setKakaoEvent({
+            target: polygon,
+            event: 'click',
+            func: function (mouseEvent) {
+                // var resultDiv = document.getElementById('result');
+                // resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
+                // coordinatesToDongCodeKakaoApi();
+            }
+        });
+
+        overlays.push(polygon);
+    }
+
+    // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
+    function removeOverlays() {
+        let len = overlays.length, i = 0;
+
+        for (i = 0; i < len; i++) {
+            overlays[i].setMap(null);
+        }
+
+        overlays = [];
+    }
+
+    // 카카오 맵 이벤트 설정
+    function setKakaoEvent(opt){
+        kakaoEvent.addListener(opt.target, opt.event, opt.func);
+    }
+
+    // 마커 초기화
+    function initializeKakaoMarker() {
+        // 지도를 클릭한 위치에 표출할 마커입니다
+        marker = new kakao.maps.Marker({
+            // 지도 중심좌표에 마커를 생성합니다
+            position: drawingMap.getCenter()
+        });
+        marker.setMap(drawingMap);
+    }
+
+    // 카카오 맵 설정 초기화
+    function initializeKakao() {
         mapId = document.getElementById('drawingMap');
 
         // mapId.style.width = "1024px";
@@ -45,43 +202,97 @@ $(function (callback) {
         manager = new kakao.maps.drawing.DrawingManager(options);
 
         // 폴리곤 생성 후 새로 그릴 때 생성된 폴리곤 삭제를 위해 manager 데이터 저장
-        manager.addListener('drawend', function (data) {
-
+        setKakaoEvent({
+            target: manager,
+            event: 'drawend',
+            func: function (data) {
+                drawingDataTargets.push(data.target);
+            }
         });
 
         /** MAP EVENT */
-        kakaoEvent = kakao.maps.event;
-
-        // 지도에 마우스 왼쪽 클릭 이벤트
-        kakaoEvent.addListener(drawingMap, 'click', function (mouseEvent) {
-            console.log("click");
+        setKakaoEvent({
+            target: drawingMap,
+            event: 'click',
+            func: function (mouseEvent) {
+                console.log("click");
+            }
         });
 
-        // 지도에 마우스 오른쪽 클릭 이벤트
-        kakaoEvent.addListener(drawingMap, 'rightclick', function (mouseEvent) {
-            console.log("rightclick");
+        setKakaoEvent({
+            target: drawingMap,
+            event: 'rightclick',
+            func: function (mouseEvent) {
+                console.log("rightclick");
+            }
         });
 
-        // 지도에 마우스 떠블 클릭 이벤트
-        kakaoEvent.addListener(drawingMap, 'dblclick', function (mouseEvent) {
-            console.log("dblclick");
+        setKakaoEvent({
+            target: drawingMap,
+            event: 'dblclick',
+            func: function (mouseEvent) {
+                console.log("dblclick");
+            }
         });
 
-        //
-        kakaoEvent.addListener(drawingMap, 'idle', function () {
-            // 지도의  레벨을 얻어옵니다
-            var level = drawingMap.getLevel();
-            log("level = ", level);
-        })
-
-        // 지도를 클릭한 위치에 표출할 마커입니다
-        marker = new kakao.maps.Marker({
-            // 지도 중심좌표에 마커를 생성합니다
-            position: drawingMap.getCenter()
+        setKakaoEvent({
+            target: drawingMap,
+            event: 'idle',
+            func: function () {
+                console.log("dblclick");
+            }
         });
-        marker.setMap(drawingMap);
+
+        initializeKakaoMarker();
+
+    }
+
+    // Polygon 초기화
+    function initializeZone(opt) {
+        let result = $.JJAjaxAsync(opt);
+
+        if (opt.data.select === undefined) {
+            return result;
+        }
+
+        zonePolygons = result.zonePolygons;
+        zoneSeqs = result.zoneSeqs;
+        zoneTypes = result.zoneTypes;
+    }
+
+    // bound 안에 polygon 초기화
+    function initializeInBounds() {
+        //맵 구역
+        let bounds = drawingMap.getBounds();
+        let inBoundsPath = [];
+
+        getPolygonData().filter(function (overlay) {
+            let obj = {}, points = [];
+            let paths = pointsToPath(overlay.points);
+            paths.forEach(function (element) {
+                points.push(bounds.contain(element));
+                obj.inBound = points;
+            });
+            // 맵 안에 포함되어있는지 확인
+            if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
+                obj.overlay = overlay;
+                inBoundsPath.push(obj.overlay);
+            }
+        });
+        drawingPolygon(inBoundsPath, 'load');
     }
 
 
-    initialize();
+    // 맵 초기화
+    initializeKakao();
+
+    initializeZone({
+        url: $.getContextPath() + '/polygons',
+        data: {
+            select: SELECT_ALL
+        }
+    });
+
+    initializeInBounds();
+
 });

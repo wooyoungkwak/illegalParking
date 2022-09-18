@@ -48,8 +48,14 @@
 		</main>
 	</stripes:layout-component>
 
+	<!-- footer -->
+	<stripes:layout-component name="footer">
+		<stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>
+	</stripes:layout-component>
+
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
+		<script src="<%=contextPath%>/resources/js/area/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 	</stripes:layout-component>
 

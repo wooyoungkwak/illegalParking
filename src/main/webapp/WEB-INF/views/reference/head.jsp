@@ -32,15 +32,37 @@
         let SELECT_TYPE= "type";
         let SELECT_DONG = "dong";
         let SELECT_TYPE_AND_DONG = "typeAndDong";
+        const log = console.log;
+        const _contextPath = $.getContextPath();
 
-        $(document).ready(function () {
-            const _contextPath = $.getContextPath();
+        $(function () {
+            let paths = location.pathname.split("/");
+            let size = paths.length;
+
             $('#navMenu').find('a').removeClass("active");
+            $('#layoutSidenav_nav').find('a').removeClass("active");
+
             $('#nav' + _contextPath.replace("/","")).addClass("active");
+            $('#side_' + paths[size-1]).addClass("active");
 
-            console.log(_contextPath.replace("/",""));
+            // Toggle the side navigation
+            const sidebarToggle = document.body.querySelector('#sidebarToggle');
+            if (sidebarToggle) {
+                // Uncomment Below to persist sidebar toggle between refreshes
+                // if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
+                //     document.body.classList.toggle('sb-sidenav-toggled');
+                // }
+                sidebarToggle.addEventListener('click', event => {
+                    event.preventDefault();
+                    document.body.classList.toggle('sb-sidenav-toggled');
+                    localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
+                });
+            }
+
+            $('#back').on('click', function (){
+                window.history.back();
+            })
+
         });
-
-        let log = console.log;
     </script>
 </head>

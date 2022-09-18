@@ -12,18 +12,10 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">${subTitle}</div>
-                <a class="nav-link" href="${pageContext.request.contextPath}/pm/map">
+                <a class="nav-link" href="${pageContext.request.contextPath}/pm/map" id="side_map">
                     <div class="sb-nav-link-icon"><i class="fas fa-map"></i></div>
-                    지도 보기
+                    위치 보기
                 </a>
-<%--                <a class="nav-link" href="${pageContext.request.contextPath}/area/areaList">--%>
-<%--                    <div class="sb-nav-link-icon"><i class="fas fa-car-side"></i></div>--%>
-<%--                    주차장 목록--%>
-<%--                </a>--%>
-<%--                <a class="nav-link" href="${pageContext.request.contextPath}/area/areaAdd">--%>
-<%--                    <div class="sb-nav-link-icon"><i class="fas fa-edit"></i></div>--%>
-<%--                    주차장 등록--%>
-<%--                </a>--%>
             </div>
         </div>
     </nav>

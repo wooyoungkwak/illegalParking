@@ -57,7 +57,8 @@ public class AreaAPIController {
 
     @PostMapping("/area/polygon/insert")
     @ResponseBody
-    public String insertPolygon(@RequestBody Map<String, Object> param) {
+    public JsonNode insertPolygon(@RequestBody Map<String, Object> param) throws JsonProcessingException {
+        Map<String, String> map = Maps.newHashMap();
         try {
             List<Map<String, Object>> polygons = (List<Map<String, Object>>) param.get("polygonData");
 
@@ -99,10 +100,13 @@ public class AreaAPIController {
 
             illegalZoneService.sets(illegalZones);
 
-            return "success";
+            map.put("success","true");
         } catch (Exception e) {
-            return "fail";
+            map.put("success","false");
         }
+
+        String jsonStr = objectMapper.writeValueAsString(map);
+        return objectMapper.readTree(jsonStr);
 
     }
 

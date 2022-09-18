@@ -33,6 +33,11 @@
         </main>
     </stripes:layout-component>
 
+    <!-- footer -->
+    <stripes:layout-component name="footer">
+        <stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>
+    </stripes:layout-component>
+
     <!-- javascript -->
     <stripes:layout-component name="javascript"></stripes:layout-component>
 

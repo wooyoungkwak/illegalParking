@@ -12,8 +12,8 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">${subTitle}</div>
-                <a class="nav-link" href="${pageContext.request.contextPath}/calculate/calculateList">
-                    <div class="sb-nav-link-icon"><i class="fas fa-map"></i></div>
+                <a class="nav-link" href="${pageContext.request.contextPath}/calculate/calculateList" id="side_calculateList">
+                    <div class="sb-nav-link-icon"><i class="fas fa-calculator"></i></div>
                     결재목록
                 </a>
             </div>

@@ -5,10 +5,11 @@
 <%@ attribute name="begin" type="java.lang.Integer" required="true" %>
 <%@ attribute name="end" type="java.lang.Integer" required="true" %>
 <%@ attribute name="timeFormat" type="java.lang.String" required="true" %>
-<%@ attribute name="current" type="java.lang.String" required="true" %>
+<%@ attribute name="current" type="java.lang.String" required="false" %>
+<%@ attribute name="option" type="java.lang.String" required="false" %>
 
 <label for="${id}" class="form-label">${title}</label>
-<select id="${id}" class="form-select">
+<select id="${id}" class="form-select" name="${id}" ${option}>
     <c:forEach begin="${begin}" end="${end}" varStatus="status">
         <c:set var="format" value="${status.index}:${timeFormat}"></c:set>
         <option value="${status.index}"

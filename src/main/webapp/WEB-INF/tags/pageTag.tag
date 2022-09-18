@@ -9,17 +9,17 @@
 <!-- Pagination-->
 <nav aria-label="Pagination">
     <hr class="my-0"/>
-    <ul class="pagination justify-content-center my-4" id="pageControl">
+    <ul class="pagination justify-content-center my-4" id="pagination">
 
         <li class="page-item <c:if test="${!isBeginOver}">disabled</c:if>"><a class="page-link" href="#" tabindex="-1" aria-disabled="true"><</a></li>
 
-        <c:forEach begin="${begin}" end="${end}" varStatus="status">
+        <c:forEach begin="1" end="${end}" varStatus="status">
             <li class="page-item <c:if test="${pageNumber == ( begin + ( status.index - 1 )) }">active</c:if>" aria-current="page"><a class="page-link">${begin + ( status.index - 1 )}</a></li>
         </c:forEach>
 
         <c:choose>
             <c:when test="${isEndOver}">
-                <li class="page-item">...</li>
+                <li class="page-item ms-2 me-2">...</li>
                 <li class="page-item"><a class="page-link" href="#!">></a></li>
             </c:when>
             <c:otherwise>

@@ -119,6 +119,9 @@ function getDataFromDrawingMap() {
 
     // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
     let data = manager.getData();
+
+    let typeSeq = 1 // ????
+
     let opt = {
         url: $.getContextPath() + "/polygon/insert",
         data: {
@@ -483,8 +486,6 @@ function pointsToPath(points) {
 //
 function getPolygonData() {
     let areas = [];
-    [2]
-        [1]
     for (let j = 0; j < zonePolygons.length; j++) {
         let pointsPoly = [], obj = {};
         let zonePolygonArr = zonePolygons[j].split(",");
@@ -504,7 +505,7 @@ function getPolygonData() {
 
 //
 function zoneInitialize(opt) {
-    let result = $.JJAjax(opt);
+    let result = $.JJAjaxAsync(opt);
 
     if (opt.data.select === undefined) {
         return result;

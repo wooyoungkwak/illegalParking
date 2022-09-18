@@ -1,4 +1,5 @@
-$.JJAjax = function (opt) {
+// 비동기 json to json 통신
+$.JJAjaxAsync = function (opt) {
     let result = '';
 
     if ( opt === undefined) {
@@ -28,30 +29,36 @@ $.JJAjax = function (opt) {
     return result;
 }
 
-window.addEventListener('DOMContentLoaded', event => {
-
-    // Toggle the side navigation
-    const sidebarToggle = document.body.querySelector('#sidebarToggle');
-    if (sidebarToggle) {
-        // Uncomment Below to persist sidebar toggle between refreshes
-        // if (localStorage.getItem('sb|sidebar-toggle') === 'true') {
-        //     document.body.classList.toggle('sb-sidenav-toggled');
-        // }
-        sidebarToggle.addEventListener('click', event => {
-            event.preventDefault();
-            document.body.classList.toggle('sb-sidenav-toggled');
-            localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
-        });
+// 동기 json to json 통신
+$.JJAjaxSync = function (opt) {
+    if ( opt === undefined) {
+        opt.success("");
+        return;
     }
 
-});
+    $.ajax({
+        url: opt.url,
+        type: 'post',
+        contentType : 'application/json; charset=UTF-8',
+        data: JSON.stringify(opt.data),
+        dataType: "json",
+        beforeSend: function (xhr, options) {
+            xhr.setRequestHeader('AJAX', true);
+        },
+        xhr: function () {
+            let myXhr = $.ajaxSettings.xhr();
+            return myXhr;
+        },
+        error: function (jqXHR, statusCode, errorThrown) {
+            opt.error(errorThrown);
+        },
+        success: function (data, statusCode, jqXHR) {
+            opt.success(data);
+        }
+    });
+}
 
-$(document).ready(function () {
-   $('#back').on('click', function (){
-       window.history.back();
-   })
-});
-
+// 파일 업로드
 $.fn.fileUpload = function (opt) {
 
     let formData = new FormData();
@@ -90,10 +97,13 @@ $.fn.fileUpload = function (opt) {
             console.log(statusCode, errorThrown);
             console.log(errorThrown);
             console.log("====================== err =========================");
+            alert(" 실패 하였습니다. 상태 코드 : " + jqXHR.status);
         },
         success: function (data, statusCode, jqXHR) {
             console.log("jqXHR.status = ",jqXHR.status);
             console.log("data = ", JSON.stringify(data));
+            alert(" 업로드 되었습니다. ");
         }
     });
 }
+
