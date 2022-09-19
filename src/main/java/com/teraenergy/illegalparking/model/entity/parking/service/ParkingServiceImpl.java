@@ -1,10 +1,17 @@
 package com.teraenergy.illegalparking.model.entity.parking.service;
 
+import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
+import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
 import com.teraenergy.illegalparking.model.entity.parking.repository.ParkingRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.javassist.runtime.Desc;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -19,7 +26,9 @@ import java.util.List;
 @Service
 public class ParkingServiceImpl implements ParkingService{
 
-    final private ParkingRepository parkingRepository;
+    private final EntityManager entityManager;
+
+    private final ParkingRepository parkingRepository;
 
     @Override
     public List<Parking> gets() {
@@ -27,8 +36,18 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public Parking get(Integer prkingSeq) {
-        return parkingRepository.findById(prkingSeq).isEmpty() == true ? null : parkingRepository.findById(prkingSeq).get();
+    public List<Parking> gets(int offset, int limit, Object orderBy ) {
+        JPAQueryFactory query = new JPAQueryFactory(entityManager);
+        return query.selectFrom(QParking.parking)
+                .limit(limit)
+                .offset(offset)
+                .orderBy((OrderSpecifier<?>) orderBy)
+                .fetch();
+    }
+
+    @Override
+    public Parking get(Integer parkingSeq) {
+        return parkingRepository.findById(parkingSeq).isEmpty() == true ? null : parkingRepository.findById(parkingSeq).get();
     }
 
     @Override

@@ -18,6 +18,8 @@ public interface ParkingService {
 
     public List<Parking> gets();
 
+    public List<Parking> gets(int offset, int limit, Object orderBy);
+
     public Parking get(Integer prkingSeq);
 
     public List<Parking> sets(List<Parking> parkings);

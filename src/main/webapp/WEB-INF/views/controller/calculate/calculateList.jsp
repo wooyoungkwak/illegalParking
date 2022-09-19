@@ -68,7 +68,7 @@
                                     <tbody>
                                         <c:forEach var="parking" items="${parkings}" varStatus="status">
                                             <tr>
-                                                <td>${parking.prkSeq}</td>
+                                                <td>${parking.parkingSeq}</td>
                                                 <td>${parking.prkplceNm}</td>
                                                 <td>${parking.parkingchrgeInfo}</td>
                                                 <td>${parking.operDay}</td>
