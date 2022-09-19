@@ -1,6 +1,8 @@
 package com.teraenergy.illegalparking.model.entity.parking.service;
 
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
+import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +20,7 @@ public interface ParkingService {
 
     public List<Parking> gets();
 
-    public List<Parking> gets(int offset, int limit, Object orderBy);
+    public List<Parking> gets(int offset, int limit, ParkingOrderColumn orderColumn, Sort.Direction orderBy);
 
     public Parking get(Integer prkingSeq);
 

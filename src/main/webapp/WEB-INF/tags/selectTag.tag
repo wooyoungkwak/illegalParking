@@ -6,7 +6,7 @@
 <%@ attribute name="option" type="java.lang.String" required="false" %>
 <%@ attribute name="items" type="java.lang.Object" required="true" %>
 
-<label for="${id}" class="form-label">${title}</label>
+<%--<label for="${id}" class="form-label">${title}</label>--%>
 <select id="${id}" class="form-select" name="${id}" ${option}>
     <c:forEach var="item" items="${items}" varStatus="status">
         <c:set var="format" value="${item}"></c:set>

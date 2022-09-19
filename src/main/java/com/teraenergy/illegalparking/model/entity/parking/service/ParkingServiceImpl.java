@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
+import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import com.teraenergy.illegalparking.model.entity.parking.repository.ParkingRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.runtime.Desc;
@@ -36,13 +37,36 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public List<Parking> gets(int offset, int limit, Object orderBy ) {
-        JPAQueryFactory query = new JPAQueryFactory(entityManager);
-        return query.selectFrom(QParking.parking)
+    public List<Parking> gets(int offset, int limit, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
+        JPAQuery  query = queryFactory.selectFrom(QParking.parking)
                 .limit(limit)
-                .offset(offset)
-                .orderBy((OrderSpecifier<?>) orderBy)
-                .fetch();
+                .offset(offset);
+        switch (orderColumn) {
+            case parkingSeq:
+                if ( orderBy.equals(Sort.Direction.DESC)) {
+                    query.orderBy(QParking.parking.parkingSeq.desc());
+                } else {
+                    query.orderBy(QParking.parking.parkingSeq.asc());
+                }
+                break;
+            case parkingchrgeInfo:
+                if ( orderBy.equals(Sort.Direction.DESC)) {
+                    query.orderBy(QParking.parking.parkingchrgeInfo.desc());
+                } else {
+                    query.orderBy(QParking.parking.parkingchrgeInfo.asc());
+                }
+                break;
+            case prkplceNm:
+                if ( orderBy.equals(Sort.Direction.DESC)) {
+                    query.orderBy(QParking.parking.prkplceNm.desc());
+                } else {
+                    query.orderBy(QParking.parking.prkplceNm.asc());
+                }
+                break;
+        }
+
+        return query.fetch();
     }
 
     @Override

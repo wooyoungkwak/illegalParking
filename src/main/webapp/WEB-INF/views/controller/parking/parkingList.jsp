@@ -10,7 +10,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <% String contextPath = request.getContextPath(); %>
-
+<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn" %>
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
 
 	<!-- nav -->
@@ -49,14 +49,9 @@
 							<div class="col-4">
 								<tags:searchTag id="search" title="검색"/>
 							</div>
-
-							<div class="col-2"></div>
-
-							<div class="col-1">
-								<tags:selectTag id="sort" title="필터" items="순번,주차장명,요금,운행요일,주소" current="순번"/>
-							</div>
-							<div class="col-1">
-								<tags:selectTag id="sort" title="정렬" items="오름차순,내림차순" current="${orderBy}"/>
+							<div class="col-1"></div>
+							<div class="col-3">
+								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}"/>
 							</div>
 
 						</form>
