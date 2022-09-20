@@ -50,9 +50,26 @@ $(function () {
             search();
         });
 
-        $('#tableList').on('click', function (){
+        $('#tableList tr').on('click', function (){
+
+            let parkingSeqStr = $(this).children("td:eq(0)").text();
+            let parkingSeq = Number.parseInt(parkingSeqStr);
+
+            let result = $.JJAjaxAsync({
+                url: _contextPath,
+                data: {
+                    parkingSeq: parkingSeq
+                }
+            });
+
+            log(result);
             $('#parkingTable').hide();
             $('#parkingDetail').show();
+        });
+
+        $('#close').on('click', function (){
+            $('#parkingTable').show();
+            $('#parkingDetail').hide();
         });
 
         $('#parkingDetail').hide();

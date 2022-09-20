@@ -1,4 +1,4 @@
-// 비동기 json to json 통신
+// 동기 json to json 통신
 $.JJAjaxAsync = function (opt) {
     let result = '';
 
@@ -29,7 +29,7 @@ $.JJAjaxAsync = function (opt) {
     return result;
 }
 
-// 동기 json to json 통신
+// 비동기 json to json 통신
 $.JJAjaxSync = function (opt) {
     if ( opt === undefined) {
         opt.success("");

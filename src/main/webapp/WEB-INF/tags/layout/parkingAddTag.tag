@@ -141,19 +141,3 @@
 		</div>
 	</div>
 </main>
-
-<script type="application/javascript">
-	$(function (){
-
-        <%--let result = $.JJAjaxSync({--%>
-		<%--	url: _contextPath + '/parking',--%>
-		<%--	data: {--%>
-        <%--        parkingSeq: ${parkingSeq}--%>
-		<%--	}--%>
-		<%--});--%>
-
-        $('#close').on('click', function (){
-            $('#parkingDetail').hide();
-		});
-	});
-</script>
