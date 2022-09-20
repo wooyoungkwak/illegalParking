@@ -1,7 +1,7 @@
 <%@ tag language="java" pageEncoding="UTF-8" body-content="empty" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="id" type="java.lang.String" required="true" %>
-<%@ attribute name="title" type="java.lang.String" required="true" %>
+<%@ attribute name="title" type="java.lang.String" required="false" %>
 <%@ attribute name="begin" type="java.lang.Integer" required="true" %>
 <%@ attribute name="end" type="java.lang.Integer" required="true" %>
 <%@ attribute name="timeFormat" type="java.lang.String" required="true" %>

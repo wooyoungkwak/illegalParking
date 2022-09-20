@@ -51,6 +51,10 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
 
+    if (dependenceOnMobile != null && dependenceOnMobile) {
+        implementation 'org.springframework.mobile:spring-mobile-device:1.1.5.RELEASE'
+    }
+
     // batch
     if (dependenceOnBatch != null && dependenceOnBatch) {
         implementation 'org.springframework.boot:spring-boot-starter-batch'

@@ -9,6 +9,8 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -37,23 +39,23 @@
                                 주차장 정보
                             </div>
                             <div class="card-body">
-                                <div class="row mb-3" >
-                                    <div class="col-2">
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option value="1" selected>10</option>
-                                            <option value="2">25</option>
-                                            <option value="3">50</option>
-                                        </select>
+                                <form class="row mb-3 g-3">
+                                    <input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
+                                    <div class="col-1">
+                                        <tags:selectTag id="pageSize" title="개수" items="10,25,50" current="${pageSize}"/>
                                     </div>
-                                    <div class="col-5">
+                                    <div class="col-2"></div>
+                                    <div class="col-1">
+                                        <tags:filterTag id="filterColumn" enumValues="${ParkingFilterColumn.values()}" column="${filterColumn}"/>
                                     </div>
-                                    <div class="col-5">
-                                        <form class="d-flex">
-                                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                                            <button class="btn btn-outline-success" type="submit">Search</button>
-                                        </form>
+                                    <div class="col-4">
+                                        <tags:searchTag id="searchStr" title="검색"/>
                                     </div>
-                                </div>
+                                    <div class="col-1"></div>
+                                    <div class="col-3">
+                                        <tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}"/>
+                                    </div>
+                                </form>
                                 <table class="table table-hover table-bordered">
                                     <thead>
                                         <tr>
@@ -78,23 +80,7 @@
                                         </c:forEach>
                                     </tbody>
                                 </table>
-                                <tags:pageTag pageNumber="1" begin="1" end="3" isBeginOver="false" isEndOver="false"/>
-<%--                                <div class="row">--%>
-<%--                                    <div class="col-5"></div>--%>
-<%--                                    <div class="col-5"></div>--%>
-<%--                                    <div class="col-2">--%>
-<%--                                        <nav aria-label="Page navigation example">--%>
-<%--                                            <ul class="pagination">--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">Previous</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">1</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">2</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">3</a></li>--%>
-<%--                                                <li class="page-item"><a class="page-link" href="#">Next</a></li>--%>
-<%--                                            </ul>--%>
-<%--                                        </nav>--%>
-<%--                                    </div>--%>
-<%--                                </div>--%>
-
+                                <tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}"/>
                             </div>
                         </div>
                     </div>

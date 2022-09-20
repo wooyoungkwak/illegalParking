@@ -3,9 +3,13 @@ package com.teraenergy.illegalparking.config;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Date : 2022-09-10
@@ -18,6 +22,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class UtilConfigure {
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Bean
     public ObjectMapper setObjectMapper() {
         log.info(" util configure register [ObjectMapper] ");
@@ -29,5 +36,11 @@ public class UtilConfigure {
         objectMapper.registerModule(new JavaTimeModule());
 
         return objectMapper;
+    }
+
+    @Bean
+    public JPAQueryFactory queryFactory() {
+        log.info(" util configure register [JPAQueryFactory] ");
+        return new JPAQueryFactory(entityManager);
     }
 }

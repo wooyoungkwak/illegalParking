@@ -6,16 +6,13 @@
 <%@ attribute name="column" type="java.lang.String" %>
 <%@ attribute name="direction" type="java.lang.String" %>
 <div id="${id}" class="orderby">
-<%--    <div class="col-5"></div>--%>
-<%--    <div class="col-5"></div>--%>
-<%--    <div class="col-2"></div>--%>
     <div class="input-group">
-        <select class="form-select">
+        <select class="form-select" name="orderColumn">
             <c:forEach items="${enumValues}" var="enumValue">
                 <option value="${enumValue}" <c:if test="${enumValue eq column}">selected</c:if>>${enumValue.value}</option>
             </c:forEach>
         </select>
-        <select class="form-select">
+        <select class="form-select" name="orderDirection">
             <c:forEach items="<%=Sort.Direction.values()%>" var="orderDirection">
                 <option value="${orderDirection}" <c:if test="${orderDirection eq direction}">selected</c:if>>
                     <c:choose>
@@ -25,29 +22,27 @@
                 </option>
             </c:forEach>
         </select>
-        <button class="btn btn-outline-success">정렬</button>
+        <a class="btn btn-outline-success">정렬</a>
     </div>
 </div>
-<script type="text/javascript">
-    $(function () {
-        var $orderby = $('#${id}.orderby');
+<%--<script type="text/javascript">--%>
+<%--    $(function () {--%>
+<%--        let $orderby = $('#${id}.orderby');--%>
 
-        $orderby.find('select').on('change', function () {
-            var event = jQuery.Event('change');
+<%--        $orderby.find('select').on('change', function () {--%>
+<%--            let event = jQuery.Event('change');--%>
+<%--            $orderby.trigger(event, [--%>
+<%--                $orderby.find('select:first').val(), $orderby.find('select:last').val()--%>
+<%--            ]);--%>
 
-            $orderby.trigger(event, [
-                $orderby.find('select:first').val(), $orderby.find('select:last').val()
-            ]);
+<%--            return false;--%>
+<%--        });--%>
 
-            return false;
-        });
-
-        $orderby.find('button').on('click', function () {
-            var event = jQuery.Event('order');
-
-            $orderby.trigger(event, [
-                $orderby.find('select:first').val(), $orderby.find('select:last').val()
-            ]);
-        });
-    });
-</script>
+<%--        $orderby.find('a').on('click', function () {--%>
+<%--            let event = jQuery.Event('order');--%>
+<%--            $orderby.trigger(event, [--%>
+<%--                $orderby.find('select:first').val(), $orderby.find('select:last').val()--%>
+<%--            ]);--%>
+<%--        });--%>
+<%--    });--%>
+<%--</script>--%>

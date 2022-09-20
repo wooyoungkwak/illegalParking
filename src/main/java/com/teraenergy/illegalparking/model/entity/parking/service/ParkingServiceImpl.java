@@ -5,10 +5,14 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
+import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import com.teraenergy.illegalparking.model.entity.parking.repository.ParkingRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.javassist.runtime.Desc;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +31,7 @@ import java.util.List;
 @Service
 public class ParkingServiceImpl implements ParkingService{
 
-    private final EntityManager entityManager;
+    private final JPAQueryFactory queryFactory;
 
     private final ParkingRepository parkingRepository;
 
@@ -37,11 +41,21 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public List<Parking> gets(int offset, int limit, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(entityManager);
-        JPAQuery  query = queryFactory.selectFrom(QParking.parking)
-                .limit(limit)
-                .offset(offset);
+    public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
+        JPAQuery query = queryFactory.selectFrom(QParking.parking);
+        int total = query.fetch().size();
+
+        if ( search != null && search.length() > 0) {
+            switch (filterColumn) {
+                case parkingchrgeInfo:
+                    query.where(QParking.parking.parkingchrgeInfo.like("%" + search + "%"));
+                    break;
+                case prkplceNm:
+                    query.where(QParking.parking.prkplceNm.like("%" + search + "%"));
+                    break;
+            }
+        }
+
         switch (orderColumn) {
             case parkingSeq:
                 if ( orderBy.equals(Sort.Direction.DESC)) {
@@ -66,7 +80,12 @@ public class ParkingServiceImpl implements ParkingService{
                 break;
         }
 
-        return query.fetch();
+        pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
+        query.limit(pageSize).offset(pageNumber * pageSize);
+        List<Parking> parkings = query.fetch();
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<Parking> page = new PageImpl<Parking>(parkings, pageRequest, total);
+        return page;
     }
 
     @Override

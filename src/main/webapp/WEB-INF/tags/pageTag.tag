@@ -1,10 +1,11 @@
 <%@ tag language="java" pageEncoding="UTF-8" body-content="empty" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ attribute name="pageNumber" type="java.lang.Integer" required="true" %>
-<%@ attribute name="begin" type="java.lang.Integer" required="true" %>
+<%@ attribute name="begin" type="java.lang.Integer" required="false" %>
 <%@ attribute name="end" type="java.lang.Integer" required="false" %>
 <%@ attribute name="isBeginOver" type="java.lang.Boolean" required="true" %>
 <%@ attribute name="isEndOver" type="java.lang.Boolean" required="true" %>
+<%@ attribute name="totalPages" type="java.lang.Integer" required="true" %>
 
 <!-- Pagination-->
 <nav aria-label="Pagination">
@@ -15,9 +16,24 @@
 			<li class="page-item ms-2 me-2">...</li>
 		</c:if>
 
-		<c:forEach begin="1" end="3" varStatus="status">
-			<li class="page-item <c:if test="${pageNumber == ( begin + ( status.index - 1 )) }">active</c:if>" aria-current="page"><a class="page-link">${begin + ( status.index - 1 )}</a></li>
-		</c:forEach>
+		<c:choose>
+			<c:when test="${ totalPages >= 3 && (totalPages - pageNumber) < 3 }">
+				<c:forEach var="item" begin="${totalPages-2}" end="${totalPages}" varStatus="status">
+					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
+				</c:forEach>
+			</c:when>
+			<c:when test="${ totalPages >= 3 && (totalPages - pageNumber) > 3 }">
+				<c:forEach var="item" begin="${pageNumber}" end="${pageNumber+2}" varStatus="status">
+					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
+				</c:forEach>
+			</c:when>
+			<c:when test="${ totalPages != null && totalPages <= 3}">
+				<c:forEach var="item" begin="1" end="${totalPages}" varStatus="status">
+					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
+				</c:forEach>
+			</c:when>
+			<c:otherwise></c:otherwise>
+		</c:choose>
 
 		<c:if test="${isEndOver}">
 			<li class="page-item ms-2 me-2">...</li>

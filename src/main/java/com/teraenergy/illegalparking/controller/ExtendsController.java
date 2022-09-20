@@ -21,12 +21,12 @@ public class ExtendsController {
 
     protected String getPath(String path) {
         String rootPath = this.getClass().getSimpleName().split("Controller")[0].toLowerCase();
-        return "/controller/" + rootPath + path;
+        return "/normal/controller/" + rootPath + path;
     }
 
-    protected String getPath(Class c, String path) {
-        String rootPath = c.getSimpleName().split("Controller")[0].toLowerCase();
-        return "/controller/" + rootPath + path;
+    protected String getMobilePath(String path) {
+        String rootPath = this.getClass().getSimpleName().split("Controller")[0].toLowerCase();
+        return "/mobile/controller/" + rootPath + path;
     }
 
 }

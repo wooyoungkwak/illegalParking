@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.controller.ExtendsController;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
-import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
+import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
+import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -49,39 +52,85 @@ public class ParkingController extends ExtendsController {
     }
 
     @GetMapping("/parking/parkingList")
-    public ModelAndView parkingList(HttpServletRequest request){
+    public ModelAndView parkingList(HttpServletRequest request) throws Exception{
 
-        HashMap<String, Object> param = _getParam(request);
+        HashMap<String, String> param = _getParam(request);
 
+        String pageNumberStr = param.get("pageNumber");
         int pageNumber = 1;
-        if ( param.get("pageNumber") != null ) {
-            pageNumber = (int) param.get("pageNumber");
+        if ( pageNumberStr != null ) {
+            pageNumber = Integer.parseInt(pageNumberStr);
         }
 
-        int offset = 0;
-        int limit = 10;
+        String orderColumnStr = param.get("orderColumn");
+        ParkingOrderColumn orderColumn;
+        if(orderColumnStr == null) {
+            orderColumn = ParkingOrderColumn.parkingSeq;
+        } else  {
+            orderColumn = ParkingOrderColumn.valueOf(orderColumnStr);
+        }
 
-        List<Parking> parkings = parkingService.gets();
-        int totalSize = parkings.size();
+        String filterColumnStr = param.get("filterColumn");
+        ParkingFilterColumn filterColumn;
+        if(filterColumnStr == null) {
+            filterColumn = ParkingFilterColumn.parkingchrgeInfo;
+        } else  {
+            filterColumn = ParkingFilterColumn.valueOf(filterColumnStr);
+        }
 
-        int begin = pageNumber;
-        int end = 5;
+        String searchStr = param.get("search");
+        if (searchStr == null) {
+            searchStr = "";
+        }
+
+        String orderDirectionStr = param.get("orderDirection");
+        Sort.Direction direction;
+        if ( orderDirectionStr == null) {
+            direction = Sort.Direction.ASC;
+        } else {
+            direction = Sort.Direction.valueOf(orderDirectionStr);
+        }
+
+        String pageSizeStr = param.get("pageSize");
+        int pageSize = 10;
+        if ( pageSizeStr != null) {
+            pageSize = Integer.parseInt(pageSizeStr);
+        }
+
+
+        Page<Parking> pages = parkingService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
 
         boolean isBeginOver = false;
         boolean isEndOver = false;
 
+        int totalPages = pages.getTotalPages();
+
+        if (totalPages > 3 && ( totalPages - pageNumber ) > 2 ) {
+            isEndOver = true;
+        }
+
+        if (totalPages > 3 && pageNumber > 1) {
+            isBeginOver = true;
+        }
+
+        int begin = pageNumber;
+
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("rowNumber", offset);
+        modelAndView.addObject("totalPages", totalPages);
+        modelAndView.addObject("search", searchStr);
+
         modelAndView.addObject("pageNumber", pageNumber);
-        modelAndView.addObject("begin", begin);
-        modelAndView.addObject("end", end);
+        modelAndView.addObject("pageSize", pageSizeStr);
         modelAndView.addObject("isBeginOver", isBeginOver);
         modelAndView.addObject("isEndOver", isEndOver);
 
-        modelAndView.setViewName(getPath("/parkingList"));
+
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
-        modelAndView.addObject("parkings", parkings);
+        modelAndView.addObject("parkings", pages.getContent());
+
+        modelAndView.setViewName(getPath("/parkingList"));
+
         return modelAndView;
     }
 
@@ -94,8 +143,8 @@ public class ParkingController extends ExtendsController {
         return modelAndView;
     }
 
-    private HashMap<String, Object> _getParam(HttpServletRequest request) {
-        HashMap<String, Object> parameterMap = Maps.newHashMap();
+    private HashMap<String, String> _getParam(HttpServletRequest request) {
+        HashMap<String, String> parameterMap = Maps.newHashMap();
         Enumeration<String> parameterNames = request.getParameterNames();
         while (parameterNames.hasMoreElements()) {
             String name = parameterNames.nextElement();

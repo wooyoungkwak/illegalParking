@@ -8,7 +8,7 @@ ext.dependenceOnMYBATIS = true                    // whether to use mybatis
 ext.uploadArchive = false                          // whether to upload archive
 ext.dependenceOnBatch = false                        // whether to use Batch
 ext.dependenceOnQuartz = false                       // whether to use Quartz ( scheduler )
-
+ext.dependenceOnMobile = true                       // mobile
 ext.RDMBS = [
         MSSQL : "MSSQL",
         MYSQL : "MYSQL",

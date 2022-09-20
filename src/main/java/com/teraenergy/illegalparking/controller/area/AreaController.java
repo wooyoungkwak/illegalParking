@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.controller.ExtendsController;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.io.ParseException;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Date : 2022-03-02
@@ -30,11 +33,16 @@ public class AreaController extends ExtendsController {
     }
 
     @GetMapping("/area/map")
-    public ModelAndView map() throws ParseException {
+    public ModelAndView map(HttpServletRequest request, Device device) throws ParseException {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
-        modelAndView.setViewName(getPath("/map"));
+
+        if ( device.isMobile() || device.isTablet()) {
+            modelAndView.setViewName(getMobilePath("/map"));
+        } else {
+            modelAndView.setViewName(getPath("/map"));
+        }
         return modelAndView;
     }
 
