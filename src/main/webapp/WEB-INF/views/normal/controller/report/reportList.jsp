@@ -41,19 +41,18 @@
 					<div class="card-body">
 						<form class="row mb-3 g-3">
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
-							<div class="col-1">
-								<tags:selectTag id="pageSize" title="개수" items="10,25,50" current="${pageSize}"/>
-							</div>
+							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
+							<div class="col-1"></div>
 							<div class="col-2"></div>
 							<div class="col-1">
 								<tags:filterTag id="filterColumn" enumValues="${ParkingFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
 							<div class="col-4">
-								<tags:searchTag id="searchStr" title="검색"/>
+								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
 							</div>
 							<div class="col-1"></div>
 							<div class="col-3">
-								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}"/>
+								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
 							</div>
 						</form>
 						<table class="table table-hover table-bordered" id="reportList">
@@ -76,7 +75,7 @@
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}"/>
+						<tags:pageBySizeTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>

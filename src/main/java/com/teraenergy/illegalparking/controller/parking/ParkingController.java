@@ -78,7 +78,7 @@ public class ParkingController extends ExtendsController {
             filterColumn = ParkingFilterColumn.valueOf(filterColumnStr);
         }
 
-        String searchStr = param.get("search");
+        String searchStr = param.get("searchStr");
         if (searchStr == null) {
             searchStr = "";
         }
@@ -97,7 +97,6 @@ public class ParkingController extends ExtendsController {
             pageSize = Integer.parseInt(pageSizeStr);
         }
 
-
         Page<Parking> pages = parkingService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
 
         boolean isBeginOver = false;
@@ -113,21 +112,21 @@ public class ParkingController extends ExtendsController {
             isBeginOver = true;
         }
 
-        int begin = pageNumber;
-
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("totalPages", totalPages);
-        modelAndView.addObject("search", searchStr);
+        modelAndView.addObject("filterColumn", filterColumnStr);
+        modelAndView.addObject("searchStr", searchStr);
+        modelAndView.addObject("orderColumn", orderColumnStr);
+        modelAndView.addObject("orderDirection", orderDirectionStr);
 
         modelAndView.addObject("pageNumber", pageNumber);
-        modelAndView.addObject("pageSize", pageSizeStr);
+        modelAndView.addObject("pageSize", pageSize);
         modelAndView.addObject("isBeginOver", isBeginOver);
         modelAndView.addObject("isEndOver", isEndOver);
-
+        modelAndView.addObject("parkings", pages.getContent());
 
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
-        modelAndView.addObject("parkings", pages.getContent());
 
         modelAndView.setViewName(getPath("/parkingList"));
 

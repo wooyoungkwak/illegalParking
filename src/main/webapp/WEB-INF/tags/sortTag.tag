@@ -3,9 +3,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ attribute name="id" type="java.lang.String" required="true" %>
 <%@ attribute name="enumValues" type="java.lang.Object[]" required="true" %>
-<%@ attribute name="column" type="java.lang.String" %>
-<%@ attribute name="direction" type="java.lang.String" %>
+<%@ attribute name="column" type="java.lang.String" required="true"%>
+<%@ attribute name="direction" type="java.lang.String" required="true" %>
+<%@ attribute name="title" type="java.lang.String" required="false" %>
+
 <div id="${id}" class="orderby">
+    <c:if test="${title != null}">
+        <label class="form-label">${title}</label>
+    </c:if>
     <div class="input-group">
         <select class="form-select" name="orderColumn">
             <c:forEach items="${enumValues}" var="enumValue">

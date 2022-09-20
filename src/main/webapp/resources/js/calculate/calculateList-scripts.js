@@ -1,14 +1,16 @@
 $(function (){
 
-    function search() {
-        let pageNumber = $('#pageNumber').val();
-        if ( pageNumber === "") {
+    function search(pageNumber) {
+        if (pageNumber === undefined) {
             $('#pageNumber').val("1");
+        } else {
+            $('#pageNumber').val(pageNumber);
         }
         location.href = _contextPath  + "/calculateList?" + $('form').serialize();
     }
 
     function initialize() {
+
         $('#orderBy a').on('click', function (){
             search();
         })
@@ -41,11 +43,11 @@ $(function (){
                 pageNumber = Number.parseInt($(this).text());
             }
 
-            $('#pageNumber').val(pageNumber);
-            search();
+            search(pageNumber);
         });
 
         $('#pageSize').on("change", function (){
+            $('#pageNumber').val(1);
             search();
         })
     }

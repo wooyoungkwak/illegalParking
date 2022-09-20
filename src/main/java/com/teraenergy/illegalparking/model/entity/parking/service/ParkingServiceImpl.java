@@ -43,7 +43,6 @@ public class ParkingServiceImpl implements ParkingService{
     @Override
     public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
         JPAQuery query = queryFactory.selectFrom(QParking.parking);
-        int total = query.fetch().size();
 
         if ( search != null && search.length() > 0) {
             switch (filterColumn) {
@@ -55,6 +54,8 @@ public class ParkingServiceImpl implements ParkingService{
                     break;
             }
         }
+
+        int total = query.fetch().size();
 
         switch (orderColumn) {
             case parkingSeq:

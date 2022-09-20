@@ -9,6 +9,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
+<%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <% String contextPath = request.getContextPath(); %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn" %>
@@ -26,7 +27,7 @@
 
 	<!-- content -->
 	<stripes:layout-component name="contents">
-		<main>
+		<main id="parkingTable">
 			<div class="container-fluid px-4">
 				<h1 class="mt-4">주차장목록</h1>
 				<ol class="breadcrumb mb-4">
@@ -40,22 +41,21 @@
 					<div class="card-body">
 						<form class="row mb-3">
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
-							<div class="col-1">
-								<tags:selectTag id="pageSize" title="개수" items="10,25,50" current="${pageSize}"/>
-							</div>
+							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
+							<div class="col-1"></div>
 							<div class="col-2"></div>
 							<div class="col-1">
 								<tags:filterTag id="filterColumn" enumValues="${ParkingFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
 							<div class="col-4">
-								<tags:searchTag id="searchStr" title="검색"/>
+								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
 							</div>
 							<div class="col-1"></div>
 							<div class="col-3">
-								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}"/>
+								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
 							</div>
 						</form>
-						<table class="table table-hover table-bordered">
+						<table class="table table-hover table-bordered" id="tableList">
 							<thead>
 							<tr>
 								<th scope="col">#</th>
@@ -79,11 +79,13 @@
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}"/>
+						<tags:pageBySizeTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>
 		</main>
+		
+		<layoutTags:parkingAddTag parkingSeq="1" />
 	</stripes:layout-component>
 
 	<!-- footer -->

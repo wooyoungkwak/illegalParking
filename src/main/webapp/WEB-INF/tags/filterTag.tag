@@ -4,7 +4,11 @@
 <%@ attribute name="enumValues" type="java.lang.Object[]" required="true" %>
 <%@ attribute name="column" type="java.lang.String" %>
 <%@ attribute name="direction" type="java.lang.String" %>
+<%@ attribute name="title" type="java.lang.String" required="false" %>
 <div id="${id}" class="filterColumn">
+	<c:if test="${title != null}">
+		<label for="${id}" class="form-label">${title}</label>
+	</c:if>
 	<div class="input-group">
 		<select class="form-select" name="filterColumn">
 			<c:forEach items="${enumValues}" var="enumValue">

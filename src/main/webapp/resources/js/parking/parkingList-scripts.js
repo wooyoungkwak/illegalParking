@@ -1,20 +1,21 @@
 $(function () {
 
-    function search() {
-        let pageNumber = $('#pageNumber').val();
-        if ( pageNumber === "") {
+    function search(pageNumber) {
+        if (pageNumber === undefined) {
             $('#pageNumber').val("1");
+        } else {
+            $('#pageNumber').val(pageNumber);
         }
-        location.href = _contextPath  + "/parkingList?" + $('form').serialize();
+        location.href = _contextPath + "/parkingList?" + $('form').serialize();
     }
 
     function initialize() {
-        $('#orderBy a').on('click', function (){
+        $('#orderBy a').on('click', function () {
             search();
-        })
+        });
 
         $('#search').on('click', function (event) {
-           search();
+            search();
         });
 
         $('#pagination').find("li").on('click', function () {
@@ -26,14 +27,14 @@ $(function () {
             let pageNumber;
             if ($(this).text() === "<") {
                 pageNumber = Number.parseInt(ul.children('.active').text());
-                if ( pageNumber == 1) return;
+                if (pageNumber == 1) return;
                 pageNumber = pageNumber - 1;
 
             } else if ($(this).text() === ">") {
                 pageNumber = Number.parseInt(ul.children('.active').text());
                 let myLocation = $(this).index();
                 let activeLocation = ul.children('.active').index();
-                if ( activeLocation == (myLocation-1) ) {
+                if (activeLocation == (myLocation - 1)) {
                     return;
                 }
                 pageNumber = pageNumber + 1;
@@ -41,13 +42,20 @@ $(function () {
                 pageNumber = Number.parseInt($(this).text());
             }
 
-            $('#pageNumber').val(pageNumber);
+            search(pageNumber);
+        });
+
+        $('#paginationSize').on("change", function () {
+            $('#pageSize').val($(this).val());
             search();
         });
 
-        $('#pageSize').on("change", function (){
-            search();
-        })
+        $('#tableList').on('click', function (){
+            $('#parkingTable').hide();
+            $('#parkingDetail').show();
+        });
+
+        $('#parkingDetail').hide();
     }
 
     initialize();

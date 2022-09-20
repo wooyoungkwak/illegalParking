@@ -17,22 +17,22 @@
 		</c:if>
 
 		<c:choose>
-			<c:when test="${ totalPages >= 3 && (totalPages - pageNumber) < 3 }">
-				<c:forEach var="item" begin="${totalPages-2}" end="${totalPages}" varStatus="status">
-					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
-				</c:forEach>
-			</c:when>
-			<c:when test="${ totalPages >= 3 && (totalPages - pageNumber) > 3 }">
-				<c:forEach var="item" begin="${pageNumber}" end="${pageNumber+2}" varStatus="status">
-					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
-				</c:forEach>
-			</c:when>
 			<c:when test="${ totalPages != null && totalPages <= 3}">
 				<c:forEach var="item" begin="1" end="${totalPages}" varStatus="status">
 					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
 				</c:forEach>
 			</c:when>
-			<c:otherwise></c:otherwise>
+			<c:when test="${ totalPages > 3 && (totalPages - pageNumber) < 3 }">
+				<c:forEach var="item" begin="${totalPages-2}" end="${totalPages}" varStatus="status">
+					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
+				</c:forEach>
+			</c:when>
+			<c:when test="${ totalPages > 3 && (totalPages - pageNumber) >= 3 }">
+				<c:forEach var="item" begin="${pageNumber}" end="${pageNumber+2}" varStatus="status">
+					<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
+				</c:forEach>
+			</c:when>
+			<c:otherwise>${totalPages}</c:otherwise>
 		</c:choose>
 
 		<c:if test="${isEndOver}">
