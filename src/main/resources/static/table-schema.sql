@@ -86,7 +86,7 @@ CREATE TABLE user
     UserSeq  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Name     VARCHAR(10)                       NOT NULL,               -- 회원 이름
     Email    VARCHAR(20)                       NOT NULL,               -- email (id)
-    Password VARCHAR(20)                       NOT NULL,               -- 패스워드
+    Password VARCHAR(50)                       NOT NULL,               -- 패스워드
     UserCode BIGINT                            NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
     Role     INT                               NOT NULL,               -- 역할 ( USER / ADMIN )
     IsDel    BOOLEAN                           NOT NULL DEFAULT FALSE, -- 삭제 여부

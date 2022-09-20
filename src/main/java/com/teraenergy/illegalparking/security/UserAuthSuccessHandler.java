@@ -34,7 +34,7 @@ public class UserAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandle
         super.setAlwaysUseDefaultTargetUrl(true);
 
         // default 페이지 설정
-        super.setDefaultTargetUrl("/dashboard");
+        super.setDefaultTargetUrl("/");
 
         // 페이지 이동
         super.onAuthenticationSuccess(request, response, authentication);

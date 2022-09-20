@@ -7,6 +7,7 @@ import com.teraenergy.illegalparking.exception.EncryptedException;
 import com.teraenergy.illegalparking.exception.EncryptedExceptionCode;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.exception.TeraExceptionCode;
+import com.teraenergy.illegalparking.model.entity.user.domain.QUser;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -47,18 +48,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User get(String userName) throws TeraException {
-//        return queryFactory.selectFrom(QUser.user)
-//                .where(QUser.user.username.eq(userName))
-//                .fetchOne();
-        return null;
+        return queryFactory.selectFrom(QUser.user)
+                .where(QUser.user.username.eq(userName))
+                .fetchOne();
     }
 
     @Override
     public User getByDB(String userName) throws TeraException {
-//        return queryFactory.selectFrom(QUser.user)
-//                .where(QUser.user.username.eq(userName))
-//                .fetchOne();
-        return null;
+        return queryFactory.selectFrom(QUser.user)
+                .where(QUser.user.username.eq(userName))
+                .fetchOne();
     }
 
     @Override
@@ -74,12 +73,12 @@ public class UserServiceImpl implements UserService {
     public boolean isUser(String userName, String password) throws TeraException {
         try {
             String passwordKey = YoungEncoder.encrypt(password);
-//            if (queryFactory.selectFrom(QUser.user)
-//                    .where(QUser.user.username.eq(userName))
-//                    .where(QUser.user.password.eq(passwordKey))
-//                    .fetchOne() != null) {
-//                return true;
-//            }
+            if (queryFactory.selectFrom(QUser.user)
+                    .where(QUser.user.username.eq(userName))
+                    .where(QUser.user.password.eq(passwordKey))
+                    .fetchOne() != null) {
+                return true;
+            }
         } catch (EncryptedException e) {
             log.error(EncryptedExceptionCode.ENCRYPT_FAILURE.getMessage(), e);
             throw new TeraException(TeraExceptionCode.NULL);
@@ -89,11 +88,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean isUser(String userName) throws TeraException {
-//        if (queryFactory.selectFrom(QUser.user)
-//                .where(QUser.user.username.eq(userName))
-//                .fetchOne() != null) {
-//            return true;
-//        }
+        if (queryFactory.selectFrom(QUser.user)
+                .where(QUser.user.username.eq(userName))
+                .fetchOne() != null) {
+            return true;
+        }
         return false;
     }
 

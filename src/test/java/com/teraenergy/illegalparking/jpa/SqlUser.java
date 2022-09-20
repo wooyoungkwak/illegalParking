@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
+import com.teraenergy.illegalparking.encrypt.YoungEncoder;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.enums.Role;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
@@ -21,7 +22,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "home")
+@ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlUser {
@@ -36,21 +37,33 @@ public class SqlUser {
         User user = new User();
         user.setIsDel(false);
         user.setUsername("admin");
-        user.setPassword("qwer1234");
+
+        user.setPassword(YoungEncoder.encrypt("qwer1234"));
         user.setRole(Role.ADMIN);
-        user.setUserCode(1234L);
+        user.setUserCode(1234l);
         user.setName("관리자");
         users.add(user);
 
         User user2 = new User();
         user2.setUsername("hong@gmail.com");
-        user2.setPassword("qwer1234");
+        user2.setPassword(YoungEncoder.encrypt("qwer1234"));
         user2.setRole(Role.USER);
-        user2.setUserCode(1234L);
+        user2.setUserCode(1234l);
         user2.setIsDel(false);
         user2.setName("홍길동");
         users.add(user2);
 
         userService.adds(users);
+    }
+
+    @Test
+    public void authentication(){
+
+        if ( userService.isUser("admin") ) {
+            System.out.println("is ... ");
+        } else  {
+            System.out.println("is not .... ");
+        }
+
     }
 }
