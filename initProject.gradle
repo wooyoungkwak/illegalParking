@@ -1,5 +1,5 @@
 /* extends */
-ext.dependenceOnSecurity = false                   // whether to use spring-boot-security
+ext.dependenceOnSecurity = true                   // whether to use spring-boot-security
 ext.dependenceOnAop = true                        // whether to use spring-boot-aop
 ext.dependenceOnJwt = false                        // whether to use jwt
 ext.dependenceOnRDBMS = true                      // whether to use RDBMS

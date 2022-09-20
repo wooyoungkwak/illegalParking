@@ -1,6 +1,6 @@
 -- 불법 주정차 데이터 베이스
 CREATE
-DATABASE illegal_parking;
+    DATABASE illegal_parking;
 
 -- 법정동코드
 -- DROP TABLE law_dong;
@@ -59,13 +59,13 @@ CREATE TABLE parking
 CREATE TABLE illegal_zone
 (
     ZoneSeq   BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Name      VARCHAR(30) NULL,                   -- 불법 구역 이름
-    Polygon   POLYGON     NOT NULL,               -- 불법 구역
-    IsDel     BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    StartTime VARCHAR(5) NULL,                    -- 시작 시간
-    EndTime   VARCHAR(5) NULL,                    -- 종료 시간
-    Code      VARCHAR(10) NOT NULL,               -- 법정동 코드 키
-    TypeSeq   INT         NOT NULL                -- 타입 키
+    Name      VARCHAR(30)                       NULL,                   -- 불법 구역 이름
+    Polygon   POLYGON                           NOT NULL,               -- 불법 구역
+    IsDel     BOOLEAN                           NOT NULL DEFAULT FALSE, -- 삭제 여부
+    StartTime VARCHAR(5)                        NULL,                   -- 시작 시간
+    EndTime   VARCHAR(5)                        NULL,                   -- 종료 시간
+    Code      VARCHAR(10)                       NOT NULL,               -- 법정동 코드 키
+    TypeSeq   INT                               NOT NULL                -- 타입 키
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -74,34 +74,35 @@ CREATE TABLE illegal_zone
 CREATE TABLE illegal_type
 (
     TypeSeq INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Name    VARCHAR(30) NOT NULL,              -- 불법 구역 타입 이름 ( 예> 불법주청자, 5분주차, 탄력주차, 샘플주차 )
-    IsDel   BOOLEAN     NOT NULL DEFAULT FALSE -- 삭제 여부
+    Name    VARCHAR(30)                    NOT NULL,              -- 불법 구역 타입 이름 ( 예> 불법주청자, 5분주차, 탄력주차, 샘플주차 )
+    IsDel   BOOLEAN                        NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
 -- 회원 정보
--- DROP TABLE users;
+-- DROP TABLE user;
 CREATE TABLE user
 (
     UserSeq  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Name     VARCHAR(10) NOT NULL,               -- 회원 이름
-    Email    POLYGON NULL,                       -- email (id)
-    Passwd   INT,                                -- 패스워드
-    UserCode BIGINT,                             -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
-    IsDel    BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt    Datetime NULl,                      -- 삭제 일자
+    Name     VARCHAR(10)                       NOT NULL,               -- 회원 이름
+    Email    VARCHAR(20)                       NOT NULL,               -- email (id)
+    Password VARCHAR(20)                       NOT NULL,               -- 패스워드
+    UserCode BIGINT                            NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
+    Role     INT                               NOT NULL,               -- 역할 ( USER / ADMIN )
+    IsDel    BOOLEAN                           NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt    Datetime                          NULL                    -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
 -- 차량 번호 정보
 CREATE TABLE car
 (
-    CarSeq  INT AUTO_INCREMENT PRIMARY KEY,
-    CarNum  VARCHAR(10) NULL,                 -- 차 번호
-    UserSeq BIGINT  NOT NULL,                 -- 사용자 키
-    IsAlarm BOOLEAN NOT NULL DEFAULT FALSE,   -- 알림 받기 여부
-    DelDt   Datetime NULl                     -- 삭제 일자
-        IsDel BOOLEAN NOT NULL DEFAULT FALSE, -- 삭제 여부
+    CarSeq  INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    CarNum  VARCHAR(10)                    NULL,                   -- 차 번호
+    UserSeq BIGINT                         NOT NULL,               -- 사용자 키
+    IsAlarm BOOLEAN                        NOT NULL DEFAULT FALSE, -- 알림 받기 여부
+    DelDt   Datetime                       NULl,                   -- 삭제 일자
+    IsDel   BOOLEAN                        NOT NULL DEFAULT FALSE  -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -109,32 +110,32 @@ CREATE TABLE car
 CREATE TABLE report
 (
     ReportSeq      INT AUTO_INCREMENT PRIMARY KEY,
-    ZoneSeq        INT      NOT NULL,               -- 불법 구역
-    RegDt          Datetime NOT NULL,               -- 신고 등록 일자
-    ReceiptUserSeq INT      NOT NULL,               -- 사용자 ( 접수자 일반 사용자 )
-    ReportUserSeq  INT NULL,                        -- 사용자 ( 기관 사용자 )
-    IsReg          BOOLEAN NULL,                    -- 신고 접수 등록 여부 ( 정부 기관 사람 )
-    CarNum         VARCHAR(10) NULL,                -- 차량 번호
-    IsDel          BOOLEAN  NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt          Datetime NULL,                   -- 삭제 일자
-    Note           VARCHAR(100)                     -- 비고
+    ZoneSeq        INT         NOT NULL,               -- 불법 구역
+    RegDt          Datetime    NOT NULL,               -- 신고 등록 일자
+    ReceiptUserSeq INT         NOT NULL,               -- 사용자 ( 접수자 일반 사용자 )
+    ReportUserSeq  INT         NULL,                   -- 사용자 ( 기관 사용자 )
+    IsReg          BOOLEAN     NULL,                   -- 신고 접수 등록 여부 ( 정부 기관 사람 )
+    CarNum         VARCHAR(10) NULL,                   -- 차량 번호
+    IsDel          BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt          Datetime    NULL,                   -- 삭제 일자
+    Note           VARCHAR(100)                        -- 비고
 ) ENGINE = InnoDB
-CHARSET = utf8;
+  CHARSET = utf8;
 
 -- 신고 등록
 CREATE TABLE receipt
 (
     ReceiptSeq INT AUTO_INCREMENT PRIMARY KEY,
-    ZoneSeq    INT          NOT NULL,               -- 불법 구역
-    RegDt      Datetime     NOT NULL,               -- 신고 등록 일자
-    UserSeq    INT          NOT NULL,               -- 사용자 ( 일반 사용자 )
-    CarNum     VARCHAR(10) NULL,                    -- 차량 번호
-    IsDel      BOOLEAN      NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt      Datetime NULL,                       -- 삭제 일자
-    FileName   VARCHAR(50)  NOT NULL,               -- 파일 이름
-    Note       VARCHAR(100) NOT                     -- 사유 또는 비고
+    ZoneSeq    INT         NOT NULL,               -- 불법 구역
+    RegDt      Datetime    NOT NULL,               -- 신고 등록 일자
+    UserSeq    INT         NOT NULL,               -- 사용자 ( 일반 사용자 )
+    CarNum     VARCHAR(10) NULL,                   -- 차량 번호
+    IsDel      BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt      Datetime    NULL,                   -- 삭제 일자
+    FileName   VARCHAR(50) NOT NULL,               -- 파일 이름
+    Note       VARCHAR(100) NOT                    -- 사유 또는 비고
 ) ENGINE = InnoDB
-CHARSET = utf8;
+  CHARSET = utf8;
 
 
 -- ---------------------------------------------------------------------------------------------------
