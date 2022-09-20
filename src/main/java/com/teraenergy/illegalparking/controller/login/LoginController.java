@@ -35,11 +35,15 @@ public class LoginController extends ExtendsController {
     /* GET */
 
     @GetMapping(value = "/login")
-    public String login(Model model, HttpServletRequest request) {
+    public String login(Model model, HttpServletRequest request, Device device) {
         // 인증 페이지로 이동하기 전 URL 기억
         String header = request.getHeader("home");
         request.getSession().setAttribute("prevPage", header);
-        return getPath("/login");
+        if (device.isNormal()) {
+            return getPath("/login");
+        } else {
+            return "/mobile/controller/area/map";
+        }
     }
 
     @GetMapping("/password")
