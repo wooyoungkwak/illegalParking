@@ -26,8 +26,6 @@ public class UserAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandle
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        log.info(" ====================> onAuthenticationSuccess .... ");
-
         request.getSession().setAttribute("hashcode", request.getSession().getId().hashCode());
 
         // default targetUrl 로 이동하지 않도록 설정

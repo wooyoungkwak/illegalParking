@@ -19,7 +19,7 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
+@Entity(name = "illegal_zone")
 public class IllegalZone {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
@@ -27,9 +27,6 @@ public class IllegalZone {
 
     @Column
     String name;        // 불법 주정차 이름
-
-    @Column
-    String polygon;     // 불법 주정차 구역
 
     @Column
     Boolean isDel;      // 삭제 여부
@@ -41,8 +38,18 @@ public class IllegalZone {
     String EndTime;      // 탄력 주차 가능 종료 시간
 
     @Column
-    Integer typeSeq;    // 불법 주정차 타입 키
+    String code;    // 법정동 키
 
     @Column
-    String code;    // 법정동 키
+    String polygon;     // 불법 주정차 구역
+
+    @Column
+    Integer typeSeq;    // 불법 주정차 타입 키
+
+//    @Column (name = "polygon")
+//    Polygon polygonObj;
+
+//    @ManyToOne (optional = false, fetch = FetchType.LAZY)
+//    @JoinColumn(name = "typeSeq")
+//    IllegalType illegalType;
 }

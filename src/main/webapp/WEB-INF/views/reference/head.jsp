@@ -42,7 +42,12 @@
             $('#navMenu').find('a').removeClass("active");
             $('#layoutSidenav_nav').find('a').removeClass("active");
 
-            $('#nav' + _contextPath.replace("/","")).addClass("active");
+            if(location.pathname === '/home'){
+                $('#sidebarToggle').hide();
+            } else {
+                $('#nav' + _contextPath.replace("/","")).addClass("active");
+            }
+
             $('#side_' + paths[size-1]).addClass("active");
 
             // Toggle the side navigation
