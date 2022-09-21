@@ -137,7 +137,7 @@ function isInside(polygon, n, p) {
 
 /*폴리곤 중심 좌표 구하기*/
 function centroid(points) {
-    var i, j, len, p1, p2, f, area, x, y;
+    let i, j, len, p1, p2, f, area, x, y;
 
     area = x = y = 0;
 
@@ -151,22 +151,81 @@ function centroid(points) {
         area += f * 3;
     }
 
-    return [x / area, y / area];
+    return {x : x / area, y : y / area};
 }
 /*폴리곤 중심 좌표 구하기 end*/
 
 
 /* 좌표로 동코드 받기 카카오 REST API */
-function coordinatesToDongCodeKakaoApi(){
-    fetch("https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=126.78416155710897&y=35.016484911425344", {
-        headers: {
-            Authorization: "KakaoAK 350a9e6cc59932a26806ab0c0b6fdd2e"
-        }
-    }).then((response) => response.json())
-        .then((data) => {
-            console.log('성공:', data.documents);
-        });
+// async function coordinatesToDongCodeKakaoApi(x, y){
+//
+//
+//     let code = '';
+//
+//     let URL = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${x}&y=${y}`;
+//     let opt = {
+//         headers: {
+//             Authorization: "KakaoAK 350a9e6cc59932a26806ab0c0b6fdd2e"
+//         }
+//     };
+//     const response = await fetch(URL, opt);
+//     const data = await response.json();
+//     data.documents.forEach(region => {
+//         if (region.region_type === 'B') {
+//             code = region.code;
+//         }
+//     });
+//     return code;
+//     //console.log(documents);
+// }
+let currentCode = '';
+let beforeCode = '';
+function coordinatesToDongCodeKakaoApi(x, y, stat){
+    let geocoder = new kakao.maps.services.Geocoder();
+    let callback = function(result, status) {
+        if (status === kakao.maps.services.Status.OK) {
+            log('지역 명칭 : ' + `${result[0].region_1depth_name} ${result[0].region_2depth_name} ${result[0].region_3depth_name}`);
+            log('행정구역 코드 : ' + result[0].code);
 
-    //console.log(documents);
+            if(stat === 'first') beforeCode = result[0].code;
+            else currentCode = result[0].code;
+        }
+    };
+    geocoder.coord2RegionCode(x, y, callback);
+
+    if (stat === 'first') return beforeCode;
+    else return currentCode;
 }
 /* 좌표로 동코드 받기 카카오 REST API end */
+
+//geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
+function getCurrentPosition(map) {
+    if (navigator.geolocation) {
+        // GPS를 지원하면
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // drawingMap.center = new kakao.maps.LatLng(`${position.coords.latitude}`, `${position.coords.longitude}`) // 지도의 중심좌표
+                let currentLat = `${position.coords.latitude}`; // y
+                let currentLng = `${position.coords.longitude}`; // x
+                beforeCode = coordinatesToDongCodeKakaoApi(currentLng, currentLat);
+
+                log(beforeCode);
+                // 지도 중심좌표를 접속위치로 변경합니다
+                let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
+                map.setCenter(currentPosition);
+            },
+            (error) => {
+                console.error(error);
+            },
+            {
+                enableHighAccuracy: true, // 위치정보를 가장 높은 정확도로 수신 true, 기본 false, 응답이 느리고 전력소모량 증가
+                maximumAge: 0,
+                timeout: Infinity,
+            }
+        );
+    } else {
+        let position = new kakao.maps.LatLng(33.450701, 126.570667);
+        alert("위치 권한을 설정하시기 바랍니다.");
+        map.setCenter(position);
+    }
+}

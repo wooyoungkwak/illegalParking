@@ -85,8 +85,9 @@ public class AreaAPIController {
                 IllegalZone illegalZone = new IllegalZone();
                 illegalZone.setPolygon(stringBuilder.toString());
                 illegalZone.setName("");
-                illegalZone.setTypeSeq(param.get("typeSeq") == null ? 1 : (Integer) param.get("typeSeq"));
-                illegalZone.setCode("2");
+                illegalZone.setTypeSeq(param.get("typeSeq") == null ? 1 : Integer.parseInt(
+                    (String) param.get("typeSeq")));
+                illegalZone.setCode((String) dataMap.get("code"));
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
 
@@ -112,14 +113,17 @@ public class AreaAPIController {
 
     @PostMapping("/area/polygon/delete")
     @ResponseBody
-    public String deletePolygon(@RequestBody String body) {
+    public JsonNode deletePolygon(@RequestBody String body) throws Exception {
+        Map<String, String> map = Maps.newHashMap();
         try {
             JsonNode jsonNode = objectMapper.readTree(body);
             illegalZoneService.delete(jsonNode.get("zoneSeq").asInt());
-            return "success";
+            map.put("success","true");
         } catch (Exception e) {
-            return "fail";
+            map.put("success","false");
         }
+        String jsonStr = objectMapper.writeValueAsString(map);
+        return objectMapper.readTree(jsonStr);
     }
 
     @PostMapping("/area/polygon/update")
