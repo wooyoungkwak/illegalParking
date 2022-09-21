@@ -99,8 +99,8 @@ public class SqlLawDong {
             }
 
             System.out.println("law_dong size = " + lawDongs.size());
-//            lawDongService.sets(lawDongs);
-            lawDongService.set(lawDongs.get(0));
+            lawDongService.sets(lawDongs);
+//            lawDongService.set(lawDongs.get(0));
 
         } catch (IOException e) {
             throw new RuntimeException(e);
