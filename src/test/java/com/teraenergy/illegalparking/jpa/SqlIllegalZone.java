@@ -21,7 +21,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlIllegalZone {
@@ -39,7 +39,11 @@ public class SqlIllegalZone {
         List<IllegalZone> illegalZones = illegalZoneJpaService.gets();
 
         for ( IllegalZone illegalZone : illegalZones) {
-
+            System.out.println(illegalZone.getIllegalType().getTypeSeq());
+            System.out.println(illegalZone.getIllegalType().getName());
+            System.out.println(illegalZone.getCode());
+            System.out.println(illegalZone.getName());
+            System.out.println(illegalZone.getPolygon());
         }
     }
 }

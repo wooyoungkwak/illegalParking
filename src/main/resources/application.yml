@@ -30,7 +30,14 @@ file:
   excelPath: D:/fileUpload/excel
 mybatis:
   mapper-locations: classpath:/mybatis/*.xml
-#server:
+
+hibernate:
+
+  metadata_builder_contributor=com:
+    vladmihalcea:
+      book:
+        hpjp:
+          SqlFunctionsMetadataBuilderContributor:#server:
 #  ssl:
 #    key-store: classpath:teraenergy.p12
 #    key-store-type: PKCS12

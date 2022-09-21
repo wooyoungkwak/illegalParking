@@ -1,5 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.illegalzone.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
@@ -13,6 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 /**
@@ -30,10 +35,19 @@ public class IllegalZoneJpaServiceImpl implements IllegalZoneJpaService{
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private final EntityManager entityManager;
+
+    private final ObjectMapper objectMapper;
+
     @Override
     public List<IllegalZone> gets( ) {
-        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
-        return query.fetch();
+//        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
+//        return query.fetch();
+
+        String queryStr = "SELECT zone.zoneSeq, zone.name, zone.polygon, zone.isDel, zone.code, zone.StartTime, zone.EndTime, zone.illegalType FROM illegal_zone zone where zone.isDel = false";
+//        TypedQuery<IllegalZone> query = entityManager.createQuery(queryStr, IllegalZone.class).getResultList();
+//        return query.getResultList();
+        return entityManager.createQuery(queryStr, IllegalZone.class).getResultList();
     }
 
     @Override

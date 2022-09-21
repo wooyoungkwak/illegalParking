@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.illegalzone.domain;
 
+import com.teraenergy.illegalparking.model.entity.illegalType.domain.IllegalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ import javax.persistence.*;
 @Entity(name = "illegal_zone")
 public class IllegalZone {
     @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Integer zoneSeq;    // 불법 주정차 구역 키
 
     @Column
@@ -43,13 +44,10 @@ public class IllegalZone {
     @Column
     String polygon;     // 불법 주정차 구역
 
-    @Column
+    @Transient
     Integer typeSeq;    // 불법 주정차 타입 키
 
-//    @Column (name = "polygon")
-//    Polygon polygonObj;
-
-//    @ManyToOne (optional = false, fetch = FetchType.LAZY)
-//    @JoinColumn(name = "typeSeq")
-//    IllegalType illegalType;
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "typeSeq")
+    IllegalType illegalType;
 }
