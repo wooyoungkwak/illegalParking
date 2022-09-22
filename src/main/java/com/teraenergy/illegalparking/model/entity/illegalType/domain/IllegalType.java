@@ -29,4 +29,8 @@ public class IllegalType {
 
     @Column
     Boolean isDel;      // 삭제 여부
+
+    @Column
+    String color;
+
 }

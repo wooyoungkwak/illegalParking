@@ -41,13 +41,7 @@ public class IllegalZoneJpaServiceImpl implements IllegalZoneJpaService{
 
     @Override
     public List<IllegalZone> gets( ) {
-//        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
-//        return query.fetch();
-
-        String queryStr = "SELECT zone.zoneSeq, zone.name, zone.polygon, zone.isDel, zone.code, zone.StartTime, zone.EndTime, zone.illegalType FROM illegal_zone zone where zone.isDel = false";
-//        TypedQuery<IllegalZone> query = entityManager.createQuery(queryStr, IllegalZone.class).getResultList();
-//        return query.getResultList();
-        return entityManager.createQuery(queryStr, IllegalZone.class).getResultList();
+        return illegalZoneRepository.findByIllegalZones();
     }
 
     @Override

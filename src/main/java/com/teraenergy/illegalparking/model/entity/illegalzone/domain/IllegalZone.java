@@ -47,7 +47,7 @@ public class IllegalZone {
     @Transient
     Integer typeSeq;    // 불법 주정차 타입 키
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "typeSeq")
     IllegalType illegalType;
 }
