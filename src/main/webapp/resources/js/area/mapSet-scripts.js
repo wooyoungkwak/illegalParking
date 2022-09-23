@@ -94,24 +94,34 @@ manager.addListener('drawend', function (data) {
     drawingDataTargets.push(data.target);
 });
 
+let searchTypeSeq = '';
 //
 $('input:radio[name=searchTypeSeq]').change(function () {
-    let typeSeq = $('input:radio[name=searchTypeSeq]:checked').val();
-    searchZone(typeSeq);
+    searchTypeSeq = $('input:radio[name=searchTypeSeq]:checked').val();
+    searchZone(searchTypeSeq);
 });
 
 //
 function searchZone(typeSeq) {
+
+    let center = drawingMap.getCenter();
+    let x = center.getLng(); // x
+    let y = center.getLat(); // y
+
+    let code = coordinatesToDongCodeKakaoApi(x, y);
+
+    let select = SELECT_TYPE_AND_DONG;
+    if(typeSeq === '') select = SELECT_ALL;
     removeOverlays();
     zoneInitialize({
         url: $.getContextPath() + '/polygons',
         data: {
-            select: SELECT_TYPE_AND_DONG,
+            select: select,
             typeSeq: typeSeq,
-            code: '2'
+            code: code
         }
     });
-    drawingPolygon(getPolygonData(), 'load');
+    drawingPolygon(pathInBounds(), 'load');
 }
 
 // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
@@ -120,7 +130,7 @@ function getDataFromDrawingMap() {
 
     // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
     let data = manager.getData();
-    let searchTypeSeq = $('input:radio[name="searchTypeSeq"]:checked').val();
+    // let searchTypeSeq = $('input:radio[name="searchTypeSeq"]:checked').val();
     let opt = {
         url: $.getContextPath() + "/polygon/insert",
         data: {
@@ -139,8 +149,8 @@ function getDataFromDrawingMap() {
             let points = polygon.points;
 
             // console.log('centroid : ', centroid(points));
-            let centerPoints = centroid(points);
-            coordinatesToDongCodeKakaoApi(centerPoints.x, centerPoints.y);
+            let centroidPoints = centroid(points);
+            coordinatesToDongCodeKakaoApi(centroidPoints.x, centroidPoints.y);
             polygon.code = currentCode;
                 // zoneSeq 추가
             // let lastZoneSeq = zoneSeqs[zoneSeqs.length - 1];
@@ -173,9 +183,6 @@ function getDataFromDrawingMap() {
         drawingPolygon(pathInBounds(), 'drawing');
         // 생성한 폴리곤 삭제
         removeDrawingOverlays();
-        // zoneInitialize(opt);
-
-
     }
 }
 
@@ -261,7 +268,7 @@ function displayArea(area) {
         var resultDiv = document.getElementById('result');
         resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
 
-        log("area  = ", JSON.stringify(area));
+        // log("area  = ", JSON.stringify(area));
         showModal(area);
     });
     overlays.push(polygon);
@@ -286,7 +293,6 @@ function showModal(area) {
     timeHideAndShow(checkVal);
     timeSetting(result);
 
-    // alert(result.zoneSeq);0
     $('#areaSettingModal').modal('show');
 
 }
@@ -319,10 +325,6 @@ $('input:radio[name=typeSeq]').click(function () {
     let checkVal = $('input:radio[name=typeSeq]:checked').val();
     timeHideAndShow(checkVal);
 });
-
-function _update(zoneSeq) {
-
-}
 
 // 폴리곤 삭제
 $('#btnDelete').click(function () {
@@ -429,7 +431,6 @@ kakao.maps.event.addListener(drawingMap, 'idle', function () {
         log('currentCode : ', code);
         log('beforeCode : ', beforeCode);
         drawingPolygon(pathInBounds(), 'load');
-
     }
 })
 
