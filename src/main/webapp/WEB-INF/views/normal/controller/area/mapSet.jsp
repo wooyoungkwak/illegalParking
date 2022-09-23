@@ -38,10 +38,9 @@
 							<button onclick="selectOverlay('POLYGON')">구역추가</button>
 							<button onclick="getDataFromDrawingMap()">저장</button>
 							<span>
-								<label><input type="radio" name="searchTypeSeq" value="" checked>전체</label>
-								<label><input type="radio" name="searchTypeSeq" value="1">주정차 불가</label>
-								<label><input type="radio" name="searchTypeSeq" value="2">탄력적 가능</label>
-								<label><input type="radio" name="searchTypeSeq" value="3">5분간 가능</label>
+								<label><input type="radio" name="searchIllegalTypeSeq" value="" checked>전체</label>
+								<label><input type="radio" name="searchIllegalTypeSeq" value="0">불법주정차</label>
+								<label><input type="radio" name="searchIllegalTypeSeq" value="1">5분주정차</label>
 							</span>
 						</p>
 					</div>
@@ -59,19 +58,13 @@
 									</div>
 									<div class="modal-body">
 										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="radio" name="typeSeq" id="zone1" value="1">
+											<input class="form-check-input" type="radio" name="illegalTypeSeq" id="zone1" value="0">
 											<label class="form-check-label" for="zone1">불가</label>
 										</div>
 										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="radio" name="typeSeq" id="zone2" value="2">
-											<label class="form-check-label" for="zone2">탄력적 가능</label>
-										</div>
-										<div class="form-check form-check-inline">
-											<input class="form-check-input" type="radio" name="typeSeq" id="zone3" value="3">
+											<input class="form-check-input" type="radio" name="illegalTypeSeq" id="zone3" value="1">
 											<label class="form-check-label" for="zone3">5분간 가능</label>
 										</div>
-
-
 										<div class="row" id="timeRow">
 											<div class="col">
 												<label for="startTime">시작</label>

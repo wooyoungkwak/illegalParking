@@ -17,9 +17,9 @@ public interface IllegalZoneService {
 
     public List<IllegalZone> getsByDong(String code);
 
-    public List<IllegalZone> getsByType(Integer typeSeq);
+    public List<IllegalZone> getsByType(Integer illegalType);
 
-    public List<IllegalZone> getsByTypeAndDong(Integer typeSeq, String code);
+    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, String code);
 
     public List<IllegalZone> gets();
 
@@ -27,7 +27,7 @@ public interface IllegalZoneService {
 
     public void sets(List<IllegalZone> illegalZones);
 
-    public void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime);
+    public void modify(Integer zoneSeq, Integer illegalType, String startTime, String endTime);
 
     public void delete(Integer zoneSeq);
 

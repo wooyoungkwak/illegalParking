@@ -32,13 +32,13 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     }
 
     @Override
-    public List<IllegalZone> getsByType(Integer typeSeq) {
-        return illegalZoneMapper.findByIdType(typeSeq);
+    public List<IllegalZone> getsByType(Integer illegalTypeSeq) {
+        return illegalZoneMapper.findByIdType(illegalTypeSeq);
     }
 
     @Override
-    public List<IllegalZone> getsByTypeAndDong(Integer typeSeq, String code) {
-        return illegalZoneMapper.findByIdTypeAndDong(typeSeq, code);
+    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, String code) {
+        return illegalZoneMapper.findByIdTypeAndDong(illegalTypeSeq, code);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     }
 
     @Override
-    public void modify(Integer zoneSeq, Integer typeSeq, String startTime, String endTime) {
-        illegalZoneMapper.modify(zoneSeq, typeSeq, startTime, endTime);
+    public void modify(Integer zoneSeq, Integer illegalType, String startTime, String endTime) {
+        illegalZoneMapper.modify(zoneSeq, illegalType, startTime, endTime);
     }
 
     @Override

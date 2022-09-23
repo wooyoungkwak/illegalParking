@@ -14,6 +14,6 @@ import java.util.List;
  * Description :
  */
 public interface IllegalZoneRepository extends JpaRepository<IllegalZone, Integer> {
-    @Query(value = "SELECT zone FROM illegal_zone zone where zone.isDel = false")
-    public List<IllegalZone> findByIllegalZones();
+//    @Query(value = "SELECT zone FROM illegal_zone zone where zone.isDel = false")
+//    public List<IllegalZone> findByIllegalZones();
 }

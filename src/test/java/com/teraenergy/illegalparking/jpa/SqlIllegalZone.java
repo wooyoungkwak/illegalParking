@@ -48,8 +48,8 @@ public class SqlIllegalZone {
 //        } catch (ParseException e) {
 //            throw new RuntimeException(e);
 //        }
-
         System.out.println(illegalZone.getPolygon());
+        System.out.println(illegalZone.getIllegalType());
 //
 //        for ( IllegalZone illegalZone : illegalZones) {
 //            System.out.println(illegalZone.getCode());
@@ -58,6 +58,5 @@ public class SqlIllegalZone {
 //            System.out.println(illegalZone.getIllegalType().getTypeSeq());
 //            System.out.println(illegalZone.getIllegalType().getName());
 //        }
-
     }
 }

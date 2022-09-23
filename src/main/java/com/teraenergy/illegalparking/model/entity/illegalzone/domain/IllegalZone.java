@@ -1,6 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.illegalzone.domain;
 
-import com.teraenergy.illegalparking.model.entity.illegalType.domain.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,10 +44,10 @@ public class IllegalZone {
     @Column
     String polygon;     // 불법 주정차 구역
 
-    @Transient
-    Integer typeSeq;    // 불법 주정차 타입 키
+    @Column
+    IllegalType illegalType;    // 불법 주정차 타입 키
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "typeSeq")
-    IllegalType illegalType;
+    @Transient
+    Integer illegalTypeSeq;    // 불법 주정차 타입 키
+
 }

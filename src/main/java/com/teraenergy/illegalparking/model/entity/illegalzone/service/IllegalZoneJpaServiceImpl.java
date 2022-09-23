@@ -41,7 +41,7 @@ public class IllegalZoneJpaServiceImpl implements IllegalZoneJpaService{
 
     @Override
     public List<IllegalZone> gets( ) {
-        return illegalZoneRepository.findByIllegalZones();
+        return illegalZoneRepository.findAll();
     }
 
     @Override

@@ -68,7 +68,7 @@ CREATE TABLE illegal_zone
     StartTime VARCHAR(5) NULL,                    -- 시작 시간
     EndTime   VARCHAR(5) NULL,                    -- 종료 시간
     Code      VARCHAR(10) NOT NULL,               -- 법정동 코드 키
-    TypeSeq   INT         NOT NULL                -- 타입 키
+    Illegaltype   INT         NOT NULL                -- 타입 키
 ) ENGINE = InnoDB
   CHARSET = utf8;
 

@@ -183,6 +183,7 @@ let beforeCode = '';
 function coordinatesToDongCodeKakaoApi(x, y, stat){
     let geocoder = new kakao.maps.services.Geocoder();
     let callback = function(result, status) {
+        log(result)
         if (status === kakao.maps.services.Status.OK) {
             log('지역 명칭 : ' + `${result[0].region_1depth_name} ${result[0].region_2depth_name} ${result[0].region_3depth_name}`);
             log('행정구역 코드 : ' + result[0].code);

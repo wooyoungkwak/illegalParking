@@ -13,10 +13,7 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
@@ -55,9 +52,25 @@ public class AreaAPIController {
         return objectMapper.readTree(jsonStr);
     }
 
-    @PostMapping("/area/polygon/insert")
+    @PostMapping("/area/zone/get")
     @ResponseBody
-    public JsonNode insertPolygon(@RequestBody Map<String, Object> param) throws JsonProcessingException {
+    public JsonNode getZone(HttpServletRequest request, @RequestBody String body) throws Exception {
+        JsonNode jsonNode = objectMapper.readTree(body);
+        String jsonStr = objectMapper.writeValueAsString(illegalZoneService.get(jsonNode.get("zoneSeq").asInt()));
+        return objectMapper.readTree(jsonStr);
+    }
+
+    @PostMapping("/area/zone/gets")
+    @ResponseBody
+    public JsonNode getsZone(HttpServletRequest request, @RequestBody String body) throws Exception {
+        JsonNode jsonNode = objectMapper.readTree(body);
+        String jsonStr = objectMapper.writeValueAsString(_getZone(jsonNode));
+        return objectMapper.readTree(jsonStr);
+    }
+
+    @PostMapping("/area/zone/set")
+    @ResponseBody
+    public JsonNode setZone(@RequestBody Map<String, Object> param) throws JsonProcessingException {
         Map<String, String> map = Maps.newHashMap();
         try {
             List<Map<String, Object>> polygons = (List<Map<String, Object>>) param.get("polygonData");
@@ -85,8 +98,7 @@ public class AreaAPIController {
                 IllegalZone illegalZone = new IllegalZone();
                 illegalZone.setPolygon(stringBuilder.toString());
                 illegalZone.setName("");
-                illegalZone.setTypeSeq(param.get("typeSeq") == null ? 1 : Integer.parseInt(
-                    (String) param.get("typeSeq")));
+//                illegalZone.setIllegalType();
                 illegalZone.setCode((String) dataMap.get("code"));
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
@@ -111,9 +123,24 @@ public class AreaAPIController {
 
     }
 
-    @PostMapping("/area/polygon/delete")
+    @PostMapping("/area/zone/modify")
     @ResponseBody
-    public JsonNode deletePolygon(@RequestBody String body) throws Exception {
+    public JsonNode modifyZone(@RequestBody String body) throws Exception {
+        Map<String, String> map = Maps.newHashMap();
+        try {
+            JsonNode jsonNode = objectMapper.readTree(body);
+            illegalZoneService.modify(jsonNode.get("zoneSeq").asInt(), jsonNode.get("illegalTypeSeq").asInt(), jsonNode.get("startTime").asText(), jsonNode.get("endTime").asText());
+            map.put("success","true");
+        } catch (Exception e) {
+            map.put("success","false");
+        }
+        String jsonStr = objectMapper.writeValueAsString(map);
+        return objectMapper.readTree(jsonStr);
+    }
+
+    @PostMapping("/area/zone/remove")
+    @ResponseBody
+    public JsonNode removeZone(@RequestBody String body) throws Exception {
         Map<String, String> map = Maps.newHashMap();
         try {
             JsonNode jsonNode = objectMapper.readTree(body);
@@ -123,37 +150,6 @@ public class AreaAPIController {
             map.put("success","false");
         }
         String jsonStr = objectMapper.writeValueAsString(map);
-        return objectMapper.readTree(jsonStr);
-    }
-
-    @PostMapping("/area/polygon/update")
-    @ResponseBody
-    public JsonNode updatePolygon(@RequestBody String body) throws Exception {
-        Map<String, String> map = Maps.newHashMap();
-        try {
-            JsonNode jsonNode = objectMapper.readTree(body);
-            illegalZoneService.modify(jsonNode.get("zoneSeq").asInt(), jsonNode.get("typeSeq").asInt(), jsonNode.get("startTime").asText(), jsonNode.get("endTime").asText());
-            map.put("success","true");
-        } catch (Exception e) {
-            map.put("success","false");
-        }
-        String jsonStr = objectMapper.writeValueAsString(map);
-        return objectMapper.readTree(jsonStr);
-    }
-
-    @PostMapping("/area/polygon")
-    @ResponseBody
-    public JsonNode polygon(HttpServletRequest request, @RequestBody String body) throws Exception {
-        JsonNode jsonNode = objectMapper.readTree(body);
-        String jsonStr = objectMapper.writeValueAsString(illegalZoneService.get(jsonNode.get("zoneSeq").asInt()));
-        return objectMapper.readTree(jsonStr);
-    }
-
-    @PostMapping("/area/polygons")
-    @ResponseBody
-    public JsonNode polygons(HttpServletRequest request, @RequestBody String body) throws Exception {
-        JsonNode jsonNode = objectMapper.readTree(body);
-        String jsonStr = objectMapper.writeValueAsString(_getZone(jsonNode));
         return objectMapper.readTree(jsonStr);
     }
 
@@ -173,13 +169,13 @@ public class AreaAPIController {
         List<IllegalZone> illegalZones = null;
         switch (select) {
             case "type":
-                illegalZones = illegalZoneService.getsByType(param.get("typeSeq").asInt());
+                illegalZones = illegalZoneService.getsByType(param.get("illegalTypeSeq").asInt());
                 break;
             case "dong":
                 illegalZones = illegalZoneService.getsByDong(param.get("code").asText());
                 break;
             case "typeAndDong":
-                illegalZones = illegalZoneService.getsByTypeAndDong(param.get("typeSeq").asInt(), param.get("code").asText());
+                illegalZones = illegalZoneService.getsByTypeAndDong(param.get("illegalTypeSeq").asInt(), param.get("code").asText());
                 break;
             case "all":
                 illegalZones = illegalZoneService.gets();
@@ -187,7 +183,7 @@ public class AreaAPIController {
         }
 
         List<Integer> zoneSeqs = Lists.newArrayList();
-        List<Integer> zonetypes = Lists.newArrayList();
+        List<Integer> zoneTypes = Lists.newArrayList();
         List<String> polygons = Lists.newArrayList();
 
         for (IllegalZone illegalZone : illegalZones) {
@@ -209,14 +205,14 @@ public class AreaAPIController {
                     .append(firstCoordinate.getY());
 
             polygons.add(builder.toString());
-            zonetypes.add(illegalZone.getTypeSeq());
+            zoneTypes.add(illegalZone.getIllegalTypeSeq());
             zoneSeqs.add(illegalZone.getZoneSeq());
         }
 
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("zonePolygons", polygons);
         resultMap.put("zoneSeqs", zoneSeqs);
-        resultMap.put("zoneTypes", zonetypes);
+        resultMap.put("zoneTypes", zoneTypes);
 
         return resultMap;
     }
