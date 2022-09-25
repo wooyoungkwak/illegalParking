@@ -6,6 +6,7 @@ import com.teraenergy.illegalparking.security.UserAuthSuccessHandler;
 import com.teraenergy.illegalparking.security.UserAuthenticationManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -14,7 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 /**
  * Date : 2022-09-20
- * Author : zilet
+ * Author : young
  * Project : illegalParking
  * Description :
  */
@@ -35,10 +36,14 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     private final UserAuthenticationManager authenticationManager;
 
 
+    @Value("${file.resourceLocation}")
+    String resourceLocation;
+
+
     @Override
     public void configure(WebSecurity webSecurity) {
         log.info("security configure register [WebSecurity]");
-        webSecurity.ignoring().antMatchers("/resources/**");
+        webSecurity.ignoring().antMatchers("/resources/**").antMatchers(resourceLocation);
     }
 
     @Override

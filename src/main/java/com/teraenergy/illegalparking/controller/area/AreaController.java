@@ -33,7 +33,7 @@ public class AreaController extends ExtendsController {
     }
 
     @GetMapping("/area/map")
-    public ModelAndView map(HttpServletRequest request, Device device) throws ParseException {
+    public ModelAndView map(Device device) throws ParseException {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);

@@ -1,5 +1,7 @@
 $(function () {
 
+    let parkingSeq ;
+
     function search(pageNumber) {
         if (pageNumber === undefined) {
             $('#pageNumber').val("1");
@@ -7,6 +9,15 @@ $(function () {
             $('#pageNumber').val(pageNumber);
         }
         location.href = _contextPath + "/parkingList?" + $('form').serialize();
+    }
+
+    function getData(){
+        let arr = $('#data').serializeArray();
+        let data = {};
+        $(arr).each(function(index, obj){
+            data[obj.name] = obj.value;
+        });
+        return data;
     }
 
     function initialize() {
@@ -50,29 +61,62 @@ $(function () {
             search();
         });
 
-        $('#tableList tr').on('click', function (){
+        // 주차장 정보 표시
+        $('#tableList tr').on('click', function () {
 
             let parkingSeqStr = $(this).children("td:eq(0)").text();
-            let parkingSeq = Number.parseInt(parkingSeqStr);
+            parkingSeq = Number.parseInt(parkingSeqStr);
 
             let result = $.JJAjaxAsync({
-                url: _contextPath,
+                url: _contextPath + '/get',
                 data: {
                     parkingSeq: parkingSeq
                 }
             });
 
-            log(result);
+            $.each(result, function (key, value) {
+                $('#' + key).val(value);
+                if (key == "rdnmadr" ) {
+                    $('#rdnmadr').val(result.lnmadr);
+                }
+            });
+
             $('#parkingTable').hide();
-            $('#parkingDetail').show();
+            $('#parkingAdd').show();
         });
 
-        $('#close').on('click', function (){
+        $('#modify').on('click', function (){
+
+            let data = getData();
+            data.parkingSeq = parkingSeq;
+
+            if ( confirm("등록 하시겠습니까?") ) {
+                $.JJAjaxSync({
+                    url: _contextPath + '/set',
+                    data: data,
+                    success: function (){
+                        if ( confirm(" 계속 등록 하시겠습니까? " ) ) {
+                            location.href = location.href;
+                        } else {
+                            location.href = _contextPath + '/parkingList';
+                        }
+                    } ,
+                    err: function (code){
+                        alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
+                    }
+                });
+            } else {
+                log(getData());
+            }
+        });
+
+        $('#close').on('click', function () {
             $('#parkingTable').show();
-            $('#parkingDetail').hide();
+            $('#parkingAdd').hide();
         });
 
-        $('#parkingDetail').hide();
+        $('#parkingAdd').hide();
+
     }
 
     initialize();

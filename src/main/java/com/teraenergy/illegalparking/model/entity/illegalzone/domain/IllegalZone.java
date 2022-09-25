@@ -27,27 +27,24 @@ public class IllegalZone {
     Integer zoneSeq;    // 불법 주정차 구역 키
 
     @Column
-    String name;        // 불법 주정차 이름
+    String name;        // 불법 주정차 구역 이름
 
-    @Column
+    @Column (nullable = false)
+    String polygon;     // 불법 주정차 구역
+
+    @Column (nullable = false)
+    String code;    // 법정동 키
+
+    @Column (nullable = false)
     Boolean isDel;      // 삭제 여부
 
     @Column
-    String StartTime;    // 탄력 주차 가능 시작 시간
+    Integer eventSeq;
 
-    @Column
-    String EndTime;      // 탄력 주차 가능 종료 시간
-
-    @Column
-    String code;    // 법정동 키
-
-    @Column
-    String polygon;     // 불법 주정차 구역
-
-    @Column
-    IllegalType illegalType;    // 불법 주정차 타입 키
+    @Column (nullable = false)
+    IllegalType illegalType;    // 불법 주정차 타입 키 ( JPA 전용 )
 
     @Transient
-    Integer illegalTypeSeq;    // 불법 주정차 타입 키
+    Integer illegalTypeSeq;    // 불법 주정차 타입 키 ( Mapper 전용 )
 
 }

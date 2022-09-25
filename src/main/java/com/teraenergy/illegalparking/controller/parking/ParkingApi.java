@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
-
 /**
  * Date : 2022-09-20
  * Author : young
@@ -23,15 +21,15 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
-public class ParkingApiController {
+public class ParkingApi {
 
     private final ObjectMapper objectMapper;
 
     private final ParkingService parkingService;
 
-    @PostMapping("/parking")
+    @PostMapping("/parking/get")
     @ResponseBody
-    public JsonNode parking(@RequestBody String body) throws JsonProcessingException {
+    public JsonNode getParking(@RequestBody String body) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(body);
         Integer parkingSeq = jsonNode.get("parkingSeq").asInt();
         Parking parking = parkingService.get(parkingSeq);
@@ -39,10 +37,20 @@ public class ParkingApiController {
         return objectMapper.readTree(jsonStr);
     }
 
-    @PostMapping("/parkings")
+    @PostMapping("/parking/gets")
     @ResponseBody
-    public JsonNode parkings(@RequestBody String body) throws JsonProcessingException {
+    public JsonNode getsParking(@RequestBody String body) throws JsonProcessingException {
         JsonNode jsonNode = objectMapper.readTree(body);
+
+        return null;
+    }
+
+    @PostMapping("/parking/set")
+    @ResponseBody
+    public JsonNode setParking(@RequestBody String body) throws JsonProcessingException {
+//        JsonNode jsonNode = objectMapper.readTree(body);
+        Parking parking = objectMapper.convertValue(body, Parking.class);
+        parkingService.set(parking);
         return null;
     }
 

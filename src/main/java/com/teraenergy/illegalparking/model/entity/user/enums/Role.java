@@ -15,7 +15,10 @@ public enum Role {
 
     USER("ROLE_USER"),
 
+    GOVERNMENT("ROLE_GOVERNMENT"),
+
     ADMIN("ROLE_ADMIN");
+
 
     private String value;
 

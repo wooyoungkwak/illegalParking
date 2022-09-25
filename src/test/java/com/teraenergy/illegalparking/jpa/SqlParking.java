@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
+import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
@@ -35,7 +36,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlParking {
@@ -145,9 +146,16 @@ public class SqlParking {
                         parking.setLongitude(Double.parseDouble(getCellData(row.getCell(29))));
                         parking.setReferenceDate(LocalDate.parse(getCellData(row.getCell(30)).split(" ")[0]));
 
-//                    LawDong lawDong = lawDongService.getFromLnmadr(parking.getLnmadr());
-//                    parking.setCode(lawDong.getCode());
-                        parking.setCode("1111100002");
+                        String temp[] = parking.getLnmadr().trim().split(" ");
+                        String addr = temp[0] + " " + temp[1] + " " +temp[2];
+                        LawDong lawDong = lawDongService.getFromLnmadr(addr);
+
+                        if ( lawDong != null) {
+                            parking.setCode(lawDong.getCode());
+                        } else {
+                            parking.setCode("");
+                        }
+                        parking.setIsDel(false);
                         parkings.add(parking);
                     }
                 }
@@ -158,5 +166,40 @@ public class SqlParking {
         }
     }
 
+    @Test
+    public void update(){
+        List<Parking> parkings = parkingService.gets();
+        List<Parking> newParkings = Lists.newArrayList();
+
+        for (Parking parking : parkings) {
+            if (!parking.getLnmadr().equals("")) {
+                String temp[] = parking.getLnmadr().trim().split(" ");
+                String addr = temp[0] + " " + temp[1] + " " +temp[2];
+                LawDong lawDong = lawDongService.getFromLnmadr(addr);
+                if ( lawDong != null) {
+                    parking.setCode(lawDong.getCode());
+                } else {
+                    parking.setCode("");
+                }
+                newParkings.add(parking);
+            } else {
+                parking.setCode("");
+                newParkings.add(parking);
+            }
+        }
+
+        parkingService.sets(parkings);
+
+    }
+
+    @Test
+    public void select() {
+        Parking parking = parkingService.get(1000);
+        if (parking == null) {
+            System.out.println("parking is null ");
+        } else  {
+            System.out.println(parking.getCode());
+        }
+    }
 
 }

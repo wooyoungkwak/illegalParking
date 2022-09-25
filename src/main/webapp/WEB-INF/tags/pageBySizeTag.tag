@@ -22,9 +22,9 @@
 		<div class="col">
 			<ul class="pagination justify-content-center my-4 me-5 pe-5" id="pagination">
 				<li class="page-item"><a class="page-link"><</a></li>
-				<c:if test="${isBeginOver}">
-					<li class="page-item ms-2 me-2">...</li>
-				</c:if>
+<%--				<c:if test="${isBeginOver}">--%>
+<%--					<li class="page-item ms-2 me-2">...</li>--%>
+<%--				</c:if>--%>
 				<c:choose>
 					<c:when test="${ totalPages != null && totalPages <= 3}">
 						<c:forEach var="item" begin="1" end="${totalPages}" varStatus="status">

@@ -11,5 +11,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * Description :
  */
 public interface LawDongRepository extends JpaRepository<LawDong, Integer> {
+    LawDong findByCodeAndIsDel(String code, Boolean isDel);
 
+    LawDong findByNameAndIsDel(String name, Boolean isDel);
 }

@@ -1,6 +1,8 @@
 package com.teraenergy.illegalparking.model.entity.lawdong.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.QLawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.repository.LawDongRepository;
@@ -22,27 +24,17 @@ import java.util.List;
 @Service
 public class LawDongServiceImpl implements LawDongService{
 
-    private final EntityManager entityManager;
-
+    private final JPAQueryFactory jpaQueryFactory;
     private final LawDongRepository lawDongRepository;
 
     @Override
     public LawDong get(String code) {
-        JPAQueryFactory query = new JPAQueryFactory(entityManager);
-        return query.selectFrom(QLawDong.lawDong)
-                .where(QLawDong.lawDong.code.eq(code))
-                .fetchOne();
+        return lawDongRepository.findByCodeAndIsDel(code, false);
     }
 
     @Override
     public LawDong getFromLnmadr(String lnmadr) {
-        String temp[] = lnmadr.split("동");
-        lnmadr = (temp[0] + "동").trim();
-        JPAQueryFactory query = new JPAQueryFactory(entityManager);
-        return query.selectFrom(QLawDong.lawDong)
-                .where(QLawDong.lawDong.isDel.isFalse())
-                .where(QLawDong.lawDong.name.contains(lnmadr))
-                .fetchOne();
+        return lawDongRepository.findByNameAndIsDel(lnmadr, false);
     }
 
     @Override
@@ -61,8 +53,16 @@ public class LawDongServiceImpl implements LawDongService{
     }
 
     @Override
-    public void delete(LawDong lawDong) {
-        lawDong.setIsDel(true);
+    public void modify(LawDong lawDong) {
         lawDongRepository.save(lawDong);
     }
+
+    @Override
+    public void remove(LawDong lawDong) {
+        JPAUpdateClause query = jpaQueryFactory.update(QLawDong.lawDong);
+        query.set(QLawDong.lawDong.isDel, true);
+        query.where(QLawDong.lawDong.dongSeq.eq(lawDong.getDongSeq()));
+        query.execute();
+    }
 }
+

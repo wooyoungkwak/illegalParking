@@ -1,8 +1,10 @@
 package com.teraenergy.illegalparking.config;
 
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
@@ -67,9 +69,9 @@ public class MybatisConfigure {
         // Mapper의 result, parameterType의 패키지 경로를 클래스만 작성 할 수 있도록 도와줌.
         sessionFactory.setTypeAliasesPackage( "com.teraenergy.illegalparking.model.entity" );
 
-//        ??
+        // enum type 을 mybatis 에서 사용하기위해 설정
 //        sessionFactory.setTypeHandlers(new TypeHandler[]{
-//                new StockType.TypeHandler()
+//                new IllegalType.TypeHandler()
 //        });
 
         return sessionFactory.getObject();

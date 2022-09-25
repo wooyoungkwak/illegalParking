@@ -17,12 +17,12 @@ import java.util.List;
 
 /**
  * Date : 2022-09-20
- * Author : zilet
+ * Author : young
  * Project : illegalParking
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlUser {

@@ -117,6 +117,9 @@ public class Parking {
     LocalDate referenceDate;
 
     @Column(nullable = false)
+    Boolean isDel;
+
+    @Column(nullable = false)
     String code;
 
 }

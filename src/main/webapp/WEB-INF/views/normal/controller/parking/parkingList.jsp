@@ -74,18 +74,23 @@
 									<td>${parking.parkingchrgeInfo}</td>
 									<td>${parking.operDay}</td>
 									<td>${parking.weekdayOperOpenHhmm} ~ ${parking.weekdayOperColseHhmm}</td>
-									<td>${parking.rdnmadr}</td>
+									<td>
+										<c:choose>
+											<c:when test="${ parking.rdnmadr == ''}">${parking.lnmadr}</c:when>
+											<c:otherwise>${parking.rdnmadr}</c:otherwise>
+										</c:choose>
+									</td>
 								</tr>
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageBySizeTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>
 		</main>
 		
-		<layoutTags:parkingAddTag parkingSeq="1" />
+		<layoutTags:parkingAddTag parkingSeq="1" path="parkingList"/>
 	</stripes:layout-component>
 
 	<!-- footer -->

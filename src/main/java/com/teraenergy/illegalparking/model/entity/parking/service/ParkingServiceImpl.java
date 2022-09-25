@@ -3,6 +3,7 @@ package com.teraenergy.illegalparking.model.entity.parking.service;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Date : 2022-09-14
@@ -31,18 +33,23 @@ import java.util.List;
 @Service
 public class ParkingServiceImpl implements ParkingService{
 
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
 
     private final ParkingRepository parkingRepository;
 
     @Override
+    public Parking get(Integer parkingSeq) {
+        return parkingRepository.findByParkingSeq(parkingSeq);
+    }
+
+    @Override
     public List<Parking> gets() {
-        return parkingRepository.findAll();
+        return parkingRepository.findByIsDel(false);
     }
 
     @Override
     public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
-        JPAQuery query = queryFactory.selectFrom(QParking.parking);
+        JPAQuery query = jpaQueryFactory.selectFrom(QParking.parking);
 
         if ( search != null && search.length() > 0) {
             switch (filterColumn) {
@@ -54,6 +61,8 @@ public class ParkingServiceImpl implements ParkingService{
                     break;
             }
         }
+
+        query.where(QParking.parking.isDel.isFalse());
 
         int total = query.fetch().size();
 
@@ -90,11 +99,6 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public Parking get(Integer parkingSeq) {
-        return parkingRepository.findById(parkingSeq).isEmpty() == true ? null : parkingRepository.findById(parkingSeq).get();
-    }
-
-    @Override
     public List<Parking> sets(List<Parking> parkings) {
         return parkingRepository.saveAll(parkings);
     }
@@ -105,7 +109,15 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public Parking delete(Parking parking) {
+    public Parking modify(Parking parking) {
         return parkingRepository.save(parking);
+    }
+
+    @Override
+    public long remove(Parking parking) {
+        JPAUpdateClause query = jpaQueryFactory.update(QParking.parking);
+        query.set(QParking.parking.isDel, true);
+        query.where(QParking.parking.parkingSeq.eq(parking.getParkingSeq()));
+        return query.execute();
     }
 }

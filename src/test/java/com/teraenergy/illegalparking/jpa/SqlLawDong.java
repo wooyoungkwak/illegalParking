@@ -2,6 +2,7 @@ package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
+import com.teraenergy.illegalparking.model.entity.lawdong.repository.LawDongRepository;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -29,7 +30,7 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlLawDong {
@@ -42,6 +43,9 @@ public class SqlLawDong {
 
     @Autowired
     LawDongService lawDongService;
+
+    @Autowired
+    LawDongRepository lawDongRepository;
 
     private String getCellData(XSSFCell cell) {
         String value = "";
@@ -109,10 +113,15 @@ public class SqlLawDong {
 
     @Test
     public void select(){
-        LawDong lawDong = lawDongService.get("1");
+        LawDong lawDong = lawDongService.get("5013032000");
+
         if (lawDong == null) {
             System.out.println(" =============> lawDong is null ");
+        } else {
+            System.out.println(lawDong.getName());
         }
+
+        lawDongRepository.findByNameAndIsDel("", false);
     }
 
 }

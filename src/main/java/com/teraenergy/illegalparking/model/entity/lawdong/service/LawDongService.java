@@ -24,6 +24,8 @@ public interface LawDongService {
 
     public void sets(List<LawDong> lawDongs);
 
-    public void delete(LawDong lawDong);
+    public void modify(LawDong lawDong);
+
+    public void remove(LawDong lawDong);
 
 }

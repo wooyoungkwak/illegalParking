@@ -26,13 +26,12 @@ file:
   templateLocation: classpath:/templates/
   staticLocation: classpath:/static/
   resourceUri: /fileUpload/**
-  resourceLocation: D:/fileUpload/
+  resourceLocation: D:/fileUpload/**
   excelPath: D:/fileUpload/excel
 mybatis:
   mapper-locations: classpath:/mybatis/*.xml
 
 hibernate:
-
   metadata_builder_contributor=com:
     vladmihalcea:
       book:

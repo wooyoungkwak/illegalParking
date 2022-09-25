@@ -30,6 +30,8 @@ public interface ParkingService {
 
     public Parking set(Parking parking);
 
-    public Parking delete(Parking parking);
+    public Parking modify(Parking parking);
+
+    public long remove(Parking parking);
 
 }

@@ -2,6 +2,7 @@ package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalZoneRepository;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import org.junit.jupiter.api.Test;
@@ -25,13 +26,16 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlIllegalZone {
 
     @Autowired
     IllegalZoneJpaService illegalZoneJpaService;
+
+    @Autowired
+    IllegalZoneRepository repository;
 
 
     @Test
@@ -41,22 +45,8 @@ public class SqlIllegalZone {
 
     @Test
     public void select() {
-        List<IllegalZone> illegalZones = illegalZoneJpaService.gets();
-        IllegalZone illegalZone = illegalZones.get(0);
-//        try {
-//            Polygon polygon = (Polygon) new WKTReader().read(illegalZone.getPolygon());
-//        } catch (ParseException e) {
-//            throw new RuntimeException(e);
-//        }
-        System.out.println(illegalZone.getPolygon());
-        System.out.println(illegalZone.getIllegalType());
-//
-//        for ( IllegalZone illegalZone : illegalZones) {
-//            System.out.println(illegalZone.getCode());
-//            System.out.println(illegalZone.getName());
-//            System.out.println(illegalZone.getPolygon());
-//            System.out.println(illegalZone.getIllegalType().getTypeSeq());
-//            System.out.println(illegalZone.getIllegalType().getName());
-//        }
+
+
     }
+
 }

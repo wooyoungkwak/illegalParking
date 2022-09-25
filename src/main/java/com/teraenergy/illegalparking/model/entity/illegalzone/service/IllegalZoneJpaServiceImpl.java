@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.QIllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalZoneRepository;
@@ -11,6 +12,7 @@ import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -48,11 +50,14 @@ public class IllegalZoneJpaServiceImpl implements IllegalZoneJpaService{
     public IllegalZone get(Integer zoneSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
         query.where(QIllegalZone.illegalZone.zoneSeq.eq(zoneSeq));
+        query.where(QIllegalZone.illegalZone.isDel.isFalse());
         return (IllegalZone) query.fetchOne();
     }
 
     @Override
     public IllegalZone set(IllegalZone illegalZone) {
+        String query = "";
+        entityManager.createQuery(query);
         return illegalZoneRepository.save(illegalZone);
     }
 
@@ -62,12 +67,29 @@ public class IllegalZoneJpaServiceImpl implements IllegalZoneJpaService{
     }
 
     @Override
-    public List<IllegalZone> updates(List<IllegalZone> illegalZones) {
+    public IllegalZone modify(IllegalZone illegalZone) {
+        return illegalZoneRepository.save(illegalZone);
+    }
+
+    @Override
+    public List<IllegalZone> modifies(List<IllegalZone> illegalZones) {
         return illegalZoneRepository.saveAll(illegalZones);
     }
 
     @Override
-    public List<IllegalZone> deletes(List<IllegalZone> illegalZones) {
-        return illegalZoneRepository.saveAll(illegalZones);
+    public long remove(Integer illegalZoneSeq) {
+        JPAUpdateClause query = jpaQueryFactory.update(QIllegalZone.illegalZone);
+        query.set(QIllegalZone.illegalZone.isDel, true);
+        query.where(QIllegalZone.illegalZone.zoneSeq.eq(illegalZoneSeq));
+        return query.execute();
+    }
+
+
+    @Override
+    public long removes(List<Integer> illegalZoneSeqs) {
+        JPAUpdateClause query = jpaQueryFactory.update(QIllegalZone.illegalZone);
+        query.set(QIllegalZone.illegalZone.isDel, true);
+        query.where(QIllegalZone.illegalZone.zoneSeq.in(illegalZoneSeqs));
+        return query.execute();
     }
 }

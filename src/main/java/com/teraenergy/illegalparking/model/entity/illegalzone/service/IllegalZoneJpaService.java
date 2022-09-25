@@ -22,7 +22,11 @@ public interface IllegalZoneJpaService {
 
     List<IllegalZone> sets(List<IllegalZone> illegalZone);
 
-    List<IllegalZone> updates(List<IllegalZone> illegalZones);
+    IllegalZone modify(IllegalZone illegalZone);
 
-    List<IllegalZone> deletes(List<IllegalZone> illegalZones);
+    List<IllegalZone> modifies(List<IllegalZone> illegalZones);
+
+    long remove(Integer illegalZoneSeq);
+
+    long removes(List<Integer> illegalZoneSeqs);
 }

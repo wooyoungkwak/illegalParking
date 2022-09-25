@@ -259,8 +259,15 @@ public class FileController {
                         parking.setLongitude(Double.parseDouble(getCellData(row.getCell(29))));
                         parking.setReferenceDate(LocalDate.parse(getCellData(row.getCell(30)).split(" ")[0]));
 
-                        LawDong lawDong = lawDongService.getFromLnmadr(parking.getLnmadr());
-                        parking.setCode(lawDong.getCode());
+                        String temp[] = parking.getLnmadr().trim().split(" ");
+                        String addr = temp[0] + " " + temp[1] + " " +temp[2];
+                        LawDong lawDong = lawDongService.getFromLnmadr(addr);
+
+                        if ( lawDong != null) {
+                            parking.setCode(lawDong.getCode());
+                        } else {
+                            parking.setCode("");
+                        }
                         parkings.add(parking);
                     }
                 }

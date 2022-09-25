@@ -1,13 +1,18 @@
 package com.teraenergy.illegalparking.aop;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 /**
  * Date : 2022-09-14
@@ -19,8 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 @Component
 public class AopController {
-    @Around("execution(* com.teraenergy.illegalparking.controller..*(..)) ")
-    public Object homeProcessing(ProceedingJoinPoint joinPoint) {
+
+    @Autowired
+    ObjectMapper objectMapper;
+
+    @Around("execution(* com.teraenergy.illegalparking.controller..*Controller.*(..)) ")
+    public Object controllerProcessing(ProceedingJoinPoint joinPoint) {
         Object object = null;
         try {
             object = joinPoint.proceed();
@@ -29,6 +38,27 @@ public class AopController {
         }
 
         return object;
+    }
+
+    @Around("execution(* com.teraenergy.illegalparking.controller..*Api.*(..)) ")
+    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
+        HashMap<String, Object> result = Maps.newHashMap();
+        try {
+            result.put("success", true);
+            result.put("data", joinPoint.proceed());
+        } catch (Throwable e) {
+            result.put("success", false);
+            result.put("data", "");
+            result.put("msg", e.getMessage());
+        }
+
+        try {
+            String jsonStr = objectMapper.writeValueAsString(result);
+            return objectMapper.readValue(jsonStr, Object.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Around("execution(* com.teraenergy.illegalparking.controller.login.LoginController.*(..)) ")

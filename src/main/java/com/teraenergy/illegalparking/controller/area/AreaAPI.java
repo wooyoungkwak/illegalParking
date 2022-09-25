@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Controller
-public class AreaAPIController {
+public class AreaAPI {
 
     private final ObjectMapper objectMapper;
 

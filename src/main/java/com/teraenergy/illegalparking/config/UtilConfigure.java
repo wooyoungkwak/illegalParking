@@ -43,4 +43,6 @@ public class UtilConfigure {
         log.info(" util configure register [JPAQueryFactory] ");
         return new JPAQueryFactory(entityManager);
     }
+
+
 }

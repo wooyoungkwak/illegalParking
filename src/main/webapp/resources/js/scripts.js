@@ -50,7 +50,7 @@ $.JJAjaxSync = function (opt) {
             return myXhr;
         },
         error: function (jqXHR, statusCode, errorThrown) {
-            opt.error(errorThrown);
+            opt.error(statusCode);
         },
         success: function (data, statusCode, jqXHR) {
             opt.success(data);

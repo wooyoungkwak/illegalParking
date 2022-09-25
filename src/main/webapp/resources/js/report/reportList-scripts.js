@@ -1,5 +1,14 @@
 $(function (){
 
+    function getData(){
+        let arr = $('#data').serializeArray();
+        let data = {};
+        $(arr).each(function(index, obj){
+            data[obj.name] = obj.value;
+        });
+        return data;
+    }
+
     function search(pageNumber) {
         if (pageNumber === undefined) {
             $('#pageNumber').val("1");
@@ -10,6 +19,7 @@ $(function (){
     }
 
     function initialize() {
+
         $('#orderBy a').on('click', function (){
             search();
         });
@@ -49,6 +59,61 @@ $(function (){
             $('#pageNumber').val(1);
             search();
         });
+
+        // 신고 등록 표시
+        $('#reportTable tr').on('click', function () {
+
+            let reportSeqStr = $(this).children("td:eq(0)").text();
+            reportSeq = Number.parseInt(reportSeqStr);
+
+            // let result = $.JJAjaxAsync({
+            //     url: _contextPath + '/get',
+            //     data: {
+            //         reportSeq: reportSeq
+            //     }
+            // });
+            //
+            // $.each(result, function (key, value) {
+            //     $('#' + key).val(value);
+            //     if (key == "rdnmadr" ) {
+            //         $('#rdnmadr').val(result.lnmadr);
+            //     }
+            // });
+
+            $('#reportMain').hide();
+            $('#reportSet').show();
+        });
+
+
+        $('#modify').on('click', function (){
+
+            let data = getData();
+            data.reportSeq = reportSeq;
+
+            // if ( confirm("등록 하시겠습니까?") ) {
+            //     $.JJAjaxSync({
+            //         url: _contextPath + '/set',
+            //         data: data,
+            //         success: function (){
+            //             alert("등록 되었습니다.");
+            //         } ,
+            //         err: function (code){
+            //             alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
+            //         }
+            //     });
+            // } else {
+            //     log(getData());
+            // }
+        });
+
+        $('#close').on('click', function () {
+            $('#reportMain').show();
+            $('#reportSet').hide();
+        });
+
+        $('#reportSet').hide();
+
+
     }
 
     initialize();
