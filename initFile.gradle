@@ -169,10 +169,10 @@ task createYML {
                         "  config: classpath:log4j2.xml\n" +
                         "debug: false\n" +
                         "file:\n" +
-                        "  templateLocation: classpath:/templates/\n" +
-                        "  staticLocation: classpath:/static/\n" +
+                        "  templatePath: classpath:/templates/\n" +
+                        "  staticPath: classpath:/static/\n" +
                         "  resourceUri: /fileUpload/**\n" +
-                        "  resourceLocation: D:/fileUpload/\n" +
+                        "  resourcePath: D:/fileUpload/\n" +
                         "---\n" +
                         "# debug\n" +
                         "spring:\n" +

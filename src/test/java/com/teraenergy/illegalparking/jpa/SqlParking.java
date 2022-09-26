@@ -36,12 +36,12 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "home")
+@ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlParking {
 
-    @Value("${file.staticLocation}")
+    @Value("${file.staticPath}")
     String staticPath;
 
     @Autowired
@@ -147,14 +147,18 @@ public class SqlParking {
                         parking.setReferenceDate(LocalDate.parse(getCellData(row.getCell(30)).split(" ")[0]));
 
                         String temp[] = parking.getLnmadr().trim().split(" ");
-                        String addr = temp[0] + " " + temp[1] + " " +temp[2];
-                        LawDong lawDong = lawDongService.getFromLnmadr(addr);
-
-                        if ( lawDong != null) {
-                            parking.setCode(lawDong.getCode());
+                        if ( temp.length >= 3) {
+                            String addr = temp[0] + " " + temp[1] + " " + temp[2];
+                            LawDong lawDong = lawDongService.getFromLnmadr(addr);
+                            if ( lawDong != null) {
+                                parking.setCode(lawDong.getCode());
+                            } else {
+                                parking.setCode("");
+                            }
                         } else {
                             parking.setCode("");
                         }
+
                         parking.setIsDel(false);
                         parkings.add(parking);
                     }

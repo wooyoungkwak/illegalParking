@@ -32,7 +32,7 @@
                 <!-- 시간별 로그 파일 생성-->
                 <TimeBasedTriggeringPolicy modulate="true" interval="1"/>
                 <!-- 크기 로그 파일 생성-->
-                <SizeBasedTriggeringPolicy size="50MB" />
+                <SizeBasedTriggeringPolicy size="50MB"/>
             </Policies>
             <!-- 롤링 파일 5개 까지 생성 -->
             <DefaultRolloverStrategy max="5" fileIndex="min"/>

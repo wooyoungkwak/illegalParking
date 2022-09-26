@@ -36,14 +36,10 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
     private final UserAuthenticationManager authenticationManager;
 
 
-    @Value("${file.resourceLocation}")
-    String resourceLocation;
-
-
     @Override
     public void configure(WebSecurity webSecurity) {
         log.info("security configure register [WebSecurity]");
-        webSecurity.ignoring().antMatchers("/resources/**").antMatchers(resourceLocation);
+        webSecurity.ignoring().antMatchers("/resources/**");
     }
 
     @Override

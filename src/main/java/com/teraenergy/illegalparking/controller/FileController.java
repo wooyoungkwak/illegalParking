@@ -52,8 +52,8 @@ public class FileController {
 
     private final LawDongService lawDongService;
 
-    @Value("${file.resourceLocation}")
-    String resourceLocation;
+    @Value("${file.resourcePath}")
+    String resourcePath;
 
     @Value("${file.excelPath}")
     String excelPath;
@@ -142,7 +142,7 @@ public class FileController {
                 FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
                 String fileName = (String) resultMap.get(KEY_FILENAME);
 
-                FileOutputStream fileOutputStream = new FileOutputStream(new File(resourceLocation));
+                FileOutputStream fileOutputStream = new FileOutputStream(new File(resourcePath));
                 fileOutputStream.write(fis.readAllBytes());
             }
 
@@ -314,7 +314,7 @@ public class FileController {
     public void download(HttpServletRequest request, HttpServletResponse response, HashMap<String, Object> parameterMap) throws Exception {
 
         String fileName = (String) parameterMap.get("fileName");
-        String filePath = Paths.get(resourceLocation, fileName).toString();
+        String filePath = Paths.get(resourcePath, fileName).toString();
         File file = new File(filePath);
 
         BufferedInputStream bufferedInputStream = null;

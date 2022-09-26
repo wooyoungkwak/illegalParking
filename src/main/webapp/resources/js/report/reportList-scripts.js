@@ -18,6 +18,20 @@ $(function (){
         location.href = _contextPath  + "/reportList?" + $('form').serialize();
     }
 
+    function initializeReportSetTagTitle(carNum){
+        $('#reportSetTitle').text(carNum);
+    }
+
+    function initializeReportSetTagBtn(isComplete){
+        if ( isComplete === undefined || isComplete === "대기") {
+            $('#register').show();
+            $('#modify').hide();
+        }  else {
+            $('#register').hide();
+            $('#modify').show();
+        }
+    }
+
     function initialize() {
 
         $('#orderBy a').on('click', function (){
@@ -64,8 +78,9 @@ $(function (){
         $('#reportTable tr').on('click', function () {
 
             let reportSeqStr = $(this).children("td:eq(0)").text();
-            reportSeq = Number.parseInt(reportSeqStr);
+            let carNum = $(this).children("td:eq(3)").text();
 
+            reportSeq = Number.parseInt(reportSeqStr);
             // let result = $.JJAjaxAsync({
             //     url: _contextPath + '/get',
             //     data: {
@@ -75,10 +90,10 @@ $(function (){
             //
             // $.each(result, function (key, value) {
             //     $('#' + key).val(value);
-            //     if (key == "rdnmadr" ) {
-            //         $('#rdnmadr').val(result.lnmadr);
-            //     }
             // });
+
+            initializeReportSetTagTitle(carNum);
+            initializeReportSetTagBtn();
 
             $('#reportMain').hide();
             $('#reportSet').show();
@@ -112,7 +127,6 @@ $(function (){
         });
 
         $('#reportSet').hide();
-
 
     }
 

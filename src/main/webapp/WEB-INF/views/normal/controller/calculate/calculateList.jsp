@@ -9,8 +9,8 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateFilterColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateOrderColumn" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -45,36 +45,38 @@
 							<div class="col-1"></div>
 							<div class="col-2"></div>
 							<div class="col-1">
-								<tags:filterTag id="filterColumn" enumValues="${ParkingFilterColumn.values()}" column="${filterColumn}"/>
+								<tags:filterTag id="filterColumn" enumValues="${CalculateFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
 							<div class="col-4">
 								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
 							</div>
 							<div class="col-1"></div>
 							<div class="col-3">
-								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
+								<tags:sortTag id="orderBy" enumValues="${CalculateOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
 							</div>
 						</form>
 						<table class="table table-hover table-bordered">
 							<thead>
 							<tr>
 								<th scope="col">#</th>
-								<th scope="col">주차장명</th>
-								<th scope="col">요금</th>
-								<th scope="col">운행요일</th>
-								<th scope="col">평일시간</th>
-								<th scope="col">주소</th>
+								<th scope="col">사용자</th>
+								<th scope="col">추가포인트</th>
+								<th scope="col">사용포인트</th>
+								<th scope="col">현재포인트</th>
+								<th scope="col">제품</th>
+								<th scope="col">일자</th>
 							</tr>
 							</thead>
 							<tbody>
-							<c:forEach var="parking" items="${parkings}" varStatus="status">
+							<c:forEach var="calculate" items="${calculates}" varStatus="status">
 								<tr>
-									<td>${parking.parkingSeq}</td>
-									<td>${parking.prkplceNm}</td>
-									<td>${parking.parkingchrgeInfo}</td>
-									<td>${parking.operDay}</td>
-									<td>${parking.weekdayOperOpenHhmm} ~ ${parking.weekdayOperColseHhmm}</td>
-									<td>${parking.rdnmadr}</td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
 								</tr>
 							</c:forEach>
 							</tbody>

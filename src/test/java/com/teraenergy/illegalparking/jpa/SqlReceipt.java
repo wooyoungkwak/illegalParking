@@ -24,11 +24,11 @@ import java.util.List;
 
 /**
  * Date : 2022-09-24
- * Author : zilet
+ * Author : young
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "home")
+@ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 public class SqlReceipt {
