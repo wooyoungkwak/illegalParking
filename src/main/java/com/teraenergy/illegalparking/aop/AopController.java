@@ -40,26 +40,26 @@ public class AopController {
         return object;
     }
 
-    @Around("execution(* com.teraenergy.illegalparking.controller..*Api.*(..)) ")
-    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
-        HashMap<String, Object> result = Maps.newHashMap();
-        try {
-            result.put("success", true);
-            result.put("data", joinPoint.proceed());
-        } catch (Throwable e) {
-            result.put("success", false);
-            result.put("data", "");
-            result.put("msg", e.getMessage());
-        }
-
-        try {
-            String jsonStr = objectMapper.writeValueAsString(result);
-            return objectMapper.readValue(jsonStr, Object.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-    }
+//    @Around("execution(* com.teraenergy.illegalparking.controller..*Api.*(..)) ")
+//    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
+//        HashMap<String, Object> result = Maps.newHashMap();
+//        try {
+//            result.put("success", true);
+//            result.put("data", joinPoint.proceed());
+//        } catch (Throwable e) {
+//            result.put("success", false);
+//            result.put("data", "");
+//            result.put("msg", e.getMessage());
+//        }
+//
+//        try {
+//            String jsonStr = objectMapper.writeValueAsString(result);
+//            return objectMapper.readValue(jsonStr, Object.class);
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
     @Around("execution(* com.teraenergy.illegalparking.controller.login.LoginController.*(..)) ")
     public Object loginProcessing(ProceedingJoinPoint joinPoint) {

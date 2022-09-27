@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.model.dto.calculate.domain.ProductDto;
 import com.teraenergy.illegalparking.model.dto.calculate.service.ProductDtoService;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
 import com.teraenergy.illegalparking.model.entity.calculate.service.ProductService;
