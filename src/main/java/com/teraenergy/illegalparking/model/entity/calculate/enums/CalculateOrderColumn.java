@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.enums;
+package com.teraenergy.illegalparking.model.entity.calculate.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,11 +12,11 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum CalculateFilterColumn {
-    user("사용자"), 
-//    currentPoint("현재포인트"),
-    product("제품"),
-    regDt("일자")
+public enum CalculateOrderColumn {
+    calculateSeq("순번"),
+    user("사용자"),
+    currentPoint("현재포인트"),
+    product("제품")
     ;
 
     private String value;

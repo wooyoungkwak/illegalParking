@@ -2,10 +2,14 @@ package com.teraenergy.illegalparking.controller.calculate;
 
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.controller.ExtendsController;
-import com.teraenergy.illegalparking.model.entity.calcurate.domain.Calculate;
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateFilterColumn;
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateOrderColumn;
-import com.teraenergy.illegalparking.model.entity.calcurate.service.CalculateService;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateFilterColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateOrderColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.ProductFilterColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.ProductOrderColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
+import com.teraenergy.illegalparking.model.entity.calculate.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -32,6 +36,8 @@ import java.util.HashMap;
 public class CalculateController extends ExtendsController {
 
     private final CalculateService calculateService;
+
+    private final ProductService productService;
 
     private String subTitle = "결재";
     
@@ -111,31 +117,100 @@ public class CalculateController extends ExtendsController {
         modelAndView.addObject("pageSize", pageSize);
         modelAndView.addObject("isBeginOver", isBeginOver);
         modelAndView.addObject("isEndOver", isEndOver);
-        modelAndView.addObject("parkings", pages.getContent());
+        modelAndView.addObject("calculates", pages.getContent());
 
-
-        modelAndView.setViewName(getPath("/calculateList"));
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
+        modelAndView.setViewName(getPath("/calculateList"));
         return modelAndView;
     }
 
     @GetMapping("/calculate/productList")
-    public ModelAndView productList() {
+    public ModelAndView productList(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
 
+        subTitle = "상품";
 
+        HashMap<String, String> param = _getParam(request);
 
+        String pageNumberStr = param.get("pageNumber");
+        int pageNumber = 1;
+        if ( pageNumberStr != null ) {
+            pageNumber = Integer.parseInt(pageNumberStr);
+        }
 
-        modelAndView.setViewName(getPath("/productList"));
+        String orderColumnStr = param.get("orderColumn");
+        ProductOrderColumn orderColumn;
+        if(orderColumnStr == null) {
+            orderColumn = ProductOrderColumn.productSeq;
+        } else  {
+            orderColumn = ProductOrderColumn.valueOf(orderColumnStr);
+        }
+
+        String filterColumnStr = param.get("filterColumn");
+        ProductFilterColumn filterColumn;
+        if(filterColumnStr == null) {
+            filterColumn = ProductFilterColumn.name;
+        } else  {
+            filterColumn = ProductFilterColumn.valueOf(filterColumnStr);
+        }
+
+        String searchStr = param.get("searchStr");
+        if (searchStr == null) {
+            searchStr = "";
+        }
+
+        String orderDirectionStr = param.get("orderDirection");
+        Sort.Direction direction;
+        if ( orderDirectionStr == null) {
+            direction = Sort.Direction.ASC;
+        } else {
+            direction = Sort.Direction.valueOf(orderDirectionStr);
+        }
+
+        String pageSizeStr = param.get("pageSize");
+        int pageSize = 10;
+        if ( pageSizeStr != null) {
+            pageSize = Integer.parseInt(pageSizeStr);
+        }
+
+        Page<Product> pages = productService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
+
+        boolean isBeginOver = false;
+        boolean isEndOver = false;
+
+        int totalPages = pages.getTotalPages();
+
+        if (totalPages > 3 && ( totalPages - pageNumber ) > 2 ) {
+            isEndOver = true;
+        }
+
+        if (totalPages > 3 && pageNumber > 1) {
+            isBeginOver = true;
+        }
+
+        modelAndView.addObject("totalPages", totalPages);
+        modelAndView.addObject("filterColumn", filterColumnStr);
+        modelAndView.addObject("searchStr", searchStr);
+        modelAndView.addObject("orderColumn", orderColumnStr);
+        modelAndView.addObject("orderDirection", orderDirectionStr);
+
+        modelAndView.addObject("pageNumber", pageNumber);
+        modelAndView.addObject("pageSize", pageSize);
+        modelAndView.addObject("isBeginOver", isBeginOver);
+        modelAndView.addObject("isEndOver", isEndOver);
+        modelAndView.addObject("products", pages.getContent());
+
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
+        modelAndView.setViewName(getPath("/productList"));
         return modelAndView;
     }
 
     @GetMapping("/calculate/productAdd")
     public ModelAndView productAdd() {
         ModelAndView modelAndView = new ModelAndView();
+        subTitle = "상품";
 
 
         modelAndView.setViewName(getPath("/productAdd"));

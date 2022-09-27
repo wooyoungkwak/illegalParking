@@ -1,5 +1,6 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.domain;
+package com.teraenergy.illegalparking.model.entity.calculate.domain;
 
+import com.teraenergy.illegalparking.model.entity.calculate.enums.Brand;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,32 +15,33 @@ import java.time.LocalDateTime;
  * Project : illegalParking
  * Description :
  */
+
 @Getter
 @Setter
-@Entity(name = "calculate")
-public class Calculate {
+@Entity(name = "product")
+public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer calculateSeq;
+    Integer productSeq;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "pointSeq")
-    Point point;
+    @Column
+    String name;
+
+    @Column
+    Brand brand;
+
+    @Column
+    Long pointValue;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "userSeq")
     User user;
 
     @Column
-    Long currentPoint;
-
-    @Column
-    Long beforePoint;
-
-    @Column (nullable = false)
-    Boolean isDel;
-
-    @Column
     LocalDateTime regDt;
+
+    @Column
+    Boolean isDel;
 
 }

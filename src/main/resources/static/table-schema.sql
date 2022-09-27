@@ -156,13 +156,13 @@ CREATE TABLE receipt
 DROP TABLE calculate;
 CREATE TABLE calculate
 (
-    CalculateSeq INT AUTO_INCREMENT PRIMARY KEY,
-    PointSeq     INT      NOT NULL,               -- 포인트 키
-    UserSeq      INT      NOT NULL,               -- 사용자 키 ( 포인트 추가 or 포인트 사용자 )
-    CurrentPoint BIGINT   NOT NULL,               -- 현재 포인트 점수
-    BeforePoint  BIGINT   NOT NULL,               -- 이전 포인트 점수
-    IsDel        BOOLEAN  NOT NULL DEFAULT FALSE, -- 삭제 여부
-    RegDt        Datetime NOT NULL                -- 등록 일자
+    CalculateSeq      INT AUTO_INCREMENT PRIMARY KEY,
+    PointSeq          INT      NOT NULL,               -- 포인트 키
+    UserSeq           INT      NOT NULL,               -- 사용자 키 ( 포인트 추가 or 포인트 사용자 )
+    CurrentPointValue BIGINT   NOT NULL,               -- 현재 포인트 점수
+    BeforePointValue  BIGINT   NOT NULL,               -- 이전 포인트 점수
+    IsDel             BOOLEAN  NOT NULL DEFAULT FALSE, -- 삭제 여부
+    RegDt             Datetime NOT NULL                -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -170,13 +170,13 @@ CREATE TABLE calculate
 DROP TABLE point;
 CREATE TABLE point
 (
-    PlusPointSeq INT AUTO_INCREMENT PRIMARY KEY,
-    Note         VARCHAR(100) NOT,      -- 등록자
-    Point        BIGINT       NOT NULL, -- 포인트 점수
-    UserSeq      INT          NOT NULL, -- 등록자
-    ReportSeq    INT          NOT NULL, -- 신고 키
-    ProductSeq   INT          NOT NULL, -- 제품 키
-    State        INT          NOT NULL  -- 상태 (추가 포이트(Plug) / 사용 포인트(Minus) )
+    PointSeq   INT AUTO_INCREMENT PRIMARY KEY,
+    Note       VARCHAR(100) NULL, -- 등록자
+    Value      BIGINT NOT NULL,   -- 포인트 점수
+    UserSeq    INT    NOT NULL,   -- 등록자
+    ReportSeq  INT NULL,          -- 신고 키
+    ProductSeq INT NULL,          -- 제품 키
+    PointState INT    NOT NULL    -- 상태 (추가 포이트(Plug) / 사용 포인트(Minus) )
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -185,11 +185,11 @@ DROP TABLE product;
 CREATE TABLE product
 (
     ProductSeq INT AUTO_INCREMENT PRIMARY KEY,
-    Name       INT      NOT NULL, -- 상품 이름
-    IconName   INT      NOT NULL, -- 브랜드 아이콘
-    Point      BIGINT   NOT NULL, -- 포인트 점수
-    UserSeq    INT      NOT NULL, -- 등록자
-    RegDt      Datetime NOT NULL  -- 등록 일자
+    Name       VARCHAR(30) NOT NULL, -- 상품 이름
+    Brand      INT         NOT NULL, -- 브랜드 이름
+    PointValue BIGINT      NOT NULL, -- 포인트 점수
+    UserSeq    INT         NOT NULL, -- 등록자
+    RegDt      Datetime    NOT NULL  -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -199,8 +199,7 @@ DROP TABLE environment;
 CREATE TABLE environment
 (
     EnvironmentSeq INT AUTO_INCREMENT PRIMARY KEY,
-    Name           INT      NOT NULL, -- 그룹 이름
-    Point          BIGINT   NOT NULL, --  포인트 점수
+    zoneGroup      INT      NOT NULL, -- 그룹 이름
     RegDt          Datetime NOT NULL  -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;

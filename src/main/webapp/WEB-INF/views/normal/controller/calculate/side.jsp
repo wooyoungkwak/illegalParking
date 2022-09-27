@@ -19,11 +19,11 @@
 				</a>
 
 				<div class="sb-sidenav-menu-heading">제품</div>
-				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productList" id="productList">
+				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productList" id="side_productList">
 					<div class="sb-nav-link-icon"><i class="fas fa-calculator"></i></div>
 					상품목록
 				</a>
-				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productAdd" id="productAdd">
+				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productAdd" id="side_productAdd">
 					<div class="sb-nav-link-icon"><i class="fas fa-fill-drip"></i></div>
 					상품등록
 				</a>

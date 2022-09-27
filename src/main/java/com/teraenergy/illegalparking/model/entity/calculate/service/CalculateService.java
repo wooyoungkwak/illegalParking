@@ -1,10 +1,8 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.service;
+package com.teraenergy.illegalparking.model.entity.calculate.service;
 
-import com.teraenergy.illegalparking.model.entity.calcurate.domain.Calculate;
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateFilterColumn;
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateOrderColumn;
-import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
-import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateFilterColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateOrderColumn;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 

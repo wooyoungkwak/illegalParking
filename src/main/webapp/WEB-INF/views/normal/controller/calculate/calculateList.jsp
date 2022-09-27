@@ -9,8 +9,8 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateFilterColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateOrderColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateFilterColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateOrderColumn" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -61,22 +61,35 @@
 								<th scope="col">#</th>
 								<th scope="col">사용자</th>
 								<th scope="col">추가포인트</th>
+								<th scope="col">신고</th>
 								<th scope="col">사용포인트</th>
-								<th scope="col">현재포인트</th>
 								<th scope="col">제품</th>
+								<th scope="col">현재포인트</th>
 								<th scope="col">일자</th>
 							</tr>
 							</thead>
 							<tbody>
 							<c:forEach var="calculate" items="${calculates}" varStatus="status">
 								<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
+									<td>${calculate.calculateSeq}</td>
+									<td>${calculate.user.name}</td>
+									<c:choose>
+										<c:when test="${calculate.point.pointState == 'PLUST_STATE'}">
+											<td class="text-primary">${calculate.point.value}</td>
+											<td>${calculate.point.report.secondReceipt.illegalZone.illegalType.value}</td>
+											<td></td>
+											<td></td>
+										</c:when>
+										<c:otherwise>
+											<td></td>
+											<td>-</td>
+											<td class="text-danger">${calculate.point.value}</td>
+											<td>${calculate.point.product.brand.value} - ${calculate.point.product.name}</td>
+										</c:otherwise>
+									</c:choose>
+
+									<td>${calculate.currentPointValue}</td>
+									<td>${calculate.regDt}</td>
 								</tr>
 							</c:forEach>
 							</tbody>

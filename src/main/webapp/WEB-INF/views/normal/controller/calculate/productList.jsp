@@ -9,8 +9,10 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn" %>
+<%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.ProductFilterColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.ProductOrderColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.Brand" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -27,16 +29,16 @@
 
 	<!-- content -->
 	<stripes:layout-component name="contents">
-		<main>
+		<main id="productTable">
 			<div class="container-fluid px-4">
 				<h1 class="mt-4">결재목록</h1>
 				<ol class="breadcrumb mb-4">
-					<li class="breadcrumb-item active">${subTitle} > 결재목록</li>
+					<li class="breadcrumb-item active">${subTitle} > 상품목록</li>
 				</ol>
 				<div class="card mb-4 shadow-sm rounded">
 					<div class="card-header">
 						<i class="fas fa-table me-1"></i>
-						주차장 정보
+						상품 정보
 					</div>
 					<div class="card-body">
 						<form class="row mb-3 g-3">
@@ -45,34 +47,36 @@
 							<div class="col-1"></div>
 							<div class="col-2"></div>
 							<div class="col-1">
-								<tags:filterTag id="filterColumn" enumValues="${ParkingFilterColumn.values()}" column="${filterColumn}"/>
+								<tags:filterTag id="filterColumn" enumValues="${ProductFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
 							<div class="col-4">
 								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
 							</div>
 							<div class="col-1"></div>
 							<div class="col-3">
-								<tags:sortTag id="orderBy" enumValues="${ParkingOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
+								<tags:sortTag id="orderBy" enumValues="${ProductOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
 							</div>
 						</form>
-						<table class="table table-hover table-bordered">
+						<table class="table table-hover table-bordered" id="productTable">
 							<thead>
 							<tr>
 								<th scope="col">#</th>
+								<th scope="col">브랜드</th>
 								<th scope="col">상품명</th>
-								<th scope="col">포인트</th>
+								<th scope="col">구매포인트</th>
 								<th scope="col">등록자</th>
 								<th scope="col">등록일</th>
 							</tr>
 							</thead>
 							<tbody>
-							<c:forEach var="parking" items="${parkings}" varStatus="status">
+							<c:forEach var="product" items="${products}" varStatus="status">
 								<tr>
-									<td>${parking.parkingSeq}</td>
-									<td>${parking.prkplceNm}</td>
-									<td>${parking.parkingchrgeInfo}</td>
-									<td>${parking.operDay}</td>
-									<td>${parking.weekdayOperOpenHhmm} ~ ${parking.weekdayOperColseHhmm}</td>
+									<td>${product.productSeq}</td>
+									<td>${product.brand.value}</td>
+									<td>${product.name}</td>
+									<td>${product.pointValue}</td>
+									<td>${product.user.name}</td>
+									<td>${product.regDt}</td>
 								</tr>
 							</c:forEach>
 							</tbody>
@@ -82,6 +86,8 @@
 				</div>
 			</div>
 		</main>
+
+		<layoutTags:productAddTag id="productAddTag" currentBrand="${Brand.STARBUGS}" brandItems="${Brand.values()}" title="상품목록"/>
 	</stripes:layout-component>
 
 	<!-- footer -->
@@ -91,7 +97,7 @@
 
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
-		<script src="<%=contextPath%>/resources/js/calculate/calculateList-scripts.js"></script>
+		<script src="<%=contextPath%>/resources/js/calculate/productList-scripts.js"></script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

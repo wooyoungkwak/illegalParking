@@ -1,6 +1,6 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.repository;
+package com.teraenergy.illegalparking.model.entity.calculate.repository;
 
-import com.teraenergy.illegalparking.model.entity.calcurate.domain.Calculate;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

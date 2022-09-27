@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.enums;
+package com.teraenergy.illegalparking.model.entity.calculate.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

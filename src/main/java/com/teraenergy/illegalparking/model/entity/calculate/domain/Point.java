@@ -1,6 +1,6 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.domain;
+package com.teraenergy.illegalparking.model.entity.calculate.domain;
 
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.PointState;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.PointState;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,13 +22,13 @@ public class Point {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer plusPointSeq;
+    Integer pointSeq;
 
     @Column
     String note;
 
     @Column
-    Long point;
+    Long value;
 
     @Column
     Integer userSeq;

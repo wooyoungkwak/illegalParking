@@ -1,14 +1,12 @@
-package com.teraenergy.illegalparking.model.entity.calcurate.service;
+package com.teraenergy.illegalparking.model.entity.calculate.service;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.teraenergy.illegalparking.model.entity.calcurate.domain.Calculate;
-import com.teraenergy.illegalparking.model.entity.calcurate.domain.QCalculate;
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateFilterColumn;
-import com.teraenergy.illegalparking.model.entity.calcurate.enums.CalculateOrderColumn;
-import com.teraenergy.illegalparking.model.entity.calcurate.repository.CalculateRepository;
-import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
-import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.QCalculate;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateFilterColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateOrderColumn;
+import com.teraenergy.illegalparking.model.entity.calculate.repository.CalculateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -92,9 +90,9 @@ public class CalculateServiceImpl implements CalculateService{
                 break;
             case currentPoint:
                 if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QCalculate.calculate.currentPoint.desc());
+                    query.orderBy(QCalculate.calculate.currentPointValue.desc());
                 } else {
-                    query.orderBy(QCalculate.calculate.currentPoint.asc());
+                    query.orderBy(QCalculate.calculate.currentPointValue.asc());
                 }
                 break;
         }
