@@ -10,7 +10,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <% String contextPath = request.getContextPath(); %>
-<%@ attribute name="reportSeq" type="java.lang.Integer" required="true" %>
 
 <!-- content -->
 <main id="reportSet">
@@ -23,22 +22,22 @@
 			<div class="card-header">
 				<i class="fas fa-table me-1"></i>
 				차량 번호 :
-				<span id="reportSetTitle" class="title"></span>
+				<span id="firstCarNum" class="title"></span>
 			</div>
 			<div class="card-body">
 				<div class="row">
 
-					<form class="row" id="data">
-						<div class="row mb-4 ms-2">
+					<form id="data">
+						<div class="row mb-2 ms-2">
 							<div class="col-6">
 								<div class="card">
 									<div class="card" style="width: 100%;">
-										<img src="<%=contextPath%>/fileUpload/image/불법주정차_1.jpg" class="card-img-top" alt="..." style="width: 100%; height: 400px;">
+										<img id="firstFileName" src="" class="card-img-top" alt="..." style="width: 100%; height: 400px;">
 										<div class="card-body">
 											<h5 class="card-title mb-4 fst-italic fw-bold text-danger">1차 신고</h5>
-											<p class="card-text">위반 종류 : <span id="illegalType" class="title"></span></p>
-											<p class="card-text">위반 장소 : <span id="addr" class="title"></span></p>
-											<p class="card-text">접수 시간 : <span id="regDt" class="title"></span></p>
+											<p class="card-text">위반 종류 : <span id="firstIllegalType" class="title"></span></p>
+											<p class="card-text">위반 장소 : <span id="firstAddr" class="title"></span></p>
+											<p class="card-text">접수 시간 : <span id="firstRegDt" class="title"></span></p>
 										</div>
 									</div>
 								</div>
@@ -46,19 +45,27 @@
 							<div class="col-6 m-0">
 								<div class="card ">
 									<div class="card" style="width: 100%;">
-										<img src="<%=contextPath%>/fileUpload/image/불법주정차_2.jpg" class="card-img-top" alt="..." style="width: 100%; height: 400px;">
+										<img id="secondFileName" src="" class="card-img-top" alt="..." style="width: 100%; height: 400px;">
 										<div class="card-body">
 											<h5 class="card-title mb-4  fst-italic fw-bold text-danger">2차 신고</h5>
-											<p class="card-text">위반 종류 : <span id="illegalType2" class="title"></span></p>
-											<p class="card-text">위반 장소 : <span id="addr2" class="title"></span></p>
-											<p class="card-text">접수 시간 : <span id="regDt2" class="title"></span></p>
+											<p class="card-text">위반 종류 : <span id="secondIllegalType" class="title"></span></p>
+											<p class="card-text">위반 장소 : <span id="secondAddr" class="title"></span></p>
+											<p class="card-text">접수 시간 : <span id="secondRegDt" class="title"></span></p>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-						<div class="col-2">
-							<div class="btn-group">
+						<div class="row mb-4 ms-2">
+							<div class="col-4 mb-2">
+								<tags:selectTag id="result" current="" items="대기,신고제외,과태료대상" title="대상:" />
+							</div>
+							<div class="col-12">
+								<tags:inputTag id="note" placeholder="내용을 입력하세요." value="" title="설명:"/>
+							</div>
+						</div>
+						<div class="row ms-2 ">
+							<div class="col-2 btn-group">
 								<a type="submit" class="btn btn-primary" id="register">등록</a>
 								<a type="submit" class="btn btn-primary" id="modify">수정</a>
 								<a class="btn btn-outline-secondary" id="close">닫기</a>

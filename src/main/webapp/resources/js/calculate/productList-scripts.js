@@ -1,4 +1,17 @@
-$(function (){
+$(function () {
+
+    // 데이터 가져오기
+    function getData() {
+        let arr = $('#data').serializeArray();
+        let data = {};
+        $(arr).each(function (index, obj) {
+            data[obj.name] = obj.value;
+        });
+        data.userSeq = _userSeq;
+        data.pointValue = Number(data.pointValue);
+        return data;
+    }
+
 
     function search(pageNumber) {
         if (pageNumber === undefined) {
@@ -6,14 +19,14 @@ $(function (){
         } else {
             $('#pageNumber').val(pageNumber);
         }
-        location.href = _contextPath  + "/productList?" + $('form').serialize();
+        location.href = _contextPath + "/productList?" + $('form').serialize();
     }
 
     function initialize() {
 
-        $('#orderBy a').on('click', function (){
+        $('#orderBy a').on('click', function () {
             search();
-        })
+        });
 
         $('#search').on('click', function (event) {
             search();
@@ -28,14 +41,14 @@ $(function (){
             let pageNumber;
             if ($(this).text() === "<") {
                 pageNumber = Number.parseInt(ul.children('.active').text());
-                if ( pageNumber == 1) return;
+                if (pageNumber == 1) return;
                 pageNumber = pageNumber - 1;
 
             } else if ($(this).text() === ">") {
                 pageNumber = Number.parseInt(ul.children('.active').text());
                 let myLocation = $(this).index();
                 let activeLocation = ul.children('.active').index();
-                if ( activeLocation == (myLocation-1) ) {
+                if (activeLocation == (myLocation - 1)) {
                     return;
                 }
                 pageNumber = pageNumber + 1;
@@ -46,7 +59,7 @@ $(function (){
             search(pageNumber);
         });
 
-        $('#pageSize').on("change", function (){
+        $('#pageSize').on("change", function () {
             $('#pageNumber').val(1);
             search();
         })
@@ -75,17 +88,58 @@ $(function (){
                 }
             });
 
-            log(result);
+            $.each(result, function (key, value) {
+                $('#' + key).val(value);
+            });
 
-            // $.each(result, function (key, value) {
-            //     $('#' + key).val(value);
-            // });
+            $('#productSeq').val(productSeq);
 
             $('#productTable').hide();
             $('#productAddTag').show();
         });
 
-        $('#close').on('click', function (){
+        $('#register').on('click', function () {
+            // $.JJAjaxSync({
+            //     url: _contextPath + "/product/set",
+            //     data: getData(),
+            //     success: function () {
+            //         if (confirm(" 등록 되었습니다. \n 계속 등록 하시겠습니까? ")) {
+            //             location.href = location.href;
+            //         } else {
+            //             location.href = _contextPath + '/productAdd';
+            //         }
+            //     },
+            //     error: function (code) {
+            //         alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
+            //     }
+            // });
+
+        });
+
+        $('#modify').on('click', function () {
+            // let data = getData();
+            // data.productSeq = Number($('#productSeq').val());
+            //
+            // $.JJAjaxSync({
+            //     url: _contextPath + "/product/modify",
+            //     data: data,
+            //     success: function (ret) {
+            //         log(ret);
+            //
+            //         if ( ret.success ) {
+            //             alert(" 수정 되었습니다.");
+            //             location.href = location.href;
+            //         } else {
+            //             alert("등록 실패 하였습니다.");
+            //         }
+            //     },
+            //     error: function (code) {
+            //         alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
+            //     }
+            // });
+        });
+
+        $('#close').on('click', function () {
             $('#productTable').show();
             $('#productAddTag').hide();
         });

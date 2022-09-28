@@ -14,7 +14,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ReportFilterColumn {
-    iscomplete("처리결과"),
+    result("처리결과"),
     addr("장소"),
     illegalType("위반종류"),
     carNum("차량번호")

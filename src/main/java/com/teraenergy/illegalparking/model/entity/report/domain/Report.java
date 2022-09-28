@@ -1,6 +1,5 @@
 package com.teraenergy.illegalparking.model.entity.report.domain;
 
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,7 @@ public class Report {
     @Column
     Integer reportSeq;
 
-    @OneToOne (optional = false, fetch = FetchType.LAZY)
+    @OneToOne (optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "FirstReceiptSeq")
     Receipt firstReceipt;
 
@@ -40,7 +39,7 @@ public class Report {
     LocalDateTime regDt;
 
     @Column
-    Boolean isComplete;
+    Integer result;
 
     @Column
     String note;

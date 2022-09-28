@@ -124,7 +124,7 @@ CREATE TABLE report
     SecondReceiptSeq INT         NOT NULL,               -- 2차 신고 등로
     ReportUserSeq    INT NULL,                           -- 사용자 ( 기관 사용자 )
     RegDt            Datetime    NOT NULL,               -- 신고 등록 일자
-    IsComplete       BOOLEAN     NOT NULL DEFAULT FALSE, -- 신고 접수 등록 여부 ( 정부 기관 사람 )
+    Result           INT         NOT NULL DEFAULT 1,     -- 신고 접수 등록 여부 ( 정부 기관 사람 - 대기(1) / 신고제외(2) / 과태료대상(3)  )
     Note             VARCHAR(100) NULL,                  -- 비고
     ZoneSeq          INT         NOT NULL,               -- 불법 구역  ( 통계 : 불법 구역에 신고 건수 찾기 위한 용도 )
     Code             VARCHAR(10) NOT NULL,               -- 법정동 코드 ( 통계 : 읍/면/동 기준으로 사고 건수 찾기 위한 용도 )

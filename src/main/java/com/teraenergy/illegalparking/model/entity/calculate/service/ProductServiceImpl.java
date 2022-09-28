@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,11 +68,11 @@ public class ProductServiceImpl implements ProductService{
                     break;
                 case brand:
                     List<Brand> brands = Lists.newArrayList();
-                    for(Brand brand : Brand.values()) {
-                        if ( brand.getValue().indexOf(search) > -1 ) {
-                            brands.add(brand);
-                        }
-                    }
+//                    for(Brand brand : Brand.values()) {
+//                        if ( brand.getValue().contains(search) ) {
+//                            brands.add(brand);
+//                        }
+//                    }
                     query.where(QProduct.product.brand.in(brands));
                 case point:
                     query.where(QProduct.product.pointValue.eq(Long.parseLong(search)));

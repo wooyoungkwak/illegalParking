@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Date : 2022-09-20
@@ -32,16 +33,29 @@ public class UserServiceImpl implements UserService {
 
     private final JPAQueryFactory queryFactory;
 
+
+    @Override
+    public User getByInsert(Integer userSeq) throws TeraException {
+        Optional<User> optional = userRepository.findById(userSeq);
+        if ( optional.isEmpty()) {
+            return null;
+        }
+        User user = optional.get();
+        return user;
+    }
+
     @Override
     public User get(Integer userSeq) throws TeraException {
-        User user = userRepository.findById(userSeq).get();
-        if (user != null) {
-            try {
-                user.setPassword(YoungEncoder.decrypt(user.getPassword()));
-            } catch (EncryptedException e) {
-                log.error("사용자 정보 가져오기 오류 : ", e);
-                throw new TeraException(TeraExceptionCode.NULL);
-            }
+        Optional<User> optional = userRepository.findById(userSeq);
+        if ( optional.isEmpty()) {
+            return null;
+        }
+        User user = optional.get();
+        try {
+            user.setPassword(YoungEncoder.decrypt(user.getPassword()));
+        } catch (EncryptedException e) {
+            log.error("사용자 정보 가져오기 오류 : ", e);
+            throw new TeraException(TeraExceptionCode.NULL);
         }
         return user;
     }

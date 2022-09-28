@@ -10,6 +10,7 @@ import com.teraenergy.illegalparking.model.entity.calculate.enums.ProductFilterC
 import com.teraenergy.illegalparking.model.entity.calculate.enums.ProductOrderColumn;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
 import com.teraenergy.illegalparking.model.entity.calculate.service.ProductService;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -158,6 +159,8 @@ public class CalculateController extends ExtendsController {
         String searchStr = param.get("searchStr");
         if (searchStr == null) {
             searchStr = "";
+        } else {
+            searchStr = searchStr.trim();
         }
 
         String orderDirectionStr = param.get("orderDirection");
@@ -203,19 +206,26 @@ public class CalculateController extends ExtendsController {
 
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
+
+        User user = (User) request.getSession().getAttribute("user");
+        modelAndView.addObject("userSeq", user.getUserSeq());
+        modelAndView.addObject("userName", user.getUsername());
         modelAndView.setViewName(getPath("/productList"));
         return modelAndView;
     }
 
     @GetMapping("/calculate/productAdd")
-    public ModelAndView productAdd() {
+    public ModelAndView productAdd(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
         subTitle = "상품";
 
-
-        modelAndView.setViewName(getPath("/productAdd"));
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
+
+        User user = (User) request.getSession().getAttribute("user");
+        modelAndView.addObject("userSeq", user.getUserSeq());
+        modelAndView.addObject("userName", user.getUsername());
+        modelAndView.setViewName(getPath("/productAdd"));
         return modelAndView;
     }
 

@@ -1,5 +1,8 @@
 package com.teraenergy.illegalparking.security;
 
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -18,15 +21,21 @@ import java.io.IOException;
  * Project : illegalParking
  * Description :
  */
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class UserAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    private  final UserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
+        User user = userService.get((String) authentication.getPrincipal());
+        request.getSession().setAttribute("user", user);
         request.getSession().setAttribute("hashcode", request.getSession().getId().hashCode());
+
 
         // default targetUrl 로 이동하지 않도록 설정
         super.setAlwaysUseDefaultTargetUrl(true);

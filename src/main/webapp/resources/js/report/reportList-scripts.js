@@ -77,20 +77,45 @@ $(function (){
         // 신고 등록 표시
         $('#reportTable tr').on('click', function () {
 
+            log($(this));
+
             let reportSeqStr = $(this).children("td:eq(0)").text();
             let carNum = $(this).children("td:eq(3)").text();
 
             reportSeq = Number.parseInt(reportSeqStr);
-            // let result = $.JJAjaxAsync({
-            //     url: _contextPath + '/get',
-            //     data: {
-            //         reportSeq: reportSeq
-            //     }
-            // });
-            //
-            // $.each(result, function (key, value) {
-            //     $('#' + key).val(value);
-            // });
+
+            let result = $.JJAjaxAsync({
+                url: _contextPath + '/get',
+                data: {
+                    reportSeq: reportSeq
+                }
+            });
+
+            if ( result.success) {
+                let report = result.data;
+                $.each(report, function (key, value) {
+                    if ( key.indexOf("FileName") > -1) {
+                        $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
+                    } else if ( key === 'firstIllegalType') {
+                        if( value === 'ILLEGAL')  $('#' + key).text("불법주정차");
+                        else if( value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                    } else if ( key === 'secondIllegalType') {
+                        if( value === 'ILLEGAL')  $('#' + key).text("불법주정차");
+                        else if( value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                    } else if ( key === 'result') {
+                        if( value === 1)  $('#' + key).val("대기");
+                        else if( value === 2) $('#' + key).val("신고제외");
+                        else if( value === 3) $('#' + key).val("과태료대상");
+                    } else if ( key === 'note') {
+                        $('#' + key).val(value === null ? "" : value);
+                    } else {
+                        $('#' + key).text(value);
+                    }
+                });
+            } else {
+                alert("데이터 요청을 실패 하였습니다. ");
+                return;
+            }
 
             initializeReportSetTagTitle(carNum);
             initializeReportSetTagBtn();

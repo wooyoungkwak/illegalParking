@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface UserService {
 
+    public User getByInsert(Integer userSeq) throws TeraException;
+
     public User get(Integer userSeq) throws TeraException;
 
     public User get(String userName) throws TeraException;

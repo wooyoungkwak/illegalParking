@@ -7,6 +7,7 @@ import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -128,17 +129,25 @@ public class ParkingController extends ExtendsController {
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
 
+        User user = (User) request.getSession().getAttribute("user");
+        modelAndView.addObject("userSeq", user.getUserSeq());
+        modelAndView.addObject("userName", user.getUsername());
+
         modelAndView.setViewName(getPath("/parkingList"));
 
         return modelAndView;
     }
 
     @GetMapping("/parking/parkingAdd")
-    public ModelAndView parkingAdd(){
+    public ModelAndView parkingAdd(HttpServletRequest request){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(getPath("/parkingAdd"));
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
+
+        User user = (User) request.getSession().getAttribute("user");
+        modelAndView.addObject("userSeq", user.getUserSeq());
+        modelAndView.addObject("userName", user.getUsername());
         return modelAndView;
     }
 

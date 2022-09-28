@@ -28,6 +28,7 @@
 			<div class="card-header"><i class="fas fa-pen me-1"></i> 직접 입력</div>
 			<div class="card-body">
 				<div class="row">
+					<input hidden type="text" id="productSeq" >
 					<form id="data">
 						<img src="https://image.istarbucks.co.kr/common/img/main/rewards-logo.png" id="brandImg" style="width: 300px; height: 300px;">
 						<div class="g-3 mb-4">
@@ -39,7 +40,7 @@
 							</div>
 							<div class="row  mb-2">
 								<div class="col-4">
-									<tags:inputTag id="productName" title="제품명"/>
+									<tags:inputTag id="name" title="제품명"/>
 								</div>
 							</div>
 							<div class="row  mb-2">

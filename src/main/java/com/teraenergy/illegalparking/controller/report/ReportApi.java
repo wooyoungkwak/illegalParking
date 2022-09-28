@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.model.dto.report.domain.ReportDto;
+import com.teraenergy.illegalparking.model.dto.report.service.ReportDtoService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
@@ -12,9 +14,12 @@ import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptState;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
+import com.teraenergy.illegalparking.model.entity.report.domain.Report;
+import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,18 +43,62 @@ public class ReportApi {
     private final IllegalZoneJpaService illegalZoneJpaService;
     private final UserService userService;
     private final ReceiptService receiptService;
-
+    private final ReportService reportService;
     private final LawDongService lawDongService;
-
     private final ObjectMapper objectMapper;
+
+    private final ReportDtoService reportDtoService;
 
     @PostMapping ("/report/get")
     @ResponseBody
-    public JsonNode getReport(@RequestBody String body) throws JsonProcessingException {
-        JsonNode jsonNode = objectMapper.readTree(body);
-        return  null;
+    public JsonNode getReport(@RequestBody String body) {
+        HashMap<String, Object> result = Maps.newHashMap();
+        boolean isSuccess = false;
+        try {
+            JsonNode jsonNode = objectMapper.readTree(body);
+            Integer reportSeq = jsonNode.get("reportSeq").asInt();
+            Report report = reportService.get(reportSeq);
+            report.getFirstReceipt();
+            Receipt firstReceipt = receiptService.get(report.getFirstReceipt().getReceiptSeq());
+            firstReceipt.getReceiptSeq();
+            firstReceipt.getNote();
+
+            ReportDto reportDto = reportDtoService.get(report);
+            result.put("data", reportDto);
+            isSuccess = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            result.put("success", isSuccess);
+            return convertResult(result);
+        }
     }
 
+    @PostMapping ("/report/set")
+    @ResponseBody
+    public JsonNode setReport(@RequestBody String body) throws JsonProcessingException {
+        HashMap<String, Object> resultMap = Maps.newHashMap();
+        boolean isSuccess = false;
+        try {
+            JsonNode jsonNode = objectMapper.readTree(body);
+            Integer reportSeq = jsonNode.get("reportSeq").asInt();
+            String note = jsonNode.get("note").asText();
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            Integer result = jsonNode.get("result").asInt();
+
+            Report report = reportService.get(reportSeq);
+            report.setNote(note);
+            report.setResult(result);
+            report.setReportUserSeq(userSeq);
+            report.setRegDt(LocalDateTime.now());
+            reportService.set(report);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            resultMap.put("success", isSuccess);
+            return convertResult(resultMap);
+        }
+    }
 
     /**
      * id :
@@ -61,7 +110,8 @@ public class ReportApi {
     */
     @PostMapping("/recepit/set")
     @ResponseBody
-    public JsonNode setReceipt(@RequestBody String body) throws TeraException {
+    public JsonNode setReceipt(@RequestBody String body){
+        boolean isSuccess = false;
         try {
             JsonNode jsonNode = objectMapper.readTree(body);
 
@@ -83,12 +133,23 @@ public class ReportApi {
             receipt.setAddr(addr);
             receiptService.set(receipt);
 
-            HashMap<String, Object> result = Maps.newHashMap();
-            result.put("success", true);
-            String jsonStr = objectMapper.writeValueAsString(result);
-            return objectMapper.readTree(jsonStr);
+            isSuccess = true;
         } catch (Exception e) {
-            throw new TeraException(e);
+            e.printStackTrace();
+        } finally {
+            HashMap<String, Object> result = Maps.newHashMap();
+            result.put("success", isSuccess);
+            return convertResult(result);
+        }
+    }
+
+    private JsonNode convertResult(HashMap<String, Object> map) {
+        try {
+            String jsonStr = objectMapper.writeValueAsString(map);
+            return objectMapper.readTree(jsonStr);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }

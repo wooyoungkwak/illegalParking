@@ -35,6 +35,9 @@
         const log = console.log;
         const _contextPath = $.getContextPath();
 
+        let _userSeq = '${userSeq}';
+        let _userName = '${userName}';
+
         $(function () {
             let paths = location.pathname.split("/");
             let size = paths.length;
@@ -45,7 +48,6 @@
             if(location.pathname === '/home'){
                 $('#sidebarToggle').hide();
             } else {
-                log('#nav' + _contextPath.replace("/",""));
                 $('#nav' + _contextPath.replace("/","")).addClass("active");
             }
 
@@ -64,7 +66,6 @@
             $('#back').on('click', function (){
                 window.history.back();
             })
-
         });
     </script>
 </head>

@@ -49,12 +49,14 @@ public class ReportServiceImpl implements ReportService{
 
         if ( search != null && search.length() > 0) {
             switch (filterColumn) {
-                case iscomplete:
-                    if (search.equals("대기")) {
-                        query.where(QReport.report.isComplete.eq(false));
-                    } else if (search.equals("완료")){
-                        query.where(QReport.report.isComplete.eq(true));
-                    }
+                case result:
+//                    if (search.equals("대기")) {
+//                        query.where(QReport.report.result.eq(1));
+//                    } else if (search.equals("신고제외")){
+//                        query.where(QReport.report.result.eq(2));
+//                    } else if (search.equals("과태료대상")){
+//                        query.where(QReport.report.result.eq(3));
+//                    }
                     break;
                 case illegalType:
                     if ( search.equals(IllegalType.ILLEGAL.getValue()) ) {
@@ -80,9 +82,9 @@ public class ReportServiceImpl implements ReportService{
 
             case iscomplete:
                 if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.isComplete.desc());
+                    query.orderBy(QReport.report.result.desc());
                 } else {
-                    query.orderBy(QReport.report.isComplete.asc());
+                    query.orderBy(QReport.report.result.asc());
                 }
                 break;
             case illegalType:

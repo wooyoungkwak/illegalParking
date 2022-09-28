@@ -43,22 +43,27 @@ public class AopController {
 //    @Around("execution(* com.teraenergy.illegalparking.controller..*Api.*(..)) ")
 //    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
 //        HashMap<String, Object> result = Maps.newHashMap();
+//        String jsonStr;
 //        try {
 //            result.put("success", true);
 //            result.put("data", joinPoint.proceed());
+//            jsonStr = objectMapper.writeValueAsString(result);
+//            return objectMapper.readValue(jsonStr, Object.class);
+//        } catch (Exception e) {
+//            e.printStackTrace();
 //        } catch (Throwable e) {
+//            e.printStackTrace();
+//        } finally {
 //            result.put("success", false);
 //            result.put("data", "");
 //            result.put("msg", e.getMessage());
+//            try {
+//                jsonStr = objectMapper.writeValueAsString(result);
+//                return objectMapper.readValue(jsonStr, Object.class);
+//            } catch (JsonProcessingException ex) {
+//                throw new RuntimeException(ex);
+//            }
 //        }
-//
-//        try {
-//            String jsonStr = objectMapper.writeValueAsString(result);
-//            return objectMapper.readValue(jsonStr, Object.class);
-//        } catch (JsonProcessingException e) {
-//            throw new RuntimeException(e);
-//        }
-//
 //    }
 
     @Around("execution(* com.teraenergy.illegalparking.controller.login.LoginController.*(..)) ")

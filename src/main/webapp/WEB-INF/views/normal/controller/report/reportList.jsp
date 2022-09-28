@@ -76,8 +76,9 @@
                                         <td>${report.secondReceipt.carNum}</td>
                                         <td>
                                             <c:choose>
-                                                <c:when test="${report.isComplete == true}">완료</c:when>
-                                                <c:otherwise>대기</c:otherwise>
+                                                <c:when test="${report.result == 1}">대기</c:when>
+                                                <c:when test="${report.result == 2}">신고제외</c:when>
+                                                <c:otherwise>과태료대상</c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td>${report.regDt}</td>
@@ -91,7 +92,7 @@
             </div>
         </main>
 
-        <layoutTags:reportSetTag reportSeq="1"/>
+        <layoutTags:reportSetTag/>
     </stripes:layout-component>
 
     <!-- footer -->
