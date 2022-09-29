@@ -43,7 +43,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         reportDto.setSecondIllegalType(secondReceipt.getIllegalZone().getIllegalType());
 
         reportDto.setNote(report.getNote());
-        reportDto.setResult(report.getResult());
+        reportDto.setResultType(report.getResultType());
         return reportDto;
     }
 

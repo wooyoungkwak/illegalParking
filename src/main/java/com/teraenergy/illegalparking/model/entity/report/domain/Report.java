@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.report.domain;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
+import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,7 +40,8 @@ public class Report {
     LocalDateTime regDt;
 
     @Column
-    Integer result;
+    @Enumerated (EnumType.STRING)
+    ResultType resultType;
 
     @Column
     String note;

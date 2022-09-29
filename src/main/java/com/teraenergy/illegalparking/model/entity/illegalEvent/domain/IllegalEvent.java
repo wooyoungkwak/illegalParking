@@ -1,6 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.illegalEvent.domain;
 
-import com.teraenergy.illegalparking.model.entity.environment.domain.Environment;
+import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +16,7 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity(name = "illegal_event")
-public class illegalEvent {
+public class IllegalEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -40,8 +40,8 @@ public class illegalEvent {
     @Column
     Boolean UsedSecond;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "EnvironmentSeq")
-    Environment environment;
+    @Column
+    @Enumerated(EnumType.STRING)
+    ZoneGroupType zoneGroupType;
 
 }

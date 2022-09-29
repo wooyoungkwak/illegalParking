@@ -63,7 +63,7 @@
 								<th scope="col">추가포인트</th>
 								<th scope="col">신고</th>
 								<th scope="col">사용포인트</th>
-								<th scope="col">제품</th>
+								<th scope="col">상품</th>
 								<th scope="col">현재포인트</th>
 								<th scope="col">일자</th>
 							</tr>
@@ -74,7 +74,7 @@
 									<td>${calculate.calculateSeq}</td>
 									<td>${calculate.user.name}</td>
 									<c:choose>
-										<c:when test="${calculate.point.pointState == 'PLUST_STATE'}">
+										<c:when test="${calculate.point.pointType == 'PLUS'}">
 											<td class="text-primary">${calculate.point.value}</td>
 											<td>${calculate.point.report.secondReceipt.illegalZone.illegalType.value}</td>
 											<td></td>

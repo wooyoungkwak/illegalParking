@@ -31,7 +31,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
-public class ProductServiceImpl implements ProductService{
+public class ProductServiceImpl implements ProductService {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -40,7 +40,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Product get(Integer productSeq) {
         Optional<Product> optional = productRepository.findById(productSeq);
-        if ( optional.isEmpty()) {
+        if (optional.isEmpty()) {
             return null;
         }
         return optional.get();
@@ -61,19 +61,14 @@ public class ProductServiceImpl implements ProductService{
     public Page<Product> gets(int pageNumber, int pageSize, ProductFilterColumn filterColumn, String search, ProductOrderColumn orderColumn, Sort.Direction orderBy) {
         JPAQuery query = jpaQueryFactory.selectFrom(QProduct.product);
 
-        if ( search != null && search.length() > 0) {
+        if (search != null && search.length() > 0) {
             switch (filterColumn) {
                 case name:
                     query.where(QProduct.product.name.contains(search));
                     break;
                 case brand:
-                    List<Brand> brands = Lists.newArrayList();
-//                    for(Brand brand : Brand.values()) {
-//                        if ( brand.getValue().contains(search) ) {
-//                            brands.add(brand);
-//                        }
-//                    }
-                    query.where(QProduct.product.brand.in(brands));
+                    query.where(QProduct.product.brand.eq(Brand.valueOf(search)));
+                    break;
                 case point:
                     query.where(QProduct.product.pointValue.eq(Long.parseLong(search)));
                     break;
@@ -86,28 +81,28 @@ public class ProductServiceImpl implements ProductService{
 
         switch (orderColumn) {
             case productSeq:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
+                if (orderBy.equals(Sort.Direction.DESC)) {
                     query.orderBy(QProduct.product.productSeq.desc());
                 } else {
                     query.orderBy(QProduct.product.productSeq.asc());
                 }
                 break;
             case name:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
+                if (orderBy.equals(Sort.Direction.DESC)) {
                     query.orderBy(QProduct.product.name.desc());
                 } else {
                     query.orderBy(QProduct.product.name.asc());
                 }
                 break;
             case point:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
+                if (orderBy.equals(Sort.Direction.DESC)) {
                     query.orderBy(QProduct.product.pointValue.desc());
                 } else {
                     query.orderBy(QProduct.product.pointValue.asc());
                 }
                 break;
             case regDt:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
+                if (orderBy.equals(Sort.Direction.DESC)) {
                     query.orderBy(QProduct.product.regDt.desc());
                 } else {
                     query.orderBy(QProduct.product.regDt.asc());
@@ -115,7 +110,7 @@ public class ProductServiceImpl implements ProductService{
                 break;
         }
 
-        pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
+        pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);
         List<Product> products = query.fetch();
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);

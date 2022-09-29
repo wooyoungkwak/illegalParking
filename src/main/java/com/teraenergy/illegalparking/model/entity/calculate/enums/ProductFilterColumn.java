@@ -13,8 +13,8 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ProductFilterColumn {
+    name("상품명"),
     brand("브랜드"),
-    name("제품명"),
     point("포인트")
     ;
 

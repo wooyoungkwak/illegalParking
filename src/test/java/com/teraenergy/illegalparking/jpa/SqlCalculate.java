@@ -5,7 +5,7 @@ import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Point;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
 import com.teraenergy.illegalparking.model.entity.calculate.enums.Brand;
-import com.teraenergy.illegalparking.model.entity.calculate.enums.PointState;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
 import com.teraenergy.illegalparking.model.entity.calculate.service.PointService;
 import com.teraenergy.illegalparking.model.entity.calculate.service.ProductService;
@@ -52,20 +52,22 @@ public class SqlCalculate {
     @Autowired
     private ReportService reportService;
 
-
     @Test
     public void insertProduct(){
         List<Product> products = Lists.newArrayList();
 
+        User adminUser = userService.get(1);
+        User user = userService.get(2);
+
         Product product = new Product();
-        product.setUserSeq(1);
+        product.setUser(adminUser);
         product.setPointValue(500L);
         product.setRegDt(LocalDateTime.now());
         product.setName("아메리카노");
         product.setBrand(Brand.STARBUGS);
         
         Product product2 = new Product();
-        product2.setUserSeq(1);
+        product2.setUser(adminUser);
         product2.setPointValue(500L);
         product2.setRegDt(LocalDateTime.now());
         product2.setName("아이스크림");
@@ -83,7 +85,7 @@ public class SqlCalculate {
         Report report = reportService.get(1);
         Point point = new Point();
         point.setValue(1000L);
-        point.setPointState(PointState.PLUST_STATE);
+        point.setPointType(PointType.PLUS);
         point.setReport(report);
         point.setNote("");
         point.setUserSeq(2);
@@ -92,7 +94,7 @@ public class SqlCalculate {
         Product product = productService.get(1);
         Point point2 = new Point();
         point2.setValue(1000L);
-        point2.setPointState(PointState.MINUS_STATE);
+        point2.setPointType(PointType.MINUS);
         point2.setProduct(product);
         point2.setNote("");
         point2.setUserSeq(2);

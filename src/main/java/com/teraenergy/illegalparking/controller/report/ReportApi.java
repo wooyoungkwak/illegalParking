@@ -4,22 +4,24 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
-import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.dto.report.domain.ReportDto;
 import com.teraenergy.illegalparking.model.dto.report.service.ReportDtoService;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Point;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.PointType;
+import com.teraenergy.illegalparking.model.entity.calculate.service.PointService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptState;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
+import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,6 +50,8 @@ public class ReportApi {
     private final ObjectMapper objectMapper;
 
     private final ReportDtoService reportDtoService;
+
+    private final PointService pointService;
 
     @PostMapping ("/report/get")
     @ResponseBody
@@ -84,14 +88,28 @@ public class ReportApi {
             Integer reportSeq = jsonNode.get("reportSeq").asInt();
             String note = jsonNode.get("note").asText();
             Integer userSeq = jsonNode.get("userSeq").asInt();
-            Integer result = jsonNode.get("result").asInt();
+            ResultType resultType = ResultType.valueOf(jsonNode.get("resultType").asText());
 
             Report report = reportService.get(reportSeq);
+
             report.setNote(note);
-            report.setResult(result);
+            report.setResultType(resultType);
             report.setReportUserSeq(userSeq);
             report.setRegDt(LocalDateTime.now());
             reportService.set(report);
+
+            // point 적립
+            long pointValue = report.getSecondReceipt().getIllegalZone().getIllegalEvent().getZoneGroupType().getValue();
+            Point point = new Point();
+            point.setReport(report);
+            point.setPointType(PointType.PLUS);
+            point.setValue(pointValue);
+            point.setNote(report.getNote());
+            point.setUserSeq(report.getReportUserSeq());
+
+            pointService.set(point);
+            isSuccess = true;
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -128,7 +146,7 @@ public class ReportApi {
             receipt.setCarNum(jsonNode.get("carNum").asText());
             receipt.setFileName(jsonNode.get("fileName").asText());
             receipt.setCode(lawDong.getCode());
-            receipt.setReceiptState(ReceiptState.ING);
+            receipt.setReceiptType(ReceiptType.REPORT);
             receipt.setIsDel(false);
             receipt.setAddr(addr);
             receiptService.set(receipt);

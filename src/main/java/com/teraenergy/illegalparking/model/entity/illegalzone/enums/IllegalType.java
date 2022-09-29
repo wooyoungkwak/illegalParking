@@ -13,7 +13,6 @@ import org.apache.ibatis.type.MappedTypes;
  * Description :
  */
 
-@AllArgsConstructor
 @Getter
 public enum IllegalType {
 
@@ -21,6 +20,10 @@ public enum IllegalType {
     FIVE_MINUTE("5분주정차");
 
     private String value;
+
+    IllegalType(String value) {
+        this.value = value;
+    }
 
     @MappedTypes(IllegalType.class)
     public static class TypeHandler extends IllegalTypeHandler<IllegalType> {

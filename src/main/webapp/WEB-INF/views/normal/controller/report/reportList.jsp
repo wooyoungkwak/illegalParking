@@ -12,6 +12,8 @@
 <%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportOrderColumn" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ResultType" %>
+
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -50,6 +52,7 @@
                             </div>
                             <div class="col-4">
                                 <tags:searchTag id="searchStr" searchStr="${searchStr}"/>
+                                <tags:selectSearchTag id="searchStr2" searchStr="${searchStr2}" items="${ResultType.values()}" />
                             </div>
                             <div class="col-1"></div>
                             <div class="col-3">
@@ -74,13 +77,7 @@
                                         <td>${report.secondReceipt.addr}</td>
                                         <td>${report.secondReceipt.illegalZone.illegalType.value}</td>
                                         <td>${report.secondReceipt.carNum}</td>
-                                        <td>
-                                            <c:choose>
-                                                <c:when test="${report.result == 1}">대기</c:when>
-                                                <c:when test="${report.result == 2}">신고제외</c:when>
-                                                <c:otherwise>과태료대상</c:otherwise>
-                                            </c:choose>
-                                        </td>
+                                        <td>${report.resultType.value}</td>
                                         <td>${report.regDt}</td>
                                     </tr>
                                 </c:forEach>
@@ -92,7 +89,7 @@
             </div>
         </main>
 
-        <layoutTags:reportSetTag/>
+        <layoutTags:reportSetTag items="${ResultType.values()}" />
     </stripes:layout-component>
 
     <!-- footer -->
@@ -103,6 +100,15 @@
     <!-- javascript -->
     <stripes:layout-component name="javascript">
         <script src="<%=contextPath%>/resources/js/report/reportList-scripts.js"></script>
+        <script type="application/javascript">
+            if ( '${filterColumn}' === 'RESULT') {
+                $('#searchStrGroup').hide();
+                $('#searchStr2Group').show();
+            } else {
+                $('#searchStrGroup').show();
+                $('#searchStr2Group').hide();
+            }
+        </script>
     </stripes:layout-component>
 
 </stripes:layout-render>

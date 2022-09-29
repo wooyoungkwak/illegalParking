@@ -28,12 +28,14 @@
             return location.href.substring(hostIndex, location.href.indexOf('/', hostIndex + 1));
         }
 
+        const _contextPath = $.getContextPath();
+        <%--const _contextPath = '${pageContext.request.contextPath}';--%>
+
         let SELECT_ALL = "all";
         let SELECT_TYPE= "type";
         let SELECT_DONG = "dong";
         let SELECT_TYPE_AND_DONG = "typeAndDong";
         const log = console.log;
-        const _contextPath = $.getContextPath();
 
         let _userSeq = '${userSeq}';
         let _userName = '${userName}';

@@ -18,7 +18,7 @@
 					결재목록
 				</a>
 
-				<div class="sb-sidenav-menu-heading">제품</div>
+				<div class="sb-sidenav-menu-heading">상품</div>
 				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productList" id="side_productList">
 					<div class="sb-nav-link-icon"><i class="fas fa-calculator"></i></div>
 					상품목록

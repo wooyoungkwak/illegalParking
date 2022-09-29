@@ -6,6 +6,7 @@ import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZon
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
+import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
@@ -50,7 +51,7 @@ public class SqlReport {
         report1.setFirstReceipt(firstReceipt);
         report1.setSecondReceipt(secondReceipt);
         report1.setRegDt(LocalDateTime.now());
-        report1.setIsComplete(false);
+        report1.setResultType(ResultType.WAIT);
         report1.setNote("테스트 ... ");
         report1.setZoneSeq(1);
         report1.setCode("5013032000");
@@ -63,7 +64,11 @@ public class SqlReport {
     @Test
     public void select(){
 
-//        Page<Report> pages = reportService.gets(  );
+
+    }
+
+    @Test
+    public void update(){
 
     }
 }

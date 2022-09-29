@@ -29,6 +29,7 @@ public class Product {
     String name;
 
     @Column
+    @Enumerated(EnumType.STRING)
     Brand brand;
 
     @Column

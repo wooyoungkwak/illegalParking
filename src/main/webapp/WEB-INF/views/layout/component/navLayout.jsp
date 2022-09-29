@@ -30,7 +30,7 @@
                 <a class="nav-link" id="navpm" href="${pageContext.request.contextPath}/pm" tabindex="-1" aria-disabled="true">전동 킥보드</a>
             </li>
             <li class="nav-item me-5">
-                <a class="nav-link" id="navcalculate" href="${pageContext.request.contextPath}/calculate" tabindex="-1" aria-disabled="true">결제</a>
+                <a class="nav-link" id="navcalculate" href="${pageContext.request.contextPath}/calculate" tabindex="-1" aria-disabled="true">결재</a>
             </li>
         </ul>
 

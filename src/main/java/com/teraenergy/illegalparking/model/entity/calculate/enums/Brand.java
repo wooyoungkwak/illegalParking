@@ -11,7 +11,6 @@ import lombok.Getter;
  * Description :
  */
 
-@AllArgsConstructor
 @Getter
 public enum Brand {
 
@@ -21,4 +20,8 @@ public enum Brand {
     ;
 
     private String value;
+
+    Brand(String value) {
+        this.value = value;
+    }
 }

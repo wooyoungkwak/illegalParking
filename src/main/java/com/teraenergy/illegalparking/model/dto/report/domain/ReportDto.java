@@ -2,6 +2,7 @@ package com.teraenergy.illegalparking.model.dto.report.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,7 +43,7 @@ public class ReportDto {
     IllegalType secondIllegalType;
 
     @JsonProperty
-    Integer result;
+    ResultType resultType;
 
     @JsonProperty
     String note;

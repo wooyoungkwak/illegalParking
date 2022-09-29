@@ -18,17 +18,25 @@ $(function (){
         location.href = _contextPath  + "/reportList?" + $('form').serialize();
     }
 
+    function searchSelect(filterColumn) {
+        if ( filterColumn === 'RESULT') {
+            $('#searchStrGroup').hide();
+            $('#searchStr2Group').show();
+        } else {
+            $('#searchStrGroup').show();
+            $('#searchStr2Group').hide();
+        }
+    }
+
     function initializeReportSetTagTitle(carNum){
         $('#reportSetTitle').text(carNum);
     }
 
-    function initializeReportSetTagBtn(isComplete){
-        if ( isComplete === undefined || isComplete === "대기") {
+    function initializeReportSetTagBtn(reportType){
+        if ( reportType === undefined || reportType === 'WAIT') {
             $('#register').show();
-            $('#modify').hide();
         }  else {
             $('#register').hide();
-            $('#modify').show();
         }
     }
 
@@ -38,7 +46,11 @@ $(function (){
             search();
         });
 
-        $('#search').on('click', function (event) {
+        $('#searchStr').next().on('click', function (event) {
+            search();
+        });
+
+        $('#searchStr2').next().on('click', function (event) {
             search();
         });
 
@@ -77,8 +89,6 @@ $(function (){
         // 신고 등록 표시
         $('#reportTable tr').on('click', function () {
 
-            log($(this));
-
             let reportSeqStr = $(this).children("td:eq(0)").text();
             let carNum = $(this).children("td:eq(3)").text();
 
@@ -102,10 +112,6 @@ $(function (){
                     } else if ( key === 'secondIllegalType') {
                         if( value === 'ILLEGAL')  $('#' + key).text("불법주정차");
                         else if( value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
-                    } else if ( key === 'result') {
-                        if( value === 1)  $('#' + key).val("대기");
-                        else if( value === 2) $('#' + key).val("신고제외");
-                        else if( value === 3) $('#' + key).val("과태료대상");
                     } else if ( key === 'note') {
                         $('#' + key).val(value === null ? "" : value);
                     } else {
@@ -124,26 +130,30 @@ $(function (){
             $('#reportSet').show();
         });
 
+        $('#filterColumn').find('select[name="filterColumn"]').on('change', function (){
+            searchSelect($(this).val());
+        });
 
-        $('#modify').on('click', function (){
+        $('#register').on('click', function (){
 
             let data = getData();
             data.reportSeq = reportSeq;
 
-            // if ( confirm("등록 하시겠습니까?") ) {
-            //     $.JJAjaxSync({
-            //         url: _contextPath + '/set',
-            //         data: data,
-            //         success: function (){
-            //             alert("등록 되었습니다.");
-            //         } ,
-            //         err: function (code){
-            //             alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
-            //         }
-            //     });
-            // } else {
-            //     log(getData());
-            // }
+            if ( confirm("등록 하시겠습니까?") ) {
+                $.JJAjaxSync({
+                    url: _contextPath + '/set',
+                    data: data,
+                    success: function (){
+                        alert("등록 되었습니다.");
+                        search();
+                    } ,
+                    err: function (code){
+                        alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
+                    }
+                });
+            } else {
+                log(getData());
+            }
         });
 
         $('#close').on('click', function () {

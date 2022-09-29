@@ -1,6 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.calculate.domain;
 
-import com.teraenergy.illegalparking.model.entity.calculate.enums.PointState;
+import com.teraenergy.illegalparking.model.entity.calculate.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +41,8 @@ public class Point {
     @JoinColumn(name = "productSeq")
     Product product;
 
-    @Column (nullable = false)
-    PointState pointState;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    PointType pointType;
 
 }

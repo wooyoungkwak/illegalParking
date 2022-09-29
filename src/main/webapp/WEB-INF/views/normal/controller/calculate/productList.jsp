@@ -51,6 +51,7 @@
 							</div>
 							<div class="col-4">
 								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
+								<tags:selectSearchTag searchStr="${searchStr2}" items="${Brand.values()}" id="searchStr2" />
 							</div>
 							<div class="col-1"></div>
 							<div class="col-3">
@@ -98,6 +99,15 @@
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/calculate/productList-scripts.js"></script>
+		<script type="application/javascript">
+            if ( '${filterColumn}' === 'brand') {
+                $('#searchStrGroup').hide();
+                $('#searchStr2Group').show();
+            } else {
+                $('#searchStrGroup').show();
+                $('#searchStr2Group').hide();
+            }
+		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

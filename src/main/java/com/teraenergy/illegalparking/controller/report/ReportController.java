@@ -37,7 +37,7 @@ public class ReportController extends ExtendsController {
     private final ReportService reportService;
 
     private String subTitle = "신고";
-    
+
     @GetMapping(value = "/report")
     public RedirectView report() {
         return new RedirectView("/report/reportList");
@@ -50,34 +50,41 @@ public class ReportController extends ExtendsController {
 
         String pageNumberStr = param.get("pageNumber");
         int pageNumber = 1;
-        if ( pageNumberStr != null ) {
+        if (pageNumberStr != null) {
             pageNumber = Integer.parseInt(pageNumberStr);
         }
 
         String orderColumnStr = param.get("orderColumn");
         ReportOrderColumn orderColumn;
-        if(orderColumnStr == null) {
-            orderColumn = ReportOrderColumn.carNum;
-        } else  {
+        if (orderColumnStr == null) {
+            orderColumn = ReportOrderColumn.REPORT_SEQ;
+        } else {
             orderColumn = ReportOrderColumn.valueOf(orderColumnStr);
         }
 
         String filterColumnStr = param.get("filterColumn");
         ReportFilterColumn filterColumn;
-        if(filterColumnStr == null) {
-            filterColumn = ReportFilterColumn.carNum;
-        } else  {
+        if (filterColumnStr == null) {
+            filterColumn = ReportFilterColumn.ADDR;
+        } else {
             filterColumn = ReportFilterColumn.valueOf(filterColumnStr);
         }
 
+        String search = "";
         String searchStr = param.get("searchStr");
-        if (searchStr == null) {
-            searchStr = "";
+        String searchStr2 = param.get("searchStr2");
+        if (filterColumn.equals(ReportFilterColumn.RESULT)) {
+            search = searchStr2;
+        } else {
+            if (searchStr == null) {
+                searchStr = "";
+            }
+            search = searchStr.trim();
         }
 
         String orderDirectionStr = param.get("orderDirection");
         Sort.Direction direction;
-        if ( orderDirectionStr == null) {
+        if (orderDirectionStr == null) {
             direction = Sort.Direction.ASC;
         } else {
             direction = Sort.Direction.valueOf(orderDirectionStr);
@@ -85,21 +92,22 @@ public class ReportController extends ExtendsController {
 
         String pageSizeStr = param.get("pageSize");
         int pageSize = 10;
-        if ( pageSizeStr != null) {
+        if (pageSizeStr != null) {
             pageSize = Integer.parseInt(pageSizeStr);
         }
 
         ModelAndView modelAndView = new ModelAndView();
 
 
-        Page<Report> pages = reportService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);;
+        Page<Report> pages = reportService.gets(pageNumber, pageSize, filterColumn, search, orderColumn, direction);
+        ;
 
         boolean isBeginOver = false;
         boolean isEndOver = false;
 
         int totalPages = pages.getTotalPages();
 
-        if (totalPages > 3 && ( totalPages - pageNumber ) > 2 ) {
+        if (totalPages > 3 && (totalPages - pageNumber) > 2) {
             isEndOver = true;
         }
 
@@ -110,6 +118,7 @@ public class ReportController extends ExtendsController {
         modelAndView.addObject("totalPages", totalPages);
         modelAndView.addObject("filterColumn", filterColumnStr);
         modelAndView.addObject("searchStr", searchStr);
+        modelAndView.addObject("searchStr2", searchStr2);
         modelAndView.addObject("orderColumn", orderColumnStr);
         modelAndView.addObject("orderDirection", orderDirectionStr);
 

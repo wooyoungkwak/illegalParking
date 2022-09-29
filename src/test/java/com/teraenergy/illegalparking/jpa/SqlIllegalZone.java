@@ -1,6 +1,9 @@
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
+import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalZoneRepository;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
 import org.junit.jupiter.api.Test;
@@ -29,10 +32,18 @@ public class SqlIllegalZone {
     @Autowired
     IllegalZoneRepository repository;
 
+    @Autowired
+    IllegalEventService illegalEventService;
 
     @Test
-    public void insert() {
+    public void insertByEvent() {
 
+        IllegalEvent illegalEvent = new IllegalEvent();
+        illegalEvent.setUsedFirst(true);
+        illegalEvent.setUsedSecond(true);
+        illegalEvent.setZoneGroupType(ZoneGroupType.GROUP_A);
+
+        illegalEventService.set(illegalEvent);
     }
 
     @Test

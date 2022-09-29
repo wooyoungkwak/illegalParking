@@ -63,7 +63,6 @@ public class CalculateServiceImpl implements CalculateService{
         }
 
         query.where(QCalculate.calculate.isDel.isFalse());
-
         int total = query.fetch().size();
 
         switch (orderColumn) {

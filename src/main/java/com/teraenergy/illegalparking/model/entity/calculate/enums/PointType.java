@@ -12,12 +12,16 @@ import lombok.Getter;
  */
 
 @Getter
-@AllArgsConstructor
-public enum PointState {
+public enum PointType {
 
-    PLUST_STATE("추가포인트"),
+    PLUS("추가포인트"),
 
-    MINUS_STATE("사용포인트");
+    MINUS("사용포인트");
 
-    String value;
+    private String value;
+
+    PointType(String value) {
+        this.value = value;
+    }
+
 }

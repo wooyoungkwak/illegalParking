@@ -14,11 +14,11 @@ import lombok.Getter;
 @Getter
 public enum ReportOrderColumn {
 
-    reportSeq("순번"),
-    iscomplete("처리결과"),
-    addr("장소"),
-    illegalType("위반종류"),
-    carNum("차량번호")
+    REPORT_SEQ("순번"),
+    RESULT("처리결과"),
+    ADDR("장소"),
+    ILLEGAL_TYPE("위반종류"),
+    CAR_NUM("차량번호")
     ;
     private String value;
 

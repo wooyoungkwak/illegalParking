@@ -41,7 +41,7 @@ public class CalculateController extends ExtendsController {
     private final ProductService productService;
 
     private String subTitle = "결재";
-    
+
     @RequestMapping("/calculate")
     public RedirectView calculate() {
         return new RedirectView("/calculate/calculateList");
@@ -54,23 +54,23 @@ public class CalculateController extends ExtendsController {
 
         String pageNumberStr = param.get("pageNumber");
         int pageNumber = 1;
-        if ( pageNumberStr != null ) {
+        if (pageNumberStr != null) {
             pageNumber = Integer.parseInt(pageNumberStr);
         }
 
         String orderColumnStr = param.get("orderColumn");
         CalculateOrderColumn orderColumn;
-        if(orderColumnStr == null) {
+        if (orderColumnStr == null) {
             orderColumn = CalculateOrderColumn.calculateSeq;
-        } else  {
+        } else {
             orderColumn = CalculateOrderColumn.valueOf(orderColumnStr);
         }
 
         String filterColumnStr = param.get("filterColumn");
         CalculateFilterColumn filterColumn;
-        if(filterColumnStr == null) {
+        if (filterColumnStr == null) {
             filterColumn = CalculateFilterColumn.user;
-        } else  {
+        } else {
             filterColumn = CalculateFilterColumn.valueOf(filterColumnStr);
         }
 
@@ -81,7 +81,7 @@ public class CalculateController extends ExtendsController {
 
         String orderDirectionStr = param.get("orderDirection");
         Sort.Direction direction;
-        if ( orderDirectionStr == null) {
+        if (orderDirectionStr == null) {
             direction = Sort.Direction.ASC;
         } else {
             direction = Sort.Direction.valueOf(orderDirectionStr);
@@ -89,7 +89,7 @@ public class CalculateController extends ExtendsController {
 
         String pageSizeStr = param.get("pageSize");
         int pageSize = 10;
-        if ( pageSizeStr != null) {
+        if (pageSizeStr != null) {
             pageSize = Integer.parseInt(pageSizeStr);
         }
 
@@ -100,7 +100,7 @@ public class CalculateController extends ExtendsController {
 
         int totalPages = pages.getTotalPages();
 
-        if (totalPages > 3 && ( totalPages - pageNumber ) > 2 ) {
+        if (totalPages > 3 && (totalPages - pageNumber) > 2) {
             isEndOver = true;
         }
 
@@ -130,42 +130,46 @@ public class CalculateController extends ExtendsController {
     public ModelAndView productList(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
 
-        subTitle = "상품";
-
         HashMap<String, String> param = _getParam(request);
 
         String pageNumberStr = param.get("pageNumber");
         int pageNumber = 1;
-        if ( pageNumberStr != null ) {
+        if (pageNumberStr != null) {
             pageNumber = Integer.parseInt(pageNumberStr);
         }
 
         String orderColumnStr = param.get("orderColumn");
         ProductOrderColumn orderColumn;
-        if(orderColumnStr == null) {
+        if (orderColumnStr == null) {
             orderColumn = ProductOrderColumn.productSeq;
-        } else  {
+        } else {
             orderColumn = ProductOrderColumn.valueOf(orderColumnStr);
         }
 
         String filterColumnStr = param.get("filterColumn");
         ProductFilterColumn filterColumn;
-        if(filterColumnStr == null) {
+        if (filterColumnStr == null) {
             filterColumn = ProductFilterColumn.name;
-        } else  {
+        } else {
             filterColumn = ProductFilterColumn.valueOf(filterColumnStr);
         }
 
         String searchStr = param.get("searchStr");
-        if (searchStr == null) {
-            searchStr = "";
+        String searchStr2 = param.get("searchStr2");
+        String search;
+        if (filterColumn.equals(ProductFilterColumn.brand)) {
+            search = searchStr2;
         } else {
-            searchStr = searchStr.trim();
+            if (searchStr == null ) {
+                search = "";
+            } else {
+                search = searchStr.trim();
+            }
         }
 
         String orderDirectionStr = param.get("orderDirection");
         Sort.Direction direction;
-        if ( orderDirectionStr == null) {
+        if (orderDirectionStr == null) {
             direction = Sort.Direction.ASC;
         } else {
             direction = Sort.Direction.valueOf(orderDirectionStr);
@@ -173,18 +177,18 @@ public class CalculateController extends ExtendsController {
 
         String pageSizeStr = param.get("pageSize");
         int pageSize = 10;
-        if ( pageSizeStr != null) {
+        if (pageSizeStr != null) {
             pageSize = Integer.parseInt(pageSizeStr);
         }
 
-        Page<Product> pages = productService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
+        Page<Product> pages = productService.gets(pageNumber, pageSize, filterColumn, search, orderColumn, direction);
 
         boolean isBeginOver = false;
         boolean isEndOver = false;
 
         int totalPages = pages.getTotalPages();
 
-        if (totalPages > 3 && ( totalPages - pageNumber ) > 2 ) {
+        if (totalPages > 3 && (totalPages - pageNumber) > 2) {
             isEndOver = true;
         }
 
@@ -195,6 +199,7 @@ public class CalculateController extends ExtendsController {
         modelAndView.addObject("totalPages", totalPages);
         modelAndView.addObject("filterColumn", filterColumnStr);
         modelAndView.addObject("searchStr", searchStr);
+        modelAndView.addObject("searchStr2", searchStr2);
         modelAndView.addObject("orderColumn", orderColumnStr);
         modelAndView.addObject("orderDirection", orderDirectionStr);
 
@@ -217,7 +222,6 @@ public class CalculateController extends ExtendsController {
     @GetMapping("/calculate/productAdd")
     public ModelAndView productAdd(HttpServletRequest request) {
         ModelAndView modelAndView = new ModelAndView();
-        subTitle = "상품";
 
         modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);

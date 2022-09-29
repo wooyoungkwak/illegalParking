@@ -1,6 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.environment.domain;
 
-import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroup;
+import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,11 +20,12 @@ import java.time.LocalDateTime;
 public class Environment {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     Integer environmentSeq;
 
     @Column
-    ZoneGroup zoneGroup;
+    @Enumerated(EnumType.STRING)
+    ZoneGroupType zoneGroupType;
 
     @Column
     LocalDateTime regDt;

@@ -79,7 +79,7 @@ spring:
     username: wooyoung
     password: rudnf12dnjf
     hikari:
-      connection-timeout: 30000 # connection_timeout
+      connection-timeout: 9900 # connection_timeout
       max-lifetime: 1800000 # wait_timeout
       maximum-pool-size: 30
 server:

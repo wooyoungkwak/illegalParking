@@ -1,13 +1,11 @@
 package com.teraenergy.illegalparking.jpa;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptState;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
@@ -60,7 +58,7 @@ public class SqlReceipt {
         receipt1.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
         receipt1.setNote("테스트 ... 1차 ");
         receipt1.setCode("5013032000");
-        receipt1.setReceiptState(ReceiptState.ING);
+        receipt1.setReceiptType(ReceiptType.REPORT);
         receipt1.setIsDel(false);
         receipt1.setAddr("전라남도 나주시 빛가람동 상야1길 7");
         receipts.add(receipt1);
@@ -74,7 +72,7 @@ public class SqlReceipt {
         receipt2.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
         receipt2.setNote("테스트 ... 2차 ");
         receipt2.setCode("5013032000");
-        receipt2.setReceiptState(ReceiptState.COMPLETE);
+        receipt2.setReceiptType(ReceiptType.PENALTY);
         receipt2.setIsDel(false);
         receipt2.setAddr("전라남도 나주시 산포면 신도리 378-4");
         receipts.add(receipt2);

@@ -10,11 +10,17 @@
 <%@ attribute name="id" type="java.lang.String" required="true" %>
 <%@ attribute name="searchStr" type="java.lang.String" required="true" %>
 <%@ attribute name="title" type="java.lang.String" required="false" %>
+<%@ attribute name="option" type="java.lang.String" required="false" %>
+<%@ attribute name="items" type="java.lang.Object" required="true" %>
 
 <c:if test="${title != null}">
   <label for="${id}" class="form-label">${title}</label>
 </c:if>
 <div class="input-group" id="${id}Group">
-  <input id="${id}" class="form-control" name="${id}" placeholder="검색 문자를 입력하세요." value="${searchStr}">
+  <select id="${id}" class="form-select" name="${id}" ${option}>
+    <c:forEach var="item" items="${items}" varStatus="status">
+      <option value="${item}" <c:if test="${searchStr eq item}">selected</c:if> >${item.value}</option>
+    </c:forEach>
+  </select>
   <a class="btn btn-outline-primary" id="search">검색</a>
 </div>

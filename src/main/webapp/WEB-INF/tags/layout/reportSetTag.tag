@@ -9,6 +9,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ attribute name="items" type="java.lang.Object" required="true" %>
 <% String contextPath = request.getContextPath(); %>
 
 <!-- content -->
@@ -58,7 +59,7 @@
 						</div>
 						<div class="row mb-4 ms-2">
 							<div class="col-4 mb-2">
-								<tags:selectTag id="result" current="" items="대기,신고제외,과태료대상" title="대상:" />
+								<tags:typeSelectTag id="setResultType" current="" items="${items}" title="대상:" />
 							</div>
 							<div class="col-12">
 								<tags:inputTag id="note" placeholder="내용을 입력하세요." value="" title="설명:"/>
@@ -67,7 +68,6 @@
 						<div class="row ms-2 ">
 							<div class="col-2 btn-group">
 								<a type="submit" class="btn btn-primary" id="register">등록</a>
-								<a type="submit" class="btn btn-primary" id="modify">수정</a>
 								<a class="btn btn-outline-secondary" id="close">닫기</a>
 							</div>
 						</div>
