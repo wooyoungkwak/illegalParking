@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
@@ -98,7 +99,7 @@ public class AreaAPI {
                 IllegalZone illegalZone = new IllegalZone();
                 illegalZone.setPolygon(stringBuilder.toString());
                 illegalZone.setName("");
-//                illegalZone.setIllegalType();
+                illegalZone.setIllegalTypeSeq(Integer.parseInt((String) param.get("illegalTypeSeq")));
                 illegalZone.setCode((String) dataMap.get("code"));
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
@@ -166,16 +167,26 @@ public class AreaAPI {
 
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {
         String select = param.get("select").asText();
+        List<String> codes = Lists.newArrayList();
+        if("dong".equals(select) || "typeAndDong".equals(select)) {
+            JsonNode codeArrNode = param.get("code");
+            if(codeArrNode.isArray()) {
+                for (JsonNode obj : codeArrNode) {
+                    codes.add(obj.asText());
+                }
+            }
+        }
+
         List<IllegalZone> illegalZones = null;
         switch (select) {
             case "type":
                 illegalZones = illegalZoneService.getsByType(param.get("illegalTypeSeq").asInt());
                 break;
             case "dong":
-                illegalZones = illegalZoneService.getsByDong(param.get("code").asText());
+                illegalZones = illegalZoneService.getsByDong(codes);
                 break;
             case "typeAndDong":
-                illegalZones = illegalZoneService.getsByTypeAndDong(param.get("illegalTypeSeq").asInt(), param.get("code").asText());
+                illegalZones = illegalZoneService.getsByTypeAndDong(param.get("illegalTypeSeq").asInt(), codes);
                 break;
             case "all":
                 illegalZones = illegalZoneService.gets();

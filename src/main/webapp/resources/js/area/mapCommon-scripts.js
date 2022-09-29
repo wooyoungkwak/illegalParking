@@ -155,48 +155,42 @@ function centroid(points) {
 }
 /*폴리곤 중심 좌표 구하기 end*/
 
-
 /* 좌표로 동코드 받기 카카오 REST API */
-// async function coordinatesToDongCodeKakaoApi(x, y){
-//
-//
-//     let code = '';
-//
-//     let URL = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${x}&y=${y}`;
-//     let opt = {
-//         headers: {
-//             Authorization: "KakaoAK 350a9e6cc59932a26806ab0c0b6fdd2e"
-//         }
-//     };
-//     const response = await fetch(URL, opt);
-//     const data = await response.json();
-//     data.documents.forEach(region => {
-//         if (region.region_type === 'B') {
-//             code = region.code;
-//         }
-//     });
-//     return code;
-//     //console.log(documents);
-// }
-let currentCode = '';
-let beforeCode = '';
-function coordinatesToDongCodeKakaoApi(x, y, stat){
-    let geocoder = new kakao.maps.services.Geocoder();
-    let callback = function(result, status) {
-        log(result)
-        if (status === kakao.maps.services.Status.OK) {
-            log('지역 명칭 : ' + `${result[0].region_1depth_name} ${result[0].region_2depth_name} ${result[0].region_3depth_name}`);
-            log('행정구역 코드 : ' + result[0].code);
-
-            if(stat === 'first') beforeCode = result[0].code;
-            else currentCode = result[0].code;
+async function coordinatesToDongCodeKakaoApi(x, y, stat){
+    let code = '';
+    let URL = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${x}&y=${y}`;
+    let opt = {
+        headers: {
+            Authorization: "KakaoAK 350a9e6cc59932a26806ab0c0b6fdd2e"
         }
     };
-    geocoder.coord2RegionCode(x, y, callback);
-
-    if (stat === 'first') return beforeCode;
-    else return currentCode;
+    const response = await fetch(URL, opt);
+    const data = await response.json();
+    data.documents.forEach(region => {
+        if (region.region_type === 'B') code = region.code.substr(0, 8).concat('00');
+    });
+    return code;
 }
+
+// function coordinatesToDongCodeKakaoApi(x, y, stat){
+//     let geocoder = new kakao.maps.services.Geocoder();
+//     let callback = function (result, status) {
+//         log(result)
+//         if (status === kakao.maps.services.Status.OK) {
+//             log('지역 명칭 : ' + `${result[0].region_1depth_name} ${result[0].region_2depth_name} ${result[0].region_3depth_name} ${result[0].region_4depth_name}`);
+//             log('행정구역 코드 : ' + result[0].code);
+//
+//             log(x);
+//
+//             if(stat === 'first') beforeCode = result[0].code;
+//             else currentCode = result[0].code;
+//         }
+//     };
+//     geocoder.coord2RegionCode(x, y, callback);
+//
+//     if (stat === 'first') return beforeCode;
+//     else return currentCode;
+// }
 /* 좌표로 동코드 받기 카카오 REST API end */
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
@@ -204,13 +198,10 @@ function getCurrentPosition(map) {
     if (navigator.geolocation) {
         // GPS를 지원하면
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 // drawingMap.center = new kakao.maps.LatLng(`${position.coords.latitude}`, `${position.coords.longitude}`) // 지도의 중심좌표
                 let currentLat = `${position.coords.latitude}`; // y
                 let currentLng = `${position.coords.longitude}`; // x
-                beforeCode = coordinatesToDongCodeKakaoApi(currentLng, currentLat);
-
-                log(beforeCode);
                 // 지도 중심좌표를 접속위치로 변경합니다
                 let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
                 map.setCenter(currentPosition);
@@ -229,4 +220,39 @@ function getCurrentPosition(map) {
         alert("위치 권한을 설정하시기 바랍니다.");
         map.setCenter(position);
     }
+}
+
+// 현재 map 중심 좌표 구하기
+function getMapCenter(map) {
+    let center = map.getCenter();
+    return {x: center.getLng(), y: center.getLat()}
+}
+
+// 꼭지점, 중심좌표의 법정동 코드 가져오기
+async function getDongCodesBounds(map){
+    // 맵 구역
+    let bounds = map.getBounds();
+    // 영역정보의 남서쪽 정보를 얻어옵니다
+    let swLatLng = bounds.getSouthWest();
+    let south = swLatLng.getLat();
+    let west = swLatLng.getLng();
+
+    // 영역정보의 북동쪽 정보를 얻어옵니다
+    let neLatLng = bounds.getNorthEast();
+    let north = neLatLng.getLat();
+    let east = neLatLng.getLng();
+
+    // 동, 서, 남, 북 좌표
+    log(east, west, south, north);
+
+    let center = getMapCenter(map);
+
+    let latLngs = [{x: east, y: north}, {x: west, y: north}, {x: east, y: south}, {x: west, y: south}, {x: center.x, y: center.y}]
+    let codes = [];
+
+    for (const latLng of latLngs) {
+        let code = await coordinatesToDongCodeKakaoApi(latLng.x, latLng.y);
+        codes.push(code);
+    }
+    return [...new Set(codes)];
 }

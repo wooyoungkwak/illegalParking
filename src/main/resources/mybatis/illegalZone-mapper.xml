@@ -8,8 +8,17 @@
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone where ZoneSeq = #{zoneSeq} and isDel = 0;
     </select>
 
+    <!--<select id="findByIdDong" resultType="IllegalZone">
+        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone WHERE Code IN (#{code}) and isDel = 0;
+    </select>-->
+
     <select id="findByIdDong" resultType="IllegalZone">
-        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone where Code = #{code} and isDel = 0;
+        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone
+        WHERE Code IN
+        <foreach collection="codes" item="code" separator="," open="(" close=")">
+              #{code}
+        </foreach>
+          AND isDel = 0;
     </select>
 
     <select id="findByIdType" resultType="IllegalZone">
@@ -17,7 +26,12 @@
     </select>
 
     <select id="findByIdTypeAndDong" resultType="IllegalZone">
-        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone where illegalType = #{illegalTypeSeq} and Code = #{code} and isDel = 0;
+        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone
+        WHERE illegalType = #{illegalTypeSeq} AND Code IN
+        <foreach collection="codes" item="code" separator="," open="(" close=")">
+            #{code}
+        </foreach>
+          AND isDel = 0;
     </select>
 
     <select id="findAll" resultType="IllegalZone">
@@ -39,7 +53,7 @@
     </insert>
 
     <update id="modify" useGeneratedKeys="false">
---          UPDATE illegal_zone SET IllegalType = #{illegalTypeSeq} WHERE ZoneSeq = #{zoneSeq};
+         UPDATE illegal_zone SET IllegalType = #{illegalTypeSeq} WHERE ZoneSeq = #{zoneSeq};
     </update>
 
     <update id="delete" useGeneratedKeys="false">

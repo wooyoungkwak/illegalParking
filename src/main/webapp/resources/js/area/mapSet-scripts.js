@@ -5,8 +5,8 @@ $(function () {
     let drawingDataTargets = [];
     let zoneAreas = [];
 
-    let CENTER_LATITUDE = 31.0234493;
-    let CENTER_LONGITUDE = 122.7927116;
+    let CENTER_LATITUDE = 35.02035492064902;
+    let CENTER_LONGITUDE = 126.79383256393594;
 
     // Drawing Manager로 도형을 그릴 지도 div
     let drawingMapContainer = document.getElementById('drawingMap');
@@ -18,13 +18,13 @@ $(function () {
     let infoWindow;
     let kakaoEvent = kakao.maps.event;
 
-// 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+    // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
     let mouseoverOption = {
         fillColor: '#EFFFED', // 채우기 색깔입니다
         fillOpacity: 0.8 // 채우기 불투명도 입니다
     };
 
-// 위에 작성한 옵션으로 Drawing Manager를 생성합니다
+    // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
     let manager;
 
     let polygonStyle = {
@@ -40,7 +40,7 @@ $(function () {
     };
 
 
-// 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+    // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
     function mouseoutOption(area) {
         return {
             fillColor: fillColorSetting(area), // 채우기 색깔입니다
@@ -48,7 +48,7 @@ $(function () {
         } // 채우기 불투명도 입니다
     }
 
-// 버튼 클릭 시 호출되는 핸들러 입니다
+    // 버튼 클릭 시 호출되는 핸들러 입니다
     function selectOverlay(type) {
         // 그리기 중이면 그리기를 취소합니다
         manager.cancel();
@@ -57,9 +57,14 @@ $(function () {
         manager.select(kakao.maps.drawing.OverlayType[type]);
     }
 
-// Drawing Manager에서 데이터를 가져와 도형을 표시할 아래쪽 지도 div
+    $('#btnAddOverlay').click(function () {
+        $('#areaSettingModal').offcanvas('hide');
+        selectOverlay('POLYGON');
+    });
+
+    // Drawing Manager에서 데이터를 가져와 도형을 표시할 아래쪽 지도 div
     /*
-    var mapContainer = document.getElementById('map'),
+    let mapContainer = document.getElementById('map'),
         mapOptions = {
             center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
             level: 3 // 지도의 확대 레벨
@@ -68,40 +73,20 @@ $(function () {
 
 
     let searchIllegalTypeSeq = '';
-    //
-    $('input:radio[name=searchIllegalTypeSeq]').change(function () {
+    // 주정차 별 구역 조회
+    $('input:radio[name=searchIllegalTypeSeq]').change(async function () {
+        $('#areaSettingModal').offcanvas('hide');
         searchIllegalTypeSeq = $('input:radio[name=searchIllegalTypeSeq]:checked').val();
         log(searchIllegalTypeSeq);
-        searchZone(searchIllegalTypeSeq);
-    });
-
-    //
-    function searchZone(illegalTypeSeq) {
-
-        let center = drawingMap.getCenter();
-        let x = center.getLng(); // x
-        let y = center.getLat(); // y
-
-        let code = coordinatesToDongCodeKakaoApi(x, y);
-
-        let select = SELECT_TYPE_AND_DONG;
-        if (illegalTypeSeq === '') select = SELECT_ALL;
         removeOverlays();
-        initializeZone({
-            url: $.getContextPath() + '/zone/gets',
-            data: {
-                select: select,
-                illegalTypeSeq: illegalTypeSeq,
-                code: code
-            }
-        });
-        drawingPolygon(getZonesInBounds(), 'load');
-    }
+        await getsZone();
+        await drawingPolygon(getZonesInBounds(), 'load');
+    });
 
     // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
     // Drawing Manager로 그려진 객체 데이터를 가져와 아래 지도에 표시합니다
-    function getDataFromDrawingMap() {
-
+    $('#btnSet').click(async function () {
+        $('#areaSettingModal').offcanvas('hide');
         // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
         let data = manager.getData();
         // let searchIllegalTypeSeq = $('input:radio[name="searchIllegalTypeSeq"]:checked').val();
@@ -109,7 +94,7 @@ $(function () {
             url: $.getContextPath() + "/zone/set",
             data: {
                 polygonData: data[kakao.maps.drawing.OverlayType.POLYGON],
-                illegalTypeSeq: searchIllegalTypeSeq === '' ? '1' : searchIllegalTypeSeq,
+                illegalTypeSeq: searchIllegalTypeSeq === '' ? '0' : searchIllegalTypeSeq,
             }
         }
 
@@ -124,8 +109,7 @@ $(function () {
 
                 // console.log('centroid : ', centroid(points));
                 let centroidPoints = centroid(points);
-                coordinatesToDongCodeKakaoApi(centroidPoints.x, centroidPoints.y);
-                polygon.code = currentCode;
+                polygon.code = await coordinatesToDongCodeKakaoApi(centroidPoints.x, centroidPoints.y);
                 // zoneSeq 추가
                 // let lastZoneSeq = zoneSeqs[zoneSeqs.length - 1];
                 let lastZoneSeq = zoneSeqs.slice(-1)[0]
@@ -158,16 +142,16 @@ $(function () {
             // 생성한 폴리곤 삭제
             removeDrawingOverlays();
         }
-    }
+    });
 
-// 생성한 그리기 도형 삭제
+    // 생성한 그리기 도형 삭제
     function removeDrawingOverlays() {
         drawingDataTargets.forEach(function (target) {
             manager.remove(target);
         })
     }
 
-// 아래 지도에 그려진 도형이 있다면 모두 지웁니다
+    // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
     function removeOverlays() {
         let len = overlays.length, i = 0;
 
@@ -178,7 +162,7 @@ $(function () {
         overlays = [];
     }
 
-//
+    // 폴리곤 그리기
     function drawingPolygon(polygons, stat) {
         // let areas = getPolygonData();
         // if (stat === 'drawing') {
@@ -194,7 +178,7 @@ $(function () {
         }
     }
 
-//
+    // 주정차 타입에 따른 폴리곤 색 구별
     function fillColorSetting(area) {
         let fillColor;
         if (area.type === 1) fillColor = '#ff6f00';
@@ -203,7 +187,7 @@ $(function () {
         return fillColor;
     }
 
-//
+    // 폴리곤 클릭 시 모달 창 오픈
     function showModal(area) {
         let result = initializeZone({
             url: $.getContextPath() + '/zone/get',
@@ -222,11 +206,11 @@ $(function () {
         timeHideAndShow(checkVal);
         timeSetting(result);
 
-        $('#areaSettingModal').modal('show');
-
+        // $('#areaSettingModal').modal('show');
+        $('#areaSettingModal').offcanvas('show');
     }
 
-//
+    // 탄력적일 경우 시간 표시
     function timeHideAndShow(checkVal) {
         if (checkVal === '2') { //탄력적 가능일 경우
             $('#timeRow').css('display', 'block');
@@ -237,7 +221,7 @@ $(function () {
         }
     }
 
-//
+    // 기본 시간 설정
     function timeSetting(result) {
         let startTime = result.startTime;
         let endTime = result.endTime;
@@ -256,7 +240,7 @@ $(function () {
     });
 
     // 폴리곤 삭제
-    $('#btnDelete').click(function () {
+    $('#btnRemove').click(function () {
         if (confirm("삭제하시겠습니까?")) {
             let opt = {
                 url: $.getContextPath() + "/zone/remove",
@@ -275,13 +259,13 @@ $(function () {
             }
 
             drawingPolygon(getZonesInBounds(), 'load');
-            $('#areaSettingModal').modal('hide');
+            $('#areaSettingModal').offcanvas('hide');
             alert("삭제되었습니다.");
         }
     });
 
     // 구역 설정
-    $('#btnUpdate').click(function () {
+    $('#btnModify').click(function () {
         if (confirm("설정하시겠습니까?")) {
             let form = $('#formAreaSetting').serializeObject();
             if (form.startTime === undefined) form.startTime = "";
@@ -295,11 +279,11 @@ $(function () {
             if (result.success === 'true') {
                 let index = zoneSeqs.indexOf(Number(form.zoneSeq));
                 zoneTypes[index] = Number(form.illegalTypeSeq);
-                log(index," :: ", zoneTypes[index]);
+                // log(index," :: ", zoneTypes[index]);
             }
 
             drawingPolygon(getPolygonData(), 'load');
-            $('#areaSettingModal').modal('hide');
+            $('#areaSettingModal').offcanvas('hide');
             alert("설정되었습니다.");
         }
     });
@@ -328,7 +312,7 @@ $(function () {
 
         });
         // drawingPolygon(inBoundsPath, 'load');
-        log(zonesInBounds);
+        log('zonesInBounds : ', zonesInBounds);
         return zonesInBounds;
     }
 
@@ -347,7 +331,7 @@ $(function () {
         return path;
     }
 
-//
+    // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
     function getPolygonData() {
         let areas = [];
         for (let j = 0; j < zonePolygons.length; j++) {
@@ -412,23 +396,22 @@ $(function () {
                 }
             });
 
-        // 다각형에 마우스다운 이벤트를 등록합니다
+        // 다각형에 클릭 이벤트를 등록합니다
         let upCount = 0;
         setKakaoEvent({
                 target: polygon,
                 event: 'click',
                 func: function (mouseEvent) {
-                    var resultDiv = document.getElementById('result');
+                    let resultDiv = document.getElementById('result');
                     resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
-
-                    // log("area  = ", JSON.stringify(area));
-                    showModal(area);
+                    if(manager._mode === undefined || manager._mode === '')
+                        showModal(area);
                 }
             });
         overlays.push(polygon);
     }
 
-    //
+    // 카카오 초기화
     function initializeKakao() {
         drawingMap = {
             center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
@@ -497,6 +480,7 @@ $(function () {
                     if (isInside(onePolygon, n, p)) {
                         log(i + " : Yes");
                     } else {
+                        // $('#areaSettingModal').offcanvas('hide');
                         // log(i + " : No");
                     }
                 }
@@ -514,11 +498,12 @@ $(function () {
             }
         });
 
-        // 
+        // 맵 더블클릭 이벤트 등록
         setKakaoEvent({
             target: drawingMap,
             event: 'dblclick',
             func: function (mouseEvent) {
+                $('#areaSettingModal').offcanvas('hide');
                 selectOverlay('POLYGON');
             }
         });
@@ -527,29 +512,39 @@ $(function () {
         setKakaoEvent({
             target: drawingMap,
             event: 'idle',
-            func: function () {
-
+            func: async function () {
+                $('#areaSettingModal').offcanvas('hide');
                 // 지도의  레벨을 얻어옵니다
                 let level = drawingMap.getLevel();
 
                 if (level > 3) {
                     removeOverlays();
                 } else {
-                    let center = drawingMap.getCenter();
-                    let x = center.getLng(); // x
-                    let y = center.getLat(); // y
-
-                    let code = coordinatesToDongCodeKakaoApi(x, y);
-                    log('currentCode : ', code);
-                    log('beforeCode : ', beforeCode);
-                    drawingPolygon(getZonesInBounds(), 'load');
+                    await getsZone();
+                    log('zonePolygons.length : ', zonePolygons.length)
+                    if(zonePolygons.length > 0)
+                        await drawingPolygon(getZonesInBounds(), 'load');
                 }
             }
         });
-
     }
 
-    //
+    async function getsZone() {
+        let select = SELECT_TYPE_AND_DONG;
+        if (searchIllegalTypeSeq === '') select = SELECT_DONG;
+        let codes = await getDongCodesBounds(drawingMap);
+        initializeZone({
+            url: $.getContextPath() + '/zone/gets',
+            data: {
+                select: select,
+                illegalTypeSeq: searchIllegalTypeSeq,
+                code: codes
+            }
+        });
+        // drawingPolygon(getZonesInBounds(), 'load');
+    }
+
+    // zone 초기화
     function initializeZone(opt) {
         let result = $.JJAjaxAsync(opt);
 
@@ -564,19 +559,8 @@ $(function () {
 
     // 초기화
     function initialize() {
-
         initializeKakao();
-
         getCurrentPosition(drawingMap);
-
-        initializeZone({
-            url: $.getContextPath() + '/zone/gets',
-            data: {
-                select: SELECT_ALL
-            }
-        });
-
-        drawingPolygon(getZonesInBounds(), 'load');
     }
 
     initialize();

@@ -27,8 +27,8 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     }
 
     @Override
-    public List<IllegalZone> getsByDong(String code) {
-        return illegalZoneMapper.findByIdDong(code);
+    public List<IllegalZone> getsByDong(List<String> codes) {
+        return illegalZoneMapper.findByIdDong(codes);
     }
 
     @Override
@@ -37,8 +37,8 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     }
 
     @Override
-    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, String code) {
-        return illegalZoneMapper.findByIdTypeAndDong(illegalTypeSeq, code);
+    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, List<String> codes) {
+        return illegalZoneMapper.findByIdTypeAndDong(illegalTypeSeq, codes);
     }
 
     @Override

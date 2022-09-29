@@ -18,11 +18,11 @@ public interface IllegalZoneMapper {
 
     IllegalZone findById(Integer zoneSeq);
 
-    List<IllegalZone> findByIdDong(String code);
+    List<IllegalZone> findByIdDong(List<String> codes);
 
     List<IllegalZone> findByIdType(Integer illegalTypeSeq);
 
-    List<IllegalZone> findByIdTypeAndDong(Integer illegalTypeSeq, String code);
+    List<IllegalZone> findByIdTypeAndDong(Integer illegalTypeSeq, List<String> codes);
 
     List<IllegalZone> findAll();
 

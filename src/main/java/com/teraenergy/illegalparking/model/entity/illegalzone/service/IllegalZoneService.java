@@ -15,11 +15,11 @@ public interface IllegalZoneService {
 
     public IllegalZone get(Integer illegalZoneSeq);
 
-    public List<IllegalZone> getsByDong(String code);
+    public List<IllegalZone> getsByDong(List<String> codes);
 
     public List<IllegalZone> getsByType(Integer illegalType);
 
-    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, String code);
+    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, List<String> codes);
 
     public List<IllegalZone> gets();
 

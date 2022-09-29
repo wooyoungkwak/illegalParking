@@ -36,8 +36,10 @@
 					<div class="map_wrap">
 						<div id="drawingMap"></div>
 						<p class="modes">
-							<button onclick="selectOverlay('POLYGON')">구역추가</button>
-							<button onclick="getDataFromDrawingMap()">저장</button>
+							<%--<button onclick="selectOverlay('POLYGON')">구역추가</button>
+							<button onclick="getDataFromDrawingMap()">저장</button>--%>
+							<button id="btnAddOverlay">구역추가</button>
+							<button id="btnSet">저장</button>
 							<span>
 								<label><input type="radio" name="searchIllegalTypeSeq" value="" checked>전체</label>
 								<label><input type="radio" name="searchIllegalTypeSeq" value="0">불법주정차</label>
