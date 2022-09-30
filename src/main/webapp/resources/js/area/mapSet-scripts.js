@@ -5,6 +5,8 @@ $(function () {
     let drawingDataTargets = [];
     let zoneAreas = [];
 
+    let beforeCodes = [];
+
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
 
@@ -71,11 +73,21 @@ $(function () {
         };
     */
 
-
-    let searchIllegalTypeSeq = '';
+    let searchIllegalTypeSeq = $('input:radio[name=searchIllegalTypeSeq]:checked').val();
     // 주정차 별 구역 조회
     $('input:radio[name=searchIllegalTypeSeq]').change(async function () {
         $('#areaSettingModal').offcanvas('hide');
+        if(drawingDataTargets.length > 0){
+            if(confirm("Are you sure!"))
+            {
+                //do your job
+            }
+            else
+            {
+                log(searchIllegalTypeSeq)
+                return false;
+            }
+        }
         searchIllegalTypeSeq = $('input:radio[name=searchIllegalTypeSeq]:checked').val();
         log(searchIllegalTypeSeq);
         removeOverlays();
@@ -89,7 +101,6 @@ $(function () {
         $('#areaSettingModal').offcanvas('hide');
         // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
         let data = manager.getData();
-        // let searchIllegalTypeSeq = $('input:radio[name="searchIllegalTypeSeq"]:checked').val();
         let opt = {
             url: $.getContextPath() + "/zone/set",
             data: {
@@ -107,7 +118,6 @@ $(function () {
 
                 let points = polygon.points;
 
-                // console.log('centroid : ', centroid(points));
                 let centroidPoints = centroid(points);
                 polygon.code = await coordinatesToDongCodeKakaoApi(centroidPoints.x, centroidPoints.y);
                 // zoneSeq 추가
@@ -129,10 +139,6 @@ $(function () {
                 polygonPath += firstPath;
                 zonePolygons.push(polygonPath);
                 zoneAreas.push(polygon);
-
-                // opt.data.code = coordinatesToDongCodeKakaoApi(centerPoints[0], centerPoints[1]);
-                //opt.data.code.push(2222222);
-                //     opt.code = coordinatesToDongCodeKakaoApi(x, y);
             }
             // 데이터 저장
             initializeZone(opt);
@@ -154,11 +160,9 @@ $(function () {
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
     function removeOverlays() {
         let len = overlays.length, i = 0;
-
         for (; i < len; i++) {
             overlays[i].setMap(null);
         }
-
         overlays = [];
     }
 
@@ -203,7 +207,7 @@ $(function () {
         $('input:radio[name=illegalTypeSeq]:input[value="' + illegalTypeSeq + '"]').prop('checked', true);
 
         let checkVal = $('input:radio[name="illegalTypeSeq"]:checked').val();
-        timeHideAndShow(checkVal);
+        // timeHideAndShow(checkVal);
         timeSetting(result);
 
         // $('#areaSettingModal').modal('show');
@@ -211,15 +215,15 @@ $(function () {
     }
 
     // 탄력적일 경우 시간 표시
-    function timeHideAndShow(checkVal) {
-        if (checkVal === '2') { //탄력적 가능일 경우
-            $('#timeRow').css('display', 'block');
-            $('#startTime, #endTime').attr('disabled', false);
-        } else {
-            $('#timeRow').css('display', 'none');
-            $('#startTime, #endTime').attr('disabled', true);
-        }
-    }
+    // function timeHideAndShow(checkVal) {
+    //     if (checkVal === '2') { //탄력적 가능일 경우
+    //         $('#timeRow').css('display', 'block');
+    //         $('#startTime, #endTime').attr('disabled', false);
+    //     } else {
+    //         $('#timeRow').css('display', 'none');
+    //         $('#startTime, #endTime').attr('disabled', true);
+    //     }
+    // }
 
     // 기본 시간 설정
     function timeSetting(result) {
@@ -234,10 +238,10 @@ $(function () {
     }
 
     // 탄력적 가능 시간 설정
-    $('input:radio[name=illegalTypeSeq]').click(function () {
-        let checkVal = $('input:radio[name=illegalTypeSeq]:checked').val();
-        timeHideAndShow(checkVal);
-    });
+    // $('input:radio[name=illegalTypeSeq]').click(function () {
+    //     let checkVal = $('input:radio[name=illegalTypeSeq]:checked').val();
+    //     timeHideAndShow(checkVal);
+    // });
 
     // 폴리곤 삭제
     $('#btnRemove').click(function () {
@@ -436,8 +440,8 @@ $(function () {
                 draggable: true,
                 removable: true,
                 editable: true,
-                strokeColor: '#a2a0a0',
-                fillColor: '#FF3333',
+                strokeColor: '#000000',
+                fillColor: '#00afff',
                 fillOpacity: 0.5,
                 hintStrokeStyle: 'dash',
                 hintStrokeOpacity: 0.5
@@ -533,14 +537,33 @@ $(function () {
         let select = SELECT_TYPE_AND_DONG;
         if (searchIllegalTypeSeq === '') select = SELECT_DONG;
         let codes = await getDongCodesBounds(drawingMap);
-        initializeZone({
-            url: $.getContextPath() + '/zone/gets',
-            data: {
-                select: select,
-                illegalTypeSeq: searchIllegalTypeSeq,
-                code: codes
-            }
-        });
+        // let sameArrChk = JSON.stringify(beforeCodes) === JSON.stringify(codes);
+        let sameArrChk = _.isEmpty(_.xor(beforeCodes, codes));
+        log('1 : ',beforeCodes);
+
+        //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
+        if (!sameArrChk) {
+            initializeZone({
+                url: $.getContextPath() + '/zone/gets',
+                data: {
+                    select: select,
+                    illegalTypeSeq: searchIllegalTypeSeq,
+                    codes: codes
+                }
+            })
+            log('ok');
+            beforeCodes = codes;
+        } else if (sameArrChk && select === SELECT_TYPE_AND_DONG) {
+            initializeZone({
+                url: $.getContextPath() + '/zone/gets',
+                data: {
+                    select: select,
+                    illegalTypeSeq: searchIllegalTypeSeq,
+                    codes: codes
+                }
+            })
+        }
+        log('2: ',beforeCodes);
         // drawingPolygon(getZonesInBounds(), 'load');
     }
 

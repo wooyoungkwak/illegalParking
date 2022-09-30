@@ -31,16 +31,22 @@
 				</ol>
 
 				<div class="row">
-					<div class="map_wrap">
-						<div id="drawingMap"></div>
-						<p class="modes">
-							<span>
-								<label><input type="radio" name="searchTypeSeq" value="" checked>전체</label>
-								<label><input type="radio" name="searchTypeSeq" value="1">주정차 불가</label>
-								<label><input type="radio" name="searchTypeSeq" value="2">탄력적 가능</label>
-								<label><input type="radio" name="searchTypeSeq" value="3">5분간 가능</label>
-							</span>
-						</p>
+
+					<div class="card">
+						<div class="card-title">
+							<p class="modes">
+								<span>
+									<label><input type="radio" name="searchIllegalTypeSeq" value="" checked>전체</label>
+									<label><input type="radio" name="searchIllegalTypeSeq" value="0">불법주정차</label>
+									<label><input type="radio" name="searchIllegalTypeSeq" value="1">5분주정차</label>
+								</span>
+							</p>
+						</div>
+						<div class="card-body mt-4">
+								<%--							<div class="map_wrap">--%>
+							<div id="map"></div>
+								<%--							</div>--%>
+						</div>
 					</div>
 
 				</div>

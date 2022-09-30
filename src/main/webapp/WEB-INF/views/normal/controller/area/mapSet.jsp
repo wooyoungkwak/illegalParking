@@ -33,19 +33,25 @@
 
 				<div class="row">
 
-					<div class="map_wrap">
-						<div id="drawingMap"></div>
-						<p class="modes">
-							<%--<button onclick="selectOverlay('POLYGON')">구역추가</button>
-							<button onclick="getDataFromDrawingMap()">저장</button>--%>
-							<button id="btnAddOverlay">구역추가</button>
-							<button id="btnSet">저장</button>
-							<span>
+					<div class="card">
+						<div class="card-title">
+							<p class="modes">
+									<%--<button onclick="selectOverlay('POLYGON')">구역추가</button>
+									<button onclick="getDataFromDrawingMap()">저장</button>--%>
+								<button id="btnAddOverlay">구역추가</button>
+								<button id="btnSet">저장</button>
+								<span>
 								<label><input type="radio" name="searchIllegalTypeSeq" value="" checked>전체</label>
 								<label><input type="radio" name="searchIllegalTypeSeq" value="0">불법주정차</label>
 								<label><input type="radio" name="searchIllegalTypeSeq" value="1">5분주정차</label>
 							</span>
-						</p>
+							</p>
+						</div>
+						<div class="card-body mt-4">
+								<%--							<div class="map_wrap">--%>
+							<div id="drawingMap"></div>
+								<%--							</div>--%>
+						</div>
 					</div>
 
 					<p id="result"></p>

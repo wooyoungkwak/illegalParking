@@ -64,7 +64,7 @@
 			</div>
 		</div>
 		<div class="offcanvas-footer">
-			<button type="button" class="btn btn-danger" id="btnRemove">삭제</button>
+			<%--<button type="button" class="btn btn-danger" id="btnRemove">삭제</button>--%>
 			<button type="button" class="btn btn-primary" id="btnModify">확인</button>
 			<button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas">취소</button>
 		</div>

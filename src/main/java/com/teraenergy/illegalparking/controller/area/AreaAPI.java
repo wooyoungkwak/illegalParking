@@ -104,11 +104,6 @@ public class AreaAPI {
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
 
-//                Polygon polygon = (Polygon) new WKTReader().read(stringBuilder.toString());
-//                polygon.getCentroid();
-//                polygon.getEnvelope().getCentroid();
-//                polygon.convexHull().getCentroid();
-
                 stringBuilder.setLength(0);
             }
 
@@ -169,9 +164,9 @@ public class AreaAPI {
         String select = param.get("select").asText();
         List<String> codes = Lists.newArrayList();
         if("dong".equals(select) || "typeAndDong".equals(select)) {
-            JsonNode codeArrNode = param.get("code");
-            if(codeArrNode.isArray()) {
-                for (JsonNode obj : codeArrNode) {
+            JsonNode codesArrNode = param.get("codes");
+            if(codesArrNode.isArray()) {
+                for (JsonNode obj : codesArrNode) {
                     codes.add(obj.asText());
                 }
             }
