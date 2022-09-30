@@ -86,6 +86,6 @@ public class AopController {
         // HttpServletRequest 접근 방법
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         request.setAttribute("msg", message);
-        return "/controller/error/500";
+        return "/normal/controller/error/500";
     }
 }

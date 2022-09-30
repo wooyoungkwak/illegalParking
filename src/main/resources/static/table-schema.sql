@@ -3,7 +3,7 @@ CREATE
 DATABASE illegal_parking;
 
 -- 법정동코드
--- DROP TABLE law_dong;
+DROP TABLE law_dong;
 CREATE TABLE law_dong
 (
     DongSeq INT          NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -17,7 +17,7 @@ CREATE TABLE law_dong
 CREATE INDEX dongCode ON law_dong (Code);
 
 -- 공영주차장 정보
--- DROP TABLE parking;
+DROP TABLE parking;
 CREATE TABLE parking
 (
     ParkingSeq           INT         NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -58,7 +58,7 @@ CREATE TABLE parking
   CHARSET = utf8;
 
 -- 불법 주정차 구역
--- DROP TABLE illegal_zone;
+DROP TABLE illegal_zone;
 CREATE TABLE illegal_zone
 (
     ZoneSeq     BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
@@ -87,20 +87,19 @@ CREATE TABLE illegal_event
   CHARSET = utf8;
 
 -- 회원 정보 ( 신고자 및 신고 알림 수신자 및 기관 )
--- DROP TABLE user;
-CREATE TABLE user
+DROP TABLE illegal_event;
+CREATE TABLE illegal_event
 (
-    UserSeq  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Name     VARCHAR(10) NOT NULL,               -- 회원 이름
-    Email    VARCHAR(20) NOT NULL,               -- email (id)
-    Password VARCHAR(50) NOT NULL,               -- 패스워드
-    UserCode BIGINT      NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
-    Role     INT         NOT NULL,               -- 역할 ( USER / ADMIN / GOVERNMENT )
-    IsDel    BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt    Datetime NULL                       -- 삭제 일자
+    EventSeq        INT AUTO_INCREMENT PRIMARY KEY,
+    FirstStartTime  VARCHAR(5) NULL,  -- 1차 이벤트 시작 시간
+    FirstEndTime    VARCHAR(5) NULL,  -- 1차 이벤트 종료 시간
+    UsedFirst       BOOLEAN NOT NULL, -- 1차 사용 여부
+    SecondStartTime VARCHAR(5) NULL,  -- 2차 이벤트 시작 시간
+    SecondEndTime   VARCHAR(5) NULL,  -- 2차 이벤트 종료 시간
+    UsedSecond      BOOLEAN NOT NULL, -- 2차 사용 여부
+    EnvironmentSeq  INT     NOT NULL
 ) ENGINE = InnoDB
   CHARSET = utf8;
-
 -- 차량 번호 정보 ( 신고 등록 및 접수 알림 차량 정보 )
 CREATE TABLE car
 (
@@ -185,11 +184,12 @@ DROP TABLE product;
 CREATE TABLE product
 (
     ProductSeq INT AUTO_INCREMENT PRIMARY KEY,
-    Name       VARCHAR(30) NOT NULL, -- 상품 이름
-    Brand      VARCHAR(20) NOT NULL, -- 브랜드 이름
-    PointValue BIGINT      NOT NULL, -- 포인트 점수
-    UserSeq    INT         NOT NULL, -- 등록자
-    RegDt      Datetime    NOT NULL  -- 등록 일자
+    Name       VARCHAR(30) NOT NULL,               -- 상품 이름
+    Brand      VARCHAR(20) NOT NULL,               -- 브랜드 이름
+    PointValue BIGINT      NOT NULL,               -- 포인트 점수
+    UserSeq    INT         NOT NULL,               -- 등록자
+    IsDel      BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    RegDt      Datetime    NOT NULL                -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 

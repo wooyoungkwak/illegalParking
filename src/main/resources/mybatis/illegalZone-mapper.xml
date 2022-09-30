@@ -22,7 +22,8 @@
     </select>
 
     <select id="findByIdType" resultType="IllegalZone">
-        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone where illegalType = #{illegalTypeSeq} and isDel = 0;
+--         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone where illegalType = #{illegalTypeSeq} and isDel = 0;
+        SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone zone join illegal_event event on zone.EventSeq = event.EventSeq where event.illegalType = #{illegalEvent.illegalType} and zone.isDel = 0;
     </select>
 
     <select id="findByIdTypeAndDong" resultType="IllegalZone">
@@ -38,16 +39,14 @@
         SELECT ZoneSeq, Name, ASTEXT(Polygon) as polygon, isDel, IllegalType as illegalTypeSeq, Code, EventSeq FROM illegal_zone where isDel = 0;
     </select>
 
-
-
     <insert id="save" useGeneratedKeys="false">
-         INSERT INTO illegal_zone (Name, Polygon, isDel, IllegalType, Code, EventSeq) VALUES (#{name}, POLYGONFROMTEXT(#{polygon}), #{isDel}, #{illegalTypeSeq}, #{code}, #{eventSeq});
+         INSERT INTO illegal_zone (Name, Polygon, isDel, IllegalType, Code, EventSeq) VALUES (#{name}, POLYGONFROMTEXT(#{polygon}), #{isDel}, #{illegalTypeSeq}, #{code}, #{illegalEvent.eventSeq});
     </insert>
 
     <insert id="saveAll" useGeneratedKeys="false">
          INSERT INTO illegal_zone (Name, Polygon, isDel, Code, IllegalType, EventSeq) VALUES
         <foreach collection="illegalZones" item="illegalZone" separator=",">
-            (#{illegalZone.name}, POLYGONFROMTEXT(#{illegalZone.polygon}), #{illegalZone.isDel}, #{illegalZone.code}, #{illegalZone.illegalTypeSeq}, #{illegalZone.eventSeq})
+            (#{illegalZone.name}, POLYGONFROMTEXT(#{illegalZone.polygon}), #{illegalZone.isDel}, #{illegalZone.code}, #{illegalZone.illegalTypeSeq}, #{illegalZone.illegalEvent.eventSeq})
         </foreach>
         ;
     </insert>

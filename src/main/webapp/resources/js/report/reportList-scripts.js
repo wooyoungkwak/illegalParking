@@ -138,7 +138,8 @@ $(function (){
 
             let data = getData();
             data.reportSeq = reportSeq;
-
+log(data);
+return;
             if ( confirm("등록 하시겠습니까?") ) {
                 $.JJAjaxSync({
                     url: _contextPath + '/set',

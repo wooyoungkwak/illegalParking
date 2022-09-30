@@ -1,10 +1,15 @@
 package com.teraenergy.illegalparking.controller.pm;
 
 import com.teraenergy.illegalparking.controller.ExtendsController;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.util.RequestUtil;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Date : 2022-09-14
@@ -24,12 +29,13 @@ public class PmController extends ExtendsController {
     }
 
     @RequestMapping("/pm/map")
-    public ModelAndView map(){
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.setViewName(getPath("/map"));
-        modelAndView.addObject("mainTitle", mainTitle);
-        modelAndView.addObject("subTitle", subTitle);
-        return modelAndView;
+    public String map(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
+
+        model.addAttribute("mainTitle", mainTitle);
+        model.addAttribute("subTitle", subTitle);
+        return getPath("/map");
     }
 
 

@@ -2,6 +2,7 @@ package com.teraenergy.illegalparking.jpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,6 +31,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
+@Transactional
 public class SqlReceipt {
 
     @Autowired
@@ -44,7 +47,7 @@ public class SqlReceipt {
     private ObjectMapper objectMapper;
 
     @Test
-    public void insert() {
+    public void insert() throws TeraException {
         List<Receipt> receipts = Lists.newArrayList();
 
         IllegalZone illegalZone = illegalZoneJpaService.get(1);

@@ -20,25 +20,25 @@ public class IllegalEvent {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Integer EventSeq;
+    Integer eventSeq;
 
     @Column
-    String FirstStartTime;
+    String firstStartTime;
 
     @Column
-    String FirstEndTime;
+    String firstEndTime;
 
     @Column
-    Boolean UsedFirst;
+    Boolean usedFirst;
 
     @Column
-    String SecondStartTime;
+    String secondStartTime;
 
     @Column
-    String SecondEndTime;
+    String secondEndTime;
 
     @Column
-    Boolean UsedSecond;
+    Boolean usedSecond;
 
     @Column
     @Enumerated(EnumType.STRING)

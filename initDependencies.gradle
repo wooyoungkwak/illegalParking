@@ -19,6 +19,7 @@ dependencies {
 
     // jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5:2.13.2'  // Hibernate5Module Class to convert of JsonNode
 
     // Excel
     implementation 'org.apache.poi:poi:5.2.2'

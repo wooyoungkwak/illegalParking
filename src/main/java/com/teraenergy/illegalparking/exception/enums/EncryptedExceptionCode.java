@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.exception;
+package com.teraenergy.illegalparking.exception.enums;
 
 /**
  * Date : 2022-03-14

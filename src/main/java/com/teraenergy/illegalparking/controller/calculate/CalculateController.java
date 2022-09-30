@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.controller.calculate;
 
-import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.controller.ExtendsController;
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
 import com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateFilterColumn;
@@ -10,19 +10,18 @@ import com.teraenergy.illegalparking.model.entity.calculate.enums.ProductFilterC
 import com.teraenergy.illegalparking.model.entity.calculate.enums.ProductOrderColumn;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
 import com.teraenergy.illegalparking.model.entity.calculate.service.ProductService;
-import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.util.CHashMap;
+import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.HashMap;
 
 /**
  * Date : 2022-09-14
@@ -48,17 +47,18 @@ public class CalculateController extends ExtendsController {
     }
 
     @GetMapping("/calculate/calculateList")
-    public ModelAndView calculateList(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView();
-        HashMap<String, String> param = _getParam(request);
+    public String calculateList(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
+        CHashMap parameterMap = requestUtil.getParameterMap();
 
-        String pageNumberStr = param.get("pageNumber");
-        int pageNumber = 1;
-        if (pageNumberStr != null) {
-            pageNumber = Integer.parseInt(pageNumberStr);
+        Integer pageNumber = parameterMap.getAsInt("pageNumber");
+        if (pageNumber == null) {
+            pageNumber = 1;
+            model.addAttribute("pageNumber", pageNumber);
         }
 
-        String orderColumnStr = param.get("orderColumn");
+        String orderColumnStr = parameterMap.getAsString("orderColumn");
         CalculateOrderColumn orderColumn;
         if (orderColumnStr == null) {
             orderColumn = CalculateOrderColumn.calculateSeq;
@@ -66,7 +66,7 @@ public class CalculateController extends ExtendsController {
             orderColumn = CalculateOrderColumn.valueOf(orderColumnStr);
         }
 
-        String filterColumnStr = param.get("filterColumn");
+        String filterColumnStr = parameterMap.getAsString("filterColumn");
         CalculateFilterColumn filterColumn;
         if (filterColumnStr == null) {
             filterColumn = CalculateFilterColumn.user;
@@ -74,12 +74,12 @@ public class CalculateController extends ExtendsController {
             filterColumn = CalculateFilterColumn.valueOf(filterColumnStr);
         }
 
-        String searchStr = param.get("searchStr");
+        String searchStr = parameterMap.getAsString("searchStr");
         if (searchStr == null) {
             searchStr = "";
         }
 
-        String orderDirectionStr = param.get("orderDirection");
+        String orderDirectionStr = parameterMap.getAsString("orderDirection");
         Sort.Direction direction;
         if (orderDirectionStr == null) {
             direction = Sort.Direction.ASC;
@@ -87,10 +87,10 @@ public class CalculateController extends ExtendsController {
             direction = Sort.Direction.valueOf(orderDirectionStr);
         }
 
-        String pageSizeStr = param.get("pageSize");
-        int pageSize = 10;
-        if (pageSizeStr != null) {
-            pageSize = Integer.parseInt(pageSizeStr);
+
+        Integer pageSize = parameterMap.getAsInt("pageSize");
+        if (pageSize == null) {
+            pageSize = 10;
         }
 
         Page<Calculate> pages = calculateService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
@@ -108,37 +108,29 @@ public class CalculateController extends ExtendsController {
             isBeginOver = true;
         }
 
-        modelAndView.addObject("totalPages", totalPages);
-        modelAndView.addObject("filterColumn", filterColumnStr);
-        modelAndView.addObject("searchStr", searchStr);
-        modelAndView.addObject("orderColumn", orderColumnStr);
-        modelAndView.addObject("orderDirection", orderDirectionStr);
-
-        modelAndView.addObject("pageNumber", pageNumber);
-        modelAndView.addObject("pageSize", pageSize);
-        modelAndView.addObject("isBeginOver", isBeginOver);
-        modelAndView.addObject("isEndOver", isEndOver);
-        modelAndView.addObject("calculates", pages.getContent());
-
-        modelAndView.addObject("mainTitle", mainTitle);
-        modelAndView.addObject("subTitle", subTitle);
-        modelAndView.setViewName(getPath("/calculateList"));
-        return modelAndView;
+        model.addAttribute("pageNumber", pageNumber);
+        model.addAttribute("isBeginOver", isBeginOver);
+        model.addAttribute("isEndOver", isEndOver);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("calculates", pages.getContent());
+        model.addAttribute("subTitle", subTitle);
+        model.addAttribute("mainTitle", mainTitle);
+        return getPath("/calculateList");
     }
 
     @GetMapping("/calculate/productList")
-    public ModelAndView productList(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView();
+    public String productList(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
+        CHashMap parameterMap = requestUtil.getParameterMap();
 
-        HashMap<String, String> param = _getParam(request);
-
-        String pageNumberStr = param.get("pageNumber");
-        int pageNumber = 1;
-        if (pageNumberStr != null) {
-            pageNumber = Integer.parseInt(pageNumberStr);
+        Integer pageNumber = parameterMap.getAsInt("pageNumber");
+        if (pageNumber == null) {
+            pageNumber = 1;
+            model.addAttribute("pageNumber", pageNumber);
         }
 
-        String orderColumnStr = param.get("orderColumn");
+        String orderColumnStr = parameterMap.getAsString("orderColumn");
         ProductOrderColumn orderColumn;
         if (orderColumnStr == null) {
             orderColumn = ProductOrderColumn.productSeq;
@@ -146,7 +138,7 @@ public class CalculateController extends ExtendsController {
             orderColumn = ProductOrderColumn.valueOf(orderColumnStr);
         }
 
-        String filterColumnStr = param.get("filterColumn");
+        String filterColumnStr = parameterMap.getAsString("filterColumn");
         ProductFilterColumn filterColumn;
         if (filterColumnStr == null) {
             filterColumn = ProductFilterColumn.name;
@@ -154,8 +146,8 @@ public class CalculateController extends ExtendsController {
             filterColumn = ProductFilterColumn.valueOf(filterColumnStr);
         }
 
-        String searchStr = param.get("searchStr");
-        String searchStr2 = param.get("searchStr2");
+        String searchStr = parameterMap.getAsString("searchStr");
+        String searchStr2 = parameterMap.getAsString("searchStr2");
         String search;
         if (filterColumn.equals(ProductFilterColumn.brand)) {
             search = searchStr2;
@@ -167,7 +159,7 @@ public class CalculateController extends ExtendsController {
             }
         }
 
-        String orderDirectionStr = param.get("orderDirection");
+        String orderDirectionStr = parameterMap.getAsString("orderDirection");
         Sort.Direction direction;
         if (orderDirectionStr == null) {
             direction = Sort.Direction.ASC;
@@ -175,10 +167,9 @@ public class CalculateController extends ExtendsController {
             direction = Sort.Direction.valueOf(orderDirectionStr);
         }
 
-        String pageSizeStr = param.get("pageSize");
-        int pageSize = 10;
-        if (pageSizeStr != null) {
-            pageSize = Integer.parseInt(pageSizeStr);
+        Integer pageSize = parameterMap.getAsInt("pageSize");
+        if (pageSize == null) {
+            pageSize = 10;
         }
 
         Page<Product> pages = productService.gets(pageNumber, pageSize, filterColumn, search, orderColumn, direction);
@@ -196,51 +187,23 @@ public class CalculateController extends ExtendsController {
             isBeginOver = true;
         }
 
-        modelAndView.addObject("totalPages", totalPages);
-        modelAndView.addObject("filterColumn", filterColumnStr);
-        modelAndView.addObject("searchStr", searchStr);
-        modelAndView.addObject("searchStr2", searchStr2);
-        modelAndView.addObject("orderColumn", orderColumnStr);
-        modelAndView.addObject("orderDirection", orderDirectionStr);
-
-        modelAndView.addObject("pageNumber", pageNumber);
-        modelAndView.addObject("pageSize", pageSize);
-        modelAndView.addObject("isBeginOver", isBeginOver);
-        modelAndView.addObject("isEndOver", isEndOver);
-        modelAndView.addObject("products", pages.getContent());
-
-        modelAndView.addObject("mainTitle", mainTitle);
-        modelAndView.addObject("subTitle", subTitle);
-
-        User user = (User) request.getSession().getAttribute("user");
-        modelAndView.addObject("userSeq", user.getUserSeq());
-        modelAndView.addObject("userName", user.getUsername());
-        modelAndView.setViewName(getPath("/productList"));
-        return modelAndView;
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("isBeginOver", isBeginOver);
+        model.addAttribute("isEndOver", isEndOver);
+        model.addAttribute("products", pages.getContent());
+        model.addAttribute("mainTitle", mainTitle);
+        model.addAttribute("subTitle", subTitle);
+        return getPath("/productList");
     }
 
     @GetMapping("/calculate/productAdd")
-    public ModelAndView productAdd(HttpServletRequest request) {
-        ModelAndView modelAndView = new ModelAndView();
+    public String productAdd(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
 
-        modelAndView.addObject("mainTitle", mainTitle);
-        modelAndView.addObject("subTitle", subTitle);
-
-        User user = (User) request.getSession().getAttribute("user");
-        modelAndView.addObject("userSeq", user.getUserSeq());
-        modelAndView.addObject("userName", user.getUsername());
-        modelAndView.setViewName(getPath("/productAdd"));
-        return modelAndView;
-    }
-
-    private HashMap<String, String> _getParam(HttpServletRequest request) {
-        HashMap<String, String> parameterMap = Maps.newHashMap();
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String name = parameterNames.nextElement();
-            parameterMap.put(name, request.getParameter(name));
-        }
-        return parameterMap;
+        model.addAttribute("mainTitle", mainTitle);
+        model.addAttribute("subTitle", subTitle);
+        return getPath("/productAdd");
     }
 
 }

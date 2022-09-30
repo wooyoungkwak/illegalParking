@@ -13,6 +13,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
+
 /**
  * Date : 2022-09-21
  * Author : young
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
+@Transactional
 public class SqlIllegalZone {
 
     @Autowired

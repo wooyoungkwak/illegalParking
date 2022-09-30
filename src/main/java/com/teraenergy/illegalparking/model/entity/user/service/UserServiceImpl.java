@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.encrypt.YoungEncoder;
 import com.teraenergy.illegalparking.exception.EncryptedException;
-import com.teraenergy.illegalparking.exception.EncryptedExceptionCode;
+import com.teraenergy.illegalparking.exception.enums.EncryptedExceptionCode;
 import com.teraenergy.illegalparking.exception.TeraException;
-import com.teraenergy.illegalparking.exception.TeraExceptionCode;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.user.domain.QUser;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.repository.UserRepository;
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(YoungEncoder.decrypt(user.getPassword()));
         } catch (EncryptedException e) {
             log.error("사용자 정보 가져오기 오류 : ", e);
-            throw new TeraException(TeraExceptionCode.NULL);
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
         }
         return user;
     }
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
             }
         } catch (EncryptedException e) {
             log.error(EncryptedExceptionCode.ENCRYPT_FAILURE.getMessage(), e);
-            throw new TeraException(TeraExceptionCode.NULL);
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
         }
         return false;
     }
@@ -117,7 +117,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
         } catch (Exception e) {
             log.error("사용자 추가 오류 : ", e);
-            throw new TeraException(TeraExceptionCode.NULL);
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
         }
     }
 
@@ -127,7 +127,7 @@ public class UserServiceImpl implements UserService {
             userRepository.saveAll(users);
         } catch (Exception e) {
             log.error("사용자 추가 오류 : ", e);
-            throw new TeraException(TeraExceptionCode.NULL);
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
         }
     }
 }

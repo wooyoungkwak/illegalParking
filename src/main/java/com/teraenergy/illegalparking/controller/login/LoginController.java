@@ -62,15 +62,14 @@ public class LoginController extends ExtendsController {
     @PostMapping(value = "/register")
     @ResponseBody
     public String register_(HttpServletRequest request, @RequestBody String body){
-        try {
+//        try {
             User user = new User();
             // TODO : body parsing 후 user 값으로 적용 후
-
 //            userService.add(user);
 
-        } catch (TeraException e) {
-            return "/register";
-        }
+//        } catch (TeraException e) {
+//            return "/register";
+//        }
         return "/login";
     }
 

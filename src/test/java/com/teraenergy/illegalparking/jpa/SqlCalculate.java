@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Point;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,6 +37,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
+@Transactional
 public class SqlCalculate {
 
     @Autowired
@@ -56,8 +59,13 @@ public class SqlCalculate {
     public void insertProduct(){
         List<Product> products = Lists.newArrayList();
 
-        User adminUser = userService.get(1);
-        User user = userService.get(2);
+        User adminUser = null;
+        try {
+            adminUser = userService.get(1);
+            User user = userService.get(2);
+        } catch (TeraException e) {
+            throw new RuntimeException(e);
+        }
 
         Product product = new Product();
         product.setUser(adminUser);
@@ -104,7 +112,7 @@ public class SqlCalculate {
     }
 
     @Test
-    public void insertCalculate(){
+    public void insertCalculate() throws TeraException {
         Point point = pointService.get(2);
         User user = userService.get(2);
         Calculate calculate = new Calculate();

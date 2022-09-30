@@ -2,6 +2,7 @@ package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.encrypt.YoungEncoder;
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.enums.Role;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -25,13 +27,14 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
+@Transactional
 public class SqlUser {
 
     @Autowired
     UserService userService;
 
     @Test
-    public void insert() {
+    public void insert() throws TeraException {
         List<User> users = Lists.newArrayList();
 
         User user = new User();
@@ -57,7 +60,7 @@ public class SqlUser {
     }
 
     @Test
-    public void authentication(){
+    public void authentication() throws TeraException {
 
         if ( userService.isUser("admin") ) {
             System.out.println("is ... ");

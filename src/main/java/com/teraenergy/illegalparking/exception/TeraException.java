@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.exception;
 
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import lombok.Getter;
 
 /**
@@ -9,27 +10,55 @@ import lombok.Getter;
  * Description :
  */
 
-public class TeraException extends RuntimeException{
+public class TeraException extends Exception{
+
+    String code;
+
+    String message;
 
     @Getter
     private TeraExceptionCode teraExceptionCode;
 
-    public TeraException(Throwable cause){
-        super(cause);
+    public TeraException(String message) {
+        super(message);
+        this.message = message;
     }
 
-    public TeraException(TeraExceptionCode code) {
-        super(code.getMessage());
-        this.teraExceptionCode = code;
+    public TeraException(TeraExceptionCode teraExceptionCode) {
+        this(teraExceptionCode.name(), teraExceptionCode.getMessage());
     }
 
-    public TeraException(TeraExceptionCode code, Throwable cause){
-        super(code.getMessage(), cause);
-        this.teraExceptionCode = code;
+    public TeraException(TeraExceptionCode teraExceptionCode, Throwable e) {
+        this(teraExceptionCode.name(), teraExceptionCode.getMessage());
     }
 
-    public TeraException(String message, Throwable cause) {
-        super(message, cause);
-        this.teraExceptionCode = TeraExceptionCode.NULL;
+    public TeraException(TeraExceptionCode teraExceptionCode, String message) {
+        this(teraExceptionCode.name(), teraExceptionCode.getMessage());
     }
+
+    public TeraException(TeraExceptionCode teraExceptionCode, Throwable e, String... args) {
+        this(teraExceptionCode.name(), TeraErrCodeUtil.parseMessage(args[0], args) );
+    }
+
+
+
+    public TeraException(String code, String message) {
+        this(message);
+        this.code = code;
+    }
+
+    public TeraException(String message, Throwable e) {
+        super(message, e);
+        this.message = message;
+    }
+
+    public String getCode() {
+        return this.code;
+    }
+
+    public String getMessage() {
+        return this.message;
+    }
+
+    
 }

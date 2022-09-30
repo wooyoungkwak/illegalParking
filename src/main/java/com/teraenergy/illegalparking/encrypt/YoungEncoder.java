@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.encrypt;
 
 import com.teraenergy.illegalparking.exception.EncryptedException;
-import com.teraenergy.illegalparking.exception.EncryptedExceptionCode;
+import com.teraenergy.illegalparking.exception.enums.EncryptedExceptionCode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
