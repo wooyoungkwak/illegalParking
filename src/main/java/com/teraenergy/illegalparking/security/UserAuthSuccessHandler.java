@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.security;
 
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,12 @@ public class UserAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandle
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
 
-        User user = userService.get((String) authentication.getPrincipal());
+        User user = null;
+        try {
+            user = userService.get((String) authentication.getPrincipal());
+        } catch (TeraException e) {
+            throw new RuntimeException(e);
+        }
         request.getSession().setAttribute("user", user);
         request.getSession().setAttribute("hashcode", request.getSession().getId().hashCode());
 

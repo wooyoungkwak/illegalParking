@@ -5,7 +5,7 @@ import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone
 import java.util.List;
 
 /**
- * Date : 2022-09-14
+ * Date : 2022-09-21
  * Author : young
  * Editor :
  * Project : illegalParking
@@ -13,22 +13,19 @@ import java.util.List;
  */
 public interface IllegalZoneService {
 
-    public IllegalZone get(Integer illegalZoneSeq);
+    List<IllegalZone> gets();
 
-    public List<IllegalZone> getsByDong(List<String> codes);
+    IllegalZone get(Integer illegalZoneSeq);
 
-    public List<IllegalZone> getsByType(Integer illegalType);
+    IllegalZone set(IllegalZone illegalZone);
 
-    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, List<String> codes);
+    List<IllegalZone> sets(List<IllegalZone> illegalZone);
 
-    public List<IllegalZone> gets();
+    IllegalZone modify(IllegalZone illegalZone);
 
-    public void set(IllegalZone illegalZone);
+    List<IllegalZone> modifies(List<IllegalZone> illegalZones);
 
-    public void sets(List<IllegalZone> illegalZones);
+    long remove(Integer illegalZoneSeq);
 
-    public void modify(Integer zoneSeq, Integer illegalType, String startTime, String endTime);
-
-    public void delete(Integer zoneSeq);
-
+    long removes(List<Integer> illegalZoneSeqs);
 }

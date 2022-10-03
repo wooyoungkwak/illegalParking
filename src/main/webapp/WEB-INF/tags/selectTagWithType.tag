@@ -11,6 +11,6 @@
 </c:if>
 <select id="${id}" class="form-select" name="${id}" ${option}>
     <c:forEach var="item" items="${items}" varStatus="status">
-        <option value="${item}" <c:if test="${searchStr eq item}">selected</c:if> >${item.value}</option>
+        <option value="${item}" <c:if test="${current eq item}">selected</c:if> >${item.value}</option>
     </c:forEach>
 </select>

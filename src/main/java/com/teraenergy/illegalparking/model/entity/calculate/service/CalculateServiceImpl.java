@@ -43,6 +43,15 @@ public class CalculateServiceImpl implements CalculateService{
     }
 
     @Override
+    public Calculate getAtLast(Integer userSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QCalculate.calculate)
+                .where(QCalculate.calculate.user.userSeq.eq(userSeq))
+                .orderBy(QCalculate.calculate.calculateSeq.desc())
+                .limit(1);
+        return (Calculate) query.fetchOne();
+    }
+
+    @Override
     public List<Calculate> gets() {
         return calculateRepository.findAll();
     }
@@ -105,12 +114,12 @@ public class CalculateServiceImpl implements CalculateService{
     }
 
     @Override
-    public Calculate save(Calculate calculate) {
+    public Calculate set(Calculate calculate) {
         return calculateRepository.save(calculate);
     }
 
     @Override
-    public List<Calculate> saves(List<Calculate> calculates) {
+    public List<Calculate> sets(List<Calculate> calculates) {
         return calculateRepository.saveAll(calculates);
     }
 

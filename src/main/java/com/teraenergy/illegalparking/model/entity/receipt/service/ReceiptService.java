@@ -1,7 +1,9 @@
 package com.teraenergy.illegalparking.model.entity.receipt.service;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -12,18 +14,20 @@ import java.util.List;
  */
 public interface ReceiptService {
 
-    public Receipt get(Integer receiptSeq);
+    Receipt get(Integer receiptSeq);
 
-    public List<Receipt> gets();
+    List<Receipt> gets();
 
-    public Receipt set(Receipt receipt);
+    List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptType receiptType);
 
-    public List<Receipt> sets(List<Receipt> receipts);
+    Receipt set(Receipt receipt);
 
-    public Receipt modify(Receipt receipt);
+    List<Receipt> sets(List<Receipt> receipts);
 
-    public long remove(Integer receiptSeq);
+    Receipt modify(Receipt receipt);
 
-    public long removes(List<Integer> receiptSeqs);
+    long remove(Integer receiptSeq);
+
+    long removes(List<Integer> receiptSeqs);
 
 }

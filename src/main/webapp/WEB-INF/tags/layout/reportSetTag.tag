@@ -59,7 +59,7 @@
 						</div>
 						<div class="row mb-4 ms-2">
 							<div class="col-4 mb-2">
-								<tags:typeSelectTag id="setResultType" current="" items="${items}" title="대상:" />
+								<tags:selectTagWithType id="setResultType" current="" items="${items}" title="결과:" />
 							</div>
 							<div class="col-12">
 								<tags:inputTag id="note" placeholder="내용을 입력하세요." value="" title="설명:"/>

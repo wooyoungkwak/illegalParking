@@ -1,6 +1,9 @@
 package com.teraenergy.illegalparking.model.entity.user.service;
 
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,9 +25,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         UserDetails userDetails = null;
-
-        if ( userService.isUser(username)  ) {
-            userDetails = userService.getByDB(username);
+        try {
+            if (userService.isUser(username)) {
+                userDetails = userService.get(username);
+            }
+        } catch (TeraException e) {
+            new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST).printStackTrace();
         }
         return userDetails;
     }

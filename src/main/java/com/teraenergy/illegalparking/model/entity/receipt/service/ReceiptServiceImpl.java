@@ -5,10 +5,12 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.QReceipt;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
 import com.teraenergy.illegalparking.model.entity.receipt.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -33,6 +35,15 @@ public class ReceiptServiceImpl implements ReceiptService {
     @Override
     public List<Receipt> gets() {
         return receiptRepository.findAllByIsDel(false);
+    }
+
+    @Override
+    public List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptType receiptType) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.regDt.between(now, old));
+        query.where(QReceipt.receipt.isDel.isFalse());
+        query.where(QReceipt.receipt.receiptType.eq(receiptType));
+        return query.fetch();
     }
 
     @Override

@@ -52,7 +52,7 @@
                             </div>
                             <div class="col-4">
                                 <tags:searchTag id="searchStr" searchStr="${searchStr}"/>
-                                <tags:selectSearchTag id="searchStr2" searchStr="${searchStr2}" items="${ResultType.values()}" />
+                                <tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${ResultType.values()}" />
                             </div>
                             <div class="col-1"></div>
                             <div class="col-3">
@@ -75,7 +75,7 @@
                                     <tr>
                                         <td>${report.reportSeq}</td>
                                         <td>${report.secondReceipt.addr}</td>
-                                        <td>${report.secondReceipt.illegalZone.illegalType.value}</td>
+                                        <td>${report.secondReceipt.illegalZone.illegalEvent.illegalType.value}</td>
                                         <td>${report.secondReceipt.carNum}</td>
                                         <td>${report.resultType.value}</td>
                                         <td>${report.regDt}</td>

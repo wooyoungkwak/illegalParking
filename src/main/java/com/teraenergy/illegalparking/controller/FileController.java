@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.exception.TeraErrCode;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
@@ -59,9 +62,9 @@ public class FileController {
     String excelPath;
 
     String KEY_REASON = "reason";
-    String KEY_RESULT = "result";
     String KEY_FILENAME = "fileName";
     String KEY_FILEINPUTSTREAM = "fileInputStream";
+    String KEY_RESULT = "success";
 
     public JsonNode fileDelete(HttpServletRequest request, String body) throws JsonProcessingException {
 
@@ -97,7 +100,7 @@ public class FileController {
         }
     }
 
-    public Map<String, Object> fileUpload(HttpServletRequest request) throws Exception {
+    public Map<String, Object> fileUpload(HttpServletRequest request) throws TeraException {
 
         HashMap<String, Object> parameterMap = Maps.newHashMap();
         Enumeration<String> parameterNames = request.getParameterNames();
@@ -123,30 +126,31 @@ public class FileController {
                     resultMap.put(KEY_FILENAME, multipartFile.getOriginalFilename());
                 }
 
-                resultMap.put(KEY_RESULT, "success");
+                resultMap.put(KEY_RESULT, true);
             }
             return resultMap;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new Exception(e.getMessage(), e);
+            throw new TeraException(TeraExceptionCode.FILE_READ_FAILURE, e);
         }
     }
 
-    @RequestMapping(value = "/image", method = RequestMethod.POST)
+    @RequestMapping(value = "/files/image/set", method = RequestMethod.POST)
     @ResponseBody
-    public JsonNode passToImage(HttpServletRequest request) throws Exception {
+    public JsonNode setImage(HttpServletRequest request) throws Exception {
         try {
             Map<String, Object> resultMap = fileUpload(request);
 
             if (resultMap.get(KEY_RESULT).equals("success")) {
                 FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
                 String fileName = (String) resultMap.get(KEY_FILENAME);
-
-                FileOutputStream fileOutputStream = new FileOutputStream(new File(resourcePath));
+                File file = new File(resourcePath + "/" + fileName);
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
                 fileOutputStream.write(fis.readAllBytes());
             }
 
             resultMap.remove(KEY_FILEINPUTSTREAM);
+            resultMap.put(KEY_RESULT, "success");
             JsonNode jsonNode = objectMapper.readTree(objectMapper.writeValueAsString(resultMap));
             return jsonNode;
         } catch (Exception e) {
@@ -155,29 +159,28 @@ public class FileController {
         }
     }
 
-    @RequestMapping(value = "/ai", method = RequestMethod.POST)
-    @ResponseBody
-    public JsonNode passToAI(HttpServletRequest request) throws Exception {
-        try {
-            Map<String, Object> resultMap = fileUpload(request);
+//    @RequestMapping(value = "/files/ai", method = RequestMethod.POST)
+//    @ResponseBody
+//    public JsonNode passToAI(HttpServletRequest request) throws Exception {
+//        try {
+//            Map<String, Object> resultMap = fileUpload(request);
+//
+//            if (resultMap.get(KEY_RESULT).equals("success")) {
+//                FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
+//                String fileName = (String) resultMap.get(KEY_FILENAME);
+//                // send ai server
+//            }
+//
+//            resultMap.remove(KEY_FILEINPUTSTREAM);
+//            JsonNode jsonNode = objectMapper.readTree(objectMapper.writeValueAsString(resultMap));
+//            return jsonNode;
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new Exception(e.getMessage(), e);
+//        }
+//    }
 
-            if (resultMap.get(KEY_RESULT).equals("success")) {
-                FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
-                String fileName = (String) resultMap.get(KEY_FILENAME);
-                System.out.println("fileName = " + fileName);
-                // send ai server
-            }
-
-            resultMap.remove(KEY_FILEINPUTSTREAM);
-            JsonNode jsonNode = objectMapper.readTree(objectMapper.writeValueAsString(resultMap));
-            return jsonNode;
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new Exception(e.getMessage(), e);
-        }
-    }
-
-    @RequestMapping(value = "/lawdong", method = RequestMethod.POST)
+    @RequestMapping(value = "/files/lawDong", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode parsingExcelLawDong(HttpServletRequest request) throws Exception {
         try {
@@ -200,7 +203,7 @@ public class FileController {
         }
     }
 
-    @RequestMapping(value = "/parking", method = RequestMethod.POST)
+    @RequestMapping(value = "/files/parking", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode parsingExcelForParking(HttpServletRequest request) throws Exception {
         try {

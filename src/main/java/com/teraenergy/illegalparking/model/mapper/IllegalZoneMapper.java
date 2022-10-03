@@ -18,11 +18,11 @@ public interface IllegalZoneMapper {
 
     IllegalZone findById(Integer zoneSeq);
 
-    List<IllegalZone> findByIdDong(List<String> codes);
+    List<IllegalZone> findByCode(List<String> codes);
 
-    List<IllegalZone> findByIdType(Integer illegalTypeSeq);
+    List<IllegalZone> findByIllegalType(Integer illegalTypeSeq);
 
-    List<IllegalZone> findByIdTypeAndDong(Integer illegalTypeSeq, List<String> codes);
+    List<IllegalZone> findByIllegalTypeAndCode(Integer illegalTypeSeq, List<String> codes);
 
     List<IllegalZone> findAll();
 
@@ -30,7 +30,9 @@ public interface IllegalZoneMapper {
 
     void saveAll(List<IllegalZone> illegalZones);
 
-    void modify(Integer zoneSeq, Integer illegalTypeSeq, String startTime, String endTime);
+    void modify(IllegalZone illegalZone);
+
+    void modifyByEvent(Integer zoneSeq, Integer eventSeq);
 
     void delete(Integer zoneSeq);
 

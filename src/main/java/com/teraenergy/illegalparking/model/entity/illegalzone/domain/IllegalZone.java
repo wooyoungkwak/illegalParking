@@ -27,9 +27,6 @@ public class IllegalZone {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer zoneSeq;    // 불법 주정차 구역 키
 
-    @Column
-    String name;        // 불법 주정차 구역 이름
-
     @Column(nullable = false)
     String polygon;     // 불법 주정차 구역
 
@@ -39,14 +36,11 @@ public class IllegalZone {
     @Column(nullable = false)
     Boolean isDel;      // 삭제 여부
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "eventSeq")
     IllegalEvent illegalEvent;
 
-    @Column(nullable = false)
-    IllegalType illegalType;    // 불법 주정차 타입 키 ( JPA 전용 )
-
     @Transient
-    Integer illegalTypeSeq;    // 불법 주정차 타입 키 ( Mapper 전용 )
+    Integer eventSeq;
 
 }

@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.security;
 
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -45,8 +46,12 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
             throw new UsernameNotFoundException("사용자의 계정을 찾을수 없습니다.");
         }
 
-        if ( !userService.isUser(account, password)) {
-            throw new BadCredentialsException("사용자의 계정과 패스워드가 맞지 않습니다.");
+        try {
+            if ( !userService.isUser(account, password)) {
+                throw new BadCredentialsException("사용자의 계정과 패스워드가 맞지 않습니다.");
+            }
+        } catch (TeraException e) {
+            e.printStackTrace();
         }
 
         // 권한 정보

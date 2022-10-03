@@ -49,22 +49,22 @@
 								<tags:selectTag id="inputState" current="평일+토요일+일요일" items="평일+토요일+일요일, 평일+토요일, 평일" title="운영요일"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="startTime" title="평일시작시간" begin="0" end="23" timeFormat="00" current="0:00"/>
+								<tags:selectTagWithTime id="startTime" title="평일시작시간" begin="0" end="23" timeFormat="00" current="0:00"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="endTime" title="평일종료시간" begin="0" end="23" timeFormat="59" current="23:59"/>
+								<tags:selectTagWithTime id="endTime" title="평일종료시간" begin="0" end="23" timeFormat="59" current="23:59"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="satStartTime" title="토요일시작시간" begin="0" end="23" timeFormat="00" current="0:00"/>
+								<tags:selectTagWithTime id="satStartTime" title="토요일시작시간" begin="0" end="23" timeFormat="00" current="0:00"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="satEndTime" title="토요일종료시간" begin="0" end="23" timeFormat="59" current="23:59"/>
+								<tags:selectTagWithTime id="satEndTime" title="토요일종료시간" begin="0" end="23" timeFormat="59" current="23:59"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="sunStartTime" title="일요일시작시간" begin="0" end="23" timeFormat="00" current="0:00"/>
+								<tags:selectTagWithTime id="sunStartTime" title="일요일시작시간" begin="0" end="23" timeFormat="00" current="0:00"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="sunEndTime" title="일요일종료시간" begin="0" end="23" timeFormat="59" current="23:59"/>
+								<tags:selectTagWithTime id="sunEndTime" title="일요일종료시간" begin="0" end="23" timeFormat="59" current="23:59"/>
 							</div>
 						</div>
 
@@ -73,13 +73,13 @@
 								<tags:selectTag id="parkingchrgeInfo" current="무료" items="무료, 유료" title="* 요금"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="basicTime" title="주차기본시간" begin="0" end="5" timeFormat="00" current="1:00"/>
+								<tags:selectTagWithTime id="basicTime" title="주차기본시간" begin="0" end="5" timeFormat="00" current="1:00"/>
 							</div>
 							<div class="col-md-2">
 								<tags:inputTag id="BasicCharge" title="* 주차기본요금" placeholder="예> 1000원"/>
 							</div>
 							<div class="col-md-1">
-								<tags:timeSelectTag id="addUnitTime" title="추가단위시간" begin="0" end="5" timeFormat="00" current="1:00"/>
+								<tags:selectTagWithTime id="addUnitTime" title="추가단위시간" begin="0" end="5" timeFormat="00" current="1:00"/>
 							</div>
 							<div class="col-md-2">
 								<tags:inputTag id="addUnitCharge" title="추가단위요금" placeholder="예> 1000원"/>
@@ -99,7 +99,7 @@
 						</div>
 
 						<div class="row g-2">
-							<div class="col-12">
+							<div class="col-md-12 mb-2">
 								<tags:inputTag id="rdnmadr" title="소재지도로명 주소" placeholder="예> 광주광역시 광산구 쌍암동 694-83번지 1층  "/>
 							</div>
 							<div class="col-md-2">

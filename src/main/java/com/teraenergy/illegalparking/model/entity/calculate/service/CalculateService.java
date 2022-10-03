@@ -18,13 +18,15 @@ import java.util.List;
 public interface CalculateService {
     public Calculate get(Integer calculateSeq);
 
+    public Calculate getAtLast(Integer userSeq);
+
     public List<Calculate> gets();
 
     public Page<Calculate> gets(int pageNumber, int pageSize, CalculateFilterColumn filterColumn, String search, CalculateOrderColumn orderColumn, Sort.Direction orderBy);
 
-    public Calculate save(Calculate calculate);
+    public Calculate set(Calculate calculate);
 
-    public List<Calculate> saves(List<Calculate> calculates);
+    public List<Calculate> sets(List<Calculate> calculates);
 
     public Calculate modify(Calculate calculate);
 

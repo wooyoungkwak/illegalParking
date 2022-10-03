@@ -7,18 +7,8 @@ package com.teraenergy.illegalparking.exception;
  * Project : illegalParking
  * Description :
  */
-public class TeraErrCodeUtil implements TeraErrCode{
+public class TeraErrCodeUtil{
 
-
-    @Override
-    public String getCode() {
-        return null;
-    }
-
-    @Override
-    public String getMessage(String... var1) {
-        return null;
-    }
 
     public static String parseMessage(String message, String... args) {
         if (message == null || message.trim().length() <= 0) {

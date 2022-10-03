@@ -8,7 +8,7 @@ import com.teraenergy.illegalparking.exception.enums.EncryptedExceptionCode;
  * Project : sarangbang
  * Description :
  */
-public class EncryptedException extends RuntimeException{
+public class EncryptedException extends RuntimeException {
 
     public EncryptedException(EncryptedExceptionCode code) {
         super(code.getMessage());

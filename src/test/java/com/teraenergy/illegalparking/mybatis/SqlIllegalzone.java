@@ -1,19 +1,17 @@
 package com.teraenergy.illegalparking.mybatis;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.io.ParseException;
-import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -28,23 +26,31 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
+//@Transactional
 public class SqlIllegalzone {
 
     @Autowired
+    IllegalZoneMapperService illegalZoneMapperService;
+
+    @Autowired
     IllegalZoneService illegalZoneService;
+
+    @Autowired
+    IllegalEventService illegalEventService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     public void insert() {
         IllegalZone illegalZone = new IllegalZone();
         illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
-        illegalZone.setName("샘플1");
         illegalZone.setCode("5013032000");
         illegalZone.setIsDel(false);
-        illegalZone.setIllegalTypeSeq(0);
-        illegalZoneService.set(illegalZone);
+        illegalZoneMapperService.set(illegalZone);
     }
 
     @Test
@@ -53,40 +59,53 @@ public class SqlIllegalzone {
 
         IllegalZone illegalZone = new IllegalZone();
         illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
-        illegalZone.setName("샘플2");
         illegalZone.setCode("1100000000");
         illegalZone.setIsDel(false);
-        illegalZone.setIllegalTypeSeq(0);
 
         IllegalZone illegalZone2 = new IllegalZone();
         illegalZone2.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
-        illegalZone2.setName("샘플3");
         illegalZone2.setCode("5013032026");
         illegalZone2.setIsDel(false);
-        illegalZone2.setIllegalTypeSeq(1);
 
         illegalZones.add(illegalZone);
         illegalZones.add(illegalZone2);
 
-        illegalZoneService.sets(illegalZones);
+        illegalZoneMapperService.sets(illegalZones);
     }
 
     @Test
     public void update() {
-        illegalZoneService.modify(6, 3, "10:00", "11:00");
+        IllegalEvent illegalEvent = illegalEventService.get(1);
+        IllegalZone illegalZone = illegalZoneMapperService.get(1);
+
+        illegalZone.setCode("1111100000");
+        illegalZoneMapperService.modify(illegalZone);
+
+        illegalZone.setIllegalEvent(illegalEvent);
+        illegalZoneMapperService.modifyByEvent(illegalZone.getZoneSeq(), illegalEvent.getEventSeq());
     }
 
     @Test
     public void delete() {
-        illegalZoneService.delete(7);
+        illegalZoneMapperService.delete(1);
     }
 
 
     @Test
     void select() {
-        List<IllegalZone> illegalZones = illegalZoneService.gets();
-        System.out.println(illegalZones.get(0).getZoneSeq());
-        System.out.println(illegalZones.get(0).getIllegalTypeSeq());
+        try {
+            List<IllegalZone> illegalZones = illegalZoneService.gets();
+            System.out.println(objectMapper.writeValueAsString(illegalZones));
+
+//            List<String> codes = Lists.newArrayList();
+//            codes.add("1111100000");
+//            codes.add("5013032026");
+//            List<IllegalZone> illegalZones = illegalZoneMapperService.getsByCode(codes);
+//            System.out.println(objectMapper.writeValueAsString(illegalZones));
+
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
 //        if( !illegalZones.isEmpty()) {
 //            IllegalZone illegalZone = illegalZones.get(0);

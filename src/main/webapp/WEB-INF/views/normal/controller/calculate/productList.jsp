@@ -51,7 +51,7 @@
 							</div>
 							<div class="col-4">
 								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
-								<tags:selectSearchTag searchStr="${searchStr2}" items="${Brand.values()}" id="searchStr2" />
+								<tags:searchTagWithSelect searchStr="${searchStr2}" items="${Brand.values()}" id="searchStr2" />
 							</div>
 							<div class="col-1"></div>
 							<div class="col-3">

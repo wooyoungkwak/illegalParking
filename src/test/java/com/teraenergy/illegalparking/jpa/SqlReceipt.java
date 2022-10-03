@@ -1,10 +1,11 @@
 package com.teraenergy.illegalparking.jpa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
@@ -38,7 +39,7 @@ public class SqlReceipt {
     private ReceiptService receiptService;
 
     @Autowired
-    private IllegalZoneJpaService illegalZoneJpaService;
+    private IllegalZoneService illegalZoneService;
 
     @Autowired
     private UserService userService;
@@ -50,7 +51,7 @@ public class SqlReceipt {
     public void insert() throws TeraException {
         List<Receipt> receipts = Lists.newArrayList();
 
-        IllegalZone illegalZone = illegalZoneJpaService.get(1);
+        IllegalZone illegalZone = illegalZoneService.get(1);
         User user = userService.get(2);
 
         Receipt receipt1 = new Receipt();
@@ -85,7 +86,11 @@ public class SqlReceipt {
 
     @Test
     public void select(){
-
-
+        List<Receipt> receipts = receiptService.gets();
+        try {
+            System.out.println(objectMapper.writeValueAsString(receipts));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -66,6 +66,7 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
                 .antMatchers("/password").permitAll()       // /password url 접속 승인
                 .antMatchers("/register").permitAll()       // /register url 접속 승인
                 .antMatchers("/login").permitAll()          // /login url 접속 승인
+                .antMatchers("/files/**").permitAll()       // /password url 접속 승인
                 .antMatchers("/api/**").permitAll()          // /login url 접속 승인
 //            .anyRequest().authenticated()
                 .and()

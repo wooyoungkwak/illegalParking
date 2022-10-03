@@ -9,6 +9,8 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="layoutTags" tagdir="/WEB-INF/tags/layout" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType" %>
+
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navMapHtmlLayout.jsp">
@@ -56,7 +58,7 @@
 
 					<p id="result"></p>
 
-					<layoutTags:mapSetModalTag id="areaSettingModal" />
+					<layoutTags:mapSetModalTag id="areaSettingModal" enumValues="${IllegalType.values()}"/>
 
 				</div>
 			</div>

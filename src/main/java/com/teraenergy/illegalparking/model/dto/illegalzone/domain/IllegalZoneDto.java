@@ -18,18 +18,18 @@ import javax.persistence.Column;
 @Getter
 @Setter
 public class IllegalZoneDto {
-    Integer zoneSeq;
-    String name;
-    String polygon;
-    String code;
-    Integer eventSeq;  // null
+    Integer zoneSeq;            // 구역 키
+    String polygon;             // POLYGON
+    String code;                // 동 코드
 
-    String illegalType;
-    Boolean usedFirst;
-    String firstStartTime;
-    String firstEndTime;
-    Boolean usedSecond;
-    String secondStartTime;
-    String secondEndTime;
-    String zoneGroupType;
+    Integer eventSeq;           // 구역 키
+    String name;                // 구역 이름
+    String illegalType;         // 구역 타입
+    Boolean usedFirst;          // 구역 첫번째 이벤트 사용 여부
+    String firstStartTime;      // 구역 첫번째 시작 시간
+    String firstEndTime;        // 구역 첫번째 끝 시간
+    Boolean usedSecond;         // 구역 두번째 이벤트 사용 여부
+    String secondStartTime;     // 구역 두번째 시작 시간
+    String secondEndTime;       // 구역 두번째 끝 시간
+    String zoneGroupType;       // 구역 그룹 타입
 }

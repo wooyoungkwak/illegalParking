@@ -34,13 +34,13 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         reportDto.setFirstCarNum(firstReceipt.getCarNum());
         reportDto.setFirstRegDt(firstReceipt.getRegDt().format(formatter));
         reportDto.setFirstFileName(firstReceipt.getFileName());
-        reportDto.setFirstIllegalType(firstReceipt.getIllegalZone().getIllegalType());
+        reportDto.setFirstIllegalType(firstReceipt.getIllegalZone().getIllegalEvent().getIllegalType());
 
         reportDto.setSecondAddr(secondReceipt.getAddr());
         reportDto.setSecondCarNum(secondReceipt.getCarNum());
         reportDto.setSecondRegDt(secondReceipt.getRegDt().format(formatter));
         reportDto.setSecondFileName(secondReceipt.getFileName());
-        reportDto.setSecondIllegalType(secondReceipt.getIllegalZone().getIllegalType());
+        reportDto.setSecondIllegalType(secondReceipt.getIllegalZone().getIllegalEvent().getIllegalType());
 
         reportDto.setNote(report.getNote());
         reportDto.setResultType(report.getResultType());

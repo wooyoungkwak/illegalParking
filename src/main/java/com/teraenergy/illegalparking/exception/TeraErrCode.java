@@ -10,5 +10,5 @@ package com.teraenergy.illegalparking.exception;
 public interface TeraErrCode {
     String getCode();
 
-    String getMessage(String... var1);
+    String getMessage(String... args);
 }

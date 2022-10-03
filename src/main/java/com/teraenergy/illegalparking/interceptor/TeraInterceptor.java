@@ -4,8 +4,8 @@ import com.teraenergy.illegalparking.model.dto.user.domain.UserDto;
 import com.teraenergy.illegalparking.model.dto.user.service.UserDtoService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -24,23 +24,22 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 public class TeraInterceptor implements HandlerInterceptor {
 
-    private final UserService userService;
+    @Autowired
+    private UserService userService;
 
-    private final UserDtoService userDtoService;
+    @Autowired
+    private UserDtoService userDtoService;
+
+
     /**
      * Controller 가 수행되기 전에
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (request != null) {
-            // basic
-
-        }
-
+        if (request != null) {}
         return true;
     }
 
@@ -49,35 +48,15 @@ public class TeraInterceptor implements HandlerInterceptor {
      */
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-//        if (modelAndView != null) {
-            // now
-//            LocalDateTime now = LocalDateTime.now();
-//            modelAndView.getModel().put("_now", now);
-//            modelAndView.getModel().put("_date", now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-//            modelAndView.getModel().put("_year", now.getYear());
-//            modelAndView.getModel().put("_month", now.getMonthValue());
-//            modelAndView.getModel().put("_day", now.getDayOfMonth());
-//            modelAndView.getModel().put("_hour", now.getHour());
-//            modelAndView.getModel().put("_minute", now.getMinute());
-//
-//            // basic
-//            modelAndView.getModel().put("_domain", request.getAttribute("_domain"));
-//
-//            // uri
-//            modelAndView.getModel().put("_uri", request.getAttribute("_uri"));
-//            modelAndView.getModel().put("_moduleCode", request.getAttribute("_moduleCode"));
-//            modelAndView.getModel().put("_menuCode", request.getAttribute("_menuCode"));
-//
-//            // maxFileSize
-//            modelAndView.getModel().put("_maxFileSize", request.getAttribute("_maxFileSize"));
 
+        if (modelAndView != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             User user = userService.get(auth.getName());
             UserDto userDto = userDtoService.get(user);
 
             // _user
             modelAndView.getModel().put("_user", userDto);
-//        }
+        }
     }
 
     /**

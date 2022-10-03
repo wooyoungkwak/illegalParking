@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.model.dto.report.domain.ReportDto;
 import com.teraenergy.illegalparking.model.dto.report.service.ReportDtoService;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Point;
 import com.teraenergy.illegalparking.model.entity.calculate.enums.PointType;
+import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
 import com.teraenergy.illegalparking.model.entity.calculate.service.PointService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneJpaService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
@@ -42,16 +44,15 @@ import java.util.HashMap;
 public class ReportApi {
 
 
-    private final IllegalZoneJpaService illegalZoneJpaService;
+    private final ObjectMapper objectMapper;
+    private final IllegalZoneService illegalZoneService;
     private final UserService userService;
     private final ReceiptService receiptService;
     private final ReportService reportService;
     private final LawDongService lawDongService;
-    private final ObjectMapper objectMapper;
-
     private final ReportDtoService reportDtoService;
-
     private final PointService pointService;
+    private final CalculateService calculateService;
 
     @PostMapping ("/report/get")
     @ResponseBody
@@ -86,28 +87,61 @@ public class ReportApi {
         try {
             JsonNode jsonNode = objectMapper.readTree(body);
             Integer reportSeq = jsonNode.get("reportSeq").asInt();
-            String note = jsonNode.get("note").asText();
             Integer userSeq = jsonNode.get("userSeq").asInt();
-            ResultType resultType = ResultType.valueOf(jsonNode.get("resultType").asText());
+            ResultType resultType = ResultType.valueOf(jsonNode.get("setResultType").asText());
+            String note = jsonNode.get("note").asText();
 
             Report report = reportService.get(reportSeq);
+
+            if (resultType == ResultType.PENALTY) {
+                // point 적립
+                long pointValue = report.getSecondReceipt().getIllegalZone().getIllegalEvent().getZoneGroupType().getValue();
+                Point point = new Point();
+                point.setReport(report);
+                point.setPointType(PointType.PLUS);
+                point.setValue(pointValue);
+                point.setNote(report.getNote());
+                point.setUserSeq(report.getReportUserSeq());
+                point = pointService.set(point);
+
+                // 결재 등록
+                long currentPointValue = 0;
+                long beforePointValue = 0;
+                Calculate oldCalculate = calculateService.getAtLast(report.getReportUserSeq());
+
+                if (oldCalculate != null) {
+                    currentPointValue = oldCalculate.getCurrentPointValue();
+                    beforePointValue = currentPointValue;
+                }
+
+                currentPointValue += currentPointValue + point.getValue();
+
+                Calculate calculate = new Calculate();
+                User reportUser = userService.get(report.getReportUserSeq());
+                calculate.setCurrentPointValue(currentPointValue);
+                calculate.setBeforePointValue(beforePointValue);
+                calculate.setPoint(point);
+                calculate.setUser(reportUser);
+                calculate.setRegDt(LocalDateTime.now());
+                calculate.setIsDel(false);
+                calculateService.set(calculate);
+            } else if (resultType == ResultType.EXCEPTION) {
+                // 신고 접수 에서 신고 제외 관련 내용 업데이트
+                Receipt firstReceipt = report.getFirstReceipt();
+                Receipt secondReceipt = report.getSecondReceipt();
+                firstReceipt.setNote(note);
+                firstReceipt.setReceiptType(ReceiptType.EXCEPTION);
+                secondReceipt.setNote(note);
+                secondReceipt.setReceiptType(ReceiptType.EXCEPTION);
+                report.setFirstReceipt(firstReceipt);
+                report.setSecondReceipt(secondReceipt);
+            }
 
             report.setNote(note);
             report.setResultType(resultType);
             report.setReportUserSeq(userSeq);
             report.setRegDt(LocalDateTime.now());
             reportService.set(report);
-
-            // point 적립
-            long pointValue = report.getSecondReceipt().getIllegalZone().getIllegalEvent().getZoneGroupType().getValue();
-            Point point = new Point();
-            point.setReport(report);
-            point.setPointType(PointType.PLUS);
-            point.setValue(pointValue);
-            point.setNote(report.getNote());
-            point.setUserSeq(report.getReportUserSeq());
-
-            pointService.set(point);
             isSuccess = true;
 
         } catch (Exception e) {
@@ -133,8 +167,8 @@ public class ReportApi {
         try {
             JsonNode jsonNode = objectMapper.readTree(body);
 
-            IllegalZone illegalZone = illegalZoneJpaService.get(1);
-            User user = userService.getByDB(jsonNode.get("id").asText());
+            IllegalZone illegalZone = illegalZoneService.get(1);
+            User user = userService.get(jsonNode.get("id").asText());
             String addr = jsonNode.get("addr").asText();
             String addrParts[] = addr.split(" ");
             LawDong lawDong = lawDongService.getFromLnmadr(addrParts[0] + " " + addrParts[1] + " " + addrParts[2]);

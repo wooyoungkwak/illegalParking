@@ -55,9 +55,9 @@ public class ReportServiceImpl implements ReportService{
                     break;
                 case ILLEGAL_TYPE:
                     if ( search.equals(IllegalType.ILLEGAL.getValue()) ) {
-                        query.where(QReport.report.secondReceipt.illegalZone.illegalType.eq(IllegalType.ILLEGAL));
+                        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.eq(IllegalType.ILLEGAL));
                     } else if (search.equals(IllegalType.FIVE_MINUTE.getValue())) {
-                        query.where(QReport.report.secondReceipt.illegalZone.illegalType.eq(IllegalType.FIVE_MINUTE));
+                        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.eq(IllegalType.FIVE_MINUTE));
                     }
                     break;
                 case ADDR:
@@ -84,9 +84,9 @@ public class ReportServiceImpl implements ReportService{
                 break;
             case ILLEGAL_TYPE:
                 if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.secondReceipt.illegalZone.illegalType.desc());
+                    query.orderBy(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.desc());
                 } else {
-                    query.orderBy(QReport.report.secondReceipt.illegalZone.illegalType.asc());
+                    query.orderBy(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.asc());
                 }
                 break;
             case ADDR:

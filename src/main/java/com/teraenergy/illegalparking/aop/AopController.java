@@ -1,8 +1,6 @@
 package com.teraenergy.illegalparking.aop;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -12,7 +10,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
 
 /**
  * Date : 2022-09-14
@@ -39,7 +36,7 @@ public class AopController {
 
         return object;
     }
-
+// dusrndnjs12#$
 //    @Around("execution(* com.teraenergy.illegalparking.controller..*Api.*(..)) ")
 //    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
 //        HashMap<String, Object> result = Maps.newHashMap();

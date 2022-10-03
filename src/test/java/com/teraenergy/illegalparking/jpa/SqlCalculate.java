@@ -123,7 +123,7 @@ public class SqlCalculate {
         calculate.setBeforePointValue(10000L);
         calculate.setCurrentPointValue(11000L);
 
-        calculateService.save(calculate);
+        calculateService.set(calculate);
     }
 
 }

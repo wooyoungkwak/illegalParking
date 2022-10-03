@@ -33,101 +33,99 @@ public class UserServiceImpl implements UserService {
 
     private final JPAQueryFactory queryFactory;
 
-
-    @Override
-    public User getByInsert(Integer userSeq) throws TeraException {
-        Optional<User> optional = userRepository.findById(userSeq);
-        if ( optional.isEmpty()) {
-            return null;
-        }
-        User user = optional.get();
-        return user;
-    }
-
     @Override
     public User get(Integer userSeq) throws TeraException {
-        Optional<User> optional = userRepository.findById(userSeq);
-        if ( optional.isEmpty()) {
-            return null;
-        }
-        User user = optional.get();
         try {
-            user.setPassword(YoungEncoder.decrypt(user.getPassword()));
+            Optional<User> optional = userRepository.findById(userSeq);
+            if ( optional.isEmpty()) {
+                return null;
+            }
+            User user = optional.get();
+//            user.setDecryptPassword();
+            return user;
         } catch (EncryptedException e) {
-            log.error("사용자 정보 가져오기 오류 : ", e);
-            throw new TeraException(TeraExceptionCode.UNKNOWN);
+            throw new TeraException(EncryptedExceptionCode.DECRYPT_FAILURE.getMessage(), e);
         }
-        return user;
     }
 
     @Override
     public User get(String userName) throws TeraException {
-        return queryFactory.selectFrom(QUser.user)
-                .where(QUser.user.username.eq(userName))
-                .fetchOne();
-    }
+        try {
+            User user = queryFactory.selectFrom(QUser.user)
+                    .where(QUser.user.username.eq(userName))
+                    .fetchOne();
 
-    @Override
-    public User getByDB(String userName) throws TeraException {
-        return queryFactory.selectFrom(QUser.user)
-                .where(QUser.user.username.eq(userName))
-                .fetchOne();
+            if (user == null) {
+                return null;
+            }
+            return user;
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST, e);
+        }
     }
 
     @Override
     public List<User> gets() throws TeraException {
-        List<User> users = userRepository.findAll();
-        if (users == null) {
-            users = Lists.newArrayList();
+        try {
+            List<User> users = userRepository.findAll();
+            if (users == null) {
+                users = Lists.newArrayList();
+            }
+            return users;
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.UNKNOWN, e);
         }
-        return users;
     }
 
     @Override
     public boolean isUser(String userName, String password) throws TeraException {
         try {
-            String passwordKey = YoungEncoder.encrypt(password);
+            String _password = YoungEncoder.encrypt(password);
             if (queryFactory.selectFrom(QUser.user)
                     .where(QUser.user.username.eq(userName))
-                    .where(QUser.user.password.eq(passwordKey))
+                    .where(QUser.user.password.eq(_password))
                     .fetchOne() != null) {
                 return true;
             }
         } catch (EncryptedException e) {
-            log.error(EncryptedExceptionCode.ENCRYPT_FAILURE.getMessage(), e);
-            throw new TeraException(TeraExceptionCode.UNKNOWN);
+            throw new TeraException(EncryptedExceptionCode.ENCRYPT_FAILURE.getMessage(), e);
         }
         return false;
     }
 
     @Override
     public boolean isUser(String userName) throws TeraException {
-        if (queryFactory.selectFrom(QUser.user)
-                .where(QUser.user.username.eq(userName))
-                .fetchOne() != null) {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void add(User user) throws TeraException {
         try {
-            user.setPassword(YoungEncoder.encrypt(user.getPassword()));
-            userRepository.save(user);
+            if (queryFactory.selectFrom(QUser.user)
+                    .where(QUser.user.username.eq(userName))
+                    .fetchOne() != null) {
+                return true;
+            }
+            return false;
         } catch (Exception e) {
-            log.error("사용자 추가 오류 : ", e);
-            throw new TeraException(TeraExceptionCode.UNKNOWN);
+            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST, e);
         }
     }
 
     @Override
-    public void adds(List<User> users) throws TeraException {
+    public User set(User user) throws TeraException {
         try {
-            userRepository.saveAll(users);
+            user.setEncyptPassword();
+            return userRepository.save(user);
         } catch (Exception e) {
-            log.error("사용자 추가 오류 : ", e);
-            throw new TeraException(TeraExceptionCode.UNKNOWN);
+            throw new TeraException(TeraExceptionCode.USER_INSERT_FAIL, e);
         }
     }
+
+    @Override
+    public List<User> sets(List<User> users) throws TeraException {
+        try {
+            for (User user : users)
+                user.setEncyptPassword();
+            return userRepository.saveAll(users);
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.USER_INSERT_FAIL);
+        }
+    }
+
 }

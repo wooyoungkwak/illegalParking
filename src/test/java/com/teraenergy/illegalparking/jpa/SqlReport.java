@@ -1,8 +1,9 @@
 package com.teraenergy.illegalparking.jpa;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
@@ -40,7 +41,10 @@ public class SqlReport {
     private ReceiptService receiptService;
 
     @Autowired
-    private IllegalZoneService illegalZoneService;
+    private IllegalZoneMapperService illegalZoneMapperService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Test
     public void insert() {
@@ -56,7 +60,7 @@ public class SqlReport {
         report1.setResultType(ResultType.WAIT);
         report1.setNote("테스트 ... ");
         report1.setZoneSeq(1);
-        report1.setCode("5013032000");
+        report1.setCode(secondReceipt.getCode());
         report1.setIsDel(false);
         reports.add(report1);
 
@@ -66,7 +70,12 @@ public class SqlReport {
     @Test
     public void select(){
 
-
+        List<Report> reports = reportService.gets();
+        try {
+            objectMapper.writeValueAsString(reports);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

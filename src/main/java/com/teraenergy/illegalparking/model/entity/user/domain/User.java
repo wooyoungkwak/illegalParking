@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.user.domain;
 
 import com.google.common.collect.Lists;
+import com.teraenergy.illegalparking.encrypt.YoungEncoder;
 import com.teraenergy.illegalparking.model.entity.user.enums.Role;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,4 +69,11 @@ public class User implements UserDetails {
         return authorityList;
     }
 
+    public void setEncyptPassword() {
+        this.password = YoungEncoder.encrypt(this.password);
+    }
+
+    public void setDecryptPassword(){
+        this.password = YoungEncoder.decrypt(this.password);
+    }
 }

@@ -12,44 +12,44 @@ import lombok.Getter;
 
 public class TeraException extends Exception{
 
-    String code;
+    private static final long serialVersionUID = 1L;
 
-    String message;
-
-    @Getter
-    private TeraExceptionCode teraExceptionCode;
+    private String code;
+    private String message;
 
     public TeraException(String message) {
         super(message);
         this.message = message;
     }
 
-    public TeraException(TeraExceptionCode teraExceptionCode) {
-        this(teraExceptionCode.name(), teraExceptionCode.getMessage());
-    }
-
-    public TeraException(TeraExceptionCode teraExceptionCode, Throwable e) {
-        this(teraExceptionCode.name(), teraExceptionCode.getMessage());
-    }
-
-    public TeraException(TeraExceptionCode teraExceptionCode, String message) {
-        this(teraExceptionCode.name(), teraExceptionCode.getMessage());
-    }
-
-    public TeraException(TeraExceptionCode teraExceptionCode, Throwable e, String... args) {
-        this(teraExceptionCode.name(), TeraErrCodeUtil.parseMessage(args[0], args) );
-    }
-
-
-
     public TeraException(String code, String message) {
-        this(message);
+        super(message);
         this.code = code;
     }
 
     public TeraException(String message, Throwable e) {
         super(message, e);
         this.message = message;
+    }
+
+    public TeraException(String code, String message, Throwable e) {
+        super(message, e);
+        this.code = code;
+    }
+
+    public TeraException(TeraErrCode teraErrCode) {
+        this(teraErrCode.getMessage(new String[0]));
+    }
+
+    public TeraException(TeraErrCode teraErrCode, Throwable e){
+        this(teraErrCode.getMessage(new String[0]), e);
+    }
+
+    public TeraException(TeraErrCode teraErrCode, String... args) {
+        this(teraErrCode.getCode(), teraErrCode.getMessage(args));
+    }
+    public TeraException(TeraErrCode teraErrCode, Throwable e, String... args) {
+        this(teraErrCode.getCode(), teraErrCode.getMessage(args), e);
     }
 
     public String getCode() {
@@ -60,5 +60,4 @@ public class TeraException extends Exception{
         return this.message;
     }
 
-    
 }

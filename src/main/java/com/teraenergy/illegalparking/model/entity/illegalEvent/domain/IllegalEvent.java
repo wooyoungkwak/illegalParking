@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.illegalEvent.domain;
 
 import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,13 @@ public class IllegalEvent {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer eventSeq;
+
+    @Column
+    String name;        // 불법 주정차 구역 이름
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    IllegalType illegalType;
 
     @Column
     String firstStartTime;

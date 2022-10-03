@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.dto.calculate.domain.ProductDto;
 import com.teraenergy.illegalparking.model.dto.calculate.service.ProductDtoService;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
@@ -68,10 +69,11 @@ public class CalculateApi {
 
     @PostMapping("/calculate/product/set")
     @ResponseBody
-    public JsonNode setProduct(@RequestBody String body) throws JsonProcessingException {
+    public JsonNode setProduct(@RequestBody String body) throws JsonProcessingException, TeraException {
         JsonNode jsonNode = objectMapper.readTree(body);
         Product product = convertProduct(jsonNode);
         product = productService.set(product);
+
         HashMap<String, Object> result = Maps.newHashMap();
         result.put("success", true);
         String jsonStr = objectMapper.writeValueAsString(result);
@@ -139,7 +141,7 @@ public class CalculateApi {
         }
     }
 
-    private Product convertProduct(JsonNode jsonNode) {
+    private Product convertProduct(JsonNode jsonNode) throws TeraException {
         Product product  = new Product();
         if ( jsonNode.get("productSeq") != null ) {
             product.setProductSeq(jsonNode.get("productSeq").asInt());
@@ -150,7 +152,7 @@ public class CalculateApi {
         product.setName(jsonNode.get("name").asText());
         product.setPointValue(jsonNode.get("pointValue").asLong());
         Integer userSeq = jsonNode.get("userSeq").asInt();
-        User user = userService.getByInsert(userSeq);
+        User user = userService.get(userSeq);
         product.setUser(user);
         return product;
     }

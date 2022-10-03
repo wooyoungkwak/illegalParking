@@ -126,7 +126,7 @@ $(function () {
                     if (confirm(" 등록 되었습니다. \n 계속 등록 하시겠습니까? ")) {
                         location.href = location.href;
                     } else {
-                        location.href = _contextPath + '/productAdd';
+                        location.href = _contextPath + '/productList';
                     }
                 },
                 error: function (code) {
@@ -170,7 +170,6 @@ $(function () {
 
         $('#productAddTag').hide();
 
-        log(_user);
     }
 
     initialize();

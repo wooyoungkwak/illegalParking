@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <% String contextPath = request.getContextPath(); %>
-
+<%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
 
     <!-- nav -->
@@ -69,6 +69,7 @@
                 </div>
             </div>
         </main>
+
     </stripes:layout-component>
 
     <!-- footer -->

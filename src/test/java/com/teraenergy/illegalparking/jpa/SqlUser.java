@@ -56,7 +56,7 @@ public class SqlUser {
         user2.setName("홍길동");
         users.add(user2);
 
-        userService.adds(users);
+        userService.sets(users);
     }
 
     @Test

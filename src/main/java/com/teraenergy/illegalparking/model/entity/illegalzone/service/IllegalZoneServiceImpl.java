@@ -1,69 +1,86 @@
 package com.teraenergy.illegalparking.model.entity.illegalzone.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.mapper.IllegalZoneMapper;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.QIllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalZoneRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
- * Date : 2022-09-14
+ * Date : 2022-09-21
  * Author : young
  * Editor :
  * Project : illegalParking
  * Description :
  */
-
 @RequiredArgsConstructor
 @Service
 public class IllegalZoneServiceImpl implements IllegalZoneService {
 
-    private final IllegalZoneMapper illegalZoneMapper;
+    private final IllegalZoneRepository illegalZoneRepository;
+
+    private final JPAQueryFactory jpaQueryFactory;
+
+    private final EntityManager entityManager;
+
+    private final ObjectMapper objectMapper;
+
+    @Override
+    public List<IllegalZone> gets( ) {
+        return illegalZoneRepository.findAll();
+    }
 
     @Override
     public IllegalZone get(Integer zoneSeq) {
-        return illegalZoneMapper.findById(zoneSeq);
+        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
+        query.where(QIllegalZone.illegalZone.zoneSeq.eq(zoneSeq));
+        query.where(QIllegalZone.illegalZone.isDel.isFalse());
+        return (IllegalZone) query.fetchOne();
     }
 
     @Override
-    public List<IllegalZone> getsByDong(List<String> codes) {
-        return illegalZoneMapper.findByIdDong(codes);
+    public IllegalZone set(IllegalZone illegalZone) {
+        String query = "";
+        entityManager.createQuery(query);
+        return illegalZoneRepository.save(illegalZone);
     }
 
     @Override
-    public List<IllegalZone> getsByType(Integer illegalTypeSeq) {
-        return illegalZoneMapper.findByIdType(illegalTypeSeq);
+    public List<IllegalZone> sets(List<IllegalZone> illegalZone) {
+        return illegalZoneRepository.saveAll(illegalZone);
     }
 
     @Override
-    public List<IllegalZone> getsByTypeAndDong(Integer illegalTypeSeq, List<String> codes) {
-        return illegalZoneMapper.findByIdTypeAndDong(illegalTypeSeq, codes);
+    public IllegalZone modify(IllegalZone illegalZone) {
+        return illegalZoneRepository.save(illegalZone);
     }
 
     @Override
-    public List<IllegalZone> gets() {
-        return illegalZoneMapper.findAll();
+    public List<IllegalZone> modifies(List<IllegalZone> illegalZones) {
+        return illegalZoneRepository.saveAll(illegalZones);
     }
 
     @Override
-    public void set(IllegalZone illegalZone) {
-        illegalZoneMapper.save(illegalZone);
+    public long remove(Integer illegalZoneSeq) {
+        JPAUpdateClause query = jpaQueryFactory.update(QIllegalZone.illegalZone);
+        query.set(QIllegalZone.illegalZone.isDel, true);
+        query.where(QIllegalZone.illegalZone.zoneSeq.eq(illegalZoneSeq));
+        return query.execute();
     }
+
 
     @Override
-    public void sets(List<IllegalZone> illegalZones) {
-        illegalZoneMapper.saveAll(illegalZones);
+    public long removes(List<Integer> illegalZoneSeqs) {
+        JPAUpdateClause query = jpaQueryFactory.update(QIllegalZone.illegalZone);
+        query.set(QIllegalZone.illegalZone.isDel, true);
+        query.where(QIllegalZone.illegalZone.zoneSeq.in(illegalZoneSeqs));
+        return query.execute();
     }
-
-    @Override
-    public void modify(Integer zoneSeq, Integer illegalType, String startTime, String endTime) {
-        illegalZoneMapper.modify(zoneSeq, illegalType, startTime, endTime);
-    }
-
-    @Override
-    public void delete(Integer zoneSeq) {
-        illegalZoneMapper.delete(zoneSeq);
-    }
-
 }

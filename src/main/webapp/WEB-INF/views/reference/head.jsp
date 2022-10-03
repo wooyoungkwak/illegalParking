@@ -34,13 +34,16 @@
         <%--const _contextPath = '${pageContext.request.contextPath}';--%>
 
         let SELECT_ALL = "all";
-        let SELECT_TYPE= "type";
+        let SELECT_TYPE = "type";
         let SELECT_DONG = "dong";
         let SELECT_TYPE_AND_DONG = "typeAndDong";
         const log = console.log;
 
-        let _userSeq = '${userSeq}';
-        let _userName = '${userName}';
+        let _userSeq = '${_user.userSeq}';
+        let _username = '${_user.username}';
+        let _name = '${_user.name}';
+        let _role = '${_user.role}';
+
 
         $(function () {
             let paths = location.pathname.split("/");
@@ -49,13 +52,19 @@
             $('#navMenu').find('a').removeClass("active");
             $('#layoutSidenav_nav').find('a').removeClass("active");
 
-            if(location.pathname === '/home'){
+            if (location.pathname === '/home') {
                 $('#sidebarToggle').hide();
+            } else if (location.pathname === '/login') {
+
+            } else if (location.pathname === '/register') {
+
+            } else if (location.pathname === '/myInfo') {
+
             } else {
-                $('#nav' + _contextPath.replace("/","")).addClass("active");
+                $('#nav' + _contextPath.replace("/", "")).addClass("active");
             }
 
-            $('#side_' + paths[size-1]).addClass("active");
+            $('#side_' + paths[size - 1]).addClass("active");
 
             // Toggle the side navigation
             const sidebarToggle = document.body.querySelector('#sidebarToggle');
@@ -67,9 +76,18 @@
                 });
             }
 
-            $('#back').on('click', function (){
+            $('#back').on('click', function () {
                 window.history.back();
-            })
+            });
+
+            if (_role !== 'ADMIN') {
+                $('#side_mapSet').hide();
+                $('#side_productAdd').hide();
+            }
+
+            $('#myInfo').on('click', function (){
+               location.href = '${pageContext.request.contextPath}/myInfo';
+            });
         });
     </script>
 </head>

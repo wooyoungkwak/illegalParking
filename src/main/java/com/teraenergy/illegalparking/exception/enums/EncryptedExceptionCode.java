@@ -1,12 +1,15 @@
 package com.teraenergy.illegalparking.exception.enums;
 
+import com.teraenergy.illegalparking.exception.TeraErrCode;
+import com.teraenergy.illegalparking.exception.TeraErrCodeUtil;
+
 /**
  * Date : 2022-03-14
  * Author : young
  * Project : sarangbang
  * Description :
  */
-public enum EncryptedExceptionCode {
+public enum EncryptedExceptionCode implements TeraErrCode {
 
     ENCRYPT_FAILURE("암호화 생성 실패"),
 
@@ -23,8 +26,13 @@ public enum EncryptedExceptionCode {
         this.message = message;
     }
 
-    public String getMessage(){
-        return this.message;
+    @Override
+    public String getCode() {
+        return this.toString();
     }
 
+    @Override
+    public String getMessage(String... args) {
+        return TeraErrCodeUtil.parseMessage(this.message, args);
+    }
 }

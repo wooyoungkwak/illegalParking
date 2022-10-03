@@ -13,13 +13,9 @@ import java.util.List;
  */
 public interface UserService {
 
-    public User getByInsert(Integer userSeq) throws TeraException;
-
     public User get(Integer userSeq) throws TeraException;
 
     public User get(String userName) throws TeraException;
-
-    public User getByDB(String userName) throws TeraException;
 
     public List<User> gets() throws TeraException;
 
@@ -27,8 +23,8 @@ public interface UserService {
 
     public boolean isUser(String userName) throws TeraException;
 
-    public void add(User user) throws TeraException;
+    public User set(User user) throws TeraException;
 
-    public void adds(List<User> users) throws TeraException;
+    public List<User> sets(List<User> users) throws TeraException;
 
 }
