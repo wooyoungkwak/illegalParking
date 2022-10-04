@@ -41,6 +41,8 @@ public class LoginController extends ExtendsController {
         request.getSession().setAttribute("prevPage", header);
         if (device.isNormal()) {
             return getPath("/login");
+        } else if (device.isTablet()) {
+            return getPath("/login");
         } else {
             return "/mobile/controller/area/map";
         }
@@ -55,7 +57,6 @@ public class LoginController extends ExtendsController {
     public String register(Model model, HttpServletRequest request){
         return getPath("/register");
     }
-
 
     /* POST */
 

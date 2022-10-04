@@ -86,21 +86,6 @@ CREATE TABLE illegal_event
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
--- 회원 정보 ( 신고자 및 신고 알림 수신자 및 기관 )
-DROP TABLE illegal_event;
-CREATE TABLE illegal_event
-(
-    EventSeq        INT AUTO_INCREMENT PRIMARY KEY,
-    FirstStartTime  VARCHAR(5) NULL,     -- 1차 이벤트 시작 시간
-    FirstEndTime    VARCHAR(5) NULL,     -- 1차 이벤트 종료 시간
-    UsedFirst       BOOLEAN    NOT NULL, -- 1차 사용 여부
-    SecondStartTime VARCHAR(5) NULL,     -- 2차 이벤트 시작 시간
-    SecondEndTime   VARCHAR(5) NULL,     -- 2차 이벤트 종료 시간
-    UsedSecond      BOOLEAN    NOT NULL, -- 2차 사용 여부
-    EnvironmentSeq  INT        NOT NULL
-) ENGINE = InnoDB
-  CHARSET = utf8;
-
 -- 차량 번호 정보 ( 신고 등록 및 접수 알림 차량 정보 )
 DROP TABLE car;
 CREATE TABLE car

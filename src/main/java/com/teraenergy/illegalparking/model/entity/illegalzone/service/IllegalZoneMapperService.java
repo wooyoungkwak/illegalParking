@@ -17,6 +17,8 @@ public interface IllegalZoneMapperService {
 
     public List<IllegalZone> getsByCode(List<String> codes);
 
+    List<IllegalZone> getsByGeometry(String latitude, String longitude);
+
     public List<IllegalZone> getsByIllegalType(String illegalType);
 
     public List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes);

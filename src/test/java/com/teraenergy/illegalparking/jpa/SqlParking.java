@@ -37,10 +37,10 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "rdata")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlParking {
 
     @Value("${file.staticPath}")

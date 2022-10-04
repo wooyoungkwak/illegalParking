@@ -41,7 +41,7 @@ public class SqlUser {
         user.setIsDel(false);
         user.setUsername("admin");
 
-        user.setPassword(YoungEncoder.encrypt("qwer1234"));
+        user.setPassword("qwer1234");
         user.setRole(Role.ADMIN);
         user.setUserCode(1234l);
         user.setName("관리자");
@@ -49,7 +49,7 @@ public class SqlUser {
 
         User user2 = new User();
         user2.setUsername("hong@gmail.com");
-        user2.setPassword(YoungEncoder.encrypt("qwer1234"));
+        user2.setPassword("qwer1234");
         user2.setRole(Role.USER);
         user2.setUserCode(1234l);
         user2.setIsDel(false);

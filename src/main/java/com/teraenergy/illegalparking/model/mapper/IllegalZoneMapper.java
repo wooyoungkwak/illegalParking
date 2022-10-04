@@ -20,6 +20,8 @@ public interface IllegalZoneMapper {
 
     List<IllegalZone> findByCode(List<String> codes);
 
+    List<IllegalZone> findByGeometry(String latitude, String longitude);
+
     List<IllegalZone> findByIllegalType(String illegalType);
 
     List<IllegalZone> findByIllegalTypeAndCode(String illegalType, List<String> codes);

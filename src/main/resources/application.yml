@@ -51,7 +51,7 @@ spring:
   datasource:
     driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
     url: jdbc:log4jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
-#    url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+    #    url: jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
     username: root
     password: tera
     hikari:
@@ -91,6 +91,29 @@ server:
 file:
   resourcePath: C:/fileUpload/
 ---
+# release-DATA
+spring:
+  config:
+    activate:
+      on-profile: rdata
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+  datasource:
+    url: jdbc:mariadb://49.50.166.205:3306/illegal_parking?serverTimezone=Asia/Seoul
+    username: tera
+    password: tera1234!
+    hikari:
+      connection-timeout: 30000 # connection_timeout
+      max-lifetime: 1800000 # wait_timeout
+server:
+  port: 80
+  servlet:
+    context-path: /
+    session:
+      timeout: 30m
+file:
+  resourcePath: /fileUpload/
+---
 # release
 spring:
   config:
@@ -112,4 +135,4 @@ server:
     session:
       timeout: 30m
 file:
-  resourcePath: /home/fileUpload/
+  resourcePath: /fileUpload/

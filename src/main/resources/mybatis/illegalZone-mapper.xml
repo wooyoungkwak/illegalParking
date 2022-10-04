@@ -34,6 +34,10 @@
         SELECT ZoneSeq, ASTEXT(Polygon) as polygon, isDel, Code, EventSeq FROM illegal_zone where isDel = 0;
     </select>
 
+    <select id="findByGeometry" resultType="IllegalZone" parameterType="String">
+        SELECT zone.ZoneSeq, ASTEXT(zone.Polygon) as polygon, zone.isDel, zone.Code, zone.EventSeq FROM illegal_zone WHERE ST_CONTAINS( Polygon, GeomFromText(<trim prefix="'Point(" suffix=")'">${latitude} ${longitude}</trim>));
+    </select>
+
     <insert id="save" useGeneratedKeys="false">
          INSERT INTO illegal_zone (Polygon, isDel, Code, EventSeq) VALUES (POLYGONFROMTEXT(#{polygon}), #{isDel}, #{code}, #{illegalEvent.eventSeq});
     </insert>
@@ -57,5 +61,7 @@
     <update id="delete" useGeneratedKeys="false">
          UPDATE illegal_zone SET isDel = true WHERE ZoneSeq = #{zoneSeq};
     </update>
+
+
 
 </mapper>

@@ -32,6 +32,11 @@ public class IllegalZoneMapperServiceImpl implements IllegalZoneMapperService {
     }
 
     @Override
+    public List<IllegalZone> getsByGeometry(String latitude, String longitude) {
+        return illegalZoneMapper.findByGeometry(latitude, longitude);
+    }
+
+    @Override
     public List<IllegalZone> getsByIllegalType(String illegalType) {
         return illegalZoneMapper.findByIllegalType(illegalType);
     }
