@@ -42,15 +42,20 @@
 <script type="application/javascript">
 
     function getTimeBySelectSeperateTime() {
+        log($('#${id}Hour').val())
+      log(${id})
         return $('#${id}Hour').val() + ":" + $('#${id}Minute').val();
-    };
+    }
 
     function setTimeBySelectSeperateTime() {
         $('#' + '${id}').val(getTimeBySelectSeperateTime());
     }
 
     $('#' + '${id}' +'Hour').on('change', function () {
-        setTimeBySelectSeperateTime();
+        log($('#' + '${id}' +'Hour').val());
+      log(this)
+
+      setTimeBySelectSeperateTime();
         log(getTimeBySelectSeperateTime());
     });
 

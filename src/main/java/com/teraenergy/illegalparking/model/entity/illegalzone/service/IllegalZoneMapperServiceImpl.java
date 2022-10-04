@@ -32,13 +32,13 @@ public class IllegalZoneMapperServiceImpl implements IllegalZoneMapperService {
     }
 
     @Override
-    public List<IllegalZone> getsByIllegalType(Integer illegalTypeSeq) {
-        return illegalZoneMapper.findByIllegalType(illegalTypeSeq);
+    public List<IllegalZone> getsByIllegalType(String illegalType) {
+        return illegalZoneMapper.findByIllegalType(illegalType);
     }
 
     @Override
-    public List<IllegalZone> getsByIllegalTypeAndCode(Integer illegalTypeSeq, List<String> codes) {
-        return illegalZoneMapper.findByIllegalTypeAndCode(illegalTypeSeq, codes);
+    public List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes) {
+        return illegalZoneMapper.findByIllegalTypeAndCode(illegalType, codes);
     }
 
     @Override

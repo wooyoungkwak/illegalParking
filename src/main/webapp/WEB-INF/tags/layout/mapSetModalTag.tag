@@ -18,6 +18,7 @@
 <div class="offcanvas offcanvas-end" id="${id}" tabindex="-1" aria-labelledby="offcanvasRightLabel" data-bs-backdrop="false">
 	<form id="formAreaSetting" name="formAreaSetting">
 		<input type="hidden" id="zoneSeq" name="zoneSeq" value=""/>
+		<input type="hidden" id="eventSeq" name="eventSeq" value=""/>
 
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title" id="offcanvasRightLabel">구역설정</h5>
@@ -52,7 +53,7 @@
 			<div class="card mb-2">
 				<div class="card-header">
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="usedFirst">
+						<input class="form-check-input" type="checkbox" value="0" id="usedFirst" name="usedFirst">
 						<label class="form-check-label" for="usedFirst">
 							첫번째 적용시간
 						</label>
@@ -61,11 +62,11 @@
 				<div class="card-body">
 					<div class="row mt-2" id="firstTimeRow">
 						<div class="col-5">
-							<tags:selectTagWithSeperateTime id="startTime" title="시작" />
+							<tags:selectTagWithSeperateTime id="firstStartTime" title="시작" />
 						</div>
 						<div class="col">~</div>
 						<div class="col-5">
-							<tags:selectTagWithSeperateTime id="endTime" title="종료"/>
+							<tags:selectTagWithSeperateTime id="firstEndTime" title="종료"/>
 						</div>
 					</div>
 				</div>
@@ -74,7 +75,7 @@
 			<div class="card">
 				<div class="card-header">
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="usedSecond">
+						<input class="form-check-input" type="checkbox" value="0" id="usedSecond" name="usedSecond">
 						<label class="form-check-label" for="usedSecond">
 							두번째 적용시간
 						</label>
@@ -83,14 +84,22 @@
 				<div class="card-body">
 					<div class="row mt-2" id="secondTimeRow">
 						<div class="col-5">
-							<tags:selectTagWithSeperateTime id="startTime" title="시작" />
+							<tags:selectTagWithSeperateTime id="secondStartTime" title="시작" />
 						</div>
 						<div class="col">~</div>
 						<div class="col-5">
-							<tags:selectTagWithSeperateTime id="endTime" title="종료"/>
+							<tags:selectTagWithSeperateTime id="secondEndTime" title="종료"/>
 						</div>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="card mb-2">
+			<div class="card-header">
+				그룹지정
+			</div>
+			<div class="card-body">
+				<input type="text" class="form-control" placeholder="그룹 이름을 입력 하세요." id="zoneGroupType" name="zoneGroupType">
 			</div>
 		</div>
 

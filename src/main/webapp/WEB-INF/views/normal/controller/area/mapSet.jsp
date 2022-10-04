@@ -43,9 +43,12 @@
 								<button id="btnAddOverlay">구역추가</button>
 								<button id="btnSet">저장</button>
 								<span>
-								<label><input type="radio" name="searchIllegalTypeSeq" value="" checked>전체</label>
-								<label><input type="radio" name="searchIllegalTypeSeq" value="0">불법주정차</label>
-								<label><input type="radio" name="searchIllegalTypeSeq" value="1">5분주정차</label>
+								<label><input type="radio" name="searchIllegalType" value="" checked>전체</label>
+								<%--<c:forEach items="${enumValues}" var="enumValue" varStatus="status">
+									<label><input type="radio" name="searchIllegalType" value="${enumValue}">${enumValue.value}</label>
+								</c:forEach>--%>
+								<label><input type="radio" name="searchIllegalType" value="ILLEGAL">불법주정차</label>
+								<label><input type="radio" name="searchIllegalType" value="FIVE_MINUTE">5분주정차</label>
 							</span>
 							</p>
 						</div>

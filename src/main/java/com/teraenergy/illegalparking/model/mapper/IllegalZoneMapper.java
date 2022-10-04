@@ -20,9 +20,9 @@ public interface IllegalZoneMapper {
 
     List<IllegalZone> findByCode(List<String> codes);
 
-    List<IllegalZone> findByIllegalType(Integer illegalTypeSeq);
+    List<IllegalZone> findByIllegalType(String illegalType);
 
-    List<IllegalZone> findByIllegalTypeAndCode(Integer illegalTypeSeq, List<String> codes);
+    List<IllegalZone> findByIllegalTypeAndCode(String illegalType, List<String> codes);
 
     List<IllegalZone> findAll();
 

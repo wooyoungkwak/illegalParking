@@ -228,6 +228,8 @@ function getMapCenter(map) {
     return {x: center.getLng(), y: center.getLat()}
 }
 
+let uniqueCodesCheck = false;
+let beforeCodes = [];
 // 꼭지점, 중심좌표의 법정동 코드 가져오기
 async function getDongCodesBounds(map){
     // 맵 구역
@@ -254,5 +256,9 @@ async function getDongCodesBounds(map){
         let code = await coordinatesToDongCodeKakaoApi(latLng.x, latLng.y);
         codes.push(code);
     }
-    return [...new Set(codes)];
+    codes = [...new Set(codes)]
+
+    uniqueCodesCheck = _.isEmpty(_.xor(beforeCodes, codes));
+
+    return codes;
 }

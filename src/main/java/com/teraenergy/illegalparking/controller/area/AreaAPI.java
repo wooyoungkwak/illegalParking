@@ -5,8 +5,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.model.dto.illegalzone.domain.IllegalZoneDto;
+import com.teraenergy.illegalparking.model.dto.illegalzone.service.IllegalZoneDtoService;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
+import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Polygon;
@@ -34,7 +42,13 @@ public class AreaAPI {
 
     private final ObjectMapper objectMapper;
 
+    private final IllegalZoneService illegalZoneService;
+
     private final IllegalZoneMapperService illegalZoneMapperService;
+
+    private final IllegalZoneDtoService illegalZoneDtoService;
+
+    private final IllegalEventService illegalEventService;
 
     @PostMapping("/area/markers")
     @ResponseBody
@@ -56,7 +70,17 @@ public class AreaAPI {
     @ResponseBody
     public JsonNode getZone(HttpServletRequest request, @RequestBody String body) throws Exception {
         JsonNode jsonNode = objectMapper.readTree(body);
-        String jsonStr = objectMapper.writeValueAsString(illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt()));
+
+        Integer zoneSeq = jsonNode.get("zoneSeq").asInt();
+        IllegalZone illegalZone = illegalZoneService.get(zoneSeq);
+
+//        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
+//        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+//        illegalZone.setIllegalEvent(illegalEvent);
+
+        String jsonStr = objectMapper.writeValueAsString(illegalZone);
+
+//        String jsonStr = objectMapper.writeValueAsString(illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt()));
         return objectMapper.readTree(jsonStr);
     }
 
@@ -98,7 +122,7 @@ public class AreaAPI {
                 IllegalZone illegalZone = new IllegalZone();
                 illegalZone.setPolygon(stringBuilder.toString());
 //                illegalZone.setName("");
-//                illegalZone.setIllegalTypeSeq(Integer.parseInt((String) param.get("illegalTypeSeq")));
+//                illegalZone.setIllegalTypeSeq(Integer.parseInt((String) param.get("illegalType")));
                 illegalZone.setCode((String) dataMap.get("code"));
                 illegalZone.setIsDel(false);
                 illegalZones.add(illegalZone);
@@ -107,6 +131,7 @@ public class AreaAPI {
             }
 
             illegalZoneMapperService.sets(illegalZones);
+
 
             map.put("success","true");
         } catch (Exception e) {
@@ -124,7 +149,34 @@ public class AreaAPI {
         Map<String, String> map = Maps.newHashMap();
         try {
             JsonNode jsonNode = objectMapper.readTree(body);
-//            illegalZoneService.modify(jsonNode.get("zoneSeq").asInt(), jsonNode.get("illegalTypeSeq").asInt(), jsonNode.get("startTime").asText(), jsonNode.get("endTime").asText());
+
+            IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
+
+            IllegalEvent illegalEvent = new IllegalEvent();
+            illegalEvent.setIllegalType(
+                IllegalType.valueOf(jsonNode.get("illegalType").asText()));
+            illegalEvent.setZoneGroupType(
+                ZoneGroupType.valueOf(jsonNode.get("zoneGroupType").asText()));
+            illegalEvent.setName(jsonNode.get("name").asText());
+            illegalEvent.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
+            illegalEvent.setFirstStartTime(jsonNode.get("firstStartTime").asText());
+            illegalEvent.setFirstEndTime(jsonNode.get("firstEndTime").asText());
+            illegalEvent.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
+            illegalEvent.setSecondStartTime(jsonNode.get("secondStartTime").asText());
+            illegalEvent.setSecondEndTime(jsonNode.get("secondEndTime").asText());
+            if(illegalZone.getEventSeq() != null) {
+                illegalEvent.setEventSeq(illegalZone.getEventSeq());
+            }
+            illegalEvent = illegalEventService.set(illegalEvent);
+//            IllegalZoneDto illegalZoneDto = new IllegalZoneDto();
+//            illegalZoneDto.setZoneSeq(jsonNode.get("zoneSeq").asInt());
+//            illegalZoneDto.setIllegalType(jsonNode.get("illegalType").asText());
+//            illegalZoneDto.setName(jsonNode.get("name").asText());
+//            illegalZoneDto.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
+//            illegalZoneDto.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
+//            jsonNode.get("startTime").asText(), jsonNode.get("endTime").asText()
+
+            illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
             map.put("success","true");
         } catch (Exception e) {
             map.put("success","false");
@@ -171,21 +223,34 @@ public class AreaAPI {
             }
         }
 
+//        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
+//        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+//        illegalZone.setIllegalEvent(illegalEvent);
+
         List<IllegalZone> illegalZones = null;
         switch (select) {
             case "type":
-                illegalZones = illegalZoneMapperService.getsByIllegalType(param.get("illegalTypeSeq").asInt());
+                illegalZones = illegalZoneMapperService.getsByIllegalType(param.get("illegalType").asText());
                 break;
             case "dong":
                 illegalZones = illegalZoneMapperService.getsByCode(codes);
                 break;
             case "typeAndDong":
-                illegalZones = illegalZoneMapperService.getsByIllegalTypeAndCode(param.get("illegalTypeSeq").asInt(), codes);
+                illegalZones = illegalZoneMapperService.getsByIllegalTypeAndCode(param.get("illegalType").asText(), codes);
                 break;
-            case "all":
+            default :
                 illegalZones = illegalZoneMapperService.gets();
                 break;
         }
+
+//        List<IllegalZoneDto> illegalZoneDtos = Lists.newArrayList();
+//
+//        illegalZoneDtoService.getsToIllegalZones(illegalZoneDtos);
+
+//        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
+//        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+//        illegalZone.setIllegalEvent(illegalEvent);
+
 
         List<Integer> zoneSeqs = Lists.newArrayList();
         List<Integer> zoneTypes = Lists.newArrayList();
