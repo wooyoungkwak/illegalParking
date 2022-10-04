@@ -28,6 +28,8 @@ public interface IllegalZoneMapper {
 
     List<IllegalZone> findAll();
 
+    List<IllegalZone> findAllByLimitAndDesc(int limit);
+
     void save(IllegalZone illegalZone);
 
     void saveAll(List<IllegalZone> illegalZones);

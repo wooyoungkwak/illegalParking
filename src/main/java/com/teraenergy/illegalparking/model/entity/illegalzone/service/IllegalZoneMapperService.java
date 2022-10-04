@@ -27,7 +27,7 @@ public interface IllegalZoneMapperService {
 
     public void set(IllegalZone illegalZone);
 
-    public void sets(List<IllegalZone> illegalZones);
+    public List<IllegalZone> sets(List<IllegalZone> illegalZones);
 
     public void modify(IllegalZone illegalZone);
 

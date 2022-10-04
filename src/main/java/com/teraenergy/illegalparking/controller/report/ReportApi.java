@@ -178,7 +178,7 @@ public class ReportApi {
             String latitude = jsonNode.get("latitude").asText(); // 위도
             String longitude = jsonNode.get("longitude").asText(); // 경도
 
-            // 1. 불법주정차 구역 내에 존재 여부
+            // 1. 불법주정차 구역 내에 존재 여부 체크
             List<IllegalZone> illegalZones = illegalZoneMapperService.getsByGeometry(latitude, longitude);
 
             if (!illegalZones.isEmpty()) {
@@ -189,48 +189,50 @@ public class ReportApi {
 
                 IllegalZone realIllegalZone = null;
 
-                // 2. 불법주정차 구역의 Event
+                // 2. 불법주정차 구역의 시간 체크
                 for (IllegalZone illegalZone : illegalZones ) {
+                    // 2-1. 첫번째 허용 적용 시간 ( 다음의 경우 불법주정차가 아님 )
                     if (illegalZone.getIllegalEvent().getUsedFirst()) {
                         LocalDateTime fsTime = LocalDateTime.parse(separate[0] + " " + illegalZone.getIllegalEvent().getFirstStartTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
                         LocalDateTime feTime = LocalDateTime.parse(separate[0] + " " + illegalZone.getIllegalEvent().getFirstEndTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-                        if ( regDt.isBefore(fsTime)) {
-                            realIllegalZone = illegalZone;
-//                        } else if (regDt.isAfter(feTime)) {
-
+                        if ( !regDt.isBefore(fsTime)  && regDt.isBefore(feTime)) {
+                            continue;
                         }
                     }
 
+                    // 2-2. 두번째 허용 적용 시간 ( 다음의 경우 불법주정차가 아님 )
                     if ( illegalZone.getIllegalEvent().getUsedSecond()) {
                         LocalDateTime ssTime = LocalDateTime.parse( separate[0] + " " + illegalZone.getIllegalEvent().getSecondStartTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
                         LocalDateTime seTime = LocalDateTime.parse( separate[0] + " " + illegalZone.getIllegalEvent().getSecondEndTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
                         if ( !regDt.isBefore(ssTime) || regDt.isBefore(seTime)) {
-                            realIllegalZone = illegalZone;
+                            continue;
                         }
                     }
+
+                    realIllegalZone = illegalZone;
                 }
 
+                // 3. 신고 등록
+                if ( realIllegalZone != null) {
+                    User user = userService.get(jsonNode.get("id").asText());
+                    String addr = jsonNode.get("addr").asText();
+                    String addrParts[] = addr.split(" ");
+                    LawDong lawDong = lawDongService.getFromLnmadr(addrParts[0] + " " + addrParts[1] + " " + addrParts[2]);
 
+                    Receipt receipt = new Receipt();
+                    receipt.setIllegalZone(realIllegalZone);
+                    receipt.setUser(user);
+                    receipt.setCarNum(jsonNode.get("carNum").asText());
+                    receipt.setFileName(jsonNode.get("fileName").asText());
+                    receipt.setCode(lawDong.getCode());
+                    receipt.setReceiptType(ReceiptType.REPORT);
+                    receipt.setIsDel(false);
+                    receipt.setAddr(addr);
+                    receipt.setRegDt(regDt);
 
-                User user = userService.get(jsonNode.get("id").asText());
-                String addr = jsonNode.get("addr").asText();
-                String addrParts[] = addr.split(" ");
-                LawDong lawDong = lawDongService.getFromLnmadr(addrParts[0] + " " + addrParts[1] + " " + addrParts[2]);
-
-
-                Receipt receipt = new Receipt();
-                receipt.setIllegalZone(realIllegalZone);
-                receipt.setUser(user);
-                receipt.setCarNum(jsonNode.get("carNum").asText());
-                receipt.setFileName(jsonNode.get("fileName").asText());
-                receipt.setCode(lawDong.getCode());
-                receipt.setReceiptType(ReceiptType.REPORT);
-                receipt.setIsDel(false);
-                receipt.setAddr(addr);
-                receipt.setRegDt(regDt);
-                
-                receiptService.set(receipt);
-                isSuccess = true;
+                    receiptService.set(receipt);
+                    isSuccess = true;
+                }
             } else {
                 result.put("msg", "불법주정차 구역이 아닙니다.");
             }
