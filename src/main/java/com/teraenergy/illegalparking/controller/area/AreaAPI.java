@@ -132,7 +132,6 @@ public class AreaAPI {
 
             illegalZoneMapperService.sets(illegalZones);
 
-
             map.put("success","true");
         } catch (Exception e) {
             map.put("success","false");
@@ -168,14 +167,6 @@ public class AreaAPI {
                 illegalEvent.setEventSeq(illegalZone.getEventSeq());
             }
             illegalEvent = illegalEventService.set(illegalEvent);
-//            IllegalZoneDto illegalZoneDto = new IllegalZoneDto();
-//            illegalZoneDto.setZoneSeq(jsonNode.get("zoneSeq").asInt());
-//            illegalZoneDto.setIllegalType(jsonNode.get("illegalType").asText());
-//            illegalZoneDto.setName(jsonNode.get("name").asText());
-//            illegalZoneDto.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
-//            illegalZoneDto.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
-//            jsonNode.get("startTime").asText(), jsonNode.get("endTime").asText()
-
             illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
             map.put("success","true");
         } catch (Exception e) {
@@ -223,10 +214,6 @@ public class AreaAPI {
             }
         }
 
-//        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
-//        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-//        illegalZone.setIllegalEvent(illegalEvent);
-
         List<IllegalZone> illegalZones = null;
         switch (select) {
             case "type":
@@ -243,17 +230,8 @@ public class AreaAPI {
                 break;
         }
 
-//        List<IllegalZoneDto> illegalZoneDtos = Lists.newArrayList();
-//
-//        illegalZoneDtoService.getsToIllegalZones(illegalZoneDtos);
-
-//        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
-//        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-//        illegalZone.setIllegalEvent(illegalEvent);
-
-
         List<Integer> zoneSeqs = Lists.newArrayList();
-        List<Integer> zoneTypes = Lists.newArrayList();
+        List<String> zoneTypes = Lists.newArrayList();
         List<String> polygons = Lists.newArrayList();
 
         for (IllegalZone illegalZone : illegalZones) {
@@ -275,7 +253,8 @@ public class AreaAPI {
                     .append(firstCoordinate.getY());
 
             polygons.add(builder.toString());
-//            zoneTypes.add(illegalZone.getIllegalTypeSeq());
+            if ( illegalZone.getEventSeq() == null) zoneTypes.add("");
+            else zoneTypes.add(illegalEventService.get(illegalZone.getEventSeq()).getIllegalType().toString());
             zoneSeqs.add(illegalZone.getZoneSeq());
         }
 

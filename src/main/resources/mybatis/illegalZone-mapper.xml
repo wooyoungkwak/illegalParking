@@ -18,12 +18,12 @@
     </select>
 
     <select id="findByIllegalType" resultType="IllegalZone">
-        SELECT zone.ZoneSeq, ASTEXT(zone.Polygon) as polygon, zone.isDel, zone.Code, zone.EventSeq FROM illegal_zone zone join illegal_event event on zone.EventSeq = event.EventSeq where event.illegalType = #{illegalEvent.illegalType} and zone.isDel = 0;
+        SELECT zone.ZoneSeq, ASTEXT(zone.Polygon) as polygon, zone.isDel, zone.Code, zone.EventSeq FROM illegal_zone zone join illegal_event event on zone.EventSeq = event.EventSeq where event.illegalType = #{illegalType} and zone.isDel = 0;
     </select>
 
     <select id="findByIllegalTypeAndCode" resultType="IllegalZone">
         SELECT zone.ZoneSeq, ASTEXT(zone.Polygon) as polygon, zone.isDel, zone.Code, zone.EventSeq FROM illegal_zone zone join illegal_event event on zone.EventSeq = event.EventSeq
-        WHERE event.illegalType = #{illegalEvent.illegalType} AND zone.Code IN
+        WHERE event.illegalType = #{illegalType} AND zone.Code IN
         <foreach collection="codes" item="code" separator="," open="(" close=")">
             #{code}
         </foreach>

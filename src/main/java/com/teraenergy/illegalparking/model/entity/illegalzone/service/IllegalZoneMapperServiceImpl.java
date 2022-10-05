@@ -57,13 +57,8 @@ public class IllegalZoneMapperServiceImpl implements IllegalZoneMapperService {
     }
 
     @Override
-    public List<IllegalZone> sets(List<IllegalZone> illegalZones) {
-        if ( !illegalZones.isEmpty()) {
-            illegalZoneMapper.saveAll(illegalZones);
-            return illegalZoneMapper.findAllByLimitAndDesc(illegalZones.size());
-        } else {
-            return null;
-        }
+    public void sets(List<IllegalZone> illegalZones) {
+        illegalZoneMapper.saveAll(illegalZones);
     }
 
     @Override
