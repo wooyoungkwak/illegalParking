@@ -111,7 +111,7 @@ $(function () {
         });
 
         // 신고 등록 표시
-        $('#reportTable tr').on('click', function () {
+        $('#reportTable tbody tr').on('click', function () {
 
             let reportSeqStr = $(this).children("td:eq(0)").text();
             let carNum = $(this).children("td:eq(3)").text();

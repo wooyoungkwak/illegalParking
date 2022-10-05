@@ -62,8 +62,7 @@ $(function () {
         });
 
         // 주차장 정보 표시
-        $('#tableList tr').on('click', function () {
-
+        $('#tableList tbody tr').on('click', function () {
             let parkingSeqStr = $(this).children("td:eq(0)").text();
             parkingSeq = Number.parseInt(parkingSeqStr);
 

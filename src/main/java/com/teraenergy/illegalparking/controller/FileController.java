@@ -62,7 +62,7 @@ public class FileController {
     String excelPath;
 
     String KEY_REASON = "reason";
-    String KEY_FILENAME = "fileName";
+    String KEY_FILENAME = "filename";
     String KEY_FILEINPUTSTREAM = "fileInputStream";
     String KEY_RESULT = "success";
 
@@ -135,19 +135,17 @@ public class FileController {
         }
     }
 
-    @RequestMapping(value = "/files/image/set", method = RequestMethod.POST)
+    @RequestMapping(value = "/image/set", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode setImage(HttpServletRequest request) throws Exception {
         try {
             Map<String, Object> resultMap = fileUpload(request);
 
-            if (resultMap.get(KEY_RESULT).equals("success")) {
-                FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
-                String fileName = (String) resultMap.get(KEY_FILENAME);
-                File file = new File(resourcePath + "/" + fileName);
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                fileOutputStream.write(fis.readAllBytes());
-            }
+            FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
+            String fileName = (String) resultMap.get(KEY_FILENAME);
+            File file = new File(resourcePath + "/" + fileName);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            fileOutputStream.write(fis.readAllBytes());
 
             resultMap.remove(KEY_FILEINPUTSTREAM);
             resultMap.put(KEY_RESULT, "success");
@@ -180,7 +178,7 @@ public class FileController {
 //        }
 //    }
 
-    @RequestMapping(value = "/files/lawDong", method = RequestMethod.POST)
+    @RequestMapping(value = "/lawDong", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode parsingExcelLawDong(HttpServletRequest request) throws Exception {
         try {
@@ -203,7 +201,7 @@ public class FileController {
         }
     }
 
-    @RequestMapping(value = "/files/parking", method = RequestMethod.POST)
+    @RequestMapping(value = "/parking", method = RequestMethod.POST)
     @ResponseBody
     public JsonNode parsingExcelForParking(HttpServletRequest request) throws Exception {
         try {

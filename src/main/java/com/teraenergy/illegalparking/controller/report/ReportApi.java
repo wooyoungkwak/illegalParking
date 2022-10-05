@@ -100,6 +100,10 @@ public class ReportApi {
 
             Report report = reportService.get(reportSeq);
 
+            if ( report.getReportUserSeq() == null) {
+
+            }
+
             if (resultType == ResultType.PENALTY) {
                 // point 적립
                 long pointValue = report.getSecondReceipt().getIllegalZone().getIllegalEvent().getZoneGroupType().getValue();
@@ -124,7 +128,7 @@ public class ReportApi {
                 currentPointValue += currentPointValue + point.getValue();
 
                 Calculate calculate = new Calculate();
-                User reportUser = userService.get(report.getReportUserSeq());
+                User reportUser = userService.get(userSeq);
                 calculate.setCurrentPointValue(currentPointValue);
                 calculate.setBeforePointValue(beforePointValue);
                 calculate.setPoint(point);

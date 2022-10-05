@@ -19,91 +19,88 @@
 
 	<!-- side -->
 	<stripes:layout-component name="side">
-		<%--        <jsp:include page="side.jsp" flush="true"/>--%>
+<%--		<jsp:include page="side.jsp" flush="true"/>--%>
 	</stripes:layout-component>
 
 	<!-- content -->
 	<stripes:layout-component name="contents">
 		<main>
 			<div class="container-fluid px-4">
-				<h1 class="mt-4">Dashboard</h1>
-				<ol class="breadcrumb mb-4">
-					<li class="breadcrumb-item active">Dashboard</li>
-				</ol>
 				<div class="row">
-					<div class="col-xl-3 col-md-6">
-						<div class="card bg-primary text-white mb-4">
-							<div class="card-body">금일 신고 건수</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">View Details</a>
-								<div class="small text-white"><i class="fas fa-angle-right"></i></div>
+					<div class="col-2">
+						<div class="mt-4 mb-5"><br /></div>
+						<div class="mt-4 mb-5"><br /></div>
+						<div class="row">
+							<div class="col-xl-12 col-md-12">
+								<div class="card text-black mb-4">
+									<div class="card-body fw-bold">금일 신고 건수</div>
+									<div class="card-footer d-flex align-items-center justify-content-between">
+										<a class="small text-white stretched-link" href="#"></a>
+										<div class="text-danger fw-bold fst-italic me-2"><span>50건</span></div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-12 col-md-12">
+								<div class="card text-dark mb-4">
+									<div class="card-body fw-bold">10월 신고 건수</div>
+									<div class="card-footer d-flex align-items-center justify-content-between">
+										<a class="small text-white stretched-link" href="#"></a>
+										<div class="text-danger fw-bold fst-italic me-2"><span>50건</span></div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-12 col-md-12">
+								<div class="card text-dark mb-4">
+									<div class="card-body fw-bold">2022년 신고 건수</div>
+									<div class="card-footer d-flex align-items-center justify-content-between">
+										<a class="small text-white stretched-link" href="#"></a>
+										<div class="text-danger fw-bold fst-italic me-2"><span>50건</span></div>
+									</div>
+								</div>
+							</div>
+							<div class="col-xl-12 col-md-12">
+								<div class="card text-dark mb-4">
+									<div class="card-body fw-bold">2022년도 신고 누락 건수</div>
+									<div class="card-footer d-flex align-items-center justify-content-between">
+										<a class="small text-white stretched-link" href="#"></a>
+										<div class="text-primary fw-bold fst-italic me-2"><span>50건</span></div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
-					<div class="col-xl-3 col-md-6">
-						<div class="card bg-warning text-white mb-4">
-							<div class="card-body">10월 신고 건수</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">View Details</a>
-								<div class="small text-white"><i class="fas fa-angle-right"></i></div>
-							</div>
+					<div class="col-9">
+						<div class="row mt-5 mb-4">
+							<div class="col-4"></div>
+							<div class="col-4 border-bottom text-center"><p class="h1 fw-bold">공지사항</p></div>
+							<div class="col-4"></div>
 						</div>
-					</div>
-					<div class="col-xl-3 col-md-6">
-						<div class="card bg-success text-white mb-4">
-							<div class="card-body">2022년 신고 건수</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">View Details</a>
-								<div class="small text-white"><i class="fas fa-angle-right"></i></div>
-							</div>
-						</div>
-					</div>
-					<div class="col-xl-3 col-md-6">
-						<div class="card bg-danger text-white mb-4">
-							<div class="card-body">2022년도 신고 누락 건수</div>
-							<div class="card-footer d-flex align-items-center justify-content-between">
-								<a class="small text-white stretched-link" href="#">View Details</a>
-								<div class="small text-white"><i class="fas fa-angle-right"></i></div>
-							</div>
+						<div class="row">
+							<table class="table table-hover">
+								<thead>
+								<tr>
+									<th scope="col" class="text-center" style="width: 5%;">#</th>
+									<th scope="col" class="text-center" style="width: 75%;">내 용</th>
+									<th scope="col" class="text-center" style="width: 10%;">등록자</th>
+									<th scope="col" class="text-center" style="width: 10%;">등록일</th>
+								</tr>
+								</thead>
+								<tbody>
+								<c:forEach begin="1" end="12" varStatus="status">
+									<tr>
+										<td class="text-center">${status.index}</td>
+										<td>공지사항 내용 ${status.index}.....</td>
+										<td class="text-center">관리자</td>
+										<td class="text-center">2022-10-01</td>
+									</tr>
+								</c:forEach>
+								</tbody>
+							</table>
+							<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}" isRegister="true"/>
 						</div>
 					</div>
 				</div>
 
-				<div class="row mt-5 mb-5">
-					<div class="col-4"></div>
-					<div class="col-4 border-bottom text-center"><p class="h1 fw-bold">공지사항</p></div>
-					<div class="col-4"></div>
-				</div>
-				<div class="row">
-					<table class="table table-hover">
-						<thead>
-						<tr>
-							<th scope="col" class="text-center" style="width: 5%;">#</th>
-							<th scope="col" class="text-center" style="width: 75%;">내 용</th>
-							<th scope="col" class="text-center" style="width: 10%;">등록자</th>
-							<th scope="col" class="text-center" style="width: 10%;">등록일</th>
-						</tr>
-						</thead>
-						<tbody>
-						<c:forEach begin="1" end="20" varStatus="status">
-							<tr>
-								<td class="text-center">${status.index}</td>
-								<td>공지사항 내용 ${status.index}.....</td>
-								<td class="text-center">관리자</td>
-								<td class="text-center">2022-10-01</td>
-							</tr>
-						</c:forEach>
-						</tbody>
-						<tfoot>
-						<tr>
-							<th scope="col" class="text-center" style="width: 5%;">#</th>
-							<th scope="col" class="text-center" style="width: 75%;">내 용</th>
-							<th scope="col" class="text-center" style="width: 10%;">등록자</th>
-							<th scope="col" class="text-center" style="width: 10%;">등록일</th>
-						</tr>
-						</tfoot>
-					</table>
-				</div>
 			</div>
 		</main>
 

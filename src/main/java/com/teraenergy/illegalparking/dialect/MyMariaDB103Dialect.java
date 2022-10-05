@@ -12,6 +12,15 @@ import org.hibernate.type.StandardBasicTypes;
  */
 public class MyMariaDB103Dialect extends MariaDB103Dialect {
 
+    /**
+     * 적용 방법
+     *  - application.yml 파일 수정 -
+     *  spring:
+     *      ...
+     *      jpa:
+     *        database-platform: org.hibernate.dialect.MariaDB103Dialect  <<< 삭제
+     *        database-platform: com.teraenergy.illegalparking.dialect.MyMariaDB103Dialect
+     * */
     public MyMariaDB103Dialect() {
         super();
         this.registerFunction( "ASTEXT", new StandardSQLFunction( "ASTEXT", StandardBasicTypes.CHARACTER) );

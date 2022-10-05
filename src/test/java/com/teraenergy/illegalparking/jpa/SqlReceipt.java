@@ -32,7 +32,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlReceipt {
 
     @Autowired
@@ -51,13 +51,13 @@ public class SqlReceipt {
     public void insert() throws TeraException {
         List<Receipt> receipts = Lists.newArrayList();
 
-        IllegalZone illegalZone = illegalZoneService.get(1);
+        IllegalZone illegalZone = illegalZoneService.get(4);
         User user = userService.get(2);
 
         Receipt receipt1 = new Receipt();
         receipt1.setIllegalZone(illegalZone);
         receipt1.setUser(user);
-        receipt1.setRegDt(LocalDateTime.now().minusMinutes(1));
+        receipt1.setRegDt(LocalDateTime.now().minusMinutes(3));
         receipt1.setCarNum("123가1234");
         receipt1.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
         receipt1.setNote("테스트 ... 1차 ");

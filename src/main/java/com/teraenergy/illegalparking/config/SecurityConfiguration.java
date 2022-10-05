@@ -66,8 +66,8 @@ public class SecurityConfiguration  extends WebSecurityConfigurerAdapter {
                 .antMatchers("/password").permitAll()       // /password url 접속 승인
                 .antMatchers("/register").permitAll()       // /register url 접속 승인
                 .antMatchers("/login").permitAll()          // /login url 접속 승인
-                .antMatchers("/files/**").permitAll()       // /password url 접속 승인
-                .antMatchers("/api/**").permitAll()          // /login url 접속 승인
+                .antMatchers("/files/**").permitAll()       // /filesurl 접속 승인
+                .antMatchers("/api/**").permitAll()          // /api url 접속 승인
 //            .anyRequest().authenticated()
                 .and()
                 .authorizeRequests().antMatchers("/**").authenticated() // 모든 url 은 인증 (단, 상단의 url(/password, /register, /login, /resource/** ) 은 제외)

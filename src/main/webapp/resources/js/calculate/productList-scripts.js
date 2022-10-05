@@ -97,7 +97,7 @@ $(function () {
         });
 
         // 주차장 정보 표시
-        $('#productTable tr').on('click', function () {
+        $('#productTable tbody tr').on('click', function () {
 
             let productSeqStr = $(this).children("td:eq(0)").text();
             productSeq = Number.parseInt(productSeqStr);
