@@ -1,8 +1,8 @@
-package com.teraenergy.illegalparking.model.entity.illegalEvent.service;
+package com.teraenergy.illegalparking.model.entity.illegalzone.service;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
-import com.teraenergy.illegalparking.model.entity.illegalEvent.repository.IllegalEventRepository;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,8 @@
 package com.teraenergy.illegalparking.scheduler;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.StateType;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
-import com.teraenergy.illegalparking.model.entity.report.domain.Report;
-import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,11 +33,11 @@ public class reportScheduler {
         LocalDateTime now = LocalDateTime.now();        // 현재 시간
         LocalDateTime startTime = now.minusMinutes(11);   // 11분 전 시간
         LocalDateTime endTime = startTime.minusMinutes(60);   // 11분 전의 60분전 시간
-        List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptType.OCCUR);
+        List<Receipt> receipts = receiptService.gets(startTime, endTime, StateType.OCCUR);
 
         if ( receipts.size() > 0) {
             for (Receipt receipt : receipts) {
-                receipt.setReceiptType(ReceiptType.FORGET);
+                receipt.setStateType(StateType.FORGET);
             }
 
             receiptService.sets(receipts);

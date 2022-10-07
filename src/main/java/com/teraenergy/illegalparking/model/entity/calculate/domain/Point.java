@@ -31,11 +31,14 @@ public class Point {
     Long value;
 
     @Column
+    Integer GroupSeq;
+
+    @Column
     Integer userSeq;
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "reportSeq")
-    Report report;
+//    @ManyToOne(optional = true, fetch = FetchType.EAGER)
+//    @JoinColumn(name = "reportSeq")
+//    Report report;
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "productSeq")
@@ -44,5 +47,20 @@ public class Point {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     PointType pointType;
+
+    @Column
+    Long LimitValue;
+
+    @Column
+    String StartDate;
+
+    @Column
+    String StopDate;
+
+    @Column
+    Boolean IsPointLimit;
+
+    @Column
+    Boolean ISTimeLimit;
 
 }

@@ -1,10 +1,12 @@
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.ApplicationTests;
-import com.teraenergy.illegalparking.encrypt.YoungEncoder;
 import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
+import com.teraenergy.illegalparking.model.entity.user.domain.GovernmentOffice;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.enums.Role;
+import com.teraenergy.illegalparking.model.entity.user.service.GovernmentOfficeService;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
@@ -14,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -27,14 +28,17 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlUser {
 
     @Autowired
     UserService userService;
 
+    @Autowired
+    GovernmentOfficeService governmentOfficeService;
+
     @Test
-    public void insert() throws TeraException {
+    public void insertByUser() throws TeraException {
         List<User> users = Lists.newArrayList();
 
         User user = new User();
@@ -45,6 +49,8 @@ public class SqlUser {
         user.setRole(Role.ADMIN);
         user.setUserCode(1234l);
         user.setName("관리자");
+        user.setPhotoName("sample1");
+        user.setPhoneNumber("010-1234-5678");
         users.add(user);
 
         User user2 = new User();
@@ -54,19 +60,28 @@ public class SqlUser {
         user2.setUserCode(1234l);
         user2.setIsDel(false);
         user2.setName("홍길동");
+        user2.setPhotoName("sample2");
+        user2.setPhoneNumber("010-1234-8901");
         users.add(user2);
 
         userService.sets(users);
     }
 
     @Test
-    public void authentication() throws TeraException {
+    public void insertByGovernmentOffice(){
+        GovernmentOffice governMentOffice = new GovernmentOffice();
+        governMentOffice.setLocationType(LocationType.JEONNAM);
+        governMentOffice.setName("나주시청 차량 민원과");
 
+        governmentOfficeService.set(governMentOffice);
+    }
+
+    @Test
+    public void authentication() throws TeraException {
         if ( userService.isUser("admin") ) {
             System.out.println("is ... ");
         } else  {
             System.out.println("is not .... ");
         }
-
     }
 }

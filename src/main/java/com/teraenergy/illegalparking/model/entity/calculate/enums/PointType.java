@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public enum PointType {
 
-    PLUS("추가포인트"),
+    PLUS("포인트제공"),
 
     MINUS("사용포인트");
 

@@ -1,11 +1,7 @@
 package com.teraenergy.illegalparking.model.dto.illegalzone.domain;
 
-import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
-import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.persistence.Column;
 
 /**
  * Date : 2022-09-30

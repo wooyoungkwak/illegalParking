@@ -1,6 +1,6 @@
-package com.teraenergy.illegalparking.model.entity.illegalEvent.service;
+package com.teraenergy.illegalparking.model.entity.illegalzone.service;
 
-import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
 
 import java.util.List;
 

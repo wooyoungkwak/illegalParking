@@ -33,7 +33,6 @@ public class PmController extends ExtendsController {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
 
-        model.addAttribute("mainTitle", mainTitle);
         model.addAttribute("subTitle", subTitle);
         return getPath("/map");
     }

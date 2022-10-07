@@ -2,7 +2,7 @@ package com.teraenergy.illegalparking.model.dto.illegalzone.service;
 
 import com.teraenergy.illegalparking.model.dto.illegalzone.domain.IllegalZoneDto;
 import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
-import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import org.apache.commons.compress.utils.Lists;

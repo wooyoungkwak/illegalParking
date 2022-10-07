@@ -44,6 +44,16 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Long userCode;
 
+    @Column
+    private String photoName;
+
+    @Column
+    private String phoneNumber;
+
+    @ManyToOne (fetch = FetchType.EAGER)
+    @JoinColumn(name = "officeSeq")
+    private GovernmentOffice governMentOffice;
+
     @Column(nullable = false)
     private Boolean isDel;
 

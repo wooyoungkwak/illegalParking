@@ -17,8 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ExtendsController {
 
-    public String mainTitle = "불법주정차";
-
     protected String getPath(String path) {
         String rootPath = this.getClass().getSimpleName().split("Controller")[0].toLowerCase();
         return "/normal/controller/" + rootPath + path;

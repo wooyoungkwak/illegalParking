@@ -3,7 +3,6 @@ package com.teraenergy.illegalparking.model.dto.report.service;
 import com.teraenergy.illegalparking.model.dto.report.domain.ReportDto;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
-import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +42,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         reportDto.setSecondIllegalType(secondReceipt.getIllegalZone().getIllegalEvent().getIllegalType());
 
         reportDto.setNote(report.getNote());
-        reportDto.setResultType(report.getResultType());
+        reportDto.setStateType(report.getStateType());
         return reportDto;
     }
 

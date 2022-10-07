@@ -3,7 +3,7 @@ $(function () {
     // 초기화
     function initialize() {
         let result = $.JJAjaxAsync({
-            url: _contextPath + '/myInfo/get',
+            url: _contextPath + '/api/myInfo/get',
             data: {
                 userSeq: _userSeq
             }

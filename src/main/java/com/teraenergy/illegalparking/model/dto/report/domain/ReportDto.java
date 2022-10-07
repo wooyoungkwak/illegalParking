@@ -2,11 +2,9 @@ package com.teraenergy.illegalparking.model.dto.report.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
-import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
+import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 /**
  * Date : 2022-09-28
@@ -43,7 +41,7 @@ public class ReportDto {
     IllegalType secondIllegalType;
 
     @JsonProperty
-    ResultType resultType;
+    StateType stateType;
 
     @JsonProperty
     String note;

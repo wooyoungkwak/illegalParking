@@ -4,10 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
-import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
-import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalGroup;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalZoneRepository;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalGroupServcie;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
@@ -32,7 +35,7 @@ import java.util.List;
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 @Transactional
-public class SqlIllegalEvent {
+public class SqlIllegalZone {
 
     @Autowired
     IllegalZoneService illegalZoneService;
@@ -44,10 +47,14 @@ public class SqlIllegalEvent {
     IllegalEventService illegalEventService;
 
     @Autowired
+    IllegalGroupServcie illegalGroupServcie;
+
+    @Autowired
     ObjectMapper objectMapper;
 
+
     @Test
-    public void insert() {
+    public void insertByEvent() {
 
         IllegalEvent illegalEvent = new IllegalEvent();
         illegalEvent.setUsedFirst(false);
@@ -78,6 +85,14 @@ public class SqlIllegalEvent {
         System.out.println("illegalEvents size = " + illegalEvents.size());
         List<IllegalEvent> illegalEventList = illegalEventService.sets(illegalEvents);
         System.out.println("illegalEventList size = " + illegalEventList.size());
+    }
+
+    @Test
+    public void insertByIllegalGroup(){
+        IllegalGroup illegalGroup = new IllegalGroup();
+        illegalGroup.setLocationType(LocationType.JEONNAM);
+        illegalGroup.setName("나주A");
+        illegalGroupServcie.set(illegalGroup);
     }
 
     @Test

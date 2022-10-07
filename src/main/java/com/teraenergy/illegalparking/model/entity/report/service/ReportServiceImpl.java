@@ -3,18 +3,15 @@ package com.teraenergy.illegalparking.model.entity.report.service;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
-import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
-import com.teraenergy.illegalparking.model.entity.report.enums.ReportOrderColumn;
-import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
+import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
 import com.teraenergy.illegalparking.model.entity.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,7 +25,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class ReportServiceImpl implements ReportService{
+public class ReportServiceImpl implements ReportService {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -45,26 +42,19 @@ public class ReportServiceImpl implements ReportService{
     }
 
     @Override
-    public Page<Report> gets(int pageNumber, int pageSize, ReportFilterColumn filterColumn, String search, ReportOrderColumn orderColumn, Sort.Direction orderBy) {
+    public Page<Report> gets(int pageNumber, int pageSize, StateType stateType, ReportFilterColumn filterColumn, String search) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
 
-        if ( search != null && search.length() > 0) {
+        if (search != null && search.length() > 0) {
             switch (filterColumn) {
-                case RESULT:
-                    query.where(QReport.report.resultType.eq(ResultType.valueOf(search)));
-                    break;
-                case ILLEGAL_TYPE:
-                    if ( search.equals(IllegalType.ILLEGAL.getValue()) ) {
-                        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.eq(IllegalType.ILLEGAL));
-                    } else if (search.equals(IllegalType.FIVE_MINUTE.getValue())) {
-                        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.eq(IllegalType.FIVE_MINUTE));
-                    }
+                case CAR_NUM:
+                    query.where(QReport.report.secondReceipt.carNum.eq(search));
                     break;
                 case ADDR:
                     query.where(QReport.report.secondReceipt.addr.contains(search));
                     break;
-                case CAR_NUM:
-                    query.where(QReport.report.secondReceipt.carNum.eq(search));
+                case USER:
+                    query.where(QReport.report.secondReceipt.user.name.contains(search));
                     break;
             }
         }
@@ -73,46 +63,11 @@ public class ReportServiceImpl implements ReportService{
 
         int total = query.fetch().size();
 
-        switch (orderColumn) {
-
-            case RESULT:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.resultType.stringValue().desc());
-                } else {
-                    query.orderBy(QReport.report.resultType.stringValue().asc());
-                }
-                break;
-            case ILLEGAL_TYPE:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.desc());
-                } else {
-                    query.orderBy(QReport.report.secondReceipt.illegalZone.illegalEvent.illegalType.asc());
-                }
-                break;
-            case ADDR:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.secondReceipt.addr.desc());
-                } else {
-                    query.orderBy(QReport.report.secondReceipt.addr.asc());
-                }
-                break;
-            case REPORT_SEQ:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.reportSeq.desc());
-                } else {
-                    query.orderBy(QReport.report.reportSeq.asc());
-                }
-                break;
-            case CAR_NUM:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QReport.report.secondReceipt.carNum.desc());
-                } else {
-                    query.orderBy(QReport.report.secondReceipt.carNum.asc());
-                }
-                break;
+        if (stateType != null) {
+            query.where(QReport.report.stateType.eq(stateType));
         }
 
-        pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
+        pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);
         List<Report> reports = query.fetch();
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);

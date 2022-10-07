@@ -56,6 +56,7 @@ public class TeraInterceptor implements HandlerInterceptor {
 
             // _user
             modelAndView.getModel().put("_user", userDto);
+            modelAndView.getModel().put("mainTitle", "불법주정차");
         }
     }
 

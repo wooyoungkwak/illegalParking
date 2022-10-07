@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.receipt.service;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.StateType;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +18,9 @@ public interface ReceiptService {
 
     List<Receipt> gets();
 
-    List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptType receiptType);
+    List<Receipt> gets(Integer user);
+
+    List<Receipt> gets(LocalDateTime now, LocalDateTime old, StateType stateType);
 
     Receipt set(Receipt receipt);
 

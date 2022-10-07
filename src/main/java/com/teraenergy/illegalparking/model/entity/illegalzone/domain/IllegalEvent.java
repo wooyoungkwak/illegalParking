@@ -1,4 +1,4 @@
-package com.teraenergy.illegalparking.model.entity.illegalEvent.domain;
+package com.teraenergy.illegalparking.model.entity.illegalzone.domain;
 
 import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;

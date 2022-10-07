@@ -11,15 +11,17 @@ import lombok.Getter;
  * Description :
  */
 
-@AllArgsConstructor
 @Getter
 public enum ReportFilterColumn {
-    ADDR("장소"),
-    ILLEGAL_TYPE("위반종류"),
     CAR_NUM("차량번호"),
-    RESULT("처리결과")
+    ADDR("위치"),
+    USER("신고자")
     ;
 
     private String value;
+
+    ReportFilterColumn(String value){
+        this.value = value;
+    }
 
 }

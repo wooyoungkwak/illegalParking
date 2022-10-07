@@ -114,7 +114,6 @@ public class CalculateController extends ExtendsController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("calculates", pages.getContent());
         model.addAttribute("subTitle", subTitle);
-        model.addAttribute("mainTitle", mainTitle);
         return getPath("/calculateList");
     }
 
@@ -191,7 +190,6 @@ public class CalculateController extends ExtendsController {
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);
         model.addAttribute("products", pages.getContent());
-        model.addAttribute("mainTitle", mainTitle);
         model.addAttribute("subTitle", subTitle);
         return getPath("/productList");
     }
@@ -201,7 +199,6 @@ public class CalculateController extends ExtendsController {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
 
-        model.addAttribute("mainTitle", mainTitle);
         model.addAttribute("subTitle", subTitle);
         return getPath("/productAdd");
     }

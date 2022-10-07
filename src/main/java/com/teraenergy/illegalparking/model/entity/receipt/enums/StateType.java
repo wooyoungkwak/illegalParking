@@ -9,7 +9,7 @@ import lombok.Getter;
  * Description :
  */
 @Getter
-public enum ReceiptType {
+public enum StateType {
 
 
     /**
@@ -29,7 +29,7 @@ public enum ReceiptType {
 
     private String value;
 
-    ReceiptType(String value) {
+    StateType(String value) {
         this.value = value;
     }
 

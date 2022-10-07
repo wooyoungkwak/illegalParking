@@ -11,15 +11,15 @@ import lombok.Getter;
  */
 
 @Getter
-public enum ResultType {
-    WAIT("대기"),
+public enum StateType {
+    COMPLETE("신고접수"),
     EXCEPTION("신고제외"),
     PENALTY("과태료대상")
         ;
 
     private String value;
 
-    ResultType(String value) {
+    StateType(String value) {
         this.value = value;
     }
 

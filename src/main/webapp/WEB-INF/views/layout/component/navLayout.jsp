@@ -21,6 +21,9 @@
                 <a class="nav-link" id="navreport" href="${pageContext.request.contextPath}/report">신고</a>
             </li>
             <li class="nav-item me-5">
+                <a class="nav-link" id="navuser" href="${pageContext.request.contextPath}/user/userList">사용자</a>
+            </li>
+            <li class="nav-item me-5">
                 <a class="nav-link" id="navarea" href="${pageContext.request.contextPath}/area">불법주정차 구역</a>
             </li>
             <li class="nav-item me-5">

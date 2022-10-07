@@ -1,6 +1,6 @@
-package com.teraenergy.illegalparking.model.entity.illegalEvent.repository;
+package com.teraenergy.illegalparking.model.entity.illegalzone.repository;
 
-import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**

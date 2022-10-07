@@ -51,7 +51,6 @@ public class ParkingController extends ExtendsController {
     public ModelAndView map(){
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName(getPath("/map"));
-        modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
         return modelAndView;
     }
@@ -121,7 +120,6 @@ public class ParkingController extends ExtendsController {
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);
         model.addAttribute("parkings", pages.getContent());
-        model.addAttribute("mainTitle", mainTitle);
         model.addAttribute("subTitle", subTitle);
 
         return getPath("/parkingList");
@@ -132,7 +130,6 @@ public class ParkingController extends ExtendsController {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
 
-        model.addAttribute("mainTitle", mainTitle);
         model.addAttribute("subTitle", subTitle);
 
         return getPath("/parkingAdd");

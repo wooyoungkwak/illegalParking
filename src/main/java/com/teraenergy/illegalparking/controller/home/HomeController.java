@@ -38,7 +38,6 @@ public class HomeController extends ExtendsController {
     public String home(Model model, HttpServletRequest request) throws TeraException {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
-        model.addAttribute("mainTitle", mainTitle);
         model.addAttribute("subTitle", subTitle);
         return getPath("/home");
     }

@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.report.domain;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.report.enums.ResultType;
+import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,16 +41,10 @@ public class Report {
 
     @Column
     @Enumerated (EnumType.STRING)
-    ResultType resultType;
+    StateType stateType;
 
     @Column
     String note;
-
-    @Column
-    Integer zoneSeq;
-
-    @Column
-    String code;
 
     @Column
     Boolean isDel;

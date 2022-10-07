@@ -35,7 +35,6 @@ public class AreaController extends ExtendsController {
     @GetMapping("/area/map")
     public ModelAndView map(Device device) throws ParseException {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
 
         if ( device.isMobile() || device.isTablet()) {
@@ -49,7 +48,6 @@ public class AreaController extends ExtendsController {
     @GetMapping("/area/mapSet")
     public ModelAndView mapSet() throws ParseException {
         ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("mainTitle", mainTitle);
         modelAndView.addObject("subTitle", subTitle);
         modelAndView.setViewName(getPath("/mapSet"));
         return modelAndView;

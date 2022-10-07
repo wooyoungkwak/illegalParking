@@ -20,4 +20,6 @@ public class UserDto {
     private String name;        // 사용자 이름
     private Role role;          // 사용자 권한
     private Long userCode;      // 사용자 분리 코드
+    private String photoName;       // 사진 이름 (모바일 전용)
+    private String phoneNumber;     // 전화 번호 (모바일 전용)
 }

@@ -94,7 +94,6 @@ public class SqlCalculate {
         Point point = new Point();
         point.setValue(1000L);
         point.setPointType(PointType.PLUS);
-        point.setReport(report);
         point.setNote("");
         point.setUserSeq(2);
         points.add(point);

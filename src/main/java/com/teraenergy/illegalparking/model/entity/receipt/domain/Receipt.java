@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.receipt.domain;
 
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.StateType;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,7 +50,7 @@ public class Receipt {
 
     @Column
     @Enumerated(EnumType.STRING)
-    ReceiptType receiptType;
+    StateType stateType;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "userSeq")

@@ -5,7 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.QReceipt;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.StateType;
 import com.teraenergy.illegalparking.model.entity.receipt.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,11 +38,19 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
     @Override
-    public List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptType receiptType) {
+    public List<Receipt> gets(Integer userSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
+        query.where(QReceipt.receipt.isDel.isFalse());
+        return query.fetch();
+    }
+
+    @Override
+    public List<Receipt> gets(LocalDateTime now, LocalDateTime old, StateType stateType) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.regDt.between(now, old));
         query.where(QReceipt.receipt.isDel.isFalse());
-        query.where(QReceipt.receipt.receiptType.eq(receiptType));
+        query.where(QReceipt.receipt.stateType.eq(stateType));
         return query.fetch();
     }
 
