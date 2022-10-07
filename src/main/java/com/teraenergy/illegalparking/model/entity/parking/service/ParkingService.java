@@ -22,6 +22,8 @@ public interface ParkingService {
 
     public List<Parking> gets();
 
+    public List<Parking> gets(List<String> codes);
+
     public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy);
 
     public Parking get(Integer prkingSeq);

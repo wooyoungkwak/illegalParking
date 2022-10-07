@@ -24,15 +24,15 @@ $(function () {
     };
 
     let polygonStyle = {
-        "draggable": true,
-        "removable": true,
-        "editable": true,
-        "strokeColor": "#330000",
+        "draggable": true, // 그린 후 드래그가 가능하도록 설정합니다
+        "removable": true, // 그린 후 삭제 할 수 있도록 x 버튼이 표시됩니다
+        "editable": true, // 그린 후 수정할 수 있도록 설정합니다
+        "strokeColor": "#330000", // 외곽선 색
         "strokeWeight": 2,
-        "strokeStyle": "solid",
-        "strokeOpacity": 1,
-        "fillColor": "#000000",
-        "fillOpacity": 0.5
+        "strokeStyle": "solid", //그리기중 마우스를 따라다니는 보조선의 선 스타일
+        "strokeOpacity": 1, // 그리기중 마우스를 따라다니는 보조선의 투명도
+        "fillColor": "#000000", // 채우기 색
+        "fillOpacity": 0.5 // 채우기색 투명도
     };
     // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
     function mouseoutOption(area) {
@@ -242,6 +242,7 @@ $(function () {
         setKakaoEvent({
             target: polygon,
             event: 'mouseout',
+
             func: function () {
                 polygon.setOptions(mouseoutOption(area));
             }

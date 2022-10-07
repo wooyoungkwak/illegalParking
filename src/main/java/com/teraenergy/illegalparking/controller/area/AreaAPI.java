@@ -72,11 +72,11 @@ public class AreaAPI {
         JsonNode jsonNode = objectMapper.readTree(body);
 
         Integer zoneSeq = jsonNode.get("zoneSeq").asInt();
-        IllegalZone illegalZone = illegalZoneService.get(zoneSeq);
+//        IllegalZone illegalZone = illegalZoneService.get(zoneSeq);
 
-//        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
-//        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-//        illegalZone.setIllegalEvent(illegalEvent);
+        IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
+        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+        illegalZone.setIllegalEvent(illegalEvent);
 
         String jsonStr = objectMapper.writeValueAsString(illegalZone);
 
@@ -150,6 +150,7 @@ public class AreaAPI {
             JsonNode jsonNode = objectMapper.readTree(body);
 
             IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
+
 
             IllegalEvent illegalEvent = new IllegalEvent();
             illegalEvent.setIllegalType(

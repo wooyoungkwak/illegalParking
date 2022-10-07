@@ -10,7 +10,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="layoutTags" tagdir="/WEB-INF/tags/layout" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType" %>
-
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navMapHtmlLayout.jsp">
@@ -44,11 +43,11 @@
 								<button id="btnSet">저장</button>
 								<span>
 								<label><input type="radio" name="searchIllegalType" value="" checked>전체</label>
-								<%--<c:forEach items="${enumValues}" var="enumValue" varStatus="status">
-									<label><input type="radio" name="searchIllegalType" value="${enumValue}">${enumValue.value}</label>
-								</c:forEach>--%>
-								<label><input type="radio" name="searchIllegalType" value="ILLEGAL">불법주정차</label>
-								<label><input type="radio" name="searchIllegalType" value="FIVE_MINUTE">5분주정차</label>
+								<c:forEach items="${IllegalType.values()}" var="type">
+									<label><input type="radio" name="searchIllegalType" value="${type}">${type.value}</label>
+								</c:forEach>
+								<%--<label><input type="radio" name="searchIllegalType" value="ILLEGAL">불법주정차</label>
+								<label><input type="radio" name="searchIllegalType" value="FIVE_MINUTE">5분주정차</label>--%>
 							</span>
 							</p>
 						</div>

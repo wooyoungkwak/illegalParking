@@ -53,7 +53,7 @@
 			<div class="card mb-2">
 				<div class="card-header">
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="0" id="usedFirst" name="usedFirst">
+						<input class="form-check-input" type="checkbox" value="" id="usedFirst" name="usedFirst">
 						<label class="form-check-label" for="usedFirst">
 							첫번째 적용시간
 						</label>
@@ -75,7 +75,7 @@
 			<div class="card">
 				<div class="card-header">
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="0" id="usedSecond" name="usedSecond">
+						<input class="form-check-input" type="checkbox" value="" id="usedSecond" name="usedSecond">
 						<label class="form-check-label" for="usedSecond">
 							두번째 적용시간
 						</label>

@@ -77,9 +77,9 @@ $(function () {
         $('#areaSettingModal').offcanvas('hide');
 
         if(drawingDataTargets.length > 0){
-            if(confirm("Are you sure!"))
+            if(confirm("작성한 구역이 삭제됩니다. 변경하시겠습니까?"))
             {
-                //do your job
+                removeDrawingOverlays();
             }
             else
             {
@@ -88,14 +88,18 @@ $(function () {
             }
         }
         searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
-        $('#btnAddOverlay').hide();
-        $('#btnSet').hide();
+        if(searchIllegalType === '') {
+            $('#btnAddOverlay').show();
+            $('#btnSet').show();
+        } else {
+            $('#btnAddOverlay').hide();
+            $('#btnSet').hide();
+        }
+
         log(searchIllegalType);
-        removeOverlays();
         let codes = await getDongCodesBounds(drawingMap);
 
         getsZone(codes);
-        // await drawingPolygon(getZonesInBounds());
     });
 
     // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
@@ -105,7 +109,7 @@ $(function () {
         // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
         let data = manager.getData();
         let opt = {
-            url: $.getContextPath() + "/zone/set",
+            url: _contextPath + "/zone/set",
             data: {
                 polygonData: data[kakao.maps.drawing.OverlayType.POLYGON],
                 // illegalType: searchIllegalType === '' ? '0' : searchIllegalType,
@@ -127,7 +131,6 @@ $(function () {
             // 지도에 가져온 데이터로 도형들을 그립니다
             let codes = await getDongCodesBounds(drawingMap);
             await getsZone(codes);
-            // drawingPolygon(getZonesInBounds());
             // 생성한 폴리곤 삭제
             removeDrawingOverlays();
         }
@@ -138,6 +141,7 @@ $(function () {
         drawingDataTargets.forEach(function (target) {
             manager.remove(target);
         })
+        drawingDataTargets = [];
     }
 
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
@@ -171,7 +175,7 @@ $(function () {
     // 폴리곤 클릭 시 모달 창 오픈
     function showModal(area) {
         let result = initializeZone({
-            url: $.getContextPath() + '/zone/get',
+            url: _contextPath + '/zone/get',
             data: {
                 zoneSeq: area.seq
             }
@@ -180,10 +184,14 @@ $(function () {
         $('#zoneSeq').val(result.zoneSeq);
         $('#eventSeq').val(result.eventSeq);
 
-        let illegalType = result.illegalEvent.illegalType;
-        $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
-        $('#name').val(result.illegalEvent.name);
-
+        if (result.eventSeq !== null) {
+            let illegalType = result.illegalEvent.illegalType;
+            $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
+            $('#name').val(result.illegalEvent.name);
+            $('#zoneGroupType').val(result.illegalEvent.zoneGroupType);
+            result.illegalEvent.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
+            result.illegalEvent.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
+        }
         let checkVal = $('input:radio[name="illegalType"]:checked').val();
         // timeHideAndShow(checkVal);
         timeSetting(result);
@@ -225,7 +233,7 @@ $(function () {
     $('#btnRemove').click(function () {
         if (confirm("삭제하시겠습니까?")) {
             let opt = {
-                url: $.getContextPath() + "/zone/remove",
+                url: _contextPath + "/zone/remove",
                 data: {
                     'zoneSeq': $('#zoneSeq').val()
                 }
@@ -250,17 +258,19 @@ $(function () {
     $('#btnModify').click(function () {
         if (confirm("설정하시겠습니까?")) {
             let form = $('#formAreaSetting').serializeObject();
+            form['usedFirst'] = !$('#usedFirst').is(':checked');
+            form['usedSecond'] = !$('#usedSecond').is(':checked');
             // if (form.firstStartTime === undefined) form.firstStartTime = "";
             // if (form.secondStartTime === undefined) form.secondStartTime = "";
 
             let result = initializeZone({
-                url: $.getContextPath() + '/zone/modify',
+                url: _contextPath + '/zone/modify',
                 data: form
             });
 
             if (result.success === 'true') {
                 let index = zoneSeqs.indexOf(Number(form.zoneSeq));
-                zoneTypes[index] = Number(form.illegalType);
+                zoneTypes[index] = form.illegalType;
                 // log(index," :: ", zoneTypes[index]);
             }
 
@@ -430,14 +440,10 @@ $(function () {
         manager.addListener('drawend', function (data) {
             drawingDataTargets.push(data.target);
         });
-
-        // 폴리곤 생성 후 새로 그릴 때 생성된 폴리곤 삭제를 위해 manager 데이터 저장
-        // setKakaoEvent({
-        //         target: manager, event: 'drawend', func: function (data) {
-        //             drawingDataTargets.push(data.target);
-        //         }
-        //     }
-        // );
+        // manager.addListener('remove', function (data) {
+        //     let index = drawingDataTargets.indexOf(data.target);
+        //     drawingDataTargets.put(data.target);
+        // });
 
         // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
@@ -503,12 +509,11 @@ $(function () {
                     removeOverlays();
                 } else {
                     let codes = await getDongCodesBounds(drawingMap);
-                    log(uniqueCodesCheck);
-                    if(!uniqueCodesCheck)
-                        getsZone(codes);
-                    log('zonePolygons.length : ', zonePolygons.length)
-                    // if(zonePolygons.length > 0)
-                    //     await drawingPolygon(getZonesInBounds());
+                    // log('idle : ', codes)
+                    // log(uniqueCodesCheck);
+                    // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
+                    if(uniqueCodesCheck) await drawingPolygon(getZonesInBounds());
+                    else getsZone(codes);
                 }
             }
         });
@@ -517,15 +522,9 @@ $(function () {
     function getsZone(codes) {
         let select = SELECT_TYPE_AND_DONG;
         if (searchIllegalType === '') select = SELECT_DONG;
-        // let codes = await getDongCodesBounds(drawingMap);
-        // let sameArrChk = JSON.stringify(beforeCodes) === JSON.stringify(codes);
-        // let sameArrChk = _.isEmpty(_.xor(beforeCodes, codes));
-        // log('1 : ',beforeCodes);
-
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
-        // if (!sameArrChk) {
         initializeZone({
-            url: $.getContextPath() + '/zone/gets',
+            url: _contextPath + '/zone/gets',
             data: {
                 select: select,
                 illegalType: searchIllegalType,
@@ -534,17 +533,6 @@ $(function () {
         })
         log('ok');
         beforeCodes = codes;
-        // } else if (sameArrChk && select === SELECT_TYPE_AND_DONG) {
-        //     initializeZone({
-        //         url: $.getContextPath() + '/zone/gets',
-        //         data: {
-        //             select: select,
-        //             illegalType: searchIllegalType,
-        //             codes: codes
-        //         }
-        //     })
-        // }
-        // log('2: ',beforeCodes);
         drawingPolygon(getZonesInBounds());
     }
 

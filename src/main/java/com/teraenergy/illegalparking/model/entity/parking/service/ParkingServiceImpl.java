@@ -48,6 +48,14 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
+    public List<Parking> gets(List<String> codes) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QParking.parking);
+        query.where(QParking.parking.code.in(codes));
+        query.where(QParking.parking.isDel.isFalse());
+        return query.fetch();
+    }
+
+    @Override
     public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
         JPAQuery query = jpaQueryFactory.selectFrom(QParking.parking);
 
