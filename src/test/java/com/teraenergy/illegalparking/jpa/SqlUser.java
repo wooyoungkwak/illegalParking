@@ -3,10 +3,10 @@ package com.teraenergy.illegalparking.jpa;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
-import com.teraenergy.illegalparking.model.entity.user.domain.GovernmentOffice;
+import com.teraenergy.illegalparking.model.entity.governmentoffice.domain.GovernmentOffice;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.enums.Role;
-import com.teraenergy.illegalparking.model.entity.user.service.GovernmentOfficeService;
+import com.teraenergy.illegalparking.model.entity.governmentoffice.service.GovernmentOfficeService;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 //@Transactional
@@ -36,6 +36,17 @@ public class SqlUser {
 
     @Autowired
     GovernmentOfficeService governmentOfficeService;
+
+
+    @Test
+    public void insert(){
+        try {
+            insertByGovernmentOffice();
+            insertByUser();
+        } catch (TeraException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void insertByUser() throws TeraException {
@@ -63,6 +74,15 @@ public class SqlUser {
         user2.setPhotoName("sample2");
         user2.setPhoneNumber("010-1234-8901");
         users.add(user2);
+
+        User user3 = new User();
+        user3.setUsername("naju");
+        user3.setPassword("qwer1234");
+        user3.setRole(Role.GOVERNMENT);
+        user3.setUserCode(1234l);
+        user3.setIsDel(false);
+        user3.setName("양만춘");
+        users.add(user3);
 
         userService.sets(users);
     }

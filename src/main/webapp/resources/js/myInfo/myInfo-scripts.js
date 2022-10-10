@@ -9,9 +9,11 @@ $(function () {
             }
         });
 
-        $.each(result, function (key, value) {
-            $('#' + key).val(value);
-        });
+        if (result.success) {
+            $.each(result.data, function (key, value) {
+                $('#' + key).val(value);
+            });
+        }
 
     }
 

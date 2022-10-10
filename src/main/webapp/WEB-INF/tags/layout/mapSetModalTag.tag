@@ -99,7 +99,6 @@
 				그룹지정
 			</div>
 			<div class="card-body">
-				<input type="text" class="form-control" placeholder="그룹 이름을 입력 하세요." id="zoneGroupType" name="zoneGroupType">
 			</div>
 		</div>
 

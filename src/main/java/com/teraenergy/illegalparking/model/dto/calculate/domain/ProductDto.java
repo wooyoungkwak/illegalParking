@@ -1,6 +1,5 @@
 package com.teraenergy.illegalparking.model.dto.calculate.domain;
 
-import com.teraenergy.illegalparking.model.entity.calculate.enums.Brand;
 import lombok.Getter;
 import lombok.Setter;
 

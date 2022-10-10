@@ -8,11 +8,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportStateColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.StateType" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType" %>
 
 <% String contextPath = request.getContextPath(); %>
 
@@ -46,13 +46,10 @@
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
 							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
 							<div class="col-3">
-								<tags:sortTagByButton sortFirst="대기" sortSecond="불가" sortThird="종료" />
+								<tags:filterTagByButton id="reportStateType" current="${reportStateType}" enumValues="${ReportStateType.values()}"/>
 							</div>
 
-							<div class="col-1"></div>
-							<div class="col-3">
-									<%--                                <tags:sortTag id="orderBy" enumValues="${ReportOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>--%>
-							</div>
+							<div class="col-4"></div>
 							<div class="col-1">
 								<tags:filterTag id="filterColumn" enumValues="${ReportFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
@@ -60,7 +57,6 @@
 								<tags:searchTag id="searchStr" searchStr="${searchStr}"/>
 								<tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${ResultType.values()}"/>
 							</div>
-
 						</form>
 						<table class="table table-hover table-bordered" id="reportTable">
 							<thead>
@@ -78,15 +74,18 @@
 								<tr>
 									<td class="text-center" >
 										<input type="hidden" value="${report.reportSeq}" id="reportSeq">
-										${report.secondReceipt.user.name}
+										${report.name}
 									</td class="text-center">
-									<td class="text-center">${report.secondReceipt.carNum}</td>
+									<td class="text-center">${report.carNum}</td>
 									<td>
-											${report.secondReceipt.addr}
+											${report.addr}
 									</td>
-									<td class="text-center" >${report.regDt}</td>
+									<td class="text-center" >
+										<fmt:parseDate value="${report.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both" />
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+									</td>
 									<td class="text-center" ></td>
-									<td class="text-center" >${report.secondReceipt.illegalZone.illegalEvent.illegalType.value}</td>
+									<td class="text-center" >${report.reportStateType.value}</td>
 								</tr>
 							</c:forEach>
 							</tbody>
@@ -97,7 +96,8 @@
 			</div>
 		</main>
 
-		<layoutTags:reportSetTag items="${ResultType.values()}"/>
+		<layoutTags:reportSetTag/>
+
 	</stripes:layout-component>
 
 	<!-- footer -->

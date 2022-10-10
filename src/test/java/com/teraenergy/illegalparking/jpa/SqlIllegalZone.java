@@ -3,14 +3,13 @@ package com.teraenergy.illegalparking.jpa;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
-import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalEventService;
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalGroup;
-import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.IllegalGroup;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.repository.IllegalZoneRepository;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalGroupServcie;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 @Transactional
@@ -52,6 +51,12 @@ public class SqlIllegalZone {
     @Autowired
     ObjectMapper objectMapper;
 
+    @Test
+    public void insert(){
+        insertByIllegalGroup();
+        insertByEvent();
+    }
+
 
     @Test
     public void insertByEvent() {
@@ -63,8 +68,8 @@ public class SqlIllegalZone {
         illegalEvent.setFirstEndTime("13:00");
         illegalEvent.setSecondStartTime("18:00");
         illegalEvent.setSecondEndTime("20:00");
-        illegalEvent.setZoneGroupType(ZoneGroupType.GROUP_A);
         illegalEvent.setIllegalType(IllegalType.ILLEGAL);
+        illegalEvent.setGroupSeq(1);
         illegalEvent.setName("샘플1");
 
         IllegalEvent illegalEvent2 = new IllegalEvent();
@@ -74,8 +79,8 @@ public class SqlIllegalZone {
         illegalEvent2.setFirstEndTime("13:30");
         illegalEvent2.setSecondStartTime("18:30");
         illegalEvent2.setSecondEndTime("20:30");
-        illegalEvent2.setZoneGroupType(ZoneGroupType.GROUP_B);
         illegalEvent2.setIllegalType(IllegalType.FIVE_MINUTE);
+        illegalEvent2.setGroupSeq(1);
         illegalEvent2.setName("샘플2");
 
         List<IllegalEvent> illegalEvents = Lists.newArrayList();

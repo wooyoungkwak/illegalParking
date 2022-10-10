@@ -1,6 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.illegalzone.handler;
 
-import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
 import org.apache.ibatis.type.TypeHandler;

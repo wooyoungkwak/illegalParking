@@ -1,6 +1,5 @@
 -- 불법 주정차 데이터 베이스
-CREATE
-DATABASE IF NOT EXISTS illegal_parking;
+CREATE DATABASE IF NOT EXISTS illegal_parking;
 
 -- 법정동코드
 DROP TABLE IF EXISTS law_dong;
@@ -63,36 +62,37 @@ DROP TABLE IF EXISTS report;
 CREATE TABLE report
 (
     ReportSeq        INT AUTO_INCREMENT PRIMARY KEY,
-    FirstReceiptSeq  INT         NOT NULL,               -- 1차 신고 등록
-    SecondReceiptSeq INT         NOT NULL,               -- 2차 신고 등로
-    ReportUserSeq    INT NULL,                           -- 사용자 ( 기관 사용자 - ROLE(GOVERNMENT))
-    RegDt            Datetime    NOT NULL,               -- 신고 접수 일자
-    StateType        VARCHAR(10) NOT NULL DEFAULT 1,     -- 신고 접수 등록 여부 ( 정부 기관 사람 - 신고접수(1) / 신고제외(2) / 과태료대상(3) )
-    Note             VARCHAR(100) NULL,                  -- 결과 내용 ( 기관 사용자의 신고 결과내용)
-    IsDel            BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt            Datetime NULL                       -- 삭제 일자
+    FirstReceiptSeq  INT          NOT NULL,               -- 1차 신고 등록
+    SecondReceiptSeq INT          NOT NULL,               -- 2차 신고 등로
+    ReportUserSeq    INT          NULL,                   -- 사용자 ( 기관 사용자 - ROLE(GOVERNMENT))
+    RegDt            Datetime     NOT NULL,               -- 신고 접수 일자
+    ReportStateType  VARCHAR(10)  NOT NULL,               -- 신고 접수 등록 여부 ( 정부 기관 사람 - 신고접수(1) / 신고제외(2) / 과태료대상(3) )
+    Note             VARCHAR(100) NULL,                   -- 결과 내용 ( 기관 사용자의 신고 결과내용)
+    IsDel            BOOLEAN      NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt            Datetime     NULL                    -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 신고
 DROP TABLE IF EXISTS receipt;
 CREATE TABLE receipt
 (
-    ReceiptSeq INT AUTO_INCREMENT PRIMARY KEY,
-    ReplyType  VARCHAR(30)  NOT NULL,               -- 결과 내용 타입
-    ZoneSeq    INT          NOT NULL,               -- 불법 구역
-    RegDt      Datetime     NOT NULL,               -- 신고 등록 일자
-    UserSeq    INT          NOT NULL,               -- 사용자 ( 일반 사용자 )
-    CarNum     VARCHAR(10) NULL,                    -- 차량 번호
-    FileName   VARCHAR(50)  NOT NULL,               -- 파일 이름
-    Note       VARCHAR(100) NOT NULL,               -- 사유 또는 비고
-    Code       VARCHAR(10)  NOT NULL,               -- 법정동 코드
-    StateType  VARCHAR(10)  NOT NULL,               -- 현재 상태 ( 신고 발생(1), 신고 접수(2), 신고 누락(3), 신고 제외(4), 과태료 대상(5) )
-    Addr       VARCHAR(50)  NOT NULL,               -- 신고 등록 지역 주소 (지번주소)
-    IsDel      BOOLEAN      NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt      Datetime NULL                        -- 삭제 일자
+    ReceiptSeq       INT AUTO_INCREMENT PRIMARY KEY,
+    ReplyType        VARCHAR(30) NULL,                   -- 결과 내용 타입
+    ZoneSeq          INT         NOT NULL,               -- 불법 구역
+    RegDt            Datetime    NOT NULL,               -- 신고 등록 일자
+    UserSeq          INT         NOT NULL,               -- 사용자 ( 일반 사용자 )
+    CarNum           VARCHAR(10) NULL,                   -- 차량 번호
+    FileName         VARCHAR(50) NOT NULL,               -- 파일 이름
+    Code             VARCHAR(10) NOT NULL,               -- 법정동 코드
+    ReceiptStateType VARCHAR(10) NOT NULL,               -- 현재 상태 ( 신고 발생(1), 신고 접수(2), 신고 누락(3), 신고 제외(4), 과태료 대상(5) )
+    Addr             VARCHAR(50) NOT NULL,               -- 신고 등록 지역 주소 (지번주소)
+    IsDel            BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt            Datetime    NULL                    -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 신고 댓글
 DROP TABLE IF EXISTS comment;
@@ -105,17 +105,19 @@ CREATE TABLE comment
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
+
 -- 불법 주정차 구역
 DROP TABLE IF EXISTS illegal_zone;
 CREATE TABLE illegal_zone
 (
     ZoneSeq  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Polygon  POLYGON     NOT NULL,              -- 불법 구역
-    Code     VARCHAR(10) NOT NULL,              -- 법정동 코드
-    EventSeq INT NULL,                          -- 불법주정차 구역 이벤트
-    IsDel    BOOLEAN     NOT NULL DEFAULT FALSE -- 삭제 여부
+    Polygon  POLYGON                           NOT NULL,              -- 불법 구역
+    Code     VARCHAR(10)                       NOT NULL,              -- 법정동 코드
+    EventSeq INT                               NULL,                  -- 불법주정차 구역 이벤트
+    IsDel    BOOLEAN                           NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 불법주정차 구역 이벤트
 DROP TABLE IF EXISTS illegal_event;
@@ -123,16 +125,17 @@ CREATE TABLE illegal_event
 (
     EventSeq        INT AUTO_INCREMENT PRIMARY KEY,
     Name            VARCHAR(30) NULL,     -- 불법 구역 이름
-    FirstStartTime  VARCHAR(5) NULL,      -- 1차 이벤트 시작 시간
-    FirstEndTime    VARCHAR(5) NULL,      -- 1차 이벤트 종료 시간
+    FirstStartTime  VARCHAR(5)  NULL,     -- 1차 이벤트 시작 시간
+    FirstEndTime    VARCHAR(5)  NULL,     -- 1차 이벤트 종료 시간
     UsedFirst       BOOLEAN     NOT NULL, -- 1차 사용 여부
-    SecondStartTime VARCHAR(5) NULL,      -- 2차 이벤트 시작 시간
-    SecondEndTime   VARCHAR(5) NULL,      -- 2차 이벤트 종료 시간
+    SecondStartTime VARCHAR(5)  NULL,     -- 2차 이벤트 시작 시간
+    SecondEndTime   VARCHAR(5)  NULL,     -- 2차 이벤트 종료 시간
     UsedSecond      BOOLEAN     NOT NULL, -- 2차 사용 여부
     IllegalType     VARCHAR(20) NOT NULL, -- 불법 구역 타입
     GroupSeq        INT         NOT NULL  -- 불법주정차 이벤트 그룹
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 불법주정차 이벤트 그룹
 DROP TABLE IF EXISTS illegal_group;
@@ -146,21 +149,24 @@ CREATE TABLE illegal_group
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
+
 -- 포인트
 DROP TABLE IF EXISTS point;
 CREATE TABLE point
 (
-    PointSeq     INT AUTO_INCREMENT PRIMARY KEY,
-    Note         VARCHAR(100) NULL,    -- 등록자
-    Value        BIGINT      NOT NULL, -- 포인트 점수
-    GroupSeq     INT NULL,             -- 그룹 키
-    ProductSeq   INT NULL,             -- 제품 키
-    PointType    VARCHAR(10) NOT NULL, -- 상태 (추가 포이트(Plug) / 사용 포인트(Minus) )
-    LimitValue   BIGINT NULL,          -- 제한 포인트 점수
-    StartDate    VARCHAR(10) NULL,        -- 불법주청자 그룹의 포인트 사용 시작 시간 ( HH:mm:ss )
-    StopDate     VARCHAR(10) NULL,        -- 불법주정차 그룹의 포인트 사용 종료 시간 ( HH:mm:ss )
-    IsPointLimit BOOLEAN NULL,         -- 불법주청자 그룹의 포인트 제한 여부
-    ISTimeLimit  BOOLEAN NULL          -- 불법주청자 그룹의 시간 제한 여부
+    PointSeq      INT AUTO_INCREMENT PRIMARY KEY,
+    Note          VARCHAR(100) NULL,     -- 비고
+    Value         BIGINT       NOT NULL, -- 포인트 점수
+    GroupSeq      INT          NULL,     -- 그룹 키
+    ProductSeq    INT          NULL,     -- 제품 키
+    PointType     VARCHAR(10)  NOT NULL, -- 상태 (추가 포이트(Plug) / 사용 포인트(Minus) )
+    LimitValue    BIGINT       NULL,     -- 제한 포인트 점수
+    residualValue BIGINT       NULL,     -- 남은 포인트 점수
+    useValue      BIGINT       NULL,     -- 누적 사용 포인트 점수
+    StartDate     DATE         NULL,     -- 불법주청자 그룹의 포인트 사용 시작 시간
+    StopDate      DATE         NULL,     -- 불법주정차 그룹의 포인트 사용 종료 시간
+    IsPointLimit  BOOLEAN      NULL,     -- 불법주청자 그룹의 포인트 제한 여부
+    IsTimeLimit   BOOLEAN      NULL      -- 불법주청자 그룹의 시간 제한 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -170,41 +176,43 @@ DROP TABLE IF EXISTS calculate;
 CREATE TABLE calculate
 (
     CalculateSeq      INT AUTO_INCREMENT PRIMARY KEY,
-    PointSeq          INT      NOT NULL,               -- 포인트 키
-    UserSeq           INT      NOT NULL,               -- 사용자 키 ( 포인트 추가 or 포인트 사용자 )
-    CurrentPointValue BIGINT   NOT NULL,               -- 현재 포인트 점수
-    BeforePointValue  BIGINT   NOT NULL,               -- 이전 포인트 점수
-    IsDel             BOOLEAN  NOT NULL DEFAULT FALSE, -- 삭제 여부
-    RegDt             Datetime NOT NULL                -- 등록 일자
+    PointSeq          INT      NOT NULL,              -- 포인트 키
+    UserSeq           INT      NOT NULL,              -- 사용자 키 ( 포인트 추가 or 포인트 사용자 )
+    CurrentPointValue BIGINT   NOT NULL,              -- 현재 포인트 점수
+    BeforePointValue  BIGINT   NOT NULL,              -- 이전 포인트 점수
+    RegDt             Datetime NOT NULL,              -- 등록 일자
+    IsDel             BOOLEAN  NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 상품
 DROP TABLE IF EXISTS product;
 CREATE TABLE product
 (
     ProductSeq INT AUTO_INCREMENT PRIMARY KEY,
-    Name       VARCHAR(30) NOT NULL,               -- 상품 이름
-    Brand      VARCHAR(20) NOT NULL,               -- 브랜드 이름
-    PointValue BIGINT      NOT NULL,               -- 포인트 점수
-    UserSeq    INT         NOT NULL,               -- 등록자
-    IsDel      BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    RegDt      Datetime    NOT NULL                -- 등록 일자
+    Name       VARCHAR(30) NOT NULL,              -- 상품 이름
+    Brand      VARCHAR(20) NOT NULL,              -- 브랜드 이름
+    PointValue BIGINT      NOT NULL,              -- 포인트 점수
+    UserSeq    INT         NOT NULL,              -- 등록자
+    RegDt      Datetime    NOT NULL,              -- 등록 일자
+    IsDel      BOOLEAN     NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 차량 번호 정보 ( 신고 등록 및 접수 알림 차량 정보 )
 DROP TABLE IF EXISTS car;
 CREATE TABLE car
 (
     CarSeq       INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    CarNum       VARCHAR(10) NULL,               -- 차 번호
-    Name         VARCHAR(10) NULL,               -- 차 이름
-    Displacement VARCHAR(10) NULL,               -- 배기량 ( 몇 CC )
-    IsAlarm      BOOLEAN NOT NULL DEFAULT FALSE, -- 알림 받기 여부
-    UserSeq      BIGINT  NOT NULL,               -- 사용자 키
-    IsDel        BOOLEAN NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt        Datetime NULl                   -- 삭제 일자
+    CarNum       VARCHAR(10)                    NULL,                   -- 차 번호
+    Name         VARCHAR(10)                    NULL,                   -- 차 이름
+    Displacement VARCHAR(10)                    NULL,                   -- 배기량 ( 몇 CC )
+    IsAlarm      BOOLEAN                        NOT NULL DEFAULT FALSE, -- 알림 받기 여부
+    UserSeq      BIGINT                         NOT NULL,               -- 사용자 키
+    IsDel        BOOLEAN                        NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt        Datetime                       NULl                    -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -214,38 +222,39 @@ DROP TABLE IF EXISTS user;
 CREATE TABLE user
 (
     UserSeq     BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Name        VARCHAR(10) NOT NULL,               -- 회원 이름
-    Email       VARCHAR(20) NOT NULL,               -- email ( 또는 id)
-    Password    VARCHAR(50) NOT NULL,               -- 패스워드
-    UserCode    BIGINT      NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
-    Role        INT         NOT NULL,               -- 역할 ( USER / ADMIN / GOVERNMENT )
-    PhoneNumber VARCHAR(15) NULL,                   -- 전화 번호 (모바일)
-    PhotoName   VARCHAR(30) NULL,                   -- 사진 이름 (모바일)
-    OfficeSeq   INT NULL,                           -- 관공서 키
-    IsDel       BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt       Datetime NULL                       -- 삭제 일자
+    Name        VARCHAR(10)                       NOT NULL,               -- 회원 이름
+    Email       VARCHAR(20)                       NOT NULL,               -- email ( 또는 id)
+    Password    VARCHAR(50)                       NOT NULL,               -- 패스워드
+    UserCode    BIGINT                            NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
+    Role        INT                               NOT NULL,               -- 역할 ( USER / ADMIN / GOVERNMENT )
+    PhoneNumber VARCHAR(15)                       NULL,                   -- 전화 번호 (모바일)
+    PhotoName   VARCHAR(30)                       NULL,                   -- 사진 이름 (모바일)
+    OfficeSeq   INT                               NULL,                   -- 관공서 키
+    IsDel       BOOLEAN                           NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt       Datetime                          NULL                    -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 관공서
 DROP TABLE IF EXISTS government_office;
 CREATE TABLE government_office
 (
     OfficeSeq    INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    Name         VARCHAR(50) NOT NULL, -- 관공서 이름 이름
-    LocationType VARCHAR(20) NOT NULL, -- 지역 타입
-    IsDel        BOOLEAN     NOT NULL, -- 삭제 여부
-    DelDt        Datetime              -- 등록 일자
+    Name         VARCHAR(50)                    NOT NULL, -- 관공서 이름 이름
+    LocationType VARCHAR(20)                    NOT NULL, -- 지역 타입
+    IsDel        BOOLEAN                        NOT NULL, -- 삭제 여부
+    DelDt        Datetime                                 -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
+
 
 -- 환경 설정 (보류)
 DROP TABLE IF EXISTS environment;
 CREATE TABLE environment
 (
     EnvironmentSeq INT AUTO_INCREMENT PRIMARY KEY,
-    ZoneGroupType  VARCHAR(10) NOT NULL, -- 그룹 이름
-    RegDt          Datetime    NOT NULL  -- 등록 일자
+    RegDt          Datetime NOT NULL -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 

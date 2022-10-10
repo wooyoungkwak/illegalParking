@@ -4,18 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.exception.TeraException;
-import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
-import com.teraenergy.illegalparking.model.entity.calculate.domain.Point;
-import com.teraenergy.illegalparking.model.entity.calculate.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
-import com.teraenergy.illegalparking.model.entity.calculate.service.PointService;
+import com.teraenergy.illegalparking.model.entity.point.service.PointService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
+import com.teraenergy.illegalparking.model.entity.comment.domain.Comment;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
+import com.teraenergy.illegalparking.model.entity.comment.service.CommentService;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
-import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
@@ -36,7 +36,7 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 //@Transactional
@@ -44,7 +44,6 @@ public class SqlReport {
 
     @Autowired
     private ReportService reportService;
-
 
     @Autowired
     private ReceiptService receiptService;
@@ -63,8 +62,24 @@ public class SqlReport {
 
     @Autowired
     private CalculateService calculateService;
+
+    @Autowired
+    private CommentService commentService;
+
     @Autowired
     private ObjectMapper objectMapper;
+
+
+    @Test
+    public void insert(){
+        try {
+            insertByReceipt();
+            insertByReport();
+            insertByComment();
+        } catch (TeraException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Test
     public void insertByReport() {
@@ -77,7 +92,7 @@ public class SqlReport {
         report1.setFirstReceipt(firstReceipt);
         report1.setSecondReceipt(secondReceipt);
         report1.setRegDt(LocalDateTime.now());
-        report1.setStateType(StateType.COMPLETE);
+        report1.setReportStateType(ReportStateType.COMPLETE);
         report1.setNote("");
         report1.setIsDel(false);
         reports.add(report1);
@@ -98,13 +113,11 @@ public class SqlReport {
         receipt1.setRegDt(LocalDateTime.now().minusMinutes(3));
         receipt1.setCarNum("123가1234");
         receipt1.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
-        receipt1.setNote("테스트 ... 1차 ");
         receipt1.setCode("5013032000");
-        receipt1.setStateType(com.teraenergy.illegalparking.model.entity.receipt.enums.StateType.REPORT);
+        receipt1.setReceiptStateType(ReceiptStateType.REPORT);
         receipt1.setIsDel(false);
         receipt1.setAddr("전라남도 나주시 빛가람동 상야1길 7");
         receipts.add(receipt1);
-
 
         Receipt receipt2 = new Receipt();
         receipt2.setIllegalZone(illegalZone);
@@ -112,14 +125,21 @@ public class SqlReport {
         receipt2.setRegDt(LocalDateTime.now());
         receipt2.setCarNum("123가1234");
         receipt2.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
-        receipt2.setNote("테스트 ... 2차 ");
         receipt2.setCode("5013032000");
-        receipt2.setStateType(com.teraenergy.illegalparking.model.entity.receipt.enums.StateType.PENALTY);
+        receipt2.setReceiptStateType(ReceiptStateType.PENALTY);
         receipt2.setIsDel(false);
         receipt2.setAddr("전라남도 나주시 산포면 신도리 378-4");
         receipts.add(receipt2);
 
         receiptService.sets(receipts);
+    }
+
+    @Test
+    public void insertByComment() throws TeraException {
+        Comment comment = new Comment();
+        comment.setContent("댓글 테스트 ....");
+        comment.setReceiptSeq(1);
+        commentService.set(comment);
     }
 
     @Test

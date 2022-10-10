@@ -27,5 +27,4 @@ public class IllegalZoneDto {
     Boolean usedSecond;         // 구역 두번째 이벤트 사용 여부
     String secondStartTime;     // 구역 두번째 시작 시간
     String secondEndTime;       // 구역 두번째 끝 시간
-    String zoneGroupType;       // 구역 그룹 타입
 }

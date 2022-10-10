@@ -188,7 +188,6 @@ $(function () {
             let illegalType = result.illegalEvent.illegalType;
             $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
             $('#name').val(result.illegalEvent.name);
-            $('#zoneGroupType').val(result.illegalEvent.zoneGroupType);
             result.illegalEvent.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
             result.illegalEvent.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
         }
@@ -540,13 +539,15 @@ $(function () {
     function initializeZone(opt) {
         let result = $.JJAjaxAsync(opt);
 
-        if (opt.data.select === undefined) {
-            return result;
-        }
+        if ( result.success) {
+            if (opt.data.select === undefined) {
+                return result;
+            }
 
-        zonePolygons = result.zonePolygons;
-        zoneSeqs = result.zoneSeqs;
-        zoneTypes = result.zoneTypes;
+            zonePolygons = result.data.zonePolygons;
+            zoneSeqs = result.data.zoneSeqs;
+            zoneTypes = result.data.zoneTypes;
+        }
     }
 
     // 초기화

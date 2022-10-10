@@ -10,6 +10,7 @@ import com.teraenergy.illegalparking.model.dto.user.domain.UserDto;
 import com.teraenergy.illegalparking.model.dto.user.service.UserDtoService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import com.teraenergy.illegalparking.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -38,43 +39,24 @@ public class LoginAPI {
 
     @PostMapping("/api/login")
     @ResponseBody
-    public JsonNode login (@RequestBody String body) {
-        HashMap<String, Object> resultMap = Maps.newHashMap();
+    public Object login(@RequestBody String body) throws TeraException {
 
         boolean result = false;
         UserDto userDto = null;
-        try {
-            JsonNode jsonNode = objectMapper.readTree(body);
-            String username = jsonNode.get("username").asText();
-            String password = jsonNode.get("password").asText();
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        String username = jsonNode.get("username").asText();
+        String password = jsonNode.get("password").asText();
 
-            result = userService.isUser(username, password);
-            if (result) {
-                User user = userService.get(username);
-                userDto = userDtoService.get(user);
-            }
+        result = userService.isUser(username, password);
 
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage(), e);
-        } catch (TeraException e) {
-            log.error(e.getMessage(), e);
-        } finally {
-            resultMap.put("success", result);
-            if (userDto != null) {
-                resultMap.put("user", userDto);
-                resultMap.put("msg", "");
-            } else {
-                resultMap.put("msg", TeraExceptionCode.USER_IS_NOT_EXIST.getMessage());
-            }
-            String jsonStr = null;
-            try {
-                jsonStr = objectMapper.writeValueAsString(resultMap);
-                return objectMapper.readTree(jsonStr);
-            } catch (JsonProcessingException e) {
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
+        if (result) {
+            User user = userService.get(username);
+            userDto = userDtoService.get(user);
+        } else {
+            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
         }
+
+        return userDto;
     }
 
 }

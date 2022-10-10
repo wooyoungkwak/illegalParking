@@ -73,12 +73,14 @@ $(function () {
                 }
             });
 
-            $.each(result, function (key, value) {
-                $('#' + key).val(value);
-                if (key == "rdnmadr" ) {
-                    $('#rdnmadr').val(result.lnmadr);
-                }
-            });
+            if ( result.success) {
+                $.each(result.data, function (key, value) {
+                    $('#' + key).val(value);
+                    if (key == "rdnmadr") {
+                        $('#rdnmadr').val(result.lnmadr);
+                    }
+                });
+            }
 
             $('#parkingTable').hide();
             $('#parkingAdd').show();

@@ -12,9 +12,13 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">${subTitle}</div>
-                <a class="nav-link" href="${pageContext.request.contextPath}/report/reportList" id="side_reportList">
+                <a class="nav-link" href="${pageContext.request.contextPath}/report/receiptList" id="side_receiptList">
                     <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
                     신고목록
+                </a>
+                <a class="nav-link" href="${pageContext.request.contextPath}/report/reportList" id="side_reportList">
+                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    접수목록
                 </a>
             </div>
         </div>

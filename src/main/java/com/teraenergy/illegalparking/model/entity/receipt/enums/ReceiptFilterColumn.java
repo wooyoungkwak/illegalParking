@@ -14,7 +14,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ReceiptFilterColumn {
 
-    CAR_NAME("차량번호")
+    CAR_NUM("차량번호"),
+    ADDR("위치"),
+    USER("신고자")
     ;
 
     private String value;

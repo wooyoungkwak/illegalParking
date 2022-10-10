@@ -108,7 +108,6 @@ public class RequestUtil {
     public void setParameterToModel(Model model){
         // parameter
         for (Map.Entry<String, Object> entry : this.parameters.entrySet()) {
-            log.info("key = {} : value ={}",entry.getKey(), entry.getValue());
             model.addAttribute(entry.getKey(), entry.getValue());
         }
 

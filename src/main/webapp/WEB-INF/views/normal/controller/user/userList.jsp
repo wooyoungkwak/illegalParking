@@ -11,9 +11,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportStateColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.StateType" %>
-
+<%@ page import="com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -30,7 +28,7 @@
 
     <!-- content -->
     <stripes:layout-component name="contents">
-        <main  id="reportMain">
+        <main  id="userMain">
             <div class="container-fluid px-4">
                 <h1 class="mt-4">사용자</h1>
                 <ol class="breadcrumb mb-4">
@@ -46,20 +44,18 @@
                             <input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
                             <input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
                             <div class="col-2">
-                                <a class="btn btn-primary"><i class="fa fa-city"></i> 관공서추가</a>
+                                <a class="btn btn-primary" id="addGovernmentOffice"><i class="fa fa-city"></i> 관공서추가</a>
                             </div>
-                            <div class="col-1"></div>
+                            <div class="col-5"></div>
                             <div class="col-1">
                                 <tags:filterTag id="filterColumn" enumValues="${ReportFilterColumn.values()}" column="${filterColumn}"/>
                             </div>
                             <div class="col-4">
                                 <tags:searchTag id="searchStr" searchStr="${searchStr}"/>
-                                <tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${ResultType.values()}" />
                             </div>
-                            <div class="col-1"></div>
-                            <div class="col-3"></div>
+
                         </form>
-                        <table class="table table-hover table-bordered" id="reportTable">
+                        <table class="table table-hover table-bordered" id="userTable">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -95,7 +91,10 @@
             </div>
         </main>
 
-        <layoutTags:reportSetTag items="${ResultType.values()}" />
+        <layoutTags:userSetTag/>
+
+        <layoutTags:userAddTag id="modal" enumValues="${LocationType.values()}" />
+
     </stripes:layout-component>
 
     <!-- footer -->
@@ -105,16 +104,7 @@
 
     <!-- javascript -->
     <stripes:layout-component name="javascript">
-        <script src="<%=contextPath%>/resources/js/report/reportList-scripts.js"></script>
-        <script type="application/javascript">
-            if ( '${filterColumn}' === 'RESULT') {
-                $('#searchStrGroup').hide();
-                $('#searchStr2Group').show();
-            } else {
-                $('#searchStrGroup').show();
-                $('#searchStr2Group').hide();
-            }
-        </script>
+        <script src="<%=contextPath%>/resources/js/user/userList-scripts.js"></script>
     </stripes:layout-component>
 
 </stripes:layout-render>

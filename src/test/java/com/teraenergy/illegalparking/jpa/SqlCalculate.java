@@ -3,13 +3,13 @@ package com.teraenergy.illegalparking.jpa;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
-import com.teraenergy.illegalparking.model.entity.calculate.domain.Point;
-import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
-import com.teraenergy.illegalparking.model.entity.calculate.enums.Brand;
-import com.teraenergy.illegalparking.model.entity.calculate.enums.PointType;
+import com.teraenergy.illegalparking.model.entity.point.domain.Point;
+import com.teraenergy.illegalparking.model.entity.product.domain.Product;
+import com.teraenergy.illegalparking.model.entity.product.enums.Brand;
+import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
-import com.teraenergy.illegalparking.model.entity.calculate.service.PointService;
-import com.teraenergy.illegalparking.model.entity.calculate.service.ProductService;
+import com.teraenergy.illegalparking.model.entity.point.service.PointService;
+import com.teraenergy.illegalparking.model.entity.product.service.ProductService;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
@@ -22,7 +22,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,7 +33,7 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
 //@Transactional
@@ -56,16 +55,23 @@ public class SqlCalculate {
     private ReportService reportService;
 
     @Test
-    public void insertProduct(){
-        List<Product> products = Lists.newArrayList();
-
-        User adminUser = null;
+    public void insert(){
         try {
-            adminUser = userService.get(1);
-            User user = userService.get(2);
+            insertByProduct();
+            insertByPoint();
+            insertByCalculate();
         } catch (TeraException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void insertByProduct() throws TeraException {
+        List<Product> products = Lists.newArrayList();
+
+        User adminUser = null;
+        adminUser = userService.get(1);
+        User user = userService.get(2);
 
         Product product = new Product();
         product.setUser(adminUser);
@@ -86,34 +92,41 @@ public class SqlCalculate {
     }
 
     @Test
-    public void insertPoint(){
+    public void insertByPoint(){
 
         List<Point> points = Lists.newArrayList();
 
         Report report = reportService.get(1);
+
         Point point = new Point();
         point.setValue(1000L);
+        point.setResidualValue(1000L);
+        point.setUseValue(1000L);
         point.setPointType(PointType.PLUS);
         point.setNote("");
-        point.setUserSeq(2);
+        point.setIsPointLimit(false);
+        point.setIsTimeLimit(false);
+        point.setStartDate(LocalDateTime.now().minusDays(10));
+        point.setStopDate(LocalDateTime.now().plusDays(10));
         points.add(point);
 
         Product product = productService.get(1);
         Point point2 = new Point();
         point2.setValue(1000L);
+        point2.setResidualValue(1000L);
+        point2.setUseValue(1000L);
         point2.setPointType(PointType.MINUS);
         point2.setProduct(product);
         point2.setNote("");
-        point2.setUserSeq(2);
         points.add(point2);
 
         pointService.sets(points);
     }
 
     @Test
-    public void insertCalculate() throws TeraException {
-        Point point = pointService.get(2);
-        User user = userService.get(2);
+    public void insertByCalculate() throws TeraException {
+        Point point = pointService.get(1);
+        User user = userService.get(1);
         Calculate calculate = new Calculate();
         calculate.setIsDel(false);
         calculate.setRegDt(LocalDateTime.now());

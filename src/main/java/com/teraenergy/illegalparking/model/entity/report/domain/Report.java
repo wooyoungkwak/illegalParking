@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.report.domain;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,7 +41,7 @@ public class Report {
 
     @Column
     @Enumerated (EnumType.STRING)
-    StateType stateType;
+    ReportStateType reportStateType;
 
     @Column
     String note;

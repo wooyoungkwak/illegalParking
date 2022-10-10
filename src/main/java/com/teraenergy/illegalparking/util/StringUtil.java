@@ -5,6 +5,9 @@ import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 
 import java.io.UnsupportedEncodingException;
 import java.rmi.dgc.VMID;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -252,6 +255,22 @@ public class StringUtil {
 
     public static String generateUUID() {
         return UUID.randomUUID().toString().toUpperCase();
+    }
+
+    public static String covertDatetimeToString(LocalDateTime time, String pattern) {
+        return time.format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    public static LocalDateTime convertStringToDateTime(String time, String pattern) {
+        return LocalDateTime.parse(time, DateTimeFormatter.ofPattern(pattern));
+    }
+
+    public static String covertDateToString(LocalDate time, String pattern) {
+        return time.format(DateTimeFormatter.ofPattern(pattern));
+    }
+
+    public static LocalDate convertStringToDate(String time, String pattern) {
+        return LocalDate.parse(time, DateTimeFormatter.ofPattern(pattern));
     }
 
 }

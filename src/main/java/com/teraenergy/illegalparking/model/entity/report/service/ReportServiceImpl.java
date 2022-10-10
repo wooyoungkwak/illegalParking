@@ -6,7 +6,7 @@ import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
-import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.model.entity.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,7 +42,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Page<Report> gets(int pageNumber, int pageSize, StateType stateType, ReportFilterColumn filterColumn, String search) {
+    public Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
 
         if (search != null && search.length() > 0) {
@@ -63,13 +63,14 @@ public class ReportServiceImpl implements ReportService {
 
         int total = query.fetch().size();
 
-        if (stateType != null) {
-            query.where(QReport.report.stateType.eq(stateType));
+        if (reportStateType != null) {
+            query.where(QReport.report.reportStateType.eq(reportStateType));
         }
 
         pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);
         List<Report> reports = query.fetch();
+
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<Report> page = new PageImpl<Report>(reports, pageRequest, total);
         return page;

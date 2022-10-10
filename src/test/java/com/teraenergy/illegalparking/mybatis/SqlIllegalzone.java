@@ -4,8 +4,8 @@ package com.teraenergy.illegalparking.mybatis;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
 @ActiveProfiles(value = "home")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-//@Transactional
+@Transactional
 public class SqlIllegalzone {
 
     @Autowired

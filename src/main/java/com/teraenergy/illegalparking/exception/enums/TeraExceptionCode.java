@@ -22,7 +22,9 @@ public enum TeraExceptionCode implements TeraErrCode {
 
     CAST_FAILURE("cast 를 실패 하였습니다."),
 
-//    WRONG_AREA_
+    ZONE_CREATE_FAIL("불법주정차 구역 생성을 실패 하였습니다."),
+
+    ZONE_MODIFY_FAIL("불법주정차 구역 수정을 실패 하였습니다."),
 
     USER_WRONG_ID_PASSWORD_AGAIN_CHECK(" 사용자 정보가 잘 못 되었거나 패스워드가 틀렸습니다. \n 다시 확인하여 입력 하세요."),
 

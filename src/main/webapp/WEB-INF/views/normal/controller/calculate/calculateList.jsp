@@ -76,7 +76,7 @@
 									<c:choose>
 										<c:when test="${calculate.point.pointType == 'PLUS'}">
 											<td class="text-primary">${calculate.point.value}</td>
-											<td>${calculate.point.report.secondReceipt.illegalZone.illegalEvent.illegalType.value}</td>
+											<td></td>
 											<td></td>
 											<td></td>
 										</c:when>

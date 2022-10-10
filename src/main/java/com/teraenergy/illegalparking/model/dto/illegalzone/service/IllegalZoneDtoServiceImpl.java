@@ -1,10 +1,9 @@
 package com.teraenergy.illegalparking.model.dto.illegalzone.service;
 
 import com.teraenergy.illegalparking.model.dto.illegalzone.domain.IllegalZoneDto;
-import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +36,6 @@ public class IllegalZoneDtoServiceImpl implements IllegalZoneDtoService {
             illegalZoneDto.setUsedSecond(illegalZone.getIllegalEvent().getUsedSecond());
             illegalZoneDto.setSecondStartTime(illegalZone.getIllegalEvent().getSecondStartTime());
             illegalZoneDto.setSecondEndTime(illegalZone.getIllegalEvent().getSecondEndTime());
-            illegalZoneDto.setZoneGroupType(illegalZone.getIllegalEvent().getZoneGroupType().toString());
         }
         return illegalZoneDto;
     }
@@ -64,7 +62,6 @@ public class IllegalZoneDtoServiceImpl implements IllegalZoneDtoService {
             illegalEvent.setUsedSecond(illegalZoneDto.getUsedSecond());
             illegalEvent.setSecondStartTime(illegalZoneDto.getSecondStartTime());
             illegalEvent.setSecondEndTime(illegalZoneDto.getSecondEndTime());
-            illegalEvent.setZoneGroupType(ZoneGroupType.valueOf(illegalZoneDto.getZoneGroupType()));
             illegalZone.setIllegalEvent(illegalEvent);
         } else {
             illegalZone.setIllegalEvent(null);

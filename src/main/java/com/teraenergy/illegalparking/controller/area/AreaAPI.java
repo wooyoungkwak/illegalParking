@@ -1,18 +1,27 @@
 package com.teraenergy.illegalparking.controller.area;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.dto.illegalzone.service.IllegalZoneDtoService;
-import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
-import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.dto.illegalzone.service.PointDtoService;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.IllegalGroup;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
-import com.teraenergy.illegalparking.model.entity.illegalzone.enums.IllegalType;
-import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
+import com.teraenergy.illegalparking.model.entity.point.domain.Point;
+import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
+import com.teraenergy.illegalparking.model.entity.point.service.PointService;
+import com.teraenergy.illegalparking.util.JsonUtil;
+import com.teraenergy.illegalparking.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Polygon;
@@ -25,7 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,65 +49,55 @@ import java.util.Map;
 @Controller
 public class AreaAPI {
 
-    private final ObjectMapper objectMapper;
-
     private final IllegalZoneService illegalZoneService;
 
     private final IllegalZoneMapperService illegalZoneMapperService;
 
     private final IllegalZoneDtoService illegalZoneDtoService;
 
+    private final IllegalGroupServcie illegalGroupServcie;
+
     private final IllegalEventService illegalEventService;
+
+    private final PointDtoService pointDtoService;
+
+    private final PointService pointService;
 
     @PostMapping("/area/markers")
     @ResponseBody
-    public JsonNode markers(@RequestParam(value = "dongId", defaultValue = "1") String dongId) throws JsonProcessingException {
-        HashMap<String, String> result = Maps.newHashMap();
-        String jsonStr = objectMapper.writeValueAsString(result);
-        return objectMapper.readTree(jsonStr);
+    public Object markers(@RequestParam(value = "dongId", defaultValue = "1") String dongId) throws TeraException {
+        return "";
     }
 
     @PostMapping("/area/coordinates")
     @ResponseBody
-    public JsonNode coordinates(@RequestParam(value = "dongId", defaultValue = "1") String dongId) throws JsonProcessingException {
-        HashMap<String, String> result = Maps.newHashMap();
-        String jsonStr = objectMapper.writeValueAsString(result);
-        return objectMapper.readTree(jsonStr);
+    public Object coordinates(@RequestParam(value = "dongId", defaultValue = "1") String dongId) throws TeraException {
+        return "";
     }
 
     @PostMapping("/area/zone/get")
     @ResponseBody
-    public JsonNode getZone(HttpServletRequest request, @RequestBody String body) throws Exception {
-        JsonNode jsonNode = objectMapper.readTree(body);
-
+    public Object getZone(@RequestBody String body) throws Exception {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
         Integer zoneSeq = jsonNode.get("zoneSeq").asInt();
-//        IllegalZone illegalZone = illegalZoneService.get(zoneSeq);
-
         IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
         IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
         illegalZone.setIllegalEvent(illegalEvent);
-
-        String jsonStr = objectMapper.writeValueAsString(illegalZone);
-
-//        String jsonStr = objectMapper.writeValueAsString(illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt()));
-        return objectMapper.readTree(jsonStr);
+        return illegalZone;
     }
 
     @PostMapping("/area/zone/gets")
     @ResponseBody
-    public JsonNode getsZone(HttpServletRequest request, @RequestBody String body) throws Exception {
-        JsonNode jsonNode = objectMapper.readTree(body);
-        String jsonStr = objectMapper.writeValueAsString(_getZone(jsonNode));
-        return objectMapper.readTree(jsonStr);
+    public Object getsZone(HttpServletRequest request, @RequestBody String body) throws Exception {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        return _getZone(jsonNode);
     }
 
     @PostMapping("/area/zone/set")
     @ResponseBody
-    public JsonNode setZone(@RequestBody Map<String, Object> param) throws JsonProcessingException {
-        Map<String, String> map = Maps.newHashMap();
+    public Object setZone(@RequestBody Map<String, Object> param) throws TeraException {
         try {
             List<Map<String, Object>> polygons = (List<Map<String, Object>>) param.get("polygonData");
-
             List<IllegalZone> illegalZones = Lists.newArrayList();
             StringBuilder stringBuilder;
 
@@ -131,33 +129,22 @@ public class AreaAPI {
                 stringBuilder.setLength(0);
             }
 
-            illegalZoneMapperService.sets(illegalZones);
+            return  illegalZoneMapperService.sets(illegalZones);
 
-            map.put("success","true");
         } catch (Exception e) {
-            map.put("success","false");
+            throw new TeraException(TeraExceptionCode.ZONE_CREATE_FAIL, e);
         }
-
-        String jsonStr = objectMapper.writeValueAsString(map);
-        return objectMapper.readTree(jsonStr);
-
     }
 
     @PostMapping("/area/zone/modify")
     @ResponseBody
-    public JsonNode modifyZone(@RequestBody String body) throws Exception {
-        Map<String, String> map = Maps.newHashMap();
+    public Object modifyZone(@RequestBody String body) throws TeraException {
         try {
-            JsonNode jsonNode = objectMapper.readTree(body);
-
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
             IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
-
-
             IllegalEvent illegalEvent = new IllegalEvent();
             illegalEvent.setIllegalType(
-                IllegalType.valueOf(jsonNode.get("illegalType").asText()));
-            illegalEvent.setZoneGroupType(
-                ZoneGroupType.valueOf(jsonNode.get("zoneGroupType").asText()));
+                    IllegalType.valueOf(jsonNode.get("illegalType").asText()));
             illegalEvent.setName(jsonNode.get("name").asText());
             illegalEvent.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
             illegalEvent.setFirstStartTime(jsonNode.get("firstStartTime").asText());
@@ -165,51 +152,68 @@ public class AreaAPI {
             illegalEvent.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
             illegalEvent.setSecondStartTime(jsonNode.get("secondStartTime").asText());
             illegalEvent.setSecondEndTime(jsonNode.get("secondEndTime").asText());
-            if(illegalZone.getEventSeq() != null) {
+            if (illegalZone.getEventSeq() != null) {
                 illegalEvent.setEventSeq(illegalZone.getEventSeq());
             }
             illegalEvent = illegalEventService.set(illegalEvent);
             illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
-            map.put("success","true");
         } catch (Exception e) {
-            map.put("success","false");
+            throw new TeraException(TeraExceptionCode.ZONE_MODIFY_FAIL, e);
         }
-        String jsonStr = objectMapper.writeValueAsString(map);
-        return objectMapper.readTree(jsonStr);
+
+        return "";
     }
 
     @PostMapping("/area/zone/remove")
     @ResponseBody
-    public JsonNode removeZone(@RequestBody String body) throws Exception {
-        Map<String, String> map = Maps.newHashMap();
-        try {
-            JsonNode jsonNode = objectMapper.readTree(body);
-            illegalZoneMapperService.delete(jsonNode.get("zoneSeq").asInt());
-            map.put("success","true");
-        } catch (Exception e) {
-            map.put("success","false");
-        }
-        String jsonStr = objectMapper.writeValueAsString(map);
-        return objectMapper.readTree(jsonStr);
+    public Object removeZone(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        illegalZoneMapperService.delete(jsonNode.get("zoneSeq").asInt());
+        return "";
     }
 
-    private HashMap<String, Object> _getParam(HttpServletRequest request) {
-        HashMap<String, Object> parameterMap = Maps.newHashMap();
-        Enumeration<String> parameterNames = request.getParameterNames();
-        while (parameterNames.hasMoreElements()) {
-            String name = parameterNames.nextElement();
-            String value = request.getParameter(name);
-            parameterMap.put(name, value);
-        }
-        return parameterMap;
+    @PostMapping("/area/group/set")
+    @ResponseBody
+    public Object setGroup(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        IllegalGroup illegalGroup = new IllegalGroup();
+        illegalGroup.setName(jsonNode.get("name").asText());
+        illegalGroup.setLocationType(LocationType.valueOf(jsonNode.get("locationType").asText()));
+        return illegalGroupServcie.set(illegalGroup);
+    }
+
+    @PostMapping("/area/point/get")
+    @ResponseBody
+    public Object getPoint(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        return pointDtoService.gets(jsonNode.get("groupSeq").asInt());
+    }
+
+    @PostMapping("/area/point/set")
+    @ResponseBody
+    public Object setPoint(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+
+        Point point = new Point();
+        point.setPointType(PointType.valueOf(jsonNode.get("pointType").asText()));
+        point.setLimitValue(jsonNode.get("limitValue").asLong());
+        point.setValue(jsonNode.get("value").asLong());
+        point.setStartDate(StringUtil.convertStringToDate(jsonNode.get("startDate").asText(), "yyyy-MM-dd"));
+        point.setStopDate(StringUtil.convertStringToDate(jsonNode.get("stopDate").asText(), "yyyy-MM-dd"));
+        point.setIsPointLimit(jsonNode.get("isPointLimit").asBoolean());
+        point.setIsTimeLimit(jsonNode.get("isTimeLimit").asBoolean());
+        point.setGroupSeq(jsonNode.get("groupSeq").asInt());
+        point = pointService.set(point);
+
+        return pointDtoService.get(point);
     }
 
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {
         String select = param.get("select").asText();
         List<String> codes = Lists.newArrayList();
-        if("dong".equals(select) || "typeAndDong".equals(select)) {
+        if ("dong".equals(select) || "typeAndDong".equals(select)) {
             JsonNode codesArrNode = param.get("codes");
-            if(codesArrNode.isArray()) {
+            if (codesArrNode.isArray()) {
                 for (JsonNode obj : codesArrNode) {
                     codes.add(obj.asText());
                 }
@@ -227,7 +231,7 @@ public class AreaAPI {
             case "typeAndDong":
                 illegalZones = illegalZoneMapperService.getsByIllegalTypeAndCode(param.get("illegalType").asText(), codes);
                 break;
-            default :
+            default:
                 illegalZones = illegalZoneMapperService.gets();
                 break;
         }
@@ -242,20 +246,20 @@ public class AreaAPI {
             int first = 0;
             Coordinate firstCoordinate = null;
             for (Coordinate coordinate : polygon.getCoordinates()) {
-                if ( first == 0) {
+                if (first == 0) {
                     firstCoordinate = coordinate;
                 }
                 builder.append(coordinate.getX())
                         .append(" ")
                         .append(coordinate.getY()).append(",");
-                first ++;
+                first++;
             }
             builder.append(firstCoordinate.getX())
                     .append(" ")
                     .append(firstCoordinate.getY());
 
             polygons.add(builder.toString());
-            if ( illegalZone.getEventSeq() == null) zoneTypes.add("");
+            if (illegalZone.getEventSeq() == null) zoneTypes.add("");
             else zoneTypes.add(illegalEventService.get(illegalZone.getEventSeq()).getIllegalType().toString());
             zoneSeqs.add(illegalZone.getZoneSeq());
         }

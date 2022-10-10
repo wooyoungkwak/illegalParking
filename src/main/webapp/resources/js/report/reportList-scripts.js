@@ -38,7 +38,17 @@ $(function () {
 
     function initializeReportSetTag(report) {
         $.each(report, function (key, value) {
-            if (key.indexOf("FileName") > -1) {
+            if (key.indexOf('receiptStateType') > -1) {
+                if (value === 'COMPLETE') {
+                    $('#' + key).text("신고접수");
+                } else if (value === 'PENALTY')  {
+                    $('#' + key).text("신고제외");
+                } else if (value === 'EXCEPTION') {
+                    $('#' + key).text("과태료대상");
+                }
+            } else if (key.indexOf("firstFileName") > -1) {
+                $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
+            } else if (key.indexOf("secondFileName") > -1) {
                 $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
             } else if (key === 'firstIllegalType') {
                 if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
@@ -48,6 +58,8 @@ $(function () {
                 else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
             } else if (key === 'note') {
                 $('#' + key).val(value === null ? "" : value);
+            } else if( key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt' ) {
+                $('#' + key).text(value.replace('T', ' '));
             } else if (key === 'resultType') {
                 if (value === undefined || value === 'WAIT') {
                     $('#register').show();
@@ -113,13 +125,13 @@ $(function () {
         // 신고 등록 표시
         $('#reportTable tbody tr').on('click', function () {
 
-            let reportSeqStr = $(this).children("td:eq(0)").text();
+            let reportSeqStr = $(this).children("td:eq(0)").find('input').val();
             let carNum = $(this).children("td:eq(3)").text();
 
             let reportSeq = Number.parseInt(reportSeqStr);
 
             let result = $.JJAjaxAsync({
-                url: _contextPath + '/get',
+                url: _contextPath + '/report/get',
                 data: {
                     reportSeq: reportSeq
                 }

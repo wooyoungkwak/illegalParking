@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.calculate.domain;
 
+import com.teraenergy.illegalparking.model.entity.point.domain.Point;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +38,7 @@ public class Calculate {
     Long beforePointValue;
 
     @Column (nullable = false)
-    Boolean isDel;
+    Boolean isDel = false;
 
     @Column
     LocalDateTime regDt;

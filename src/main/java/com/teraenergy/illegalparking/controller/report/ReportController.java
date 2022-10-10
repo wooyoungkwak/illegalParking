@@ -2,10 +2,13 @@ package com.teraenergy.illegalparking.controller.report;
 
 import com.teraenergy.illegalparking.controller.ExtendsController;
 import com.teraenergy.illegalparking.exception.TeraException;
-import com.teraenergy.illegalparking.model.entity.report.domain.Report;
+import com.teraenergy.illegalparking.model.dto.report.domain.ReceiptDto;
+import com.teraenergy.illegalparking.model.dto.report.domain.ReportDto;
+import com.teraenergy.illegalparking.model.dto.report.service.ReportDtoService;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
-import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
-import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.util.CHashMap;
 import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 public class ReportController extends ExtendsController {
 
 
-    private final ReportService reportService;
+    private final ReportDtoService reportDtoService;
 
     private String subTitle = "신고";
 
@@ -39,18 +42,77 @@ public class ReportController extends ExtendsController {
         return new RedirectView("/report/reportList");
     }
 
+    @GetMapping(value = "/report/receiptList")
+    public String receiptList(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
+        CHashMap paramMap = requestUtil.getParameterMap();
+
+        ReceiptStateType receiptStateType = null;
+        String stateTypeStr = paramMap.getAsString("stateType");
+        if ( stateTypeStr != null) {
+            receiptStateType = ReceiptStateType.valueOf(stateTypeStr);
+        }
+
+        String filterColumnStr = paramMap.getAsString("filterColumn");
+        ReceiptFilterColumn filterColumn;
+        if (filterColumnStr == null) {
+            filterColumn = ReceiptFilterColumn.ADDR;
+        } else {
+            filterColumn = ReceiptFilterColumn.valueOf(filterColumnStr);
+        }
+
+        String search = "";
+        String searchStr = paramMap.getAsString("searchStr");
+        if (searchStr == null) {
+            searchStr = "";
+        }
+
+        Integer pageNumber = paramMap.getAsInt("pageNumber");
+        if (pageNumber == null) {
+            pageNumber = 1;
+            model.addAttribute("pageNumber", pageNumber);
+        }
+
+        Integer pageSize = paramMap.getAsInt("pageSize");
+        if (pageSize == null) {
+            pageSize = 10;
+            model.addAttribute("pageSize", pageSize);
+        }
+
+        Page<ReceiptDto> pages = reportDtoService.getsFromReceipt(pageNumber, pageSize, receiptStateType, filterColumn, search);
+
+        boolean isBeginOver = false;
+        boolean isEndOver = false;
+
+        int totalPages = pages.getTotalPages();
+
+        if (totalPages > 3 && (totalPages - pageNumber) > 2) {
+            isEndOver = true;
+        }
+
+        if (totalPages > 3 && pageNumber > 1) {
+            isBeginOver = true;
+        }
+
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("isBeginOver", isBeginOver);
+        model.addAttribute("isEndOver", isEndOver);
+        model.addAttribute("receipts", pages.getContent());
+        model.addAttribute("subTitle", subTitle);
+        return getPath("/receiptList");
+    }
+
     @GetMapping(value = "/report/reportList")
     public String reportList(Model model, HttpServletRequest request) throws TeraException {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
         CHashMap paramMap = requestUtil.getParameterMap();
 
-
-
-        StateType stateType = null;
+        ReportStateType reportStateType = null;
         String stateTypeStr = paramMap.getAsString("stateType");
         if ( stateTypeStr != null) {
-            stateType = StateType.valueOf(stateTypeStr);
+            reportStateType = ReportStateType.valueOf(stateTypeStr);
         }
 
         String filterColumnStr = paramMap.getAsString("filterColumn");
@@ -79,7 +141,7 @@ public class ReportController extends ExtendsController {
             model.addAttribute("pageSize", pageSize);
         }
 
-        Page<Report> pages = reportService.gets(pageNumber, pageSize, stateType, filterColumn, search);
+        Page<ReportDto> pages = reportDtoService.getsFromReport(pageNumber, pageSize, reportStateType, filterColumn, search);
 
         boolean isBeginOver = false;
         boolean isEndOver = false;

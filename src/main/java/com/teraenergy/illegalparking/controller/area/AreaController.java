@@ -2,10 +2,18 @@ package com.teraenergy.illegalparking.controller.area;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.controller.ExtendsController;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.model.dto.illegalzone.domain.IllegalGroupDto;
+import com.teraenergy.illegalparking.model.dto.illegalzone.service.IllegalGroupDtoService;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.enums.GroupFilterColumn;
+import com.teraenergy.illegalparking.util.CHashMap;
+import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.locationtech.jts.io.ParseException;
+import org.springframework.data.domain.Page;
 import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
@@ -22,6 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 @Controller
 public class AreaController extends ExtendsController {
+
+
+    private final IllegalGroupDtoService illegalGroupDtoService;
 
     private final ObjectMapper objectMapper;
 
@@ -51,6 +62,68 @@ public class AreaController extends ExtendsController {
         modelAndView.addObject("subTitle", subTitle);
         modelAndView.setViewName(getPath("/mapSet"));
         return modelAndView;
+    }
+
+    @GetMapping("/area/groupList")
+    public String mapSet(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
+        CHashMap paramMap = requestUtil.getParameterMap();
+
+        String filterColumnStr = paramMap.getAsString("filterColumn");
+        GroupFilterColumn filterColumn;
+        if (filterColumnStr == null) {
+            filterColumn = GroupFilterColumn.NAME;
+        } else {
+            filterColumn = GroupFilterColumn.valueOf(filterColumnStr);
+        }
+
+        String search = "";
+        switch (filterColumn) {
+            case LOCATION:
+                search = paramMap.getAsString("searchStr2");
+                break;
+            case NAME:
+                search = paramMap.getAsString("searchStr");
+                if (search == null) {
+                    search = "";
+                }
+                break;
+        }
+
+        Integer pageNumber = paramMap.getAsInt("pageNumber");
+        if (pageNumber == null) {
+            pageNumber = 1;
+            model.addAttribute("pageNumber", pageNumber);
+        }
+
+        Integer pageSize = paramMap.getAsInt("pageSize");
+        if (pageSize == null) {
+            pageSize = 10;
+            model.addAttribute("pageSize", pageSize);
+        }
+
+        Page<IllegalGroupDto> pages = illegalGroupDtoService.gets(pageNumber, pageSize, filterColumn, search);
+
+        boolean isBeginOver = false;
+        boolean isEndOver = false;
+
+        int totalPages = pages.getTotalPages();
+
+        if (totalPages > 3 && (totalPages - pageNumber) > 2) {
+            isEndOver = true;
+        }
+
+        if (totalPages > 3 && pageNumber > 1) {
+            isBeginOver = true;
+        }
+
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("isBeginOver", isBeginOver);
+        model.addAttribute("isEndOver", isEndOver);
+        model.addAttribute("illegalGroupDtos", pages.getContent());
+        model.addAttribute("subTitle", subTitle);
+        return getPath("/groupList");
     }
 
 }

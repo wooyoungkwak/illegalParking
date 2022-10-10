@@ -26,7 +26,7 @@ public enum LocationType {
     JEJU("제주")
     ;
 
-    String value;
+    private String value;
 
     LocationType(String value) {
         this.value = value;

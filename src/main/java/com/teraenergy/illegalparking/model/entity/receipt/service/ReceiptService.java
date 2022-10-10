@@ -1,9 +1,15 @@
 package com.teraenergy.illegalparking.model.entity.receipt.service;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.StateType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
+import com.teraenergy.illegalparking.model.entity.report.domain.Report;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,7 +26,12 @@ public interface ReceiptService {
 
     List<Receipt> gets(Integer user);
 
-    List<Receipt> gets(LocalDateTime now, LocalDateTime old, StateType stateType);
+    int getsOverlabCount(Integer user, LocalDateTime regDt);
+
+    List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType);
+
+    Page<Receipt> gets(int pageNumber, int pageSize, ReceiptStateType receiptStateType, ReceiptFilterColumn filterColumn, String search);
+
 
     Receipt set(Receipt receipt);
 

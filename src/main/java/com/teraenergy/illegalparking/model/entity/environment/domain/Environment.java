@@ -1,6 +1,5 @@
 package com.teraenergy.illegalparking.model.entity.environment.domain;
 
-import com.teraenergy.illegalparking.model.entity.environment.enums.ZoneGroupType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,10 +21,6 @@ public class Environment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer environmentSeq;
-
-    @Column
-    @Enumerated(EnumType.STRING)
-    ZoneGroupType zoneGroupType;
 
     @Column
     LocalDateTime regDt;

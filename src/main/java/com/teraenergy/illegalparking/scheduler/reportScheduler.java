@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.scheduler;
 
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
-import com.teraenergy.illegalparking.model.entity.receipt.enums.StateType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,11 +33,11 @@ public class reportScheduler {
         LocalDateTime now = LocalDateTime.now();        // 현재 시간
         LocalDateTime startTime = now.minusMinutes(11);   // 11분 전 시간
         LocalDateTime endTime = startTime.minusMinutes(60);   // 11분 전의 60분전 시간
-        List<Receipt> receipts = receiptService.gets(startTime, endTime, StateType.OCCUR);
+        List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR);
 
         if ( receipts.size() > 0) {
             for (Receipt receipt : receipts) {
-                receipt.setStateType(StateType.FORGET);
+                receipt.setReceiptStateType(ReceiptStateType.FORGET);
             }
 
             receiptService.sets(receipts);

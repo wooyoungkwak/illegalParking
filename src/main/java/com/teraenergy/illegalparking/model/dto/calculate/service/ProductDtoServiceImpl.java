@@ -1,7 +1,7 @@
 package com.teraenergy.illegalparking.model.dto.calculate.service;
 
 import com.teraenergy.illegalparking.model.dto.calculate.domain.ProductDto;
-import com.teraenergy.illegalparking.model.entity.calculate.domain.Product;
+import com.teraenergy.illegalparking.model.entity.product.domain.Product;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 

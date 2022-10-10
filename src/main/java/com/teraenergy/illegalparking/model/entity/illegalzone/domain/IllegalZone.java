@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.illegalzone.domain;
 
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,14 @@
 package com.teraenergy.illegalparking.aop;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
+import com.teraenergy.illegalparking.util.JsonUtil;
+import com.teraenergy.illegalparking.util.enums.JsonUtilModule;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -10,6 +18,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 
 /**
  * Date : 2022-09-14
@@ -18,12 +27,10 @@ import javax.servlet.http.HttpServletRequest;
  * Project : illegalParking
  * Description :
  */
+@Slf4j
 @Aspect
 @Component
 public class AopController {
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     @Around("execution(* com.teraenergy.illegalparking.controller..*Controller.*(..)) ")
     public Object controllerProcessing(ProceedingJoinPoint joinPoint) {
@@ -31,37 +38,35 @@ public class AopController {
         try {
             object = joinPoint.proceed();
         } catch (Throwable e) {
+            e.printStackTrace();
             return errMsg(e.getMessage());
         }
 
         return object;
     }
-// dusrndnjs12#$
-//    @Around("execution(* com.teraenergy.illegalparking.controller..*Api.*(..)) ")
-//    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
-//        HashMap<String, Object> result = Maps.newHashMap();
-//        String jsonStr;
-//        try {
-//            result.put("success", true);
-//            result.put("data", joinPoint.proceed());
-//            jsonStr = objectMapper.writeValueAsString(result);
-//            return objectMapper.readValue(jsonStr, Object.class);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } catch (Throwable e) {
-//            e.printStackTrace();
-//        } finally {
-//            result.put("success", false);
-//            result.put("data", "");
-//            result.put("msg", e.getMessage());
-//            try {
-//                jsonStr = objectMapper.writeValueAsString(result);
-//                return objectMapper.readValue(jsonStr, Object.class);
-//            } catch (JsonProcessingException ex) {
-//                throw new RuntimeException(ex);
-//            }
-//        }
-//    }
+
+    @Around("execution(* com.teraenergy.illegalparking.controller..*API.*(..)) ")
+    public Object apiProcessing(ProceedingJoinPoint joinPoint) {
+        HashMap<String, Object> result = Maps.newHashMap();
+        try {
+            result.put("success", true);
+            result.put("data", joinPoint.proceed());
+        } catch (TeraException e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("code", e.getCode());
+            result.put("msg", e.getMessage());
+            result.put("data", "");
+        } catch (Throwable e) {
+            e.printStackTrace();
+            result.put("success", false);
+            result.put("code", TeraExceptionCode.UNKNOWN);
+            result.put("msg", e.getMessage());
+            result.put("data", "");
+        } finally {
+            return JsonUtil.toString(result, JsonUtilModule.HIBERNATE);
+        }
+    }
 
     @Around("execution(* com.teraenergy.illegalparking.controller.login.LoginController.*(..)) ")
     public Object loginProcessing(ProceedingJoinPoint joinPoint) {
@@ -69,6 +74,8 @@ public class AopController {
         try {
             object = joinPoint.proceed();
         } catch (Throwable e) {
+            e.printStackTrace();
+            log.error(e.getMessage(), e);
             return errMsg(e.getMessage());
         }
 

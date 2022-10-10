@@ -361,13 +361,15 @@ $(function () {
     function initializeZone(opt) {
         let result = $.JJAjaxAsync(opt);
 
-        if (opt.data.select === undefined) {
-            return result;
-        }
+        if (result.success) {
+            if (opt.data.select === undefined) {
+                return result;
+            }
 
-        zonePolygons = result.zonePolygons;
-        zoneSeqs = result.zoneSeqs;
-        zoneTypes = result.zoneTypes;
+            zonePolygons = result.data.zonePolygons;
+            zoneSeqs = result.data.zoneSeqs;
+            zoneTypes = result.data.zoneTypes;
+        }
     }
 
     // 초기화

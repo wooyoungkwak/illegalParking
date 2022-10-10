@@ -89,7 +89,7 @@ server:
     session:
       timeout: 300m
 file:
-  resourcePath: C:/fileUpload/
+  resourcePath: D:/fileUpload/
 ---
 # release-DATA
 spring:

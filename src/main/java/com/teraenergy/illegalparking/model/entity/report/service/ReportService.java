@@ -2,7 +2,7 @@ package com.teraenergy.illegalparking.model.entity.report.service;
 
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
-import com.teraenergy.illegalparking.model.entity.report.enums.StateType;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface ReportService {
 
     public List<Report> gets();
 
-    public Page<Report> gets(int pageNumber, int pageSize, StateType stateType, ReportFilterColumn filterColumn, String search);
+    public Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
 
     public Report set(Report report);
 
