@@ -22,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -106,8 +107,8 @@ public class SqlCalculate {
         point.setNote("");
         point.setIsPointLimit(false);
         point.setIsTimeLimit(false);
-        point.setStartDate(LocalDateTime.now().minusDays(10));
-        point.setStopDate(LocalDateTime.now().plusDays(10));
+        point.setStartDate(LocalDate.now().minusDays(10));
+        point.setStopDate(LocalDate.now().plusDays(10));
         points.add(point);
 
         Product product = productService.get(1);
