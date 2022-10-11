@@ -8,12 +8,18 @@ import com.teraenergy.illegalparking.exception.EncryptedException;
 import com.teraenergy.illegalparking.exception.enums.EncryptedExceptionCode;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
+import com.teraenergy.illegalparking.model.dto.user.enums.UserGovernmentFilterColumn;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
+import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.user.domain.QUser;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.enums.Role;
 import com.teraenergy.illegalparking.model.entity.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -80,10 +86,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getsByGovernmentRole() throws TeraException {
+    public Page<User> getsByGovernmentRole(int pageNumber, int pageSize, UserGovernmentFilterColumn userGovernmentFilterColumn, String search) throws TeraException {
         JPAQuery query = jpaQueryFactory.selectFrom(QUser.user);
         query.where(QUser.user.role.eq(Role.GOVERNMENT));
-        return query.fetch();
+
+        switch (userGovernmentFilterColumn) {
+            case LOCATION:
+                query.where(QUser.user.governMentOffice.locationType.eq(LocationType.valueOf(search)));
+                break;
+            case OFFICE_NAME:
+                query.where(QUser.user.governMentOffice.name.contains(search));
+                break;
+        }
+
+        int total = query.fetch().size();
+
+        pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
+        query.limit(pageSize).offset(pageNumber * pageSize);
+        List<User> users = query.fetch();
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        Page<User> page = new PageImpl<User>(users, pageRequest, total);
+        return page;
+
+
     }
 
     @Override

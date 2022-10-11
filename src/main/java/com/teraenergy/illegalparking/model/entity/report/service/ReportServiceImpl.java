@@ -61,11 +61,11 @@ public class ReportServiceImpl implements ReportService {
 
         query.where(QReport.report.isDel.isFalse());
 
-        int total = query.fetch().size();
-
         if (reportStateType != null) {
             query.where(QReport.report.reportStateType.eq(reportStateType));
         }
+
+        int total = query.fetch().size();
 
         pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);

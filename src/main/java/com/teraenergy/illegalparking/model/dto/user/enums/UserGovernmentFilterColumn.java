@@ -1,5 +1,7 @@
 package com.teraenergy.illegalparking.model.dto.user.enums;
 
+import lombok.Getter;
+
 /**
  * Date : 2022-10-11
  * Author : young
@@ -7,16 +9,17 @@ package com.teraenergy.illegalparking.model.dto.user.enums;
  * Project : illegalParking
  * Description :
  */
-public enum UesrGovernmetnfilterColum {
 
-    LOCATION ("지역"),
+@Getter
+public enum UserGovernmentFilterColumn {
 
-    OFFICE_NAME("관공서명")
+    OFFICE_NAME("관공서명"),
+    LOCATION ("지역")
     ;
 
-    String value;
+    private String value;
 
-    UesrGovernmetnfilterColum(String value) {
+    UserGovernmentFilterColumn(String value) {
         this.value = value;
     }
 }

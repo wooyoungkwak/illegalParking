@@ -1,7 +1,9 @@
 package com.teraenergy.illegalparking.model.entity.user.service;
 
 import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.model.dto.user.enums.UserGovernmentFilterColumn;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ public interface UserService {
 
     List<User> gets() throws TeraException;
 
-    List<User> getsByGovernmentRole() throws TeraException;
+    Page<User> getsByGovernmentRole(int pageNumber, int pageSize, UserGovernmentFilterColumn userGovernmentFilterColumn, String search) throws TeraException;
 
     boolean isUser(String userName, String password) throws TeraException;
 
