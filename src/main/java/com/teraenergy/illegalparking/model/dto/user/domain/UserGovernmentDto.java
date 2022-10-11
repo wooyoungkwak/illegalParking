@@ -15,7 +15,7 @@ import lombok.Setter;
 public class UserGovernmentDto {
     Integer userSeq;        // 사용자 키
     String locationType;    // 지역
-    String OfficeName;      // 관공서명
+    String officeName;      // 관공서명
     String userName;        // 아이디
     Integer groupCount;     // 관리그룹 (개수)
     Integer totalCount;     // 신고 접수건

@@ -75,7 +75,7 @@
                                     <tr>
                                         <td>${userGovernmentDto.userSeq}</td>
                                         <td>${userGovernmentDto.locationType}</td>
-                                        <td>${userGovernmentDto.OfficeName}</td>
+                                        <td>${userGovernmentDto.officeName}</td>
                                         <td>${userGovernmentDto.userName}</td>
                                         <td>${userGovernmentDto.groupCount}</td>
                                         <td>${userGovernmentDto.totalCount}</td>
@@ -252,6 +252,9 @@
                         });
                     });
                 }
+
+                $('#searchStr2').hide();
+                searchSelect('${filterColumn}');
 
                 initialize();
             });
