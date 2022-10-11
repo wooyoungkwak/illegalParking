@@ -14,6 +14,7 @@
         <%@ include file="/WEB-INF/views/reference/head.jsp"%>
 
         <link href="<%=contextPath%>/resources/css/area/map-styles.css" rel="stylesheet"/>
+        <link href="<%=contextPath%>/resources/css/parking/map-styles.css" rel="stylesheet"/>
         <body>
 
             <stripes:layout-component name="nav" />
