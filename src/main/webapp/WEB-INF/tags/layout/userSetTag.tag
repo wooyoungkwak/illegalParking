@@ -14,7 +14,7 @@
 <!-- content -->
 <main id="userSet">
     <div class="container-fluid px-4">
-        <h1 class="mt-4">신고목록</h1>
+        <h1 class="mt-4">사용자</h1>
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item active">${subTitle} > 관공서</li>
         </ol>
@@ -48,12 +48,10 @@
                 <div class="col-12">
                     <div class="input-group">
                         <a class="btn btn-primary" id="userModify"><i class="fas fa-sun"></i> 정보수정</a>
-
                     </div>
                 </div>
-
                 <div class="col-12 ms3"><label>관리 그룹</label></div>
-                <%--                <div class="col-9"><a class="btn btn-primary"><i class="fas fa-plus"></i>그룹추가</a></div>--%>
+<%--                <div class="col-9"><a class="btn btn-primary"><i class="fas fa-plus"></i>그룹추가</a></div>--%>
             </div>
         </div>
 

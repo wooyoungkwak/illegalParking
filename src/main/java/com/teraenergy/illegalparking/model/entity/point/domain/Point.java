@@ -32,7 +32,7 @@ public class Point {
     Long value;                                         // 제공 포인트
 
     @Column
-    Integer GroupSeq;
+    Integer groupSeq;
 
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "productSeq")

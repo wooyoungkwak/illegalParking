@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface GovernmentOfficeService {
 
+    GovernmentOffice get(Integer officeSeq);
+
     List<GovernmentOffice> gets();
 
     GovernmentOffice set(GovernmentOffice governmentOffice);

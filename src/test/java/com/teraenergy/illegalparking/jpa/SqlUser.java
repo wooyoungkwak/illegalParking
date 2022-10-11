@@ -76,6 +76,9 @@ public class SqlUser {
         user2.setPhoneNumber("010-1234-8901");
         users.add(user2);
 
+
+        GovernmentOffice governMentOffice = governmentOfficeService.get(1);
+
         User user3 = new User();
         user3.setUsername("naju");
         user3.setPassword("qwer1234");
@@ -83,6 +86,7 @@ public class SqlUser {
         user3.setUserCode(1234l);
         user3.setIsDel(false);
         user3.setName("양만춘");
+        user3.setGovernMentOffice(governMentOffice);
         users.add(user3);
 
         userService.sets(users);

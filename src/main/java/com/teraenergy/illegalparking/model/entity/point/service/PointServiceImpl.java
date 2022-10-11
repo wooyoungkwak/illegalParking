@@ -44,16 +44,15 @@ public class PointServiceImpl implements PointService{
     @Override
     public Point getInGroup(Integer groupSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QPoint.point);
-        query.where(QPoint.point.GroupSeq.eq(groupSeq));
+        query.where(QPoint.point.groupSeq.eq(groupSeq));
         query.orderBy(QPoint.point.pointSeq.desc());
-        query.limit(1);
-        return (Point) query.fetchOne();
+        return (Point) query.fetchFirst();
     }
 
     @Override
     public List<Point> getsInGroup(Integer groupSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QPoint.point);
-        query.where(QPoint.point.GroupSeq.eq(groupSeq));
+        query.where(QPoint.point.groupSeq.eq(groupSeq));
         query.orderBy(QPoint.point.pointSeq.desc());
         return query.fetch();
     }
@@ -67,8 +66,5 @@ public class PointServiceImpl implements PointService{
     public List<Point> sets(List<Point> points) {
         return pointRepository.saveAll(points);
     }
-
-
-
 
 }

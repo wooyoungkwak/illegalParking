@@ -17,22 +17,26 @@
 
 <!-- content -->
 <div class="modal" id="${id}">
-	<div class="modal_body">
-		<div class="row mb-5">
-			<div class="col-11 fw-bold"><h3>관공서추가</h3></div>
-			<div class="col-1">
+	<div class="userModal_body">
+		<div class="row mb-4 border-bottom">
+			<div class="col-10 d-flex justify-content-center fw-bold"><h3>관공서추가</h3></div>
+			<div class="col-2 d-flex justify-content-end">
 				<a class="btn btn-close" aria-label="Close" id="modalClose"></a>
 			</div>
 		</div>
-		<div class="row mb-3">
-			<div class="col-4">관공서명</div>
-			<div class="col-8">
+		<div class="row mb-2">
+			<div class="col-4 d-flex flex-row-reverse">
+				<span class="mt-2 ">관공서명</span>
+			</div>
+			<div class="col-8 d-flex flex-row">
 				<input type="text" class="form-control" id="name">
 			</div>
 		</div>
-		<div class="row mb-3">
-			<div class="col-4">지역</div>
-			<div class="col-8">
+		<div class="row mb-2">
+			<div class="col-4 d-flex flex-row-reverse">
+				<span class="mt-2 ">지역</span>
+			</div>
+			<div class="col-8 d-flex flex-row">
 				<select class="form-select" id="locationType">
 					<c:forEach items="${enumValues}" var="enumValue">
 						<option value="${enumValue}" <c:if test="${enumValue eq current}">selected</c:if>>${enumValue.value}</option>
@@ -40,20 +44,24 @@
 				</select>
 			</div>
 		</div>
-		<div class="row mb-3">
-			<div class="col-4">아이디</div>
-			<div class="col-8">
-				<input type="text" class="form-control" id="username">
+		<div class="row mb-2">
+			<div class="col-4 d-flex flex-row-reverse">
+				<span class="mt-2">아이디</span>
+			</div>
+			<div class="col-8 d-flex flex-row">
+				<input type="text" class="form-control" id="username" placeholder="아이디를 입력하세요.">
 			</div>
 		</div>
-		<div class="row mb-3">
-			<div class="col-4">패스워드</div>
-			<div class="col-8">
-				<input type="text" class="form-control" id="password">
+		<div class="row mb-2">
+			<div class="col-4 d-flex flex-row-reverse">
+				<span class="mt-2">패스워드</span>
+			</div>
+			<div class="col-8 d-flex flex-row">
+				<input type="text" class="form-control" id="password" placeholder="패스원드를 입력하세요." >
 			</div>
 		</div>
-		<div class="row mb-3">
-			<div class="input-group">
+		<div class="row mb-2">
+			<div class="input-group d-flex justify-content-end">
 				<a class="btn-primary btn">생성</a>
 			</div>
 		</div>

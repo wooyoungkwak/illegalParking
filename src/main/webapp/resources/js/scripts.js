@@ -2,7 +2,7 @@
 $.JJAjaxAsync = function (opt) {
     let result = '';
 
-    if ( opt === undefined) {
+    if (opt === undefined) {
         return result;
     }
 
@@ -10,7 +10,7 @@ $.JJAjaxAsync = function (opt) {
         url: opt.url,
         type: 'post',
         async: false,
-        contentType : 'application/json; charset=UTF-8',
+        contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(opt.data),
         dataType: "json",
         beforeSend: function (xhr, options) {
@@ -20,7 +20,8 @@ $.JJAjaxAsync = function (opt) {
             let myXhr = $.ajaxSettings.xhr();
             return myXhr;
         },
-        error: function (jqXHR, statusCode, errorThrown) {},
+        error: function (jqXHR, statusCode, errorThrown) {
+        },
         success: function (data, statusCode, jqXHR) {
             result = data;
         }
@@ -31,7 +32,7 @@ $.JJAjaxAsync = function (opt) {
 
 // 비동기 json to json 통신
 $.JJAjaxSync = function (opt) {
-    if ( opt === undefined) {
+    if (opt === undefined) {
         opt.success("");
         return;
     }
@@ -39,7 +40,7 @@ $.JJAjaxSync = function (opt) {
     $.ajax({
         url: opt.url,
         type: 'post',
-        contentType : 'application/json; charset=UTF-8',
+        contentType: 'application/json; charset=UTF-8',
         data: JSON.stringify(opt.data),
         dataType: "json",
         beforeSend: function (xhr, options) {
@@ -63,16 +64,16 @@ $.fn.fileUpload = function (opt) {
 
     let formData = new FormData();
 
-    if ( opt.description !== undefined ){
+    if (opt.description !== undefined) {
         formData.append("description", opt.description);
     }
 
-    $(this).find(':file').each(function (){
+    $(this).find(':file').each(function () {
         let key = $(this).attr("name");
-        if ( key == undefined) {
+        if (key == undefined) {
             return;
         }
-        $.each($(this)[0].files, function(index, file){
+        $.each($(this)[0].files, function (index, file) {
             formData.append(key, file);
         });
     });
@@ -100,10 +101,49 @@ $.fn.fileUpload = function (opt) {
             alert(" 실패 하였습니다. 상태 코드 : " + jqXHR.status);
         },
         success: function (data, statusCode, jqXHR) {
-            console.log("jqXHR.status = ",jqXHR.status);
+            console.log("jqXHR.status = ", jqXHR.status);
             console.log("data = ", JSON.stringify(data));
             alert(" 업로드 되었습니다. ");
         }
     });
 }
 
+// 데이터 가져오기
+$.getData = function (id) {
+    let arr = $('#' + id).serializeArray();
+    let data = {};
+    $(arr).each(function (index, obj) {
+        data[obj.name] = obj.value;
+    });
+    return data;
+}
+
+$.formatDateYYYYMMDD = function (date) {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+};
+
+$.formatDateYYYYMMDDhhmm = function (date) {
+    let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear(),
+        hh = d.getHours(),
+        mm = d.getMinutes();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    if (hh.length < 2) hh = '0' + hh;
+    if (mm.length < 2) mm = '0' + mm;
+
+    let dataFormat = [year, month, day].join('-')
+    let timeFormat = [hh,mm].join(":");
+    return dataFormat + " " + timeFormat;
+};

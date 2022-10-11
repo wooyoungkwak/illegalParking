@@ -56,11 +56,6 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 
         // 권한 정보
         Collection< ? extends GrantedAuthority> authorities = user.getAuthorities();
-//        Iterator< ? extends GrantedAuthority> iterator = authorities.iterator();
-//        while (iterator.hasNext()) {
-//            GrantedAuthority grantedAuthority = iterator.next();
-//            log.info(" **** authorities = {}", grantedAuthority.getAuthority());
-//        }
 
         return new UsernamePasswordAuthenticationToken(account, password, authorities);
     }

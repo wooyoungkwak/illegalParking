@@ -37,10 +37,10 @@
 
             <div class="card-body">
                 <div class="row mb-2">
-                    <div class="col-2">
+                    <div class="col-1">
                         <label class="ms-5">그룹위치</label>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <select class="form-select" id="locationType" disabled>
                             <c:forEach items="${enumValues}" var="enumValue">
                                 <option value="${enumValue.value}" <c:if test="${enumValue eq current}">selected</c:if>>${enumValue.value}</option>
@@ -49,10 +49,10 @@
                     </div>
                 </div>
                 <div class="row mb-5">
-                    <div class="col-2">
+                    <div class="col-1">
                         <label class="ms-5">그룹명</label>
                     </div>
-                    <div class="col-2">
+                    <div class="col-1">
                         <input type="text" class="form-control" id="name" disabled>
                     </div>
 

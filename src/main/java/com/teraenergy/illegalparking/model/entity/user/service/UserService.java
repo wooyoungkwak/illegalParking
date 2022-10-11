@@ -13,18 +13,22 @@ import java.util.List;
  */
 public interface UserService {
 
-    public User get(Integer userSeq) throws TeraException;
+    User get(Integer userSeq) throws TeraException;
 
-    public User get(String userName) throws TeraException;
+    User get(String userName) throws TeraException;
 
-    public List<User> gets() throws TeraException;
+    List<User> gets() throws TeraException;
 
-    public boolean isUser(String userName, String password) throws TeraException;
+    List<User> getsByGovernmentRole() throws TeraException;
 
-    public boolean isUser(String userName) throws TeraException;
+    boolean isUser(String userName, String password) throws TeraException;
 
-    public User set(User user) throws TeraException;
+    boolean isUser(String userName) throws TeraException;
 
-    public List<User> sets(List<User> users) throws TeraException;
+    User set(User user) throws TeraException;
+
+    List<User> sets(List<User> users) throws TeraException;
+
+
 
 }

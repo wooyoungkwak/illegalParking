@@ -77,6 +77,41 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public int getSizeForReport(Integer governmentUserSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        return query.fetch().size();
+    }
+
+    // 신고제외(미처리) 처리 신고 건수
+
+    @Override
+    public int getSizeForException(Integer governmentUserSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.reportStateType.eq(ReportStateType.EXCEPTION));
+        return query.fetch().size();
+    }
+
+    // 과태료 처리 신고 건수
+    @Override
+    public int getSizeForPenalty(Integer governmentUserSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.reportStateType.eq(ReportStateType.PENALTY));
+        return query.fetch().size();
+    }
+
+    // 대기중인 신고 건수
+    @Override
+    public int getSizeForCOMPLETE(Integer governmentUserSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
+        return query.fetch().size();
+    }
+
+    @Override
     public Report set(Report report) {
         return reportRepository.save(report);
     }

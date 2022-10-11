@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Date : 2022-10-07
@@ -24,9 +25,17 @@ public class GovernmentOfficeServiceImpl implements GovernmentOfficeService{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    public GovernmentOffice get(Integer officeSeq) {
+        Optional<GovernmentOffice> optional = governmentOfficeRepository.findById(officeSeq);
+        if ( optional.isEmpty() ) {
+            return null;
+        }
+        return optional.get();
+    }
+
+    @Override
     public List<GovernmentOffice> gets() {
-//        jpaQueryFactory.selectFrom()
-        return null;
+        return governmentOfficeRepository.findAll();
     }
 
     @Override

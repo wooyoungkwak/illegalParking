@@ -15,19 +15,27 @@ import java.util.List;
  */
 public interface ReportService {
 
-    public Report get(Integer reportSeq);
+    Report get(Integer reportSeq);
 
-    public List<Report> gets();
+    List<Report> gets();
 
-    public Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
+    Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
 
-    public Report set(Report report);
+    int getSizeForReport(Integer governmentUserSeq);
 
-    public List<Report> sets(List<Report> reports);
+    int getSizeForException(Integer governmentUserSeq);
 
-    public Report modify(Report report);
+    int getSizeForPenalty(Integer governmentUserSeq);
 
-    public long remove(Integer reportSeq);
+    int getSizeForCOMPLETE(Integer governmentUserSeq);
 
-    public long removes(List<Integer> reportSeqs);
+    Report set(Report report);
+
+    List<Report> sets(List<Report> reports);
+
+    Report modify(Report report);
+
+    long remove(Integer reportSeq);
+
+    long removes(List<Integer> reportSeqs);
 }

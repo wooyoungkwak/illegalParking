@@ -1,6 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.user.service;
 
 import com.google.common.collect.Lists;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.encrypt.YoungEncoder;
 import com.teraenergy.illegalparking.exception.EncryptedException;
@@ -9,6 +10,7 @@ import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.user.domain.QUser;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.model.entity.user.enums.Role;
 import com.teraenergy.illegalparking.model.entity.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +33,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public User get(Integer userSeq) throws TeraException {
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User get(String userName) throws TeraException {
         try {
-            User user = queryFactory.selectFrom(QUser.user)
+            User user = jpaQueryFactory.selectFrom(QUser.user)
                     .where(QUser.user.username.eq(userName))
                     .fetchOne();
 
@@ -78,10 +80,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> getsByGovernmentRole() throws TeraException {
+        JPAQuery query = jpaQueryFactory.selectFrom(QUser.user);
+        query.where(QUser.user.role.eq(Role.GOVERNMENT));
+        return query.fetch();
+    }
+
+    @Override
     public boolean isUser(String userName, String password) throws TeraException {
         try {
             String _password = YoungEncoder.encrypt(password);
-            if (queryFactory.selectFrom(QUser.user)
+            if (jpaQueryFactory.selectFrom(QUser.user)
                     .where(QUser.user.username.eq(userName))
                     .where(QUser.user.password.eq(_password))
                     .fetchOne() != null) {
@@ -96,8 +105,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean isUser(String userName) throws TeraException {
         try {
-            if (queryFactory.selectFrom(QUser.user)
+            if (jpaQueryFactory.selectFrom(QUser.user)
                     .where(QUser.user.username.eq(userName))
+                    .where(QUser.user.role.ne(Role.USER))
                     .fetchOne() != null) {
                 return true;
             }
