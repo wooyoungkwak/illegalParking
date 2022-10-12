@@ -52,6 +52,13 @@ public class IllegalGroupServiceImpl implements IllegalGroupServcie{
     }
 
     @Override
+    public List<IllegalGroup> gets(List<Integer> groupSeqs) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalGroup.illegalGroup);
+        query.where(QIllegalGroup.illegalGroup.groupSeq.in(groupSeqs));
+        return query.fetch();
+    }
+
+    @Override
     public Page<IllegalGroup> get(Integer pageNumber, Integer pageSize, GroupFilterColumn filterColumn, String search) {
         JPAQuery query = jpaQueryFactory.selectFrom(QIllegalGroup.illegalGroup);
 

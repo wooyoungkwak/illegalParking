@@ -17,6 +17,7 @@ public class UserGovernmentDto {
     String locationType;    // 지역
     String officeName;      // 관공서명
     String userName;        // 아이디
+    String password;        // 패스워드
     Integer groupCount;     // 관리그룹 (개수)
     Integer totalCount;     // 신고 접수건
     Integer completeCount;    // 대기 건수 ( 현재 처리 되지 않은 건수 )

@@ -3,9 +3,13 @@ package com.teraenergy.illegalparking.model.dto.user.service;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.dto.user.domain.UserGovernmentDto;
 import com.teraenergy.illegalparking.model.dto.user.enums.UserGovernmentFilterColumn;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.IllegalGroup;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import com.teraenergy.illegalparking.model.entity.userGroup.domain.UserGroup;
+import com.teraenergy.illegalparking.model.entity.userGroup.service.UserGroupService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
@@ -14,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Date : 2022-10-11
@@ -29,7 +34,13 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
 
     private final UserService userService;
 
+    private final UserGroupService userGroupService;
+
+    private final IllegalGroupServcie illegalGroupServcie;
+
     private final ReportService reportService;
+
+
 
     @Override
     public Page<UserGovernmentDto> gets(int pageNumber, int pageSize, UserGovernmentFilterColumn userGovernmentFilterColumn, String search) throws TeraException {
@@ -42,6 +53,8 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
             UserGovernmentDto userGovernmentDto = new UserGovernmentDto();
             userGovernmentDto.setUserSeq(user.getUserSeq());
             userGovernmentDto.setUserName(user.getUsername());
+            user.setDecryptPassword();
+            userGovernmentDto.setPassword(user.getPassword());
             userGovernmentDto.setLocationType(user.getGovernMentOffice().getLocationType().getValue());
             userGovernmentDto.setOfficeName(user.getGovernMentOffice().getName());
 
@@ -64,6 +77,13 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<UserGovernmentDto> page = new PageImpl<UserGovernmentDto>(userGovernmentDtos, pageRequest, total);
         return page;
+    }
+
+    @Override
+    public List<IllegalGroup> gets(Integer userSeq) {
+        List<UserGroup> userGroups = userGroupService.getsByUser(userSeq);
+        List<Integer> groupSeqs = userGroups.stream().map(userGroup -> userGroup.getGroupSeq()).collect(Collectors.toList());
+        return illegalGroupServcie.gets(groupSeqs);
     }
 
 

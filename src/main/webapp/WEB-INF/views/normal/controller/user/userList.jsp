@@ -16,97 +16,100 @@
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
 
-    <!-- nav -->
-    <stripes:layout-component name="nav">
-        <stripes:layout-render name="/WEB-INF/views/layout/component/navLayout.jsp"/>
-    </stripes:layout-component>
+	<!-- nav -->
+	<stripes:layout-component name="nav">
+		<stripes:layout-render name="/WEB-INF/views/layout/component/navLayout.jsp"/>
+	</stripes:layout-component>
 
-    <!-- side -->
-    <stripes:layout-component name="side">
-        <jsp:include page="side.jsp" flush="true"/>
-    </stripes:layout-component>
+	<!-- side -->
+	<stripes:layout-component name="side">
+		<jsp:include page="side.jsp" flush="true"/>
+	</stripes:layout-component>
 
-    <!-- content -->
-    <stripes:layout-component name="contents">
-        <main id="userMain">
-            <div class="container-fluid px-4">
-                <h1 class="mt-4">사용자</h1>
-                <ol class="breadcrumb mb-4">
-                    <li class="breadcrumb-item active">${subTitle} > 관공서</li>
-                </ol>
-                <div class="card mb-4 shadow-sm rounded">
-                    <div class="card-header">
-                        <i class="fas fa-table me-1"></i>
-                        관공서 정보
-                    </div>
-                    <div class="card-body">
-                        <form class="row mb-3 g-3">
-                            <input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
-                            <input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
-                            <div class="col-2">
-                                <a class="btn btn-primary" id="addGovernmentOffice"><i class="fa fa-city"></i> 관공서추가</a>
-                            </div>
-                            <div class="col-5"></div>
-                            <div class="col-1">
-                                <tags:filterTag id="filterColumn" enumValues="${UserGovernmentFilterColumn.values()}" column="${filterColumn}"/>
-                            </div>
-                            <div class="col-4">
-                                <tags:searchTag id="searchStr" searchStr="${searchStr}"/>
-                                <tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${LocationType.values()}"/>
-                            </div>
+	<!-- content -->
+	<stripes:layout-component name="contents">
+		<main id="userMain">
+			<div class="container-fluid px-4">
+				<h1 class="mt-4">사용자</h1>
+				<ol class="breadcrumb mb-4">
+					<li class="breadcrumb-item active">${subTitle} > 관공서</li>
+				</ol>
+				<div class="card mb-4 shadow-sm rounded">
+					<div class="card-header">
+						<i class="fas fa-table me-1"></i>
+						관공서 정보
+					</div>
+					<div class="card-body">
+						<form class="row mb-3 g-3">
+							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
+							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
+							<div class="col-2">
+								<a class="btn btn-primary" id="addGovernmentOffice"><i class="fa fa-city"></i> 관공서추가</a>
+							</div>
+							<div class="col-5"></div>
+							<div class="col-1">
+								<tags:filterTag id="filterColumn" enumValues="${UserGovernmentFilterColumn.values()}" column="${filterColumn}"/>
+							</div>
+							<div class="col-4">
+								<tags:searchTag id="searchStr" searchStr="${searchStr}"/>
+								<tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${LocationType.values()}"/>
+							</div>
 
-                        </form>
-                        <table class="table table-hover table-bordered" id="userTable">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">지역</th>
-                                    <th scope="col">관공서명</th>
-                                    <th scope="col">아이디</th>
-                                    <th scope="col">관리그룹</th>
-                                    <th scope="col">신고접수건</th>
-                                    <th scope="col">대기</th>
-                                    <th scope="col">미처리</th>
-                                    <th scope="col">처리</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <c:forEach items="${userGovernmentDtos}" var="userGovernmentDto" varStatus="status">
-                                    <tr>
-                                        <td>${userGovernmentDto.userSeq}</td>
-                                        <td>${userGovernmentDto.locationType}</td>
-                                        <td>${userGovernmentDto.officeName}</td>
-                                        <td>${userGovernmentDto.userName}</td>
-                                        <td>${userGovernmentDto.groupCount}</td>
-                                        <td>${userGovernmentDto.totalCount}</td>
-                                        <td>${userGovernmentDto.completeCount}</td>
-                                        <td>${userGovernmentDto.exceptionCount}</td>
-                                        <td>${userGovernmentDto.penaltyCount}</td>
-                                    </tr>
-                                </c:forEach>
-                            </tbody>
-                        </table>
-                        <tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="15,25,50" pageSize="${pageSize}"/>
-                    </div>
-                </div>
-            </div>
-        </main>
+						</form>
+						<table class="table table-hover table-bordered" id="userTable">
+							<thead>
+							<tr>
+								<th scope="col">지역</th>
+								<th scope="col">관공서명</th>
+								<th scope="col">아이디</th>
+								<th scope="col">패스워드</th>
+								<th scope="col">관리그룹</th>
+								<th scope="col">신고접수건</th>
+								<th scope="col">대기</th>
+								<th scope="col">미처리</th>
+								<th scope="col">처리</th>
+							</tr>
+							</thead>
+							<tbody>
+								<c:forEach items="${userGovernmentDtos}" var="userGovernmentDto" varStatus="status">
+									<tr>
+										<td>
+											<input type="hidden" value="${userGovernmentDto.userSeq}">
+												${userGovernmentDto.locationType}
+										</td>
+										<td>${userGovernmentDto.officeName}</td>
+										<td>${userGovernmentDto.userName}</td>
+										<td>${userGovernmentDto.password}</td>
+										<td>${userGovernmentDto.groupCount}</td>
+										<td>${userGovernmentDto.totalCount}</td>
+										<td>${userGovernmentDto.completeCount}</td>
+										<td>${userGovernmentDto.exceptionCount}</td>
+										<td>${userGovernmentDto.penaltyCount}</td>
+									</tr>
+								</c:forEach>
+							</tbody>
+						</table>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="15,25,50" pageSize="${pageSize}"/>
+					</div>
+				</div>
+			</div>
+		</main>
 
-        <layoutTags:userSetTag/>
+		<layoutTags:userSetTag items="${LocationType.values()}"/>
 
-        <layoutTags:userAddTag id="modal" enumValues="${LocationType.values()}"/>
+		<layoutTags:userAddTag id="modal" enumValues="${LocationType.values()}"/>
 
-    </stripes:layout-component>
+	</stripes:layout-component>
 
-    <!-- footer -->
-    <stripes:layout-component name="footer">
-        <stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>
-    </stripes:layout-component>
+	<!-- footer -->
+	<stripes:layout-component name="footer">
+		<stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>
+	</stripes:layout-component>
 
-    <!-- javascript -->
-    <stripes:layout-component name="javascript">
-        <script src="<%=contextPath%>/resources/js/user/userList-scripts.js"></script>
-        <script type="application/javascript">
+	<!-- javascript -->
+	<stripes:layout-component name="javascript">
+		<script src="<%=contextPath%>/resources/js/user/userList-scripts.js"></script>
+		<script type="application/javascript">
 
             $(function () {
 
@@ -131,20 +134,14 @@
                     }
                 }
 
-                function initializeUserSetTag(report) {
-                    $.each(report, function (key, value) {
-                        if (key.indexOf('receiptStateType') > -1) {
-                            if (value === 'OCCUR') {
-                                $('#' + key).text("신고발생");
-                            } else if (value === 'FORGET') {
-                                $('#' + key).text("신고누락");
-                            } else if (value === 'EXCEPTION') {
-                                $('#' + key).text("신고제외");
-                            }
-                        } else {
-                            $('#' + key).text(value);
-                        }
-                    });
+                function initializeUserSetTag(userGovernmentDto) {
+                    $('#userSeq').val(userGovernmentDto.userSeq);
+                    $('#governmentOfficeName').val(userGovernmentDto.governmentOfficeName);
+                    // $('#locationType').val();
+                    $('#userName').val(userGovernmentDto.userName);
+                    $('#password').val(userGovernmentDto.password);
+
+
                 }
 
                 function initialize() {
@@ -196,27 +193,33 @@
 
                     // 신고 등록 표시
                     $('#userTable tbody tr').on('click', function () {
+                        let useSeqStr = $(this).children("td:eq(0)").find('input').val();
+                        let userSeq = Number.parseInt(useSeqStr);
 
-                        // let reportSeqStr = $(this).children("td:eq(0)").find('input').val();
-                        // let carNum = $(this).children("td:eq(1)").text();
-                        // let receiptSeq = Number.parseInt(reportSeqStr);
-                        //
-                        // let result = $.JJAjaxAsync({
-                        //     url: _contextPath + '/receipt/get',
-                        //     data: {
-                        //         receiptSeq: receiptSeq
-                        //     }
-                        // });
-                        //
-                        // if (result.success) {
-                        //     let receipt = result.data;
-                        //     initializeReceiptSetTag(receipt);
-                        // } else {
-                        //     alert("데이터 요청을 실패 하였습니다. ");
-                        //     return;
-                        // }
+                        let userGovernmentDto = {
+                            userSeq : userSeq,
+                            locationTypeValue : $(this).children("td:eq(0)").text().trim(),
+                            governmentName : $(this).children("td:eq(1)").text(),
+                            userName : $(this).children("td:eq(2)").text(),
+                            password : $(this).children("td:eq(3)").text(),
+                            totalCount : $(this).children("td:eq(4)").text(),
+                            completeCount : $(this).children("td:eq(5)").text(),
+                            exceptionCount : $(this).children("td:eq(6)").text(),
+                            penaltyCount : $(this).children("td:eq(7)").text()
+						}
 
-                        // initializeReportSetTagTitle(carNum);
+                        let result = $.JJAjaxAsync({
+							url: _contextPath + "/userGroup/group/get",
+							data: {
+                                userSeq : userSeq
+							}
+						});
+
+                        if (result.success) {
+                            userGovernmentDto.illegalGroups = result.data;
+                        }
+
+                        initializeUserSetTag(userGovernmentDto);
 
                         $('#userMain').hide();
                         $('#userSet').show();
@@ -258,7 +261,7 @@
 
                 initialize();
             });
-        </script>
-    </stripes:layout-component>
+		</script>
+	</stripes:layout-component>
 
 </stripes:layout-render>

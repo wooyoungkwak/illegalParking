@@ -20,6 +20,8 @@ public interface IllegalGroupServcie {
 
     List<String> gets(LocationType locationType);
 
+    List<IllegalGroup> gets(List<Integer> groupSeqs);
+
     Page<IllegalGroup> get(Integer pageNumber, Integer pageSize, GroupFilterColumn filterColumn, String search);
 
     IllegalGroup set(IllegalGroup illegalGroup);
