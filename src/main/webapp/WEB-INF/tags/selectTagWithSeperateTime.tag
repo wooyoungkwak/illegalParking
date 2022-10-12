@@ -11,11 +11,11 @@
 </c:if>
 <div class="input-group">
     <input id="${id}" name="${id}" type="hidden">
-    <select id="${id}Hour" class="form-select" ${option}>
+    <select id="${id}Hour" class="form-select timeSelect" ${option}>
         <c:forEach begin="0" end="23" varStatus="status">
             <c:choose>
                 <c:when test="${status.index < 10}">
-                    <option value="${status.index}"
+                    <option value="0${status.index}"
                             <c:if test="${hour == status.index}">selected</c:if> > 0${status.index}</option>
                 </c:when>
                 <c:otherwise>
@@ -26,11 +26,11 @@
         </c:forEach>
     </select>
     <div class="ms-2 me-2">:</div>
-    <select id="${id}Minute" class="form-select" ${option}>
+    <select id="${id}Minute" class="form-select timeSelect" ${option}>
         <c:forEach begin="0" end="59" varStatus="status">
             <c:choose>
                 <c:when test="${status.index < 10}">
-                    <option value="${status.index}">0${status.index}</option>
+                    <option value="0${status.index}">0${status.index}</option>
                 </c:when>
                 <c:otherwise>
                     <option value="${status.index}" <c:if test="${minute == status.index}">selected</c:if>>${status.index}</option>

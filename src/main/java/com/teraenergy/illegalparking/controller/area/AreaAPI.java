@@ -81,8 +81,10 @@ public class AreaAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         Integer zoneSeq = jsonNode.get("zoneSeq").asInt();
         IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
-        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-        illegalZone.setIllegalEvent(illegalEvent);
+        if(illegalZone.getEventSeq() != null) {
+            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+            illegalZone.setIllegalEvent(illegalEvent);
+        }
         return illegalZone;
     }
 

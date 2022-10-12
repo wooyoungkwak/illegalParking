@@ -31,7 +31,7 @@
 
                 <div class="row">
                     <div class="col-12">
-                        <div id="drawingMap"></div>
+                        <div id="map"></div>
                     </div>
                 </div>
             </div>

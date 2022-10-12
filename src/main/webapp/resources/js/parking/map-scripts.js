@@ -1,6 +1,6 @@
 $(function (callback) {
   let mapId;
-  let drawingMap;
+  let map;
   let options;
   let manager;
   let kakaoEvent;
@@ -27,7 +27,7 @@ $(function (callback) {
   }
 
   async function getsParking() {
-    let codes = await getDongCodesBounds(drawingMap);
+    let codes = await getDongCodesBounds(map);
 
     let sameArrChk = _.isEmpty(_.xor(beforeCodes, codes));
     log('1 : ',beforeCodes);
@@ -48,7 +48,7 @@ $(function (callback) {
         result.data.forEach(function(data){
           let marker = addMarker(new kakao.maps.LatLng(data.latitude, data.longitude));
           kakaoEvent.addListener(marker, 'click', function() {
-            drawingMap.panTo(marker.getPosition());
+            map.panTo(marker.getPosition());
             // 커스텀 오버레이 컨텐츠를 설정합니다
             displayParkingInfo(data);
           });
@@ -70,7 +70,7 @@ $(function (callback) {
       image: markerImage
     });
 
-    marker.setMap(drawingMap); // 지도 위에 마커를 표출합니다
+    marker.setMap(map); // 지도 위에 마커를 표출합니다
     markers.push(marker);  // 배열에 생성된 마커를 추가합니다
 
     return marker;
@@ -88,9 +88,16 @@ $(function (callback) {
     let title = document.createElement('div');
     title.className = 'title';
     title.appendChild(document.createTextNode(parking.prkplceNm));
-    title.onclick = function () {
+    // title.onclick = function () {
+    //   parkingOverlay.setMap(null);
+    // };
+
+    let closeBtn = document.createElement('div');
+    closeBtn.className = 'close';
+    closeBtn.onclick = function () {
       parkingOverlay.setMap(null);
     };
+    title.appendChild(closeBtn);
 
     infoNode.appendChild(title);
 
@@ -121,26 +128,26 @@ $(function (callback) {
 
     parkingOverlay.setPosition(new kakao.maps.LatLng(parking.latitude, parking.longitude));
     parkingOverlay.setContent(contentNode)
-    parkingOverlay.setMap(drawingMap);
+    parkingOverlay.setMap(map);
   }
 
   // 맵 초기화
   function initialize() {
 
-    mapId = document.getElementById('drawingMap');
+    mapId = document.getElementById('map');
 
     // mapId.style.width = "1024px";
     // mapId.style.height = "768px";
 
     // 지도를 표시할 지도 옵션으로  지도를 생성합니다
-    drawingMap = new kakao.maps.Map(mapId, {
+    map = new kakao.maps.Map(mapId, {
       center: new kakao.maps.LatLng(35.02035492064902, 126.79383256393594), // 지도의 중심좌표
       level: 3, // 지도의 확대 레벨
       disableDoubleClickZoom: true
     });
 
     options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
-      map: drawingMap, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
+      map: map, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
       drawingMode: [ // Drawing Manager로 제공할 그리기 요소 모드입니다
         kakao.maps.drawing.OverlayType.MARKER
       ],
@@ -166,21 +173,21 @@ $(function (callback) {
     kakaoEvent = kakao.maps.event;
 
     // 지도에 마우스 오른쪽 클릭 이벤트
-    kakaoEvent.addListener(drawingMap, 'rightclick', function (mouseEvent) {
+    kakaoEvent.addListener(map, 'rightclick', function (mouseEvent) {
       console.log("rightclick");
     });
 
     // 지도에 마우스 떠블 클릭 이벤트
-    kakaoEvent.addListener(drawingMap, 'dblclick', function (mouseEvent) {
+    kakaoEvent.addListener(map, 'dblclick', function (mouseEvent) {
       console.log("dblclick");
     });
 
     //
-    kakaoEvent.addListener(drawingMap, 'idle', async function () {
+    kakaoEvent.addListener(map, 'idle', async function () {
       // 지도의  레벨을 얻어옵니다
-      let level = drawingMap.getLevel();
+      let level = map.getLevel();
       log("level = ", level);
-      let codes = await getDongCodesBounds(drawingMap);
+      let codes = await getDongCodesBounds(map);
 
       let sameArrChk = _.isEmpty(_.xor(beforeCodes, codes));
       log('1 : ',beforeCodes);

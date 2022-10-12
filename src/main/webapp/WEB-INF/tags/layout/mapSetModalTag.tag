@@ -12,7 +12,7 @@
 
 <% String contextPath = request.getContextPath(); %>
 <%@ attribute name="id" type="java.lang.String" required="true" %>
-<%@ attribute name="enumValues" type="java.lang.Object[]" required="true" %>
+<%@ attribute name="typeValues" type="java.lang.Object[]" required="true" %>
 
 <!-- content -->
 <div class="offcanvas offcanvas-end" id="${id}" tabindex="-1" aria-labelledby="offcanvasRightLabel" data-bs-backdrop="false">
@@ -32,10 +32,10 @@
 					불법주정차 구역 타입
 				</div>
 				<div class="card-body">
-					<c:forEach items="${enumValues}" var="enumValue" varStatus="status">
+					<c:forEach items="${typeValues}" var="typeValue" varStatus="status">
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="radio" name="illegalType" id="zone${status.index}" value="${enumValue}">
-							<label class="form-check-label" for="zone${status.index}">${enumValue.value}</label>
+							<label class="form-check-label" for="zone${status.index}">${typeValue.value}</label>
 						</div>
 					</c:forEach>
 				</div>
@@ -43,10 +43,10 @@
 
 			<div class="card mb-2">
 				<div class="card-header">
-					불법주정차 구역 이름
+					불법주정차 그룹지정
 				</div>
 				<div class="card-body">
-					<input type="text" class="form-control" placeholder="구역의 이름을 입력 하세요." id="name" name="name">
+
 				</div>
 			</div>
 
@@ -92,13 +92,6 @@
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div class="card mb-2">
-			<div class="card-header">
-				그룹지정
-			</div>
-			<div class="card-body">
 			</div>
 		</div>
 

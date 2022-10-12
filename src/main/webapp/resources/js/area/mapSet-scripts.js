@@ -181,45 +181,88 @@ $(function () {
             }
         });
 
-        $('#zoneSeq').val(result.zoneSeq);
-        $('#eventSeq').val(result.eventSeq);
+        if(result.success) {
+            let data = result.data;
+            $('#zoneSeq').val(data.zoneSeq);
 
-        if (result.eventSeq !== null) {
-            let illegalType = result.illegalEvent.illegalType;
-            $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
-            $('#name').val(result.illegalEvent.name);
-            result.illegalEvent.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
-            result.illegalEvent.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
+            if (data.illegalEvent === null) {
+                $('input:radio[name=illegalType]:input[value="ILLEGAL"]').prop('checked', true);
+                $('.timeSelect').attr('disabled', true);
+                $('#usedFirst').prop('checked', false);
+                $('#usedSecond').prop('checked', false);
+                $('#btnModify').text('등록');
+                $('#btnModify').addClass('btn-primary');
+                $('#btnModify').removeClass('btn-danger');
+            } else {
+                let event = data.illegalEvent;
+                $('#eventSeq').val(event.eventSeq);
+                let illegalType = event.illegalType;
+                $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
+                $('#name').val(event.name);
+                event.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
+                event.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
+                $('#btnModify').text('수정');
+                $('#btnModify').addClass('btn-danger');
+                $('#btnModify').removeClass('btn-primary');
+            }
+
+            let checkVal = $('input:radio[name="illegalType"]:checked').val();
+            // timeHideAndShow(checkVal);
+            timeSetting(data);
+
+            // $('#areaSettingModal').modal('show');
+            // $('#areaSettingModal').offcanvas('show');
+        } else {
+            alert(result.msg);
         }
-        let checkVal = $('input:radio[name="illegalType"]:checked').val();
-        // timeHideAndShow(checkVal);
-        timeSetting(result);
 
-        // $('#areaSettingModal').modal('show');
-        $('#areaSettingModal').offcanvas('show');
     }
 
-    // 탄력적일 경우 시간 표시
-    // function timeHideAndShow(checkVal) {
-    //     if (checkVal === '2') { //탄력적 가능일 경우
-    //         $('#timeRow').css('display', 'block');
-    //         $('#startTime, #endTime').attr('disabled', false);
-    //     } else {
-    //         $('#timeRow').css('display', 'none');
-    //         $('#startTime, #endTime').attr('disabled', true);
-    //     }
-    // }
+    function initializeTime() {
+        let firstStartTimeHour = '12';
+        let firstEndTimeHour = '14';
+        let secondStartTimeHour = '20';
+        let secondEndTimeHour = '08';
+        $('#firstStartTimeHour').val(firstStartTimeHour).prop('selected', true);
+        $('#firstStartTimeMinute').val('00').prop('selected', true);
+
+        $('#firstEndTimeHour').val(firstEndTimeHour).prop('selected', true);
+        $('#firstEndTimeMinute').val('00').prop('selected', true);
+
+        $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected', true);
+        $('#secondStartTimeMinute').val('00').prop('selected', true);
+
+        $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected', true);
+        $('#secondEndTimeMinute').val('00').prop('selected', true);
+    }
 
     // 기본 시간 설정
-    function timeSetting(result) {
-        let startTime = result.startTime;
-        let endTime = result.endTime;
-        if (startTime === null || endTime === null) {
-            startTime = "09:00";
-            endTime = "18:00";
+    function timeSetting(data) {
+        let event = data.illegalEvent;
+
+        if(event === null) {
+            initializeTime();
+        } else {
+            if(event.usedFirst === false) {
+                let firstStartTime = event.firstStartTime.split(':');
+                let firstEndTime = event.firstEndTime.split(':');
+                $('#firstStartTimeHour').val(firstStartTime[0]).prop('selected', true);
+                $('#firstStartTimeMinute').val(firstStartTime[1]).prop('selected', true);
+
+                $('#firstEndTimeHour').val(firstEndTime[0]).prop('selected', true);
+                $('#firstEndTimeMinute').val(firstEndTime[1]).prop('selected', true);
+            }
+            if(event.usedSecond === false) {
+                let secondStartTime = event.secondStartTime.split(':');
+                let secondEndTime = event.secondEndTime.split(':');
+                $('#secondStartTimeHour').val(secondStartTime[0]).prop('selected', true);
+                $('#secondStartTimeMinute').val(secondStartTime[1]).prop('selected', true);
+
+                $('#secondEndTimeHour').val(secondEndTime[0]).prop('selected', true);
+                $('#secondEndTimeMinute').val(secondEndTime[1]).prop('selected', true);
+            }
         }
-        $('#startTime').val(startTime).prop('selected', true);
-        $('#endTime').val(endTime).prop('selected', true);
+
     }
 
     // 탄력적 가능 시간 설정
@@ -393,10 +436,15 @@ $(function () {
                 target: polygon,
                 event: 'click',
                 func: function (mouseEvent) {
+                    // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
                     let resultDiv = document.getElementById('result');
                     resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
-                    if(manager._mode === undefined || manager._mode === '')
+                    if(manager._mode === undefined || manager._mode === '') {
+                        let center = centroid(area.points);
+                        let centerLatLng = new kakao.maps.LatLng(center.y, center.x);
+                        drawingMap.panTo(centerLatLng);
                         showModal(area);
+                    }
                 }
             });
         overlays.push(polygon);
@@ -466,9 +514,11 @@ $(function () {
                     let n = onePolygon.length;
                     if (isInside(onePolygon, n, p)) {
                         log(i + " : Yes");
+                        $('#areaSettingModal').offcanvas('show');
+                        return;
                     } else {
-                        // $('#areaSettingModal').offcanvas('hide');
-                        // log(i + " : No");
+                        $('#areaSettingModal').offcanvas('hide');
+                        log(i + " : No");
                     }
                 }
             }
@@ -500,7 +550,7 @@ $(function () {
             target: drawingMap,
             event: 'idle',
             func: async function () {
-                $('#areaSettingModal').offcanvas('hide');
+                // $('#areaSettingModal').offcanvas('hide');
                 // 지도의  레벨을 얻어옵니다
                 let level = drawingMap.getLevel();
 

@@ -60,7 +60,7 @@
 
 					<p id="result"></p>
 
-					<layoutTags:mapSetModalTag id="areaSettingModal" enumValues="${IllegalType.values()}"/>
+					<layoutTags:mapSetModalTag id="areaSettingModal" typeValues="${IllegalType.values()}"/>
 
 				</div>
 			</div>

@@ -56,12 +56,12 @@
     padding: 10px;
     color: #464646;
     background: #eee;
-    background: #eee url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png) no-repeat right 14px center;
+    /*background: #eee url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png) no-repeat right 14px center;*/
 }
 
-/*.parkingInfo .close {*/
-/*    position: absolute;top: 10px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');*/
-/*}*/
+.parkingInfo .close {
+    position: absolute;top: 15px;right: 10px;color: #888;width: 17px;height: 17px;background: url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png');
+}
 
 .parkingInfo .tel {
     color: #0f7833;
