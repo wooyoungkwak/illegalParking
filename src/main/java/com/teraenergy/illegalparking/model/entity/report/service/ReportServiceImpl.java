@@ -1,14 +1,18 @@
 package com.teraenergy.illegalparking.model.entity.report.service;
 
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.QIllegalGroup;
 import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.model.entity.report.repository.ReportRepository;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -104,9 +108,13 @@ public class ReportServiceImpl implements ReportService {
 
     // 대기중인 신고 건수
     @Override
-    public int getSizeForCOMPLETE(Integer governmentUserSeq) {
+    public int getSizeForCOMPLETE(LocationType locationType) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.reportSeq.isNull());
+//        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(
+//                JPAExpressions.select(QIllegalGroup.illegalGroup.groupSeq)
+//                        .where(QIllegalGroup.illegalGroup.locationType.eq(locationType))
+//        ));
         query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
         return query.fetch().size();
     }

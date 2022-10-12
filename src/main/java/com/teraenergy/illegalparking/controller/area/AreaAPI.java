@@ -210,6 +210,14 @@ public class AreaAPI {
         return pointDtoService.get(point);
     }
 
+    @PostMapping(value = "/area/event/group/name/get")
+    @ResponseBody
+    public Object getName(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        LocationType locationType = LocationType.valueOf(jsonNode.get("locationType").asText());
+        return illegalGroupServcie.gets(locationType);
+    }
+
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {
         String select = param.get("select").asText();
         List<String> codes = Lists.newArrayList();

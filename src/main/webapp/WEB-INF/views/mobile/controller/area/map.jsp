@@ -32,6 +32,34 @@
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/area/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
+		<script type="application/javascript">
+            // INTERFACE : APP TO WEB
+            function appToGps(x, y) {
+                $('#debug').val(x + "," + y + " :: " + (typeof x));
+            }
+
+            $(function () {
+                // INTERFACE : WEB TO APP
+                // TYPE : parking / pm
+                // DATA (parking) : pkName ( 주차장이름 ) / pkAddr(주소) / pkPrice(요금) / pkOper(운영 - 유료/무료) / pkCount(주차장면수) / pkPhone(주차장 전화번호)
+                // DATA (pm) : pmName ( 킥보드 이름 ) / pmPrice(요금) / pmOper(운영 - 유료/무료)
+                $('#webToApp').on('click', function (event) {
+                    let obj = {
+                        type: 'parking',
+                        data: {
+                            pkName: '1',
+                            pkAddr: '2',
+                            pkPrice: '3',
+                            pkOper: '4',
+                            pkCount: '5',
+                            pkPhone: '6'
+                        }
+                    };
+
+                    webToApp.postMessage(JSON.stringify(obj));
+                });
+            });
+		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

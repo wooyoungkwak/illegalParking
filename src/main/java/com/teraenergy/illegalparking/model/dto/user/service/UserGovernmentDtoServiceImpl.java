@@ -49,9 +49,12 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
             userGovernmentDto.setGroupCount(0);
 
             userGovernmentDto.setTotalCount(reportService.getSizeForReport(user.getUserSeq()));
+            // 미처리 건수 ( )
             userGovernmentDto.setExceptionCount(reportService.getSizeForException(user.getUserSeq()));
+            // 처리 건수 (과태료)
             userGovernmentDto.setPenaltyCount(reportService.getSizeForPenalty(user.getUserSeq()));
-            userGovernmentDto.setCompleteCount(reportService.getSizeForCOMPLETE(user.getUserSeq()));
+            // 대기 (지역 기준)
+            userGovernmentDto.setCompleteCount(reportService.getSizeForCOMPLETE(user.getGovernMentOffice().getLocationType()));
 
             userGovernmentDtos.add(userGovernmentDto);
         }

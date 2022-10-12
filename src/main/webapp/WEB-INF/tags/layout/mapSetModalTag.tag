@@ -14,6 +14,9 @@
 <%@ attribute name="id" type="java.lang.String" required="true" %>
 <%@ attribute name="typeValues" type="java.lang.Object[]" required="true" %>
 
+<%@ attribute name="enumValues" type="java.lang.Object[]" required="true" %>
+<%@ attribute name="current" type="java.lang.String" required="false" %>
+
 <!-- content -->
 <div class="offcanvas offcanvas-end" id="${id}" tabindex="-1" aria-labelledby="offcanvasRightLabel" data-bs-backdrop="false">
 	<form id="formAreaSetting" name="formAreaSetting">
@@ -46,7 +49,18 @@
 					불법주정차 그룹지정
 				</div>
 				<div class="card-body">
-
+					<div class="row">
+						<div class="col-6">
+							<select class="form-select" id="locationType" name="locationType">
+								<c:forEach items="${enumValues}" var="enumValue">
+									<option value="${enumValue}" <c:if test="${enumValue eq current}">selected</c:if>>${enumValue.value}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="col-6">
+							<select class="form-select" id="name" name="name"></select>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -105,3 +119,13 @@
 		</div>
 	</form>
 </div>
+<script type="application/javascript">
+	$(function (){
+
+        // 위치 변경 이벤트
+		$('#locationType').on('change', function (){
+           let locationType = $(this).val();
+            $.setGroupNames(locationType);
+		});
+	});
+</script>

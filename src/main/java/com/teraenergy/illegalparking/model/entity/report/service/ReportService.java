@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.report.service;
 
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
@@ -27,7 +28,7 @@ public interface ReportService {
 
     int getSizeForPenalty(Integer governmentUserSeq);
 
-    int getSizeForCOMPLETE(Integer governmentUserSeq);
+    int getSizeForCOMPLETE(LocationType locationType);
 
     Report set(Report report);
 

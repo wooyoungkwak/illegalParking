@@ -43,19 +43,6 @@ public class AreaController extends ExtendsController {
         return new RedirectView("/area/map");
     }
 
-    @GetMapping("/area/map")
-    public ModelAndView map(Device device) throws ParseException {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("subTitle", subTitle);
-
-        if ( device.isMobile() || device.isTablet()) {
-            modelAndView.setViewName(getMobilePath("/map"));
-        } else {
-            modelAndView.setViewName(getPath("/map"));
-        }
-        return modelAndView;
-    }
-
     @GetMapping("/area/mapSet")
     public ModelAndView mapSet() throws ParseException {
         ModelAndView modelAndView = new ModelAndView();
@@ -65,7 +52,7 @@ public class AreaController extends ExtendsController {
     }
 
     @GetMapping("/area/groupList")
-    public String mapSet(Model model, HttpServletRequest request) throws TeraException {
+    public String groupList(Model model, HttpServletRequest request) throws TeraException {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
         CHashMap paramMap = requestUtil.getParameterMap();
@@ -124,6 +111,32 @@ public class AreaController extends ExtendsController {
         model.addAttribute("illegalGroupDtos", pages.getContent());
         model.addAttribute("subTitle", subTitle);
         return getPath("/groupList");
+    }
+
+
+
+    @GetMapping("/area/map")
+    public ModelAndView mapByDesktop(Device device) throws ParseException {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("subTitle", subTitle);
+        if ( device.isMobile() || device.isTablet()) {
+            return null;
+        } else {
+            modelAndView.setViewName(getPath("/map"));
+        }
+        return modelAndView;
+    }
+
+    @GetMapping("/api/area/map")
+    public ModelAndView mapByMobile(Device device) throws ParseException {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("subTitle", subTitle);
+        if ( device.isMobile() || device.isTablet()) {
+            modelAndView.setViewName(getMobilePath("/map"));
+        } else {
+            modelAndView.setViewName(getPath("/map"));
+        }
+        return modelAndView;
     }
 
 }

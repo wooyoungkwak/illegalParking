@@ -32,7 +32,7 @@ public interface IllegalZoneMapper {
 
     void save(IllegalZone illegalZone);
 
-    List<IllegalZone> saveAll(List<IllegalZone> illegalZones);
+    void saveAll(List<IllegalZone> illegalZones);
 
     void modify(IllegalZone illegalZone);
 

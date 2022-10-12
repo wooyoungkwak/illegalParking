@@ -47,6 +47,12 @@ public class SqlIllegalzone {
 
     @Test
     public void insert() {
+        insertOne();
+        insertList();
+    }
+
+    @Test
+    public void insertOne(){
         IllegalZone illegalZone = new IllegalZone();
         illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
         illegalZone.setCode("5013032000");

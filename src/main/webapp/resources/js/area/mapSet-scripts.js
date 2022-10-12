@@ -608,4 +608,27 @@ $(function () {
 
     initialize();
 
+    $.setGroupNames = function (locationType) {
+
+        function getNamesSelectHtml(names) {
+            let html = '';
+            for (let i = 0; i < names.length; i++) {
+                html += "<option value=" + names[i] + ">" + names[i] + "</option>";
+            }
+            return html;
+        }
+        let result = $.JJAjaxAsync({
+            url: _contextPath + '/event/group/name/get',
+            data: {
+                locationType: locationType
+            }
+        });
+
+        if (result.success) {
+            let names = result.data;
+            let html = getNamesSelectHtml(names);
+            $('#name').append(html);
+        }
+    }
+
 });

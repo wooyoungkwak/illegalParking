@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.illegalGroup.service;
 
+import com.google.common.collect.Lists;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.IllegalGroup;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Date : 2022-10-07
@@ -36,6 +38,17 @@ public class IllegalGroupServiceImpl implements IllegalGroupServcie{
         Optional<IllegalGroup> optional = illegalGroupRepository.findById(groupSeq);
         if (optional.isEmpty()) return null;
         return optional.get();
+    }
+
+    @Override
+    public List<String> gets(LocationType locationType) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalGroup.illegalGroup);
+        query.where(QIllegalGroup.illegalGroup.locationType.eq(locationType));
+        List<IllegalGroup> illegalGroups = query.fetch();
+        if ( illegalGroups.size() == 0) {
+            return Lists.newArrayList();
+        }
+        return illegalGroups.stream().map( illegalGroup -> illegalGroup.getName()).collect(Collectors.toList());
     }
 
     @Override

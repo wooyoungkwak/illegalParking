@@ -52,11 +52,14 @@ public class TeraInterceptor implements HandlerInterceptor {
         if (modelAndView != null) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             User user = userService.get(auth.getName());
-            UserDto userDto = userDtoService.get(user);
 
-            // _user
-            modelAndView.getModel().put("_user", userDto);
-            modelAndView.getModel().put("mainTitle", "불법주정차");
+            if ( user != null) {
+                UserDto userDto = userDtoService.get(user);
+
+                // _user
+                modelAndView.getModel().put("_user", userDto);
+                modelAndView.getModel().put("mainTitle", "불법주정차");
+            }
         }
     }
 

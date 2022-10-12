@@ -80,7 +80,7 @@ public class SqlIllegalZone {
         illegalEvent2.setSecondStartTime("18:30");
         illegalEvent2.setSecondEndTime("20:30");
         illegalEvent2.setIllegalType(IllegalType.FIVE_MINUTE);
-        illegalEvent2.setGroupSeq(1);
+        illegalEvent2.setGroupSeq(2);
         illegalEvent2.setName("샘플2");
 
         List<IllegalEvent> illegalEvents = Lists.newArrayList();

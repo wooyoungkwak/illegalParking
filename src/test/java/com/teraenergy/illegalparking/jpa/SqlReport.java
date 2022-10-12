@@ -40,7 +40,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlReport {
 
     @Autowired
@@ -105,7 +105,7 @@ public class SqlReport {
     public void insertByReceipt() throws TeraException {
         List<Receipt> receipts = Lists.newArrayList();
 
-        IllegalZone illegalZone = illegalZoneService.get(4);
+        IllegalZone illegalZone = illegalZoneService.get(1);
         User user = userService.get(2);
 
         Receipt receipt1 = new Receipt();

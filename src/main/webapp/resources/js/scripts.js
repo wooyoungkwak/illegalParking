@@ -21,6 +21,9 @@ $.JJAjaxAsync = function (opt) {
             return myXhr;
         },
         error: function (jqXHR, statusCode, errorThrown) {
+            console.log(jqXHR);
+            console.log(statusCode);
+            console.log(errorThrown);
         },
         success: function (data, statusCode, jqXHR) {
             result = data;

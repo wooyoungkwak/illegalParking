@@ -35,7 +35,7 @@
     </select>
 
     <select id="findAllByLimitAndDesc" resultType="IllegalZone">
-        SELECT ZoneSeq, ASTEXT(Polygon) as polygon, isDel, Code, EventSeq FROM illegal_zone where isDel = 0 order by desc limit #{limit};
+        SELECT ZoneSeq, ASTEXT(Polygon) as polygon, isDel, Code, EventSeq FROM illegal_zone where isDel = 0 order by ZoneSeq desc limit #{limit};
     </select>
 
     <select id="findByGeometry" resultType="IllegalZone" parameterType="String">
