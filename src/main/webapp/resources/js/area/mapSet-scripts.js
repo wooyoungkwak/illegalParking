@@ -62,15 +62,6 @@ $(function () {
         selectOverlay('POLYGON');
     });
 
-    // Drawing Manager에서 데이터를 가져와 도형을 표시할 아래쪽 지도 div
-    /*
-    let mapContainer = document.getElementById('map'),
-        mapOptions = {
-            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-            level: 3 // 지도의 확대 레벨
-        };
-    */
-
     let searchIllegalType = '';
     // 주정차 별 구역 조회
     $('input:radio[name=searchIllegalType]').change(async function () {
@@ -112,7 +103,6 @@ $(function () {
             url: _contextPath + "/zone/set",
             data: {
                 polygonData: data[kakao.maps.drawing.OverlayType.POLYGON],
-                // illegalType: searchIllegalType === '' ? '0' : searchIllegalType,
             }
         }
 
@@ -172,6 +162,39 @@ $(function () {
         return fillColor;
     }
 
+    function setEventHtml(data) {
+
+        $('#offcanvasRightLabel').text(data.zoneSeq + '번 구역설정')
+        if (data.eventSeq === null) {
+            data.usedFirst = true;
+            data.usedSecond = true;
+
+            $('input:radio[name=illegalType]').eq(0).prop('checked', true);
+            $('#usedFirst').prop('checked', false);
+            $('#usedSecond').prop('checked', false);
+            $('.timeSelect').attr('disabled', true);
+            $('#locationType').trigger('change');
+            $('#btnModify').text('등록');
+            $('#btnModify').addClass('btn-primary');
+            $('#btnModify').removeClass('btn-danger');
+            $('#locationType').trigger('change');
+        } else {
+            data.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
+            data.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
+            $('#usedFirst').trigger('change');
+            $('#usedSecond').trigger('change');
+            $('#eventSeq').val(data.eventSeq);
+            $('input:radio[name=illegalType]:input[value="'+ data.illegalType +'"]').prop('checked', true);
+            $.setGroupNames(data.locationType);
+            $('#locationType').val(data.locationType).prop('selected', true);
+            $('#locationType').trigger('change');
+            $('#name').val(data.groupSeq).prop('selected', true);
+            $('#btnModify').text('수정');
+            $('#btnModify').addClass('btn-danger');
+            $('#btnModify').removeClass('btn-primary');
+        }
+    }
+
     // 폴리곤 클릭 시 모달 창 오픈
     function showModal(area) {
         let result = initializeZone({
@@ -184,92 +207,69 @@ $(function () {
         if(result.success) {
             let data = result.data;
             $('#zoneSeq').val(data.zoneSeq);
-
-            if (data.illegalEvent === null) {
-                $('input:radio[name=illegalType]:input[value="ILLEGAL"]').prop('checked', true);
-                $('.timeSelect').attr('disabled', true);
-                $('#usedFirst').prop('checked', false);
-                $('#usedSecond').prop('checked', false);
-                $('#btnModify').text('등록');
-                $('#btnModify').addClass('btn-primary');
-                $('#btnModify').removeClass('btn-danger');
-            } else {
-                let event = data.illegalEvent;
-                $('#eventSeq').val(event.eventSeq);
-                let illegalType = event.illegalType;
-                $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
-                $('#name').val(event.name);
-                event.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
-                event.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
-                $('#btnModify').text('수정');
-                $('#btnModify').addClass('btn-danger');
-                $('#btnModify').removeClass('btn-primary');
-            }
-
-            let checkVal = $('input:radio[name="illegalType"]:checked').val();
-            // timeHideAndShow(checkVal);
+            setEventHtml(data);
             timeSetting(data);
-
-            // $('#areaSettingModal').modal('show');
-            // $('#areaSettingModal').offcanvas('show');
         } else {
             alert(result.msg);
         }
 
     }
 
-    function initializeTime() {
+    $('#usedFirst').change(function() {
+        $.setTime(this);
+    });
+    $('#usedSecond').change(function() {
+        $.setTime(this);
+    })
+
+
+    function initializeTime(first, second) {
         let firstStartTimeHour = '12';
         let firstEndTimeHour = '14';
         let secondStartTimeHour = '20';
         let secondEndTimeHour = '08';
-        $('#firstStartTimeHour').val(firstStartTimeHour).prop('selected', true);
-        $('#firstStartTimeMinute').val('00').prop('selected', true);
+        if(first) {
+            $('#firstStartTimeHour').val(firstStartTimeHour).prop('selected', true);
+            $('#firstStartTimeMinute').val('00').prop('selected', true);
 
-        $('#firstEndTimeHour').val(firstEndTimeHour).prop('selected', true);
-        $('#firstEndTimeMinute').val('00').prop('selected', true);
+            $('#firstEndTimeHour').val(firstEndTimeHour).prop('selected', true);
+            $('#firstEndTimeMinute').val('00').prop('selected', true);
+        }
+        if(second) {
+            $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected',true);
+            $('#secondStartTimeMinute').val('00').prop('selected', true);
 
-        $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected', true);
-        $('#secondStartTimeMinute').val('00').prop('selected', true);
-
-        $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected', true);
-        $('#secondEndTimeMinute').val('00').prop('selected', true);
+            $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected',true);
+            $('#secondEndTimeMinute').val('00').prop('selected', true);
+        }
     }
 
     // 기본 시간 설정
     function timeSetting(data) {
-        let event = data.illegalEvent;
-
-        if(event === null) {
-            initializeTime();
-        } else {
-            if(event.usedFirst === false) {
-                let firstStartTime = event.firstStartTime.split(':');
-                let firstEndTime = event.firstEndTime.split(':');
-                $('#firstStartTimeHour').val(firstStartTime[0]).prop('selected', true);
-                $('#firstStartTimeMinute').val(firstStartTime[1]).prop('selected', true);
-
-                $('#firstEndTimeHour').val(firstEndTime[0]).prop('selected', true);
-                $('#firstEndTimeMinute').val(firstEndTime[1]).prop('selected', true);
-            }
-            if(event.usedSecond === false) {
-                let secondStartTime = event.secondStartTime.split(':');
-                let secondEndTime = event.secondEndTime.split(':');
-                $('#secondStartTimeHour').val(secondStartTime[0]).prop('selected', true);
-                $('#secondStartTimeMinute').val(secondStartTime[1]).prop('selected', true);
-
-                $('#secondEndTimeHour').val(secondEndTime[0]).prop('selected', true);
-                $('#secondEndTimeMinute').val(secondEndTime[1]).prop('selected', true);
-            }
+        let first = data.usedFirst;
+        let second = data.usedSecond;
+        if(first === true || second === true ) {
+            initializeTime(first, second);
         }
+        if(first === false) {
+            let firstStartTime = data.firstStartTime.split(':');
+            let firstEndTime = data.firstEndTime.split(':');
+            $('#firstStartTimeHour').val(firstStartTime[0]).prop('selected', true);
+            $('#firstStartTimeMinute').val(firstStartTime[1]).prop('selected', true);
 
+            $('#firstEndTimeHour').val(firstEndTime[0]).prop('selected', true);
+            $('#firstEndTimeMinute').val(firstEndTime[1]).prop('selected', true);
+        }
+        if(second === false) {
+            let secondStartTime = data.secondStartTime.split(':');
+            let secondEndTime = data.secondEndTime.split(':');
+            $('#secondStartTimeHour').val(secondStartTime[0]).prop('selected', true);
+            $('#secondStartTimeMinute').val(secondStartTime[1]).prop('selected', true);
+
+            $('#secondEndTimeHour').val(secondEndTime[0]).prop('selected', true);
+            $('#secondEndTimeMinute').val(secondEndTime[1]).prop('selected', true);
+        }
     }
-
-    // 탄력적 가능 시간 설정
-    // $('input:radio[name=illegalType]').click(function () {
-    //     let checkVal = $('input:radio[name=illegalType]:checked').val();
-    //     timeHideAndShow(checkVal);
-    // });
 
     // 폴리곤 삭제
     $('#btnRemove').click(function () {
@@ -302,23 +302,26 @@ $(function () {
             let form = $('#formAreaSetting').serializeObject();
             form['usedFirst'] = !$('#usedFirst').is(':checked');
             form['usedSecond'] = !$('#usedSecond').is(':checked');
-            // if (form.firstStartTime === undefined) form.firstStartTime = "";
-            // if (form.secondStartTime === undefined) form.secondStartTime = "";
+            form['firstStartTime'] = $('#firstStartTimeHour').val() + ':' + $('#firstStartTimeMinute').val();
+            form['firstEndTime'] = $('#firstEndTimeHour').val() + ':' + $('#firstEndTimeMinute').val();
+            form['secondStartTime'] = $('#secondStartTimeHour').val() + ':' + $('#secondStartTimeMinute').val();
+            form['secondEndTime'] = $('#secondEndTimeHour').val() + ':' + $('#secondEndTimeMinute').val();
 
             let result = initializeZone({
                 url: _contextPath + '/zone/modify',
                 data: form
             });
 
-            if (result.success === 'true') {
+            if (result.success) {
                 let index = zoneSeqs.indexOf(Number(form.zoneSeq));
                 zoneTypes[index] = form.illegalType;
                 // log(index," :: ", zoneTypes[index]);
+                drawingPolygon(getPolygonData());
+                $('#areaSettingModal').offcanvas('hide');
+                alert("설정되었습니다.");
+            } else {
+                alert(result.msg);
             }
-
-            drawingPolygon(getPolygonData());
-            $('#areaSettingModal').offcanvas('hide');
-            alert("설정되었습니다.");
         }
     });
 
@@ -331,7 +334,6 @@ $(function () {
         getPolygonData().filter(function (overlay) {
             let obj = {}, points = [];
             let paths = pointsToPath(overlay.points);
-            //log(paths);
             paths.forEach(function (element) {
                 points.push(bounds.contain(element));
                 obj.inBound = points;
@@ -340,12 +342,8 @@ $(function () {
             if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
                 obj.overlay = overlay;
                 zonesInBounds.push(obj.overlay);
-                //log(inBoundsPath);
             }
-            // log(obj.inBound.every(x => x === false));
-
         });
-        // drawingPolygon(inBoundsPath, 'load');
         log('zonesInBounds : ', zonesInBounds);
         return zonesInBounds;
     }
@@ -408,8 +406,6 @@ $(function () {
             fillOpacity: style.fillOpacity
         });
 
-        // log(centroid(area.points));
-
         // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
         // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
         setKakaoEvent({
@@ -436,10 +432,12 @@ $(function () {
                 target: polygon,
                 event: 'click',
                 func: function (mouseEvent) {
+                    kakao.maps.event.preventMap();
                     // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
-                    let resultDiv = document.getElementById('result');
-                    resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
+                    // let resultDiv = document.getElementById('result');
+                    // resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
                     if(manager._mode === undefined || manager._mode === '') {
+                        $('#areaSettingModal').offcanvas('show');
                         let center = centroid(area.points);
                         let centerLatLng = new kakao.maps.LatLng(center.y, center.x);
                         drawingMap.panTo(centerLatLng);
@@ -487,38 +485,32 @@ $(function () {
         manager.addListener('drawend', function (data) {
             drawingDataTargets.push(data.target);
         });
-        // manager.addListener('remove', function (data) {
-        //     let index = drawingDataTargets.indexOf(data.target);
-        //     drawingDataTargets.put(data.target);
-        // });
 
         // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
             target: drawingMap,
             event: 'click',
             func: function (mouseEvent) {
-                let latlng = mouseEvent.latLng;
-                log('click! ' + latlng.toString());
-                log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
-                let p = new Point(latlng.getLng(), latlng.getLat());
-                // let polys = getPolygonData();
-                let len = overlays.length;
-                for (let i = 0; i < len; i++) {
-                    let points = [];
-                    overlays[i].getPath().forEach(function (overlay) {
-                        let x = overlay.getLng(), y = overlay.getLat();
-                        points.push(new Point(x, y));
-                    })
-                    // let onePolygon = polys[i].points;
-                    let onePolygon = points;
-                    let n = onePolygon.length;
-                    if (isInside(onePolygon, n, p)) {
-                        log(i + " : Yes");
-                        $('#areaSettingModal').offcanvas('show');
-                        return;
-                    } else {
-                        $('#areaSettingModal').offcanvas('hide');
-                        log(i + " : No");
+                if (manager._mode === undefined || manager._mode === '') {
+                    let latlng = mouseEvent.latLng;
+                    log('click! ' + latlng.toString());
+                    log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
+                    let p = new Point(latlng.getLng(), latlng.getLat());
+                    let len = overlays.length;
+                    for (let i = 0; i < len; i++) {
+                        let points = [];
+                        overlays[i].getPath().forEach(function (overlay) {
+                            let x = overlay.getLng(), y = overlay.getLat();
+                            points.push(new Point(x, y));
+                        })
+                        let onePolygon = points;
+                        let n = onePolygon.length;
+                        if (isInside(onePolygon, n, p)) {
+                            // log(i + " : Yes");
+                        } else {
+                            $('#areaSettingModal').offcanvas('hide');
+                            // log(i + " : No");
+                        }
                     }
                 }
             }
@@ -554,12 +546,12 @@ $(function () {
                 // 지도의  레벨을 얻어옵니다
                 let level = drawingMap.getLevel();
 
+                $('#mapLevel').text(level + '레벨');
+
                 if (level > 3) {
                     removeOverlays();
                 } else {
                     let codes = await getDongCodesBounds(drawingMap);
-                    // log('idle : ', codes)
-                    // log(uniqueCodesCheck);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if(uniqueCodesCheck) await drawingPolygon(getZonesInBounds());
                     else getsZone(codes);
@@ -610,10 +602,10 @@ $(function () {
 
     $.setGroupNames = function (locationType) {
 
-        function getNamesSelectHtml(names) {
+        function getNamesSelectHtml(groups) {
             let html = '';
-            for (let i = 0; i < names.length; i++) {
-                html += "<option value=" + names[i] + ">" + names[i] + "</option>";
+            for (const group of groups) {
+                html += '<option value="' + group.groupSeq + '">' + group.name + '</option>';
             }
             return html;
         }
@@ -625,9 +617,24 @@ $(function () {
         });
 
         if (result.success) {
-            let names = result.data;
-            let html = getNamesSelectHtml(names);
+            let groups = result.data;
+            let html = getNamesSelectHtml(groups);
             $('#name').append(html);
+        }
+    }
+
+    $.setTime = function(_this) {
+        let id = _this.id.substr(4).toLowerCase();
+        if($('#'+_this.id).is(':checked')){
+            $('#'+ id +'StartTimeHour').attr('disabled', false);
+            $('#'+ id +'StartTimeMinute').attr('disabled', false);
+            $('#'+ id +'EndTimeHour').attr('disabled', false);
+            $('#'+ id +'EndTimeMinute').attr('disabled', false);
+        } else {
+            $('#'+ id +'StartTimeHour').attr('disabled', true);
+            $('#'+ id +'StartTimeMinute').attr('disabled', true);
+            $('#'+ id +'EndTimeHour').attr('disabled', true);
+            $('#'+ id +'EndTimeMinute').attr('disabled', true);
         }
     }
 

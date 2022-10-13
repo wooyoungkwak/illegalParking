@@ -44,11 +44,12 @@ public class IllegalGroupServiceImpl implements IllegalGroupServcie{
     public List<String> gets(LocationType locationType) {
         JPAQuery query = jpaQueryFactory.selectFrom(QIllegalGroup.illegalGroup);
         query.where(QIllegalGroup.illegalGroup.locationType.eq(locationType));
-        List<IllegalGroup> illegalGroups = query.fetch();
-        if ( illegalGroups.size() == 0) {
-            return Lists.newArrayList();
-        }
-        return illegalGroups.stream().map( illegalGroup -> illegalGroup.getName()).collect(Collectors.toList());
+//        List<IllegalGroup> illegalGroups = query.fetch();
+//        if ( illegalGroups.size() == 0) {
+//            return Lists.newArrayList();
+//        }
+//        return illegalGroups.stream().map( illegalGroup -> illegalGroup.getName()).collect(Collectors.toList());
+        return query.fetch();
     }
 
     @Override

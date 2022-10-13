@@ -8,6 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navMapHtmlLayout.jsp">
@@ -36,9 +37,10 @@
 						<div class="card-title">
 							<p class="modes">
 								<span>
-									<label><input type="radio" name="searchIllegalTypeSeq" value="" checked>전체</label>
-									<label><input type="radio" name="searchIllegalTypeSeq" value="0">불법주정차</label>
-									<label><input type="radio" name="searchIllegalTypeSeq" value="1">5분주정차</label>
+									<label><input type="radio" name="searchIllegalType" value="" checked>전체</label>
+									<c:forEach items="${IllegalType.values()}" var="type">
+										<label><input type="radio" name="searchIllegalType" value="${type}">${type.value}</label>
+									</c:forEach>
 								</span>
 							</p>
 						</div>

@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.dto.illegalzone.domain;
 
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +20,8 @@ public class IllegalZoneDto {
     String code;                // 동 코드
 
     Integer eventSeq;           // 구역 키
-    String name;                // 구역 이름
+    LocationType locationType;  // 그룹 지역
+    Integer groupSeq;           // 그룹 키
     String illegalType;         // 구역 타입
     Boolean usedFirst;          // 구역 첫번째 이벤트 사용 여부
     String firstStartTime;      // 구역 첫번째 시작 시간
