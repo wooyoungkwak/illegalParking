@@ -59,7 +59,7 @@
 						</div>
 					</div>
 
-					<p id="result"></p>
+					<p id="postscript">20m : 1레벨, 50m : 3레벨, 3레벨 이하 구역이 표시. 현재 <span id="mapLevel">3레벨</span></p>
 
 					<layoutTags:mapSetModalTag id="areaSettingModal" typeValues="${IllegalType.values()}" enumValues="${LocationType.values()}" current=""/>
 

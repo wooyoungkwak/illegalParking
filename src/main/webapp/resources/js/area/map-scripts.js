@@ -2,20 +2,15 @@ $(function () {
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
-    let drawingDataTargets = [];
-    let zoneAreas = [];
 
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
 
-    // Drawing Manager로 도형을 그릴 지도 div
-    let drawingMapContainer = document.getElementById('drawingMap');
+    let mapContainer = document.getElementById('map');
 
-    let drawingMap;
+    let map;
 
     let overlays = [] // 지도에 그려진 도형을 담을 배열
-    let customOverlay;
-    let infoWindow;
     let kakaoEvent = kakao.maps.event;
 
     // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
@@ -23,9 +18,6 @@ $(function () {
         fillColor: '#EFFFED', // 채우기 색깔입니다
         fillOpacity: 0.8 // 채우기 불투명도 입니다
     };
-
-    // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
-    let manager;
 
     let polygonStyle = {
         "draggable": true,
@@ -48,101 +40,15 @@ $(function () {
         } // 채우기 불투명도 입니다
     }
 
-    // 버튼 클릭 시 호출되는 핸들러 입니다
-    function selectOverlay(type) {
-        // 그리기 중이면 그리기를 취소합니다
-        manager.cancel();
-
-        // 클릭한 그리기 요소 타입을 선택합니다
-        manager.select(kakao.maps.drawing.OverlayType[type]);
-    }
-
-    $('#btnAddOverlay').click(function () {
-        $('#areaSettingModal').offcanvas('hide');
-        selectOverlay('POLYGON');
-    });
-
-    // Drawing Manager에서 데이터를 가져와 도형을 표시할 아래쪽 지도 div
-    /*
-    let mapContainer = document.getElementById('map'),
-        mapOptions = {
-            center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-            level: 3 // 지도의 확대 레벨
-        };
-    */
-
     let searchIllegalType = '';
     // 주정차 별 구역 조회
     $('input:radio[name=searchIllegalType]').change(async function () {
-        $('#areaSettingModal').offcanvas('hide');
-
-        if(drawingDataTargets.length > 0){
-            if(confirm("작성한 구역이 삭제됩니다. 변경하시겠습니까?"))
-            {
-                removeDrawingOverlays();
-            }
-            else
-            {
-                log(searchIllegalType)
-                return false;
-            }
-        }
         searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
-        if(searchIllegalType === '') {
-            $('#btnAddOverlay').show();
-            $('#btnSet').show();
-        } else {
-            $('#btnAddOverlay').hide();
-            $('#btnSet').hide();
-        }
-
-        log(searchIllegalType);
-        let codes = await getDongCodesBounds(drawingMap);
+        let codes = await getDongCodesBounds(map);
 
         getsZone(codes);
     });
 
-    // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
-    // Drawing Manager로 그려진 객체 데이터를 가져와 아래 지도에 표시합니다
-    $('#btnSet').click(async function () {
-        $('#areaSettingModal').offcanvas('hide');
-        // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
-        let data = manager.getData();
-        let opt = {
-            url: _contextPath + "/zone/set",
-            data: {
-                polygonData: data[kakao.maps.drawing.OverlayType.POLYGON],
-                // illegalType: searchIllegalType === '' ? '0' : searchIllegalType,
-            }
-        }
-
-        if (opt.data.polygonData.length === 0) {
-            alert('구역을 지정하시기 바랍니다.');
-            return false;
-        } else {
-            // 폴리곤 중심좌표를 구해서 법정동 코드 넣기
-            for (const polygon of opt.data.polygonData) {
-                let points = polygon.points;
-                let centroidPoints = centroid(points);
-                polygon.code = await coordinatesToDongCodeKakaoApi(centroidPoints.x, centroidPoints.y);
-            }
-            // 데이터 저장
-            initializeZone(opt);
-            // 지도에 가져온 데이터로 도형들을 그립니다
-            let codes = await getDongCodesBounds(drawingMap);
-            await getsZone(codes);
-            // 생성한 폴리곤 삭제
-            removeDrawingOverlays();
-        }
-    });
-
-    // 생성한 그리기 도형 삭제
-    function removeDrawingOverlays() {
-        drawingDataTargets.forEach(function (target) {
-            manager.remove(target);
-        })
-        drawingDataTargets = [];
-    }
 
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
     function removeOverlays() {
@@ -172,123 +78,15 @@ $(function () {
         return fillColor;
     }
 
-    // 폴리곤 클릭 시 모달 창 오픈
-    function showModal(area) {
-        let result = initializeZone({
-            url: _contextPath + '/zone/get',
-            data: {
-                zoneSeq: area.seq
-            }
-        });
-
-        $('#zoneSeq').val(result.zoneSeq);
-        $('#eventSeq').val(result.eventSeq);
-
-        if (result.eventSeq !== null) {
-            let illegalType = result.illegalEvent.illegalType;
-            $('input:radio[name=illegalType]:input[value="' + illegalType + '"]').prop('checked', true);
-            $('#name').val(result.illegalEvent.name);
-            result.illegalEvent.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
-            result.illegalEvent.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
-        }
-        let checkVal = $('input:radio[name="illegalType"]:checked').val();
-        // timeHideAndShow(checkVal);
-        timeSetting(result);
-
-        // $('#areaSettingModal').modal('show');
-        $('#areaSettingModal').offcanvas('show');
-    }
-
-    // 탄력적일 경우 시간 표시
-    // function timeHideAndShow(checkVal) {
-    //     if (checkVal === '2') { //탄력적 가능일 경우
-    //         $('#timeRow').css('display', 'block');
-    //         $('#startTime, #endTime').attr('disabled', false);
-    //     } else {
-    //         $('#timeRow').css('display', 'none');
-    //         $('#startTime, #endTime').attr('disabled', true);
-    //     }
-    // }
-
-    // 기본 시간 설정
-    function timeSetting(result) {
-        let startTime = result.startTime;
-        let endTime = result.endTime;
-        if (startTime === null || endTime === null) {
-            startTime = "09:00";
-            endTime = "18:00";
-        }
-        $('#startTime').val(startTime).prop('selected', true);
-        $('#endTime').val(endTime).prop('selected', true);
-    }
-
-    // 탄력적 가능 시간 설정
-    // $('input:radio[name=illegalType]').click(function () {
-    //     let checkVal = $('input:radio[name=illegalType]:checked').val();
-    //     timeHideAndShow(checkVal);
-    // });
-
-    // 폴리곤 삭제
-    $('#btnRemove').click(function () {
-        if (confirm("삭제하시겠습니까?")) {
-            let opt = {
-                url: _contextPath + "/zone/remove",
-                data: {
-                    'zoneSeq': $('#zoneSeq').val()
-                }
-            };
-            let result = initializeZone(opt);
-
-            if (result.success === 'true') {
-                let index = zoneSeqs.indexOf(Number(opt.data.zoneSeq));
-                zoneTypes.splice(index, 1)
-                zoneSeqs.splice(index, 1)
-                zoneAreas.splice(index, 1)
-                zonePolygons.splice(index, 1);
-            }
-
-            drawingPolygon(getZonesInBounds());
-            $('#areaSettingModal').offcanvas('hide');
-            alert("삭제되었습니다.");
-        }
-    });
-
-    // 구역 설정
-    $('#btnModify').click(function () {
-        if (confirm("설정하시겠습니까?")) {
-            let form = $('#formAreaSetting').serializeObject();
-            form['usedFirst'] = !$('#usedFirst').is(':checked');
-            form['usedSecond'] = !$('#usedSecond').is(':checked');
-            // if (form.firstStartTime === undefined) form.firstStartTime = "";
-            // if (form.secondStartTime === undefined) form.secondStartTime = "";
-
-            let result = initializeZone({
-                url: _contextPath + '/zone/modify',
-                data: form
-            });
-
-            if (result.success === 'true') {
-                let index = zoneSeqs.indexOf(Number(form.zoneSeq));
-                zoneTypes[index] = form.illegalType;
-                // log(index," :: ", zoneTypes[index]);
-            }
-
-            drawingPolygon(getPolygonData());
-            $('#areaSettingModal').offcanvas('hide');
-            alert("설정되었습니다.");
-        }
-    });
-
     // 보여지는 맵에 포함된 폴리곤 찾기
     function getZonesInBounds() {
         //맵 구역
-        let bounds = drawingMap.getBounds();
+        let bounds = map.getBounds();
         let zonesInBounds = [];
 
         getPolygonData().filter(function (overlay) {
             let obj = {}, points = [];
             let paths = pointsToPath(overlay.points);
-            //log(paths);
             paths.forEach(function (element) {
                 points.push(bounds.contain(element));
                 obj.inBound = points;
@@ -297,17 +95,13 @@ $(function () {
             if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
                 obj.overlay = overlay;
                 zonesInBounds.push(obj.overlay);
-                //log(inBoundsPath);
             }
-            // log(obj.inBound.every(x => x === false));
 
         });
-        // drawingPolygon(inBoundsPath, 'load');
         log('zonesInBounds : ', zonesInBounds);
         return zonesInBounds;
     }
 
-    // Drawing Manager에서 가져온 데이터 중
     // 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
     function pointsToPath(points) {
         let len = points.length,
@@ -338,7 +132,6 @@ $(function () {
             obj.coordinate = 'wgs84';
             obj.options = polygonStyle;
             areas.push(obj);
-            zoneAreas.push(obj);
         }
         return areas;
     }
@@ -355,7 +148,7 @@ $(function () {
 
         // 다각형을 생성합니다
         let polygon = new kakao.maps.Polygon({
-            map: drawingMap, // 다각형을 표시할 지도 객체
+            map: map, // 다각형을 표시할 지도 객체
             path: path,
             strokeColor: style.strokeColor,
             strokeOpacity: style.strokeOpacity,
@@ -365,10 +158,7 @@ $(function () {
             fillOpacity: style.fillOpacity
         });
 
-        // log(centroid(area.points));
-
         // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
-        // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
         setKakaoEvent({
             target: polygon,
             event: 'mouseover',
@@ -378,7 +168,6 @@ $(function () {
         });
 
         // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-        // 커스텀 오버레이를 지도에서 제거합니다
         setKakaoEvent({
             target: polygon,
             event: 'mouseout',
@@ -386,67 +175,23 @@ $(function () {
                 polygon.setOptions(mouseoutOption(area));
             }
         });
-
-        // 다각형에 클릭 이벤트를 등록합니다
-        let upCount = 0;
-        setKakaoEvent({
-            target: polygon,
-            event: 'click',
-            func: function (mouseEvent) {
-                let resultDiv = document.getElementById('result');
-                resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
-                if(manager._mode === undefined || manager._mode === '')
-                    showModal(area);
-            }
-        });
         overlays.push(polygon);
     }
 
     // 카카오 초기화
     function initializeKakao() {
-        drawingMap = {
+        map = {
             center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
             level: 3, // 지도의 확대 레벨
             disableDoubleClickZoom: true
         };
 
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-        drawingMap = new kakao.maps.Map(drawingMapContainer, drawingMap);
-        customOverlay = new kakao.maps.CustomOverlay({})
-        infoWindow = new kakao.maps.InfoWindow({removable: true});
-
-        let options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
-            map: drawingMap, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
-            drawingMode: [ // Drawing Manager로 제공할 그리기 요소 모드입니다
-                kakao.maps.drawing.OverlayType.POLYGON
-            ],
-            // 사용자에게 제공할 그리기 가이드 툴팁입니다
-            // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
-            guideTooltip: ['draw', 'drag', 'edit'],
-            polygonOptions: {
-                draggable: true,
-                removable: true,
-                editable: true,
-                strokeColor: '#000000',
-                fillColor: '#00afff',
-                fillOpacity: 0.5,
-                hintStrokeStyle: 'dash',
-                hintStrokeOpacity: 0.5
-            }
-        };
-        manager = new kakao.maps.drawing.DrawingManager(options);
-
-        manager.addListener('drawend', function (data) {
-            drawingDataTargets.push(data.target);
-        });
-        // manager.addListener('remove', function (data) {
-        //     let index = drawingDataTargets.indexOf(data.target);
-        //     drawingDataTargets.put(data.target);
-        // });
+        map = new kakao.maps.Map(mapContainer, map);
 
         // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
-            target: drawingMap,
+            target: map,
             event: 'click',
             func: function (mouseEvent) {
                 let latlng = mouseEvent.latLng;
@@ -466,50 +211,27 @@ $(function () {
                     let n = onePolygon.length;
                     if (isInside(onePolygon, n, p)) {
                         log(i + " : Yes");
+                        break;
                     } else {
-                        // $('#areaSettingModal').offcanvas('hide');
-                        // log(i + " : No");
+                        log(i + " : No");
                     }
                 }
             }
         });
 
-        // 지도에 마우스 오른쪽 클릭 이벤트를 등록합니다
-        // 선을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면 그리기를 종료합니다
-        setKakaoEvent({
-            target: drawingMap,
-            event: 'rightclick',
-            func: function (mouseEvent) {
-                // 그리기 중이면 그리기를 취소합니다
-                manager.cancel();
-            }
-        });
-
-        // 맵 더블클릭 이벤트 등록
-        setKakaoEvent({
-            target: drawingMap,
-            event: 'dblclick',
-            func: function (mouseEvent) {
-                $('#areaSettingModal').offcanvas('hide');
-                selectOverlay('POLYGON');
-            }
-        });
-
         // 중심 좌표나 확대 수준이 변경되면 발생한다.
         setKakaoEvent({
-            target: drawingMap,
+            target: map,
             event: 'idle',
             func: async function () {
-                $('#areaSettingModal').offcanvas('hide');
+                // $('#areaSettingModal').offcanvas('hide');
                 // 지도의  레벨을 얻어옵니다
-                let level = drawingMap.getLevel();
+                let level = map.getLevel();
 
                 if (level > 3) {
                     removeOverlays();
                 } else {
-                    let codes = await getDongCodesBounds(drawingMap);
-                    // log('idle : ', codes)
-                    // log(uniqueCodesCheck);
+                    let codes = await getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if(uniqueCodesCheck) await drawingPolygon(getZonesInBounds());
                     else getsZone(codes);
@@ -553,9 +275,8 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-        getCurrentPosition(drawingMap);
+        getCurrentPosition(map);
     }
 
     initialize();
-
 });

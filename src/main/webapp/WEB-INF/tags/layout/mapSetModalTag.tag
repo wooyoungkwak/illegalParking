@@ -23,6 +23,7 @@
 		<input type="hidden" id="zoneSeq" name="zoneSeq" value=""/>
 		<input type="hidden" id="eventSeq" name="eventSeq" value=""/>
 
+
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title" id="offcanvasRightLabel">구역설정</h5>
 			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -37,7 +38,7 @@
 				<div class="card-body">
 					<c:forEach items="${typeValues}" var="typeValue" varStatus="status">
 						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="illegalType" id="zone${status.index}" value="${enumValue}">
+							<input class="form-check-input" type="radio" name="illegalType" id="zone${status.index}" value="${typeValue}">
 							<label class="form-check-label" for="zone${status.index}">${typeValue.value}</label>
 						</div>
 					</c:forEach>
@@ -121,9 +122,9 @@
 </div>
 <script type="application/javascript">
 	$(function (){
-
         // 위치 변경 이벤트
 		$('#locationType').on('change', function (){
+			$("#name option").remove();
            let locationType = $(this).val();
             $.setGroupNames(locationType);
 		});

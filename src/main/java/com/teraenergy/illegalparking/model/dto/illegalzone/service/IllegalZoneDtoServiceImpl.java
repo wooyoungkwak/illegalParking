@@ -2,8 +2,12 @@ package com.teraenergy.illegalparking.model.dto.illegalzone.service;
 
 import com.teraenergy.illegalparking.model.dto.illegalzone.domain.IllegalZoneDto;
 import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEventService;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.IllegalGroup;
+import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +20,13 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
+@RequiredArgsConstructor
 @Service
 public class IllegalZoneDtoServiceImpl implements IllegalZoneDtoService {
+
+    private final IllegalGroupServcie illegalGroupServcie;
+    private final IllegalEventService illegalEventService;
+
 
     @Override
     public IllegalZoneDto getToIllegalZoneDto(IllegalZone illegalZone) {
@@ -26,16 +35,19 @@ public class IllegalZoneDtoServiceImpl implements IllegalZoneDtoService {
         illegalZoneDto.setPolygon(illegalZone.getPolygon());
         illegalZoneDto.setCode(illegalZone.getCode());
 
-        if (illegalZone.getIllegalEvent() != null) {
-            illegalZoneDto.setEventSeq(illegalZone.getIllegalEvent().getEventSeq());
-            illegalZoneDto.setName(illegalZone.getIllegalEvent().getName());
-            illegalZoneDto.setIllegalType(illegalZone.getIllegalEvent().getIllegalType().toString());
-            illegalZoneDto.setUsedFirst(illegalZone.getIllegalEvent().getUsedFirst());
-            illegalZoneDto.setFirstStartTime(illegalZone.getIllegalEvent().getFirstStartTime());
-            illegalZoneDto.setFirstEndTime(illegalZone.getIllegalEvent().getFirstEndTime());
-            illegalZoneDto.setUsedSecond(illegalZone.getIllegalEvent().getUsedSecond());
-            illegalZoneDto.setSecondStartTime(illegalZone.getIllegalEvent().getSecondStartTime());
-            illegalZoneDto.setSecondEndTime(illegalZone.getIllegalEvent().getSecondEndTime());
+        if (illegalZone.getEventSeq() != null) {
+            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+            IllegalGroup illegalGroup = illegalGroupServcie.get(illegalEvent.getGroupSeq());
+            illegalZoneDto.setEventSeq(illegalEvent.getEventSeq());
+            illegalZoneDto.setGroupSeq(illegalEvent.getGroupSeq());
+            illegalZoneDto.setLocationType( illegalGroup.getLocationType());
+            illegalZoneDto.setIllegalType(illegalEvent.getIllegalType().toString());
+            illegalZoneDto.setUsedFirst(illegalEvent.getUsedFirst());
+            illegalZoneDto.setFirstStartTime(illegalEvent.getFirstStartTime());
+            illegalZoneDto.setFirstEndTime(illegalEvent.getFirstEndTime());
+            illegalZoneDto.setUsedSecond(illegalEvent.getUsedSecond());
+            illegalZoneDto.setSecondStartTime(illegalEvent.getSecondStartTime());
+            illegalZoneDto.setSecondEndTime(illegalEvent.getSecondEndTime());
         }
         return illegalZoneDto;
     }
@@ -53,8 +65,8 @@ public class IllegalZoneDtoServiceImpl implements IllegalZoneDtoService {
 
         if (illegalZoneDto.getEventSeq() != null) {
             IllegalEvent illegalEvent = new IllegalEvent();
+
             illegalEvent.setEventSeq(illegalZoneDto.getEventSeq());
-            illegalEvent.setName(illegalZoneDto.getName());
             illegalEvent.setIllegalType(IllegalType.valueOf(illegalZoneDto.getIllegalType()));
             illegalEvent.setUsedFirst(illegalZoneDto.getUsedFirst());
             illegalEvent.setFirstStartTime(illegalZoneDto.getFirstStartTime());

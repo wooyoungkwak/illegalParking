@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
+import com.teraenergy.illegalparking.model.dto.illegalzone.domain.IllegalZoneDto;
 import com.teraenergy.illegalparking.model.dto.illegalzone.service.IllegalZoneDtoService;
 import com.teraenergy.illegalparking.model.dto.illegalzone.service.PointDtoService;
 import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
@@ -81,11 +82,10 @@ public class AreaAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         Integer zoneSeq = jsonNode.get("zoneSeq").asInt();
         IllegalZone illegalZone = illegalZoneMapperService.get(zoneSeq);
-        if(illegalZone.getEventSeq() != null) {
-            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-            illegalZone.setIllegalEvent(illegalEvent);
-        }
-        return illegalZone;
+
+        IllegalZoneDto illegalZoneDto = illegalZoneDtoService.getToIllegalZoneDto(illegalZone);
+
+        return illegalZoneDto;
     }
 
     @PostMapping("/area/zone/gets")
@@ -147,13 +147,14 @@ public class AreaAPI {
             IllegalEvent illegalEvent = new IllegalEvent();
             illegalEvent.setIllegalType(
                     IllegalType.valueOf(jsonNode.get("illegalType").asText()));
-            illegalEvent.setName(jsonNode.get("name").asText());
+//            illegalEvent.setName(jsonNode.get("name").asText());
             illegalEvent.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
             illegalEvent.setFirstStartTime(jsonNode.get("firstStartTime").asText());
             illegalEvent.setFirstEndTime(jsonNode.get("firstEndTime").asText());
             illegalEvent.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
             illegalEvent.setSecondStartTime(jsonNode.get("secondStartTime").asText());
             illegalEvent.setSecondEndTime(jsonNode.get("secondEndTime").asText());
+            illegalEvent.setGroupSeq(jsonNode.get("name").asInt()); // name selectbox
             if (illegalZone.getEventSeq() != null) {
                 illegalEvent.setEventSeq(illegalZone.getEventSeq());
             }
