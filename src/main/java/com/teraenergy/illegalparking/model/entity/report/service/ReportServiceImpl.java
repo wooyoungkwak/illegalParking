@@ -36,6 +36,18 @@ public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
 
     @Override
+    public boolean isExist(String carNum) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.secondReceipt.carNum.eq(carNum));
+        query.where(QReport.report.isDel.isFalse());
+
+        if ( query.fetchOne() == null ) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public Report get(Integer reportSeq) {
         return reportRepository.findByReportSeq(reportSeq);
     }
@@ -52,7 +64,7 @@ public class ReportServiceImpl implements ReportService {
         if (search != null && search.length() > 0) {
             switch (filterColumn) {
                 case CAR_NUM:
-                    query.where(QReport.report.secondReceipt.carNum.eq(search));
+                    query.where(QReport.report.secondReceipt.carNum.contains(search));
                     break;
                 case ADDR:
                     query.where(QReport.report.secondReceipt.addr.contains(search));
@@ -69,7 +81,7 @@ public class ReportServiceImpl implements ReportService {
             query.where(QReport.report.reportStateType.eq(reportStateType));
         }
 
-        int total = query.fetch().size();
+        int total =  query.fetch().size();
 
         pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);

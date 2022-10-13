@@ -50,6 +50,7 @@ public class AopController {
         HashMap<String, Object> result = Maps.newHashMap();
         try {
             result.put("success", true);
+            result.put("msg", "");
             result.put("data", joinPoint.proceed());
         } catch (TeraException e) {
             e.printStackTrace();

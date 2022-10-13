@@ -34,6 +34,15 @@ public class IllegalGroupServiceImpl implements IllegalGroupServcie{
     private final IllegalGroupRepository illegalGroupRepository;
 
     @Override
+    public IllegalGroup get(LocationType locationType, String name) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalGroup.illegalGroup);
+        query.where(QIllegalGroup.illegalGroup.isDel.isFalse());
+        query.where(QIllegalGroup.illegalGroup.locationType.eq(locationType));
+        query.where(QIllegalGroup.illegalGroup.name.eq(name));
+        return  (IllegalGroup) query.fetchOne();
+    }
+
+    @Override
     public IllegalGroup get(Integer groupSeq) {
         Optional<IllegalGroup> optional = illegalGroupRepository.findById(groupSeq);
         if (optional.isEmpty()) return null;

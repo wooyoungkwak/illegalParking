@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface IllegalGroupServcie {
 
+    IllegalGroup get(LocationType locationType, String name);
+
     IllegalGroup get(Integer groupSeq);
 
     List<String> gets(LocationType locationType);

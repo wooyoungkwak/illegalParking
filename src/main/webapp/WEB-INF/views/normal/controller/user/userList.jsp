@@ -136,12 +136,23 @@
 
                 function initializeUserSetTag(userGovernmentDto) {
                     $('#userSeq').val(userGovernmentDto.userSeq);
-                    $('#governmentOfficeName').val(userGovernmentDto.governmentOfficeName);
+                    $('#officeName').val(userGovernmentDto.officeName);
                     // $('#locationType').val();
                     $('#userName').val(userGovernmentDto.userName);
                     $('#password').val(userGovernmentDto.password);
 
+                    $('#totalCount').text(userGovernmentDto.totalCount + " 건");
+                    $('#completeCount').text(userGovernmentDto.completeCount + " 건");
+                    $('#exceptionCount').text(userGovernmentDto.exceptionCount + " 건");
+                    $('#penaltyCount').text(userGovernmentDto.penaltyCount + " 건");
 
+                    // example
+					userGovernmentDto.completeCount = 1;
+
+                    // 차트
+                    $.drawPieChart(userGovernmentDto);
+
+                    $('.canvasjs-chart-credit').hide();
                 }
 
                 function initialize() {
@@ -199,7 +210,7 @@
                         let userGovernmentDto = {
                             userSeq : userSeq,
                             locationTypeValue : $(this).children("td:eq(0)").text().trim(),
-                            governmentName : $(this).children("td:eq(1)").text(),
+                            officeName : $(this).children("td:eq(1)").text(),
                             userName : $(this).children("td:eq(2)").text(),
                             password : $(this).children("td:eq(3)").text(),
                             totalCount : $(this).children("td:eq(4)").text(),
@@ -229,15 +240,6 @@
                         searchSelect($(this).val());
                     });
 
-                    $('#userModify').on('click', function () {
-
-                    });
-
-                    $('#userClose').on('click', function () {
-                        $('#userMain').show();
-                        $('#userSet').hide();
-                    });
-
                     $('#modalClose').on('click', function () {
                         $('#modal').hide();
                         $('body').css({
@@ -245,15 +247,15 @@
                         });
                     });
 
-                    $('#modal').hide();
-                    $('#userSet').hide();
-
                     $('#addGovernmentOffice').on('click', function () {
                         $('#modal').show();
                         $('body').css({
                             'overflow': 'hidden'
                         });
                     });
+
+                    $('#modal').hide();
+                    $('#userSet').hide();
                 }
 
                 $('#searchStr2').hide();

@@ -2,6 +2,8 @@ package com.teraenergy.illegalparking.model.entity.userGroup.service;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.userGroup.domain.QUserGroup;
 import com.teraenergy.illegalparking.model.entity.userGroup.domain.UserGroup;
 import com.teraenergy.illegalparking.model.entity.userGroup.repository.UserGroupRepository;
@@ -20,7 +22,7 @@ import java.util.Optional;
  */
 @RequiredArgsConstructor
 @Service
-public class UserGroupServiceImpl implements UserGroupService{
+public class UserGroupServiceImpl implements UserGroupService {
 
     private final UserGroupRepository userGroupRepository;
 
@@ -29,8 +31,8 @@ public class UserGroupServiceImpl implements UserGroupService{
     @Override
     public UserGroup get(Integer userGroupSeq) {
         Optional<UserGroup> optional = userGroupRepository.findById(userGroupSeq);
-        if ( optional.isEmpty()) {
-            return  null;
+        if (optional.isEmpty()) {
+            return null;
         }
         return optional.get();
     }
@@ -51,4 +53,15 @@ public class UserGroupServiceImpl implements UserGroupService{
     public UserGroup set(UserGroup userGroup) {
         return userGroupRepository.save(userGroup);
     }
+
+    @Override
+    public void remove(Integer userGroupSeq) throws TeraException {
+        try {
+            userGroupRepository.deleteById(userGroupSeq);
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.UNKNOWN, e);
+        }
+    }
+
+
 }

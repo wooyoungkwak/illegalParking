@@ -16,6 +16,9 @@ import java.util.List;
  */
 public interface ReportService {
 
+
+    boolean isExist(String carNum);
+
     Report get(Integer reportSeq);
 
     List<Report> gets();

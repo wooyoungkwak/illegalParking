@@ -16,6 +16,8 @@ import java.util.List;
 @Mapper
 public interface IllegalZoneMapper {
 
+    IllegalZone findByLatitudeAndLongitude(double latitude, double longitude);
+
     IllegalZone findById(Integer zoneSeq);
 
     List<IllegalZone> findByCode(List<String> codes);

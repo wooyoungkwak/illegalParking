@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.userGroup.service;
 
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.userGroup.domain.UserGroup;
 
 import java.util.List;
@@ -22,5 +23,7 @@ public interface UserGroupService {
     List<UserGroup> getsByUser(Integer userSeq);
 
     UserGroup set(UserGroup userGroup);
+
+    void remove(Integer userGroupSeq) throws TeraException;
 
 }

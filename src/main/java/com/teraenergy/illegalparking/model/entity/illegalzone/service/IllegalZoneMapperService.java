@@ -13,26 +13,28 @@ import java.util.List;
  */
 public interface IllegalZoneMapperService {
 
-    public IllegalZone get(Integer illegalZoneSeq);
+    IllegalZone get(double latitude, double longitude);
 
-    public List<IllegalZone> getsByCode(List<String> codes);
+    IllegalZone get(Integer illegalZoneSeq);
+
+    List<IllegalZone> getsByCode(List<String> codes);
 
     List<IllegalZone> getsByGeometry(String latitude, String longitude);
 
-    public List<IllegalZone> getsByIllegalType(String illegalType);
+    List<IllegalZone> getsByIllegalType(String illegalType);
 
-    public List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes);
+    List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes);
 
-    public List<IllegalZone> gets();
+    List<IllegalZone> gets();
 
-    public IllegalZone set(IllegalZone illegalZone);
+    IllegalZone set(IllegalZone illegalZone);
 
-    public List<IllegalZone> sets(List<IllegalZone> illegalZones);
+    List<IllegalZone> sets(List<IllegalZone> illegalZones);
 
-    public void modify(IllegalZone illegalZone);
+    void modify(IllegalZone illegalZone);
 
-    public void modifyByEvent(Integer zoneSeq, Integer eventSeq);
+    void modifyByEvent(Integer zoneSeq, Integer eventSeq);
 
-    public void delete(Integer zoneSeq);
+    void delete(Integer zoneSeq);
 
 }

@@ -9,6 +9,7 @@
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="layoutTags" tagdir="/WEB-INF/tags/layout" %>
 <% String contextPath = request.getContextPath(); %>
 
 <%@ attribute name="items" type="java.lang.Object" required="true" %>
@@ -33,21 +34,14 @@
 					</div>
 				</div>
 			</div>
-			<%--            <div class="row">--%>
-			<%--                <div class="col-11"></div>--%>
-			<%--                <div class="col-1">--%>
-			<%--                    <a class="ms-5 btn btn-close" id="userClose"></a>--%>
-			<%--                </div>--%>
-			<%--            </div>--%>
-
 			<form id="userForm">
-				<input type="hidden" name="userSeq">
+				<input type="hidden" name="userSeq" id="userSeq">
 				<div class="row mt-2 mb-2">
 					<div class="col-1 d-flex justify-content-lg-end">
 						<label class="mt-2">관공서명 : </label>
 					</div>
 					<div class="col-3">
-						<input class="form-control" id="governmentOfficeName" name="name" disabled>
+						<input class="form-control" id="officeName" name="name" disabled>
 					</div>
 				</div>
 				<div class="row mb-2">
@@ -81,45 +75,90 @@
 					<label>관리 그룹</label>
 				</div>
 				<div class="col-2 d-flex justify-content-lg-start">
-					<a class="btn btn-outline-primary"><i class="fas fa-plus"></i> 그룹추가</a>
+					<a class="btn btn-outline-primary" id="userGroupAdd"><i class="fas fa-plus"></i> 그룹추가</a>
 				</div>
 			</div>
 
 			<nav class="navbar navbar-expand-lg navbar-light bg-light ms-3 me-3 mb-2">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item">
-						<a class="nav-link" href="#">나주 A <i class="text-danger fa fa-times"></i></a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">나주 B <i class="text-danger fa fa-times"></i></a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">나주 C <i class="text-danger fa fa-times"></i></a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="#">나주 D <i class="text-danger fa fa-times"></i></a>
-					</li>
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="addUserGroupNav">
+<%--					<li class="nav-item">--%>
+<%--						<a class="nav-link" href="#">나주 A <i class="text-danger fa fa-times"></i></a>--%>
+<%--					</li>--%>
+<%--					<li class="nav-item">--%>
+<%--						<a class="nav-link" href="#">나주 B <i class="text-danger fa fa-times"></i></a>--%>
+<%--					</li>--%>
+<%--					<li class="nav-item">--%>
+<%--						<a class="nav-link" href="#">나주 C <i class="text-danger fa fa-times"></i></a>--%>
+<%--					</li>--%>
+<%--					<li class="nav-item">--%>
+<%--						<a class="nav-link" href="#">나주 D <i class="text-danger fa fa-times"></i></a>--%>
+<%--					</li>--%>
 				</ul>
 			</nav>
 
 			<div class="row">
-				<div class="col-8">
-
+				<div class="col-8 d-flex justify-content-lg-center">
+					<div id="chartContainer"></div>
 				</div>
-				<div class="col-6">
-
+				<div class="col-4">
+					<div class="border-2 row mt-2">
+						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 총 신고접수</div>
+						<div class="col-3 mb-2 border-bottom"> <span id="totalCount"></span></div>
+					</div>
+					<div class="border-2 row mt-2">
+						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 대기</div>
+						<div class="col-3 mb-2 border-bottom"> <span id="completeCount"></span></div>
+					</div>
+					<div class="border-2 row mt-2">
+						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 미처리</div>
+						<div class="col-3 mb-2 border-bottom"> <span id="exceptionCount"></span></div>
+					</div>
+					<div class="border-2 row mt-2">
+						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 처리</div>
+						<div class="col-3 mb-2 border-bottom"> <span id="penaltyCount"></span></div>
+					</div>
 				</div>
 			</div>
 		</div>
 
 	</div>
 </main>
+<layoutTags:userGroupAddTag id="userGroupAddTag" enumValues="${items}" current=""/>
+
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 <script type="application/javascript">
     $(function () {
 
+        // 정보 수정
         $('#userModify').on('click', function () {
-			log($('#userForm').serialize());
+            if ( confirm("정보 수정 하시겠습니까 ?") ){
+                log($('#userForm').serialize());
+
+            }
         });
+
+        // 관리 그룹 추가
+        $('#userGroupAdd').on('click', function (){
+            $('#userGroupAddTag').show();
+        });
+
+        // 관리 그룹 삭제
+		$('#addUserGroupNav a').on('click', function (){
+			if ( confirm("삭제 하시겠습니까") ) {
+                $(this).parent().remove();
+			}
+		});
+
+        // 상세 정보 닫기
+        $('#userClose').on('click', function () {
+            $('#userMain').show();
+            $('#userSet').hide();
+        });
+
+        // 그룹 추가 태그 숨기기
+        $('#userGroupAddTag').hide();
+
+        $.bindUserGroupNavEvent();
     });
 </script>
 
