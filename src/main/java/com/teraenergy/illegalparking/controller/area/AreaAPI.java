@@ -28,6 +28,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKTReader;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,6 +95,8 @@ public class AreaAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         return _getZone(jsonNode);
     }
+
+
 
     @PostMapping("/area/zone/set")
     @ResponseBody
@@ -217,6 +220,17 @@ public class AreaAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         LocationType locationType = LocationType.valueOf(jsonNode.get("locationType").asText());
         return illegalGroupServcie.getsNameByIllegalEvent(locationType);
+    }
+
+
+    @PostMapping("/api/area/zone/gets")
+    @ResponseBody
+    public Object getsZoneByMobile(Device device, HttpServletRequest request, @RequestBody String body) throws Exception {
+        if ( device.isMobile()) {
+            return getsZone(request, body);
+        } else {
+            return "";
+        }
     }
 
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {
