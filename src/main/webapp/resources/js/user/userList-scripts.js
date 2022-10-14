@@ -1,3 +1,4 @@
+// 신고 접수 건 파이 차트
 $.drawPieChart = function(opt) {
     let options = {
         animationEnabled: true,
@@ -42,7 +43,8 @@ $.setUserGroupNames = function (locationType) {
             locationType: locationType
         }
     });
-
+    log(result);
+    return;
     if (result.success) {
         let names = result.data;
         let html = getNamesSelectHtml(names);

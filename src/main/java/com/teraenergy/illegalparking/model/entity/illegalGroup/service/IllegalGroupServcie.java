@@ -20,7 +20,9 @@ public interface IllegalGroupServcie {
 
     IllegalGroup get(Integer groupSeq);
 
-    List<String> gets(LocationType locationType);
+    List<IllegalGroup> getsNameByIllegalEvent(LocationType locationType);
+
+    List<String> getsNameByUserGroup(LocationType locationType);
 
     List<IllegalGroup> gets(List<Integer> groupSeqs);
 

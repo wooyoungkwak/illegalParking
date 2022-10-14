@@ -5,7 +5,9 @@
 <mapper namespace="com.teraenergy.illegalparking.model.mapper.IllegalZoneMapper">
 
     <select id="findByLatitudeAndLongitude" resultType="boolean">
---         SELECT IF(COUNT(ZoneSeq) = 1, 1, 0) FROM illegal_zone where ;
+        SELECT IF(COUNT(ZoneSeq) = 1, 1, 0) FROM illegal_zone where  and st_within(point,
+            (SELECT ASTEXT(Polygon) as polygon FROM illegal_zone where code=${code} and isDel = 0)
+        );
     </select>
 
     <select id="findById" resultType="IllegalZone">

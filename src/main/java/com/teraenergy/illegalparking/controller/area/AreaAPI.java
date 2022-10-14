@@ -216,7 +216,7 @@ public class AreaAPI {
     public Object getName(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         LocationType locationType = LocationType.valueOf(jsonNode.get("locationType").asText());
-        return illegalGroupServcie.gets(locationType);
+        return illegalGroupServcie.getsNameByIllegalEvent(locationType);
     }
 
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {

@@ -48,7 +48,7 @@ public class UserAPI {
     public Object getName(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         LocationType locationType = LocationType.valueOf(jsonNode.get("locationType").asText());
-        return illegalGroupServcie.gets(locationType);
+        return illegalGroupServcie.getsNameByUserGroup(locationType);
     }
 
     @PostMapping("/user/userGroup/set")
