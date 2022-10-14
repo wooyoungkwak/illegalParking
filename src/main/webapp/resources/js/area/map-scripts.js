@@ -78,29 +78,29 @@ $(function () {
         return fillColor;
     }
 
-    // 보여지는 맵에 포함된 폴리곤 찾기
-    function getZonesInBounds() {
-        //맵 구역
-        let bounds = map.getBounds();
-        let zonesInBounds = [];
-
-        getPolygonData().filter(function (overlay) {
-            let obj = {}, points = [];
-            let paths = pointsToPath(overlay.points);
-            paths.forEach(function (element) {
-                points.push(bounds.contain(element));
-                obj.inBound = points;
-            });
-            // 맵 안에 포함되어있는지 확인
-            if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
-                obj.overlay = overlay;
-                zonesInBounds.push(obj.overlay);
-            }
-
-        });
-        log('zonesInBounds : ', zonesInBounds);
-        return zonesInBounds;
-    }
+    // // 보여지는 맵에 포함된 폴리곤 찾기 20221014 동코드로 zone을 가져오기 때문에 기능 제거
+    // function getZonesInBounds() {
+    //     //맵 구역
+    //     let bounds = map.getBounds();
+    //     let zonesInBounds = [];
+    //
+    //     getPolygonData().filter(function (overlay) {
+    //         let obj = {}, points = [];
+    //         let paths = pointsToPath(overlay.points);
+    //         paths.forEach(function (element) {
+    //             points.push(bounds.contain(element));
+    //             obj.inBound = points;
+    //         });
+    //         // 맵 안에 포함되어있는지 확인
+    //         if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
+    //             obj.overlay = overlay;
+    //             zonesInBounds.push(obj.overlay);
+    //         }
+    //
+    //     });
+    //     log('zonesInBounds : ', zonesInBounds);
+    //     return zonesInBounds;
+    // }
 
     // 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
     function pointsToPath(points) {
@@ -233,8 +233,11 @@ $(function () {
                 } else {
                     let codes = await getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
-                    if(uniqueCodesCheck) await drawingPolygon(getZonesInBounds());
-                    else getsZone(codes);
+                    log(uniqueCodesCheck);
+                    // if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
+                    // else getsZone(codes);
+                    if(!uniqueCodesCheck) getsZone(codes);
+
                 }
             }
         });
@@ -254,7 +257,7 @@ $(function () {
         })
         log('ok');
         beforeCodes = codes;
-        drawingPolygon(getZonesInBounds());
+        drawingPolygon(getPolygonData());
     }
 
     // zone 초기화
@@ -279,4 +282,21 @@ $(function () {
     }
 
     initialize();
+
+
+
+    $.setCurrentPosition = function (){
+        getCurrentPosition(map);
+    }
+
+    // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+    $.zoomIn = function() {
+        map.setLevel(map.getLevel() - 1);
+    }
+
+// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
+    $.zoomOut = function() {
+        map.setLevel(map.getLevel() + 1);
+    }
+
 });

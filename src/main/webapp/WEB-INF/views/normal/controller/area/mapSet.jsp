@@ -38,18 +38,14 @@
 					<div class="card">
 						<div class="card-title">
 							<p class="modes">
-									<%--<button onclick="selectOverlay('POLYGON')">구역추가</button>
-									<button onclick="getDataFromDrawingMap()">저장</button>--%>
 								<button id="btnAddOverlay">구역추가</button>
 								<button id="btnSet">저장</button>
 								<span>
-								<label><input type="radio" name="searchIllegalType" value="" checked>전체</label>
-								<c:forEach items="${IllegalType.values()}" var="type">
-									<label><input type="radio" name="searchIllegalType" value="${type}">${type.value}</label>
-								</c:forEach>
-								<%--<label><input type="radio" name="searchIllegalType" value="ILLEGAL">불법주정차</label>
-								<label><input type="radio" name="searchIllegalType" value="FIVE_MINUTE">5분주정차</label>--%>
-							</span>
+									<label><input type="radio" name="searchIllegalType" value="" checked>전체</label>
+									<c:forEach items="${IllegalType.values()}" var="type">
+										<label><input type="radio" name="searchIllegalType" value="${type}">${type.value}</label>
+									</c:forEach>
+								</span>
 							</p>
 						</div>
 						<div class="card-body mt-4">

@@ -202,9 +202,10 @@ function getCurrentPosition(map) {
                 // drawingMap.center = new kakao.maps.LatLng(`${position.coords.latitude}`, `${position.coords.longitude}`) // 지도의 중심좌표
                 let currentLat = `${position.coords.latitude}`; // y
                 let currentLng = `${position.coords.longitude}`; // x
-                // 지도 중심좌표를 접속위치로 변경합니다
+                // 도 중심좌표를 접속위치로 변경합니다지
                 let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
-                map.setCenter(currentPosition);
+                //map.setCenter(currentPosition);
+                map.panTo(currentPosition);
             },
             (error) => {
                 console.error(error);
@@ -218,7 +219,7 @@ function getCurrentPosition(map) {
     } else {
         let position = new kakao.maps.LatLng(33.450701, 126.570667);
         alert("위치 권한을 설정하시기 바랍니다.");
-        map.setCenter(position);
+        map.panTo(position);
     }
 }
 
@@ -257,6 +258,11 @@ async function getDongCodesBounds(map){
         codes.push(code);
     }
     codes = [...new Set(codes)]
+
+    log('codes : ', codes);
+    log('beforeCodes : ', beforeCodes);
+    log('uniqueCodesCheck : ', uniqueCodesCheck);
+
 
     uniqueCodesCheck = _.isEmpty(_.xor(beforeCodes, codes));
 
