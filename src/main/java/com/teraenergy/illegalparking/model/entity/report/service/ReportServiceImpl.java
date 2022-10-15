@@ -93,41 +93,42 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public int getSizeForReport(Integer governmentUserSeq) {
+    public int getSizeForReport(Integer governmentUserSeq, List<Integer> groupSeqs) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 
     // 신고제외(미처리) 처리 신고 건수
 
     @Override
-    public int getSizeForException(Integer governmentUserSeq) {
+    public int getSizeForException(Integer governmentUserSeq, List<Integer> groupSeqs) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
         query.where(QReport.report.reportStateType.eq(ReportStateType.EXCEPTION));
+        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 
     // 과태료 처리 신고 건수
     @Override
-    public int getSizeForPenalty(Integer governmentUserSeq) {
+    public int getSizeForPenalty(Integer governmentUserSeq, List<Integer> groupSeqs) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
         query.where(QReport.report.reportStateType.eq(ReportStateType.PENALTY));
+        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 
     // 대기중인 신고 건수
     @Override
-    public int getSizeForCOMPLETE(LocationType locationType) {
+    public int getSizeForCOMPLETE(Integer governmentUserSeq, List<Integer> groupSeqs) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.reportSeq.isNull());
-//        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(
-//                JPAExpressions.select(QIllegalGroup.illegalGroup.groupSeq)
-//                        .where(QIllegalGroup.illegalGroup.locationType.eq(locationType))
-//        ));
+        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
         query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
+        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 

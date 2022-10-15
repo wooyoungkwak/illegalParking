@@ -25,13 +25,13 @@ public interface ReportService {
 
     Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
 
-    int getSizeForReport(Integer governmentUserSeq);
+    int getSizeForReport(Integer governmentUserSeq, List<Integer> groupSeqs);
 
-    int getSizeForException(Integer governmentUserSeq);
+    int getSizeForException(Integer governmentUserSeq, List<Integer> groupSeqs);
 
-    int getSizeForPenalty(Integer governmentUserSeq);
+    int getSizeForPenalty(Integer governmentUserSeq, List<Integer> groupSeqs);
 
-    int getSizeForCOMPLETE(LocationType locationType);
+    int getSizeForCOMPLETE(Integer governmentUserSeq, List<Integer> groupSeqs);
 
     Report set(Report report);
 

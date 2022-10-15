@@ -56,15 +56,27 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
             userGovernmentDto.setLocationType(user.getGovernMentOffice().getLocationType().getValue());
             userGovernmentDto.setOfficeName(user.getGovernMentOffice().getName());
 
-            userGovernmentDto.setGroupCount(userGroupService.getCountByUser(user.getUserSeq()));
 
-            userGovernmentDto.setTotalCount(reportService.getSizeForReport(user.getUserSeq()));
-            // 미처리 건수 ( )
-            userGovernmentDto.setExceptionCount(reportService.getSizeForException(user.getUserSeq()));
-            // 처리 건수 (과태료)
-            userGovernmentDto.setPenaltyCount(reportService.getSizeForPenalty(user.getUserSeq()));
-            // 대기 (지역 기준)
-            userGovernmentDto.setCompleteCount(reportService.getSizeForCOMPLETE(user.getGovernMentOffice().getLocationType()));
+            List<UserGroup> userGroups = userGroupService.getsByUser(user.getUserSeq());
+
+            if (userGroups != null) {
+                userGovernmentDto.setGroupCount(userGroups.size());
+
+                List<Integer> groupSeqs = userGroups.stream().map(userGroup -> userGroup.getGroupSeq()).collect(Collectors.toList());
+                // 신고 건수
+                userGovernmentDto.setTotalCount(reportService.getSizeForReport(user.getUserSeq(), groupSeqs));
+                // 미처리 건수 (신고 제외)
+                userGovernmentDto.setExceptionCount(reportService.getSizeForException(user.getUserSeq(), groupSeqs));
+                // 처리 건수 (과태료대상)
+                userGovernmentDto.setPenaltyCount(reportService.getSizeForPenalty(user.getUserSeq(), groupSeqs));
+                // 대기 건수 (신고 접수)
+                userGovernmentDto.setCompleteCount(reportService.getSizeForCOMPLETE(user.getUserSeq(), groupSeqs));
+            } else {
+                userGovernmentDto.setTotalCount(0);
+                userGovernmentDto.setExceptionCount(0);
+                userGovernmentDto.setPenaltyCount(0);
+                userGovernmentDto.setCompleteCount(0);
+            }
 
             userGovernmentDtos.add(userGovernmentDto);
         }
