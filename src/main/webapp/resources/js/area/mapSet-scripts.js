@@ -68,13 +68,11 @@ $(function () {
         $('#areaSettingModal').offcanvas('hide');
 
         if(drawingDataTargets.length > 0){
-            if(confirm("작성한 구역이 삭제됩니다. 변경하시겠습니까?"))
-            {
+            if(confirm("저장하지 않은 구역이 삭제됩니다. 검색하시겠습니까?")) {
                 removeDrawingOverlays();
             }
-            else
-            {
-                log(searchIllegalType)
+            else {
+                $('input:radio[name=searchIllegalType]').eq(0).prop('checked', true)
                 return false;
             }
         }
@@ -290,7 +288,7 @@ $(function () {
                 zonePolygons.splice(index, 1);
             }
 
-            drawingPolygon(getZonesInBounds());
+            drawingPolygon(getPolygonData());
             $('#areaSettingModal').offcanvas('hide');
             alert("삭제되었습니다.");
         }
@@ -325,28 +323,28 @@ $(function () {
         }
     });
 
-    // 보여지는 맵에 포함된 폴리곤 찾기
-    function getZonesInBounds() {
-        //맵 구역
-        let bounds = drawingMap.getBounds();
-        let zonesInBounds = [];
-
-        getPolygonData().filter(function (overlay) {
-            let obj = {}, points = [];
-            let paths = pointsToPath(overlay.points);
-            paths.forEach(function (element) {
-                points.push(bounds.contain(element));
-                obj.inBound = points;
-            });
-            // 맵 안에 포함되어있는지 확인
-            if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
-                obj.overlay = overlay;
-                zonesInBounds.push(obj.overlay);
-            }
-        });
-        log('zonesInBounds : ', zonesInBounds);
-        return zonesInBounds;
-    }
+    // 보여지는 맵에 포함된 폴리곤 찾기 20221014 동코드로 zone을 가져오기 때문에 기능 제거
+    // function getZonesInBounds() {
+    //     //맵 구역
+    //     let bounds = drawingMap.getBounds();
+    //     let zonesInBounds = [];
+    //
+    //     getPolygonData().filter(function (overlay) {
+    //         let obj = {}, points = [];
+    //         let paths = pointsToPath(overlay.points);
+    //         paths.forEach(function (element) {
+    //             points.push(bounds.contain(element));
+    //             obj.inBound = points;
+    //         });
+    //         // 맵 안에 포함되어있는지 확인
+    //         if (obj.inBound.some(inBoundPoint => inBoundPoint === true)) {
+    //             obj.overlay = overlay;
+    //             zonesInBounds.push(obj.overlay);
+    //         }
+    //     });
+    //     log('zonesInBounds : ', zonesInBounds);
+    //     return zonesInBounds;
+    // }
 
     // Drawing Manager에서 가져온 데이터 중
     // 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
@@ -553,7 +551,7 @@ $(function () {
                 } else {
                     let codes = await getDongCodesBounds(drawingMap);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
-                    if(uniqueCodesCheck) await drawingPolygon(getZonesInBounds());
+                    if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
                     else getsZone(codes);
                 }
             }
@@ -574,7 +572,7 @@ $(function () {
         })
         log('ok');
         beforeCodes = codes;
-        drawingPolygon(getZonesInBounds());
+        drawingPolygon(getPolygonData());
     }
 
     // zone 초기화

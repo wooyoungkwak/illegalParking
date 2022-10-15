@@ -223,7 +223,7 @@ public class AreaAPI {
     }
 
 
-    @PostMapping("/api/area/zone/gets")
+    @PostMapping("/api/zone/gets")
     @ResponseBody
     public Object getsZoneByMobile(Device device, HttpServletRequest request, @RequestBody String body) throws Exception {
         if ( device.isMobile()) {
