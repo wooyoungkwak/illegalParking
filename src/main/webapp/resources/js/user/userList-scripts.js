@@ -43,8 +43,7 @@ $.setUserGroupNames = function (locationType) {
             locationType: locationType
         }
     });
-    log(result);
-    return;
+
     if (result.success) {
         let names = result.data;
         let html = getNamesSelectHtml(names);

@@ -42,10 +42,9 @@
         const log = console.log;
 
         let _userSeq = '${_user.userSeq}';
-        let _username = '${_user.username}';
+        let _userName = '${_user.userName}';
         let _name = '${_user.name}';
         let _role = '${_user.role}';
-
 
         $(function () {
             let paths = location.pathname.split("/");
@@ -90,6 +89,15 @@
             $('#myInfo').on('click', function (){
                location.href = '${pageContext.request.contextPath}/myInfo';
             });
+
+            if (_role === 'GOVERNMENT') {
+                $('#navMenu').find('li').each(function (){
+                   if ( $(this).index() != 0 ) {
+                       $(this).hide();
+                   }
+                });
+            }
+
         });
     </script>
 </head>

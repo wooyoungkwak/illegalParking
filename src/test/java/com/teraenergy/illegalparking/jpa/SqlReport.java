@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
 import com.teraenergy.illegalparking.model.entity.point.service.PointService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
@@ -37,6 +38,8 @@ import java.util.List;
  * Project : illegalParking
  * Description :
  */
+
+
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
@@ -194,11 +197,30 @@ public class SqlReport {
     @Test
     public void select(){
 
+
+    }
+
+    @Test
+    public void selectByReport() {
         List<Report> reports = reportService.gets();
         try {
             objectMapper.writeValueAsString(reports);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void selectByReceipt(){
+        Receipt receipt = receiptService.get(6);
+
+        IllegalZone illegalZone = receipt.getIllegalZone();
+        IllegalEvent illegalEvent = illegalZone.getIllegalEvent();
+
+        if (illegalEvent == null) {
+            System.out.println(" ***************** event is not ");
+        } else {
+            System.out.println(" *****************  " + illegalEvent.getEventSeq());
         }
     }
 

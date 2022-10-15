@@ -22,7 +22,7 @@ public class UserDtoServiceImpl implements UserDtoService{
         userDto.setName(user.getName());
         userDto.setRole(user.getRole());
         userDto.setUserCode(user.getUserCode());
-        userDto.setUsername(user.getUsername());
+        userDto.setUserName(user.getUsername());
         userDto.setPhotoName(user.getPhotoName());
         userDto.setPhoneNumber(user.getPhoneNumber());
         return userDto;

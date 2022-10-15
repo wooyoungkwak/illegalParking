@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface IllegalZoneMapperService {
 
-    IllegalZone get(double latitude, double longitude);
+    IllegalZone get(String code, double latitude, double longitude);
 
     IllegalZone get(Integer illegalZoneSeq);
 

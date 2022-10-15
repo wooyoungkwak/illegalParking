@@ -56,7 +56,7 @@ public class User implements UserDetails {
     private GovernmentOffice governMentOffice;
 
     @Column(nullable = false)
-    private Boolean isDel;
+    private Boolean isDel = false;
 
     @Column
     private LocalDateTime delDt;

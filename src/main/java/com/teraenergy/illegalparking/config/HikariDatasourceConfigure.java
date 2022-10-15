@@ -23,7 +23,7 @@ import javax.sql.DataSource;
  * Author : young
  * Editor :
  * Project : illegalParking
- * Description : datasource  +   ( mybatis + jpa )
+ * Description : hikari datasource  +   ( mybatis + jpa )
  */
 @Slf4j
 @Lazy
@@ -32,16 +32,27 @@ import javax.sql.DataSource;
         basePackageClasses = {Jsr310JpaConverters.class},
         basePackages = {"com.teraenergy.illegalparking.model.mapper"}
 )
-@Configuration
-public class MybatisConfigure {
+//@Configuration
+public class HikariDatasourceConfigure {
 
     private final ApplicationContext context;
 
     @Value("${mybatis.mapper-locations}")
     String mapperPath;
 
+    /**
+     * application.yml 에서 spring.datasource.hikari 를 지정하여 DB 를 한개 더 연결할때 사용 ( 또는 hikari 설정을 이용할때 사용 )
+     * 주의 : 기존의 datasource 와 충돌이 되지 않도록 설정이 중요.
+     */
     @Bean
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("dataSource") DataSource dataSource) throws Exception {
+    @ConfigurationProperties(prefix = "spring.datasource.hikari")
+    public DataSource hikariDatasource(){
+        log.info("configure mybatisDatasource ");
+        return DataSourceBuilder.create().build();
+    }
+
+    @Bean
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("hikariDatasource") DataSource dataSource) throws Exception {
         return _sqlSessionFactory(dataSource);
     }
 
@@ -78,7 +89,7 @@ public class MybatisConfigure {
     }
 
 //    @Bean
-//    public DataSourceTransactionManager transactionManager(@Qualifier("dataSource") DataSource dataSource) {
+//    public DataSourceTransactionManager transactionManager(@Qualifier("hikariDatasource") DataSource dataSource) {
 //        return new DataSourceTransactionManager(dataSource);
 //    }
 }

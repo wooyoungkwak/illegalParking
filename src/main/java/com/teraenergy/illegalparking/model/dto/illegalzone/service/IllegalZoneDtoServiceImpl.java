@@ -42,10 +42,10 @@ public class IllegalZoneDtoServiceImpl implements IllegalZoneDtoService {
             illegalZoneDto.setGroupSeq(illegalEvent.getGroupSeq());
             illegalZoneDto.setLocationType( illegalGroup.getLocationType());
             illegalZoneDto.setIllegalType(illegalEvent.getIllegalType().toString());
-            illegalZoneDto.setUsedFirst(illegalEvent.getUsedFirst());
+            illegalZoneDto.setUsedFirst(illegalEvent.isUsedFirst());
             illegalZoneDto.setFirstStartTime(illegalEvent.getFirstStartTime());
             illegalZoneDto.setFirstEndTime(illegalEvent.getFirstEndTime());
-            illegalZoneDto.setUsedSecond(illegalEvent.getUsedSecond());
+            illegalZoneDto.setUsedSecond(illegalEvent.isUsedSecond());
             illegalZoneDto.setSecondStartTime(illegalEvent.getSecondStartTime());
             illegalZoneDto.setSecondEndTime(illegalEvent.getSecondEndTime());
         }

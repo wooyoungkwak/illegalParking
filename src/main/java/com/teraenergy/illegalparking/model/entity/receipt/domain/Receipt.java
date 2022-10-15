@@ -31,8 +31,8 @@ public class Receipt {
     @Column
     String carNum;
 
-    @Column
-    Boolean isDel;
+    @Column(nullable = false)
+    Boolean isDel = false;
 
     @Column
     LocalDateTime delDt;

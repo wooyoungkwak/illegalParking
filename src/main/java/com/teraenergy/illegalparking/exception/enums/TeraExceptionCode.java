@@ -37,6 +37,7 @@ public enum TeraExceptionCode implements TeraErrCode {
     USER_INSERT_FAIL ("사용자 등록이 실패 하였습니다. \n 다시 확인하여 입력 하세요"),
 
     USER_IS_NOT_EXIST ("존재하지 않는 사용자입니다."),
+    USER_FAIL_RESiSTER ("등록 실패 하였습니다."),
 
     USER_GET_FAIL ("사용자 정보를 가져오는데 실패 하였습니다."),
 

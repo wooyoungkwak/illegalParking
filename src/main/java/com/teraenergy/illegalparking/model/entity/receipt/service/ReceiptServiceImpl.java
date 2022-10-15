@@ -8,6 +8,7 @@ import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.receipt.repository.ReceiptRepository;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,6 +36,23 @@ public class ReceiptServiceImpl implements ReceiptService {
     @Override
     public Receipt get(Integer receiptSeq) {
         return receiptRepository.findByReceiptSeqAndIsDel(receiptSeq, false);
+    }
+
+    @Override
+    public boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code) {
+        LocalDateTime beforeRegDt = regDt.minusMinutes(11);
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
+        query.where(QReceipt.receipt.carNum.eq(carNum));
+        query.where(QReceipt.receipt.regDt.between(beforeRegDt, regDt));
+        query.where(QReceipt.receipt.illegalZone.code.eq(code));
+
+        if (query.fetch().size() > 0) {
+            return true;
+        }
+
+        return false;
+
     }
 
     @Override

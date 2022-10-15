@@ -22,8 +22,8 @@ public class IllegalZoneMapperServiceImpl implements IllegalZoneMapperService {
     private final IllegalZoneMapper illegalZoneMapper;
 
     @Override
-    public IllegalZone get(double latitude, double longitude) {
-        return illegalZoneMapper.findByLatitudeAndLongitude(latitude, longitude);
+    public IllegalZone get(String code, double latitude, double longitude) {
+        return illegalZoneMapper.findByLatitudeAndLongitude(code, latitude, longitude);
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,8 @@ import java.util.List;
 public interface ReceiptService {
 
     Receipt get(Integer receiptSeq);
+
+    boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code);
 
     List<Receipt> gets();
 

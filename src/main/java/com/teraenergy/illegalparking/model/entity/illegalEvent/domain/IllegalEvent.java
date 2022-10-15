@@ -36,7 +36,7 @@ public class IllegalEvent {
     String firstEndTime;
 
     @Column
-    Boolean usedFirst;
+    boolean usedFirst;
 
     @Column
     String secondStartTime;
@@ -45,7 +45,7 @@ public class IllegalEvent {
     String secondEndTime;
 
     @Column
-    Boolean usedSecond;
+    boolean usedSecond;
 
     @Column
     Integer groupSeq;

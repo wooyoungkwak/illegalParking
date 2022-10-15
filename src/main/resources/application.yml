@@ -55,9 +55,13 @@ spring:
     username: root
     password: tera
     hikari:
-      connection-timeout: 30000 # connection_timeout
+      connection-timeout: 58000 # connection_timeout
       max-lifetime: 1800000 # wait_timeout
-
+      driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+      jdbc-url: jdbc:log4jdbc:mariadb://192.168.0.53:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: root
+      password: tera
+      maximum-pool-size: 30
 server:
   port: 8090
   servlet:
@@ -79,8 +83,11 @@ spring:
     username: wooyoung
     password: rudnf12dnjf
     hikari:
-      connection-timeout: 9900 # connection_timeout
+      connection-timeout: 9000 # connection_timeout
       max-lifetime: 1800000 # wait_timeout
+      jdbc-url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: wooyoung
+      password: rudnf12dnjf
       maximum-pool-size: 30
 server:
   port: 8090
@@ -103,6 +110,9 @@ spring:
     username: tera
     password: tera1234!
     hikari:
+      jdbc-url: jdbc:mariadb://49.50.166.205:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: tera
+      password: tera1234!
       connection-timeout: 30000 # connection_timeout
       max-lifetime: 1800000 # wait_timeout
 server:
@@ -126,8 +136,11 @@ spring:
     username: root
     password: tera
     hikari:
-      connection-timeout: 30000 # connection_timeout
-      max-lifetime: 1800000 # wait_timeout
+      jdbc-url: jdbc:mariadb://localhost:3306/illegal_parking?serverTimezone=Asia/Seoul
+      username: root
+      password: tera
+      connection-timeout: 29000 # connection_timeout
+      max-lifetime: 2800000 # wait_timeout
 server:
   port: 80
   servlet:

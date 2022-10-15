@@ -16,7 +16,7 @@ import lombok.Setter;
 @Setter
 public class UserDto {
     Integer userSeq;
-    private String username;    // 사용자 ID
+    private String userName;    // 사용자 ID
     private String name;        // 사용자 이름
     private Role role;          // 사용자 권한
     private Long userCode;      // 사용자 분리 코드
