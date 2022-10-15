@@ -1,7 +1,10 @@
 package com.teraenergy.illegalparking.model.dto.user.domain;
 
+import com.teraenergy.illegalparking.model.entity.userGroup.domain.UserGroup;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 /**
  * Date : 2022-10-11

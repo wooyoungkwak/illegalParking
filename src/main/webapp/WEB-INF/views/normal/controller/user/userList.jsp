@@ -113,17 +113,7 @@
 
             $(function () {
 
-                // 검색
-                function search(pageNumber) {
-                    if (pageNumber === undefined) {
-                        $('#pageNumber').val("1");
-                    } else {
-                        $('#pageNumber').val(pageNumber);
-                    }
-                    location.href = _contextPath + "/receiptList?" + $('form').serialize();
-                }
-
-                // 검색 입력 방식 선택
+                // 검색 입력 방식 선택 함수
                 function searchSelect(filterColumn) {
                     if (filterColumn === 'RESULT') {
                         $('#searchStrGroup').hide();
@@ -134,6 +124,7 @@
                     }
                 }
 
+                // 사용자 설정 태그 초기화 함수
                 function initializeUserSetTag(userGovernmentDto) {
                     $('#userSeq').val(userGovernmentDto.userSeq);
                     $('#officeName').val(userGovernmentDto.officeName);
@@ -153,20 +144,32 @@
                     $.drawPieChart(userGovernmentDto);
 
                     $('.canvasjs-chart-credit').hide();
+
+                    let userGroupDtos = userGovernmentDto.userGroupDtos;
+
+                    if ( userGroupDtos != undefined) {
+                        for ( let i = 0; i < userGroupDtos.length; i++) {
+                            $.addUserGroupList(userGroupDtos[i]);
+                        }
+                    }
+
+					// 관리 그룹 리스트 이벤트 연결
+                    $.bindUserGroupNavEvent();
                 }
 
+                // 초기화 함수
                 function initialize() {
 
                     $('#orderBy a').on('click', function () {
-                        search();
+                        $.search();
                     });
 
                     $('#searchStr').next().on('click', function (event) {
-                        search();
+                        $.search();
                     });
 
                     $('#searchStr2').next().on('click', function (event) {
-                        search();
+                        $.search();
                     });
 
                     $('#pagination').find("li").on('click', function () {
@@ -194,12 +197,12 @@
                             pageNumber = Number.parseInt($(this).text());
                         }
 
-                        search(pageNumber);
+                        $.search(pageNumber);
                     });
 
                     $('#pageSize').on("change", function () {
                         $('#pageNumber').val(1);
-                        search();
+                        $.search();
                     });
 
                     // 신고 등록 표시
@@ -220,14 +223,14 @@
 						}
 
                         let result = $.JJAjaxAsync({
-							url: _contextPath + "/userGroup/group/get",
+							url: _contextPath + "/userGroup/gets",
 							data: {
                                 userSeq : userSeq
 							}
 						});
 
                         if (result.success) {
-                            userGovernmentDto.illegalGroups = result.data;
+                            userGovernmentDto.userGroupDtos = result.data;
                         }
 
                         initializeUserSetTag(userGovernmentDto);
@@ -258,9 +261,13 @@
                     $('#userSet').hide();
                 }
 
+                // 검색 2 숨기기
                 $('#searchStr2').hide();
+
+                // 필터에 의한 검색 입력 방식 선택
                 searchSelect('${filterColumn}');
 
+                // 초기화
                 initialize();
             });
 		</script>

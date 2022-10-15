@@ -1,3 +1,12 @@
+$.search = function (pageNumber) {
+    if (pageNumber === undefined) {
+        $('#pageNumber').val("1");
+    } else {
+        $('#pageNumber').val(pageNumber);
+    }
+    location.href = _contextPath + "/userList?" + $('form').serialize();
+}
+
 // 신고 접수 건 파이 차트
 $.drawPieChart = function(opt) {
     let options = {
@@ -52,19 +61,19 @@ $.setUserGroupNames = function (locationType) {
 }
 
 // 관리 그룹 리스트 추가
-$.addUserGroupList = function (data) {
+$.addUserGroupList = function (userGroupDto) {
 
-    let createHtml = function (data) {
+    let createHtml = function (userGroupDto) {
         let html = '';
         html +='<li class="nav-item">';
-        html +='    <input type="hidden" value="' + data.userGroupSeq  +  '">'
-        html +='    <a class="nav-link" href="#">' + data.groupName + '<i class="text-danger fa fa-times"></i></a>'
+        html +='    <input type="hidden" value="' + userGroupDto.userGroupSeq  +  '">'
+        html +='    <a class="nav-link" href="#">' + userGroupDto.name + '<i class="text-danger fa fa-times"></i></a>'
         html +='</li>'
 
         return html;
     }
 
-    $('#addUserGroupNav').append(createHtml(data));
+    $('#addUserGroupNav').append(createHtml(userGroupDto));
 }
 
 // 관리 그룹 리스트 이벤트 연결
@@ -73,6 +82,7 @@ $.bindUserGroupNavEvent = function (){
         if ( confirm("삭제 하시겠습니까") ) {
 
             let userGroupSeq = $(this).parent().find('input').val();
+
             let result = $.JJAjaxAsync({
                 url: _contextPath + "/userGroup/remove",
                 data: {

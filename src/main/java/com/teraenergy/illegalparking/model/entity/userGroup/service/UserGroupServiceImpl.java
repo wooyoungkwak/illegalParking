@@ -50,8 +50,26 @@ public class UserGroupServiceImpl implements UserGroupService {
     }
 
     @Override
+    public int getCountByUser(Integer userSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QUserGroup.userGroup);
+        query.where(QUserGroup.userGroup.userSeq.eq(userSeq));
+        return query.fetch().size();
+    }
+
+    @Override
     public UserGroup set(UserGroup userGroup) {
         return userGroupRepository.save(userGroup);
+    }
+
+    @Override
+    public boolean isExist(Integer userSeq, Integer groupSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QUserGroup.userGroup);
+        query.where(QUserGroup.userGroup.userSeq.eq(userSeq));
+        query.where(QUserGroup.userGroup.groupSeq.eq(groupSeq));
+        if ( query.fetch().size() != 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override

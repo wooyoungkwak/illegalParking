@@ -22,7 +22,11 @@ public interface UserGroupService {
 
     List<UserGroup> getsByUser(Integer userSeq);
 
+    int getCountByUser(Integer userSeq);
+
     UserGroup set(UserGroup userGroup);
+
+    boolean isExist(Integer userSeq, Integer groupSeq);
 
     void remove(Integer userGroupSeq) throws TeraException;
 

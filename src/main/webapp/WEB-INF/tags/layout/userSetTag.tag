@@ -129,36 +129,36 @@
 <script type="application/javascript">
     $(function () {
 
-        // 정보 수정
+        // 정보 수정 이벤트
         $('#userModify').on('click', function () {
             if ( confirm("정보 수정 하시겠습니까 ?") ){
-                log($('#userForm').serialize());
+                // log($('#userForm').serialize());
 
             }
         });
 
-        // 관리 그룹 추가
+        // 관리 그룹 추가 이벤트
         $('#userGroupAdd').on('click', function (){
             $('#userGroupAddTag').show();
         });
 
-        // 관리 그룹 삭제
+        // 관리 그룹 삭제 이벤트
 		$('#addUserGroupNav a').on('click', function (){
 			if ( confirm("삭제 하시겠습니까") ) {
                 $(this).parent().remove();
 			}
 		});
 
-        // 상세 정보 닫기
+        // 상세 정보 닫기 이벤트
         $('#userClose').on('click', function () {
             $('#userMain').show();
             $('#userSet').hide();
+            $.search();
         });
 
         // 그룹 추가 태그 숨기기
         $('#userGroupAddTag').hide();
 
-        $.bindUserGroupNavEvent();
     });
 </script>
 

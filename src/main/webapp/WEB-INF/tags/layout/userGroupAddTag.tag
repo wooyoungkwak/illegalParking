@@ -55,23 +55,26 @@
 <script type="application/javascript">
     $(function () {
 
+        // 관리 그룹 추가 태그 닫기 함수
         function closeUseGroupAddTag() {
-            $('#userGroupAddTag').hide();
             $('#userGroupLocationType').val('SEOUL');
             $('#userGroupLocationType').trigger('change');
+            $('#name').find('option').remove();
+            $('#userGroupAddTag').hide();
         }
 
+        // 관리 그룹 타입 변경 이벤트
         $('#userGroupLocationType').on('change', function () {
             let locationType = $(this).val();
             $.setUserGroupNames(locationType);
         });
 
-        // 그룹 추가 팝업창 닫기
+        // 그룹 추가 팝업창 닫기 이벤트
         $('#closeUserGroupAdd').on('click', function () {
             closeUseGroupAddTag();
         });
 
-        // 추가
+        // 관리 그룹 추가 이벤트
         $('#createUserGroupAdd').on('click', function () {
             let userGroup = $.getData('userGroupAddForm');
             if (userGroup.name === undefined) {
@@ -92,7 +95,7 @@
                 $.addUserGroupList(result.data);
                 $.bindUserGroupNavEvent();
             } else {
-                alert("등록 실패 하였습니다. ");
+                alert("등록 실패 하였습니다. \n" + result.msg);
             }
 
             closeUseGroupAddTag();

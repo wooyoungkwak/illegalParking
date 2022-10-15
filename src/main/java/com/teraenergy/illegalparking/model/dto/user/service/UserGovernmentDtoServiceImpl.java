@@ -40,8 +40,6 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
 
     private final ReportService reportService;
 
-
-
     @Override
     public Page<UserGovernmentDto> gets(int pageNumber, int pageSize, UserGovernmentFilterColumn userGovernmentFilterColumn, String search) throws TeraException {
 
@@ -58,8 +56,7 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
             userGovernmentDto.setLocationType(user.getGovernMentOffice().getLocationType().getValue());
             userGovernmentDto.setOfficeName(user.getGovernMentOffice().getName());
 
-            // TODO : 그룹 관리 개수는 어디서 ????
-            userGovernmentDto.setGroupCount(0);
+            userGovernmentDto.setGroupCount(userGroupService.getCountByUser(user.getUserSeq()));
 
             userGovernmentDto.setTotalCount(reportService.getSizeForReport(user.getUserSeq()));
             // 미처리 건수 ( )
