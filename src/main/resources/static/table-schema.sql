@@ -119,6 +119,7 @@ CREATE TABLE illegal_zone
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
+CREATE INDEX zoneCode ON illegal_zone (Code);
 
 -- 불법주정차 구역 이벤트
 DROP TABLE IF EXISTS illegal_event;
