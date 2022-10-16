@@ -15,6 +15,8 @@ public interface IllegalZoneService {
 
     List<IllegalZone> gets();
 
+    List<IllegalZone> gets(List<Integer> groupSeqs);
+
     IllegalZone get(Integer illegalZoneSeq);
 
     IllegalZone set(IllegalZone illegalZone);

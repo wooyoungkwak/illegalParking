@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.QIllegalGroup;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
@@ -41,7 +42,7 @@ public class ReportServiceImpl implements ReportService {
         query.where(QReport.report.secondReceipt.carNum.eq(carNum));
         query.where(QReport.report.isDel.isFalse());
 
-        if ( query.fetchOne() == null ) {
+        if (query.fetchOne() == null) {
             return false;
         }
         return true;
@@ -81,7 +82,7 @@ public class ReportServiceImpl implements ReportService {
             query.where(QReport.report.reportStateType.eq(reportStateType));
         }
 
-        int total =  query.fetch().size();
+        int total = query.fetch().size();
 
         pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);
@@ -93,42 +94,37 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public int getSizeForReport(Integer governmentUserSeq, List<Integer> groupSeqs) {
+    public int getSizeForReport(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
-        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
+        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
         return query.fetch().size();
     }
 
     // 신고제외(미처리) 처리 신고 건수
 
     @Override
-    public int getSizeForException(Integer governmentUserSeq, List<Integer> groupSeqs) {
+    public int getSizeForException(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
         query.where(QReport.report.reportStateType.eq(ReportStateType.EXCEPTION));
-        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 
     // 과태료 처리 신고 건수
     @Override
-    public int getSizeForPenalty(Integer governmentUserSeq, List<Integer> groupSeqs) {
+    public int getSizeForPenalty(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
         query.where(QReport.report.reportStateType.eq(ReportStateType.PENALTY));
-        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 
     // 대기중인 신고 건수
     @Override
-    public int getSizeForCOMPLETE(Integer governmentUserSeq, List<Integer> groupSeqs) {
+    public int getSizeForCOMPLETE(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.reportSeq.isNull());
-        query.where(QReport.report.reportUserSeq.eq(governmentUserSeq));
+        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
         query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
-        query.where(QReport.report.secondReceipt.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
         return query.fetch().size();
     }
 

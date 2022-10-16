@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.report.service;
 
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
@@ -25,13 +26,13 @@ public interface ReportService {
 
     Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
 
-    int getSizeForReport(Integer governmentUserSeq, List<Integer> groupSeqs);
+    int getSizeForReport(List<IllegalZone> illegalZones);
 
-    int getSizeForException(Integer governmentUserSeq, List<Integer> groupSeqs);
+    int getSizeForException(List<IllegalZone> illegalZones);
 
-    int getSizeForPenalty(Integer governmentUserSeq, List<Integer> groupSeqs);
+    int getSizeForPenalty(List<IllegalZone> illegalZones);
 
-    int getSizeForCOMPLETE(Integer governmentUserSeq, List<Integer> groupSeqs);
+    int getSizeForCOMPLETE(List<IllegalZone> illegalZones);
 
     Report set(Report report);
 

@@ -47,7 +47,7 @@
 				<div class="row mb-2">
 					<div class="col-1 d-flex justify-content-lg-end"><label class="mt-2">지역 : </label></div>
 					<div class="col-3">
-						<tags:selectTagWithType id="locationType" current="" items="${items}"/>
+						<tags:selectTagWithType id="locationType" current="" items="${items}" option="disabled"/>
 					</div>
 				</div>
 				<div class="row mb-2">
@@ -80,20 +80,7 @@
 			</div>
 
 			<nav class="navbar navbar-expand-lg navbar-light bg-light ms-3 me-3 mb-2">
-				<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="addUserGroupNav">
-<%--					<li class="nav-item">--%>
-<%--						<a class="nav-link" href="#">나주 A <i class="text-danger fa fa-times"></i></a>--%>
-<%--					</li>--%>
-<%--					<li class="nav-item">--%>
-<%--						<a class="nav-link" href="#">나주 B <i class="text-danger fa fa-times"></i></a>--%>
-<%--					</li>--%>
-<%--					<li class="nav-item">--%>
-<%--						<a class="nav-link" href="#">나주 C <i class="text-danger fa fa-times"></i></a>--%>
-<%--					</li>--%>
-<%--					<li class="nav-item">--%>
-<%--						<a class="nav-link" href="#">나주 D <i class="text-danger fa fa-times"></i></a>--%>
-<%--					</li>--%>
-				</ul>
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0" id="addUserGroupNav"></ul>
 			</nav>
 
 			<div class="row">
@@ -131,8 +118,27 @@
 
         // 정보 수정 이벤트
         $('#userModify').on('click', function () {
+
             if ( confirm("정보 수정 하시겠습니까 ?") ){
-                // log($('#userForm').serialize());
+                let getData = function (id) {
+                    let arr = $('#'+id).serializeArray();
+                    let data = {};
+                    $(arr).each(function (index, obj) {
+                        data[obj.name] = obj.value;
+                    });
+                    return data;
+                }
+
+				let result = $.JJAjaxAsync({
+					url: _contextPath + '/modify',
+					data : getData('userForm')
+				});
+
+                if (result.success) {
+                    alert("수정 되었습니다.");
+				} else {
+                    alert(result.msg);
+				}
 
             }
         });

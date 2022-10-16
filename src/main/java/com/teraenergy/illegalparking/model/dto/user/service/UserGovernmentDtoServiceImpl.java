@@ -5,6 +5,8 @@ import com.teraenergy.illegalparking.model.dto.user.domain.UserGovernmentDto;
 import com.teraenergy.illegalparking.model.dto.user.enums.UserGovernmentFilterColumn;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.IllegalGroup;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
@@ -38,6 +40,8 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
 
     private final IllegalGroupServcie illegalGroupServcie;
 
+    private final IllegalZoneService illegalZoneService;
+
     private final ReportService reportService;
 
     @Override
@@ -53,7 +57,7 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
             userGovernmentDto.setUserName(user.getUsername());
             user.setDecryptPassword();
             userGovernmentDto.setPassword(user.getPassword());
-            userGovernmentDto.setLocationType(user.getGovernMentOffice().getLocationType().getValue());
+            userGovernmentDto.setLocationType(user.getGovernMentOffice().getLocationType());
             userGovernmentDto.setOfficeName(user.getGovernMentOffice().getName());
 
 
@@ -61,16 +65,17 @@ public class UserGovernmentDtoServiceImpl implements UserGovernmentDtoService{
 
             if (userGroups != null) {
                 userGovernmentDto.setGroupCount(userGroups.size());
-
                 List<Integer> groupSeqs = userGroups.stream().map(userGroup -> userGroup.getGroupSeq()).collect(Collectors.toList());
+                List<IllegalZone> illegalZones = illegalZoneService.gets(groupSeqs);
+
                 // 신고 건수
-                userGovernmentDto.setTotalCount(reportService.getSizeForReport(user.getUserSeq(), groupSeqs));
+                userGovernmentDto.setTotalCount(reportService.getSizeForReport(illegalZones));
                 // 미처리 건수 (신고 제외)
-                userGovernmentDto.setExceptionCount(reportService.getSizeForException(user.getUserSeq(), groupSeqs));
+                userGovernmentDto.setExceptionCount(reportService.getSizeForException(illegalZones));
                 // 처리 건수 (과태료대상)
-                userGovernmentDto.setPenaltyCount(reportService.getSizeForPenalty(user.getUserSeq(), groupSeqs));
+                userGovernmentDto.setPenaltyCount(reportService.getSizeForPenalty(illegalZones));
                 // 대기 건수 (신고 접수)
-                userGovernmentDto.setCompleteCount(reportService.getSizeForCOMPLETE(user.getUserSeq(), groupSeqs));
+                userGovernmentDto.setCompleteCount(reportService.getSizeForCOMPLETE(illegalZones));
             } else {
                 userGovernmentDto.setTotalCount(0);
                 userGovernmentDto.setExceptionCount(0);

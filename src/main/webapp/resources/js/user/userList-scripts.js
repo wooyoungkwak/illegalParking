@@ -31,9 +31,13 @@ $.drawPieChart = function(opt) {
     function draw() {
         $("#chartContainer").css("height", "300px").css("width", "500px");
         $("#chartContainer").CanvasJSChart(options);
+        $('.canvasjs-chart-credit').hide();
     };
 
-    draw();
+    setTimeout(() => {
+        draw();
+    }, 200);
+
 }
 
 // 관리 그룹 추가 이름 설정

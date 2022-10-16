@@ -36,7 +36,7 @@ public class IllegalZone {
     Boolean isDel;      // 삭제 여부
 
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "eventSeq")
+    @JoinColumn(name = "eventSeq" )
     IllegalEvent illegalEvent;
 
     @Transient

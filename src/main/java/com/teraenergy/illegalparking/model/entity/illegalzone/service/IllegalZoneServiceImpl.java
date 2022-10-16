@@ -38,6 +38,13 @@ public class IllegalZoneServiceImpl implements IllegalZoneService {
     }
 
     @Override
+    public List<IllegalZone> gets(List<Integer> groupSeqs) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
+        query.where(QIllegalZone.illegalZone.illegalEvent.groupSeq.in(groupSeqs));
+        return query.fetch();
+    }
+
+    @Override
     public IllegalZone get(Integer zoneSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QIllegalZone.illegalZone);
         query.where(QIllegalZone.illegalZone.zoneSeq.eq(zoneSeq));

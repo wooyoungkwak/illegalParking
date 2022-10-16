@@ -1,10 +1,8 @@
 package com.teraenergy.illegalparking.model.dto.user.domain;
 
-import com.teraenergy.illegalparking.model.entity.userGroup.domain.UserGroup;
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.List;
 
 /**
  * Date : 2022-10-11
@@ -17,7 +15,7 @@ import java.util.List;
 @Setter
 public class UserGovernmentDto {
     Integer userSeq;        // 사용자 키
-    String locationType;    // 지역
+    LocationType locationType;    // 지역
     String officeName;      // 관공서명
     String userName;        // 아이디
     String password;        // 패스워드

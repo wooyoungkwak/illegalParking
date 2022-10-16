@@ -72,14 +72,17 @@
 							</thead>
 							<tbody>
 								<c:forEach items="${userGovernmentDtos}" var="userGovernmentDto" varStatus="status">
-									<tr>
+									<tr seq="${userGovernmentDto.userSeq}">
 										<td>
-											<input type="hidden" value="${userGovernmentDto.userSeq}">
-												${userGovernmentDto.locationType}
+											<input type="hidden" value="${userGovernmentDto.locationType}">
+												${userGovernmentDto.locationType.value}
 										</td>
 										<td>${userGovernmentDto.officeName}</td>
 										<td>${userGovernmentDto.userName}</td>
-										<td>${userGovernmentDto.password}</td>
+										<td>
+											<input type="hidden" value="${userGovernmentDto.password}">
+											**************
+										</td>
 										<td>${userGovernmentDto.groupCount}</td>
 										<td>${userGovernmentDto.totalCount}</td>
 										<td>${userGovernmentDto.completeCount}</td>
@@ -97,7 +100,7 @@
 
 		<layoutTags:userSetTag items="${LocationType.values()}"/>
 
-		<layoutTags:userAddTag id="modal" enumValues="${LocationType.values()}"/>
+		<layoutTags:userAddTag id="userAddModal" enumValues="${LocationType.values()}"/>
 
 	</stripes:layout-component>
 
@@ -128,7 +131,7 @@
                 function initializeUserSetTag(userGovernmentDto) {
                     $('#userSeq').val(userGovernmentDto.userSeq);
                     $('#officeName').val(userGovernmentDto.officeName);
-                    // $('#locationType').val();
+                    $('#locationType').val(userGovernmentDto.locationType);
                     $('#userName').val(userGovernmentDto.userName);
                     $('#password').val(userGovernmentDto.password);
 
@@ -142,8 +145,6 @@
 
                     // 차트
                     $.drawPieChart(userGovernmentDto);
-
-                    $('.canvasjs-chart-credit').hide();
 
                     let userGroupDtos = userGovernmentDto.userGroupDtos;
 
@@ -207,19 +208,19 @@
 
                     // 신고 등록 표시
                     $('#userTable tbody tr').on('click', function () {
-                        let useSeqStr = $(this).children("td:eq(0)").find('input').val();
+                        let useSeqStr = $(this).attr('seq');
                         let userSeq = Number.parseInt(useSeqStr);
 
                         let userGovernmentDto = {
                             userSeq : userSeq,
-                            locationTypeValue : $(this).children("td:eq(0)").text().trim(),
+                            locationType : $(this).children("td:eq(0)").find('input').val(),
                             officeName : $(this).children("td:eq(1)").text(),
                             userName : $(this).children("td:eq(2)").text(),
-                            password : $(this).children("td:eq(3)").text(),
-                            totalCount : $(this).children("td:eq(4)").text(),
-                            completeCount : $(this).children("td:eq(5)").text(),
-                            exceptionCount : $(this).children("td:eq(6)").text(),
-                            penaltyCount : $(this).children("td:eq(7)").text()
+                            password : $(this).children("td:eq(3)").find('input').val(),
+                            totalCount : $(this).children("td:eq(5)").text(),
+                            completeCount : $(this).children("td:eq(6)").text(),
+                            exceptionCount : $(this).children("td:eq(7)").text(),
+                            penaltyCount : $(this).children("td:eq(8)").text()
 						}
 
                         let result = $.JJAjaxAsync({
@@ -244,20 +245,20 @@
                     });
 
                     $('#modalClose').on('click', function () {
-                        $('#modal').hide();
+                        $('#userAddModal').hide();
                         $('body').css({
                             'overflow': 'auto'
                         });
                     });
 
                     $('#addGovernmentOffice').on('click', function () {
-                        $('#modal').show();
+                        $('#userAddModal').show();
                         $('body').css({
                             'overflow': 'hidden'
                         });
                     });
 
-                    $('#modal').hide();
+                    $('#userAddModal').hide();
                     $('#userSet').hide();
                 }
 
