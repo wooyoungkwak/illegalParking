@@ -1,6 +1,8 @@
 package com.teraenergy.illegalparking.model.entity.calculate.domain;
 
+import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.point.domain.Point;
+import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,24 +25,25 @@ public class Calculate {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Integer calculateSeq;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "pointSeq")
-    Point point;
+    @Column (nullable = false)
+    Integer userSeq;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "userSeq")
-    User user;
-
-    @Column
+    @Column (nullable = false)
     Long currentPointValue;
 
     @Column
-    Long beforePointValue;
-
-    @Column (nullable = false)
-    Boolean isDel = false;
+    Long eventPointValue;
 
     @Column
-    LocalDateTime regDt;
+    LocationType locationType;
+
+    @Column
+    PointType pointType;
+
+    @Column
+    String productName;
+
+    @Column
+    LocalDateTime regDt = LocalDateTime.now();
 
 }

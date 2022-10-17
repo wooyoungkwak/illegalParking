@@ -29,6 +29,9 @@ public class Receipt {
     LocalDateTime regDt;
 
     @Column
+    LocalDateTime secondRegDt;
+
+    @Column
     String carNum;
 
     @Column(nullable = false)
@@ -39,6 +42,9 @@ public class Receipt {
 
     @Column
     String fileName;
+
+    @Column
+    String secondFileName;
 
     @Column
     String addr;
@@ -58,7 +64,7 @@ public class Receipt {
     @JoinColumn(name = "userSeq")
     User user;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "zoneSeq")
     IllegalZone illegalZone;
 

@@ -34,10 +34,6 @@ public class Point {
     @Column
     Integer groupSeq;
 
-    @ManyToOne(optional = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "productSeq")
-    Product product;
-
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     PointType pointType;                                // 포인트 타입

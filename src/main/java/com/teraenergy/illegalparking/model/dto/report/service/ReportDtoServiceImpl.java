@@ -57,11 +57,8 @@ public class ReportDtoServiceImpl implements ReportDtoService {
     @Override
     public ReportDto get(Report report) {
         ReportDto reportDto = new ReportDto();
-        Receipt firstReceipt = report.getFirstReceipt();
-        Receipt secondReceipt = report.getSecondReceipt();
-
+        Receipt receipt = report.getReceipt();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm");
-
         return reportDto;
     }
 
@@ -75,7 +72,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         Page<Receipt> receiptPage = receiptService.gets(pageNumber, pageSize, receiptStateType, filterColumn, search);
 
         List<ReceiptDto> receiptDtos = Lists.newArrayList();
-        for ( Receipt receipt : receiptPage.getContent() ) {
+        for (Receipt receipt : receiptPage.getContent()) {
             ReceiptDto receiptDto = new ReceiptDto();
             receiptDto.setReceiptSeq(receipt.getReceiptSeq());
             receiptDto.setAddr(receipt.getAddr());
@@ -128,20 +125,20 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         Page<Report> reportPage = reportService.gets(pageNumber, pageSize, reportStateType, filterColumn, search);
 
         List<ReportDto> reportDtos = Lists.newArrayList();
-        for ( Report report : reportPage.getContent() ) {
+        for (Report report : reportPage.getContent()) {
             ReportDto reportDto = new ReportDto();
             reportDto.setReportSeq(report.getReportSeq());
-            reportDto.setAddr(report.getSecondReceipt().getAddr());
-            reportDto.setCarNum(report.getSecondReceipt().getCarNum());
-            reportDto.setName(report.getSecondReceipt().getUser().getName());
+            reportDto.setAddr(report.getReceipt().getAddr());
+            reportDto.setCarNum(report.getReceipt().getCarNum());
+            reportDto.setName(report.getReceipt().getUser().getName());
             reportDto.setRegDt(report.getRegDt());
             reportDto.setReportStateType(report.getReportStateType());
 
-            if ( report.getReportUserSeq() != null) {
+            if (report.getReportUserSeq() != null) {
                 User user = userService.get(report.getReportUserSeq());
                 reportDto.setGovernmentName(user.getGovernMentOffice().getName());
 
-                Point point= pointService.get(report.getSecondReceipt().getIllegalZone().getIllegalEvent().getGroupSeq());
+                Point point = pointService.get(report.getReceipt().getIllegalZone().getIllegalEvent().getGroupSeq());
                 String mark = "-";
                 switch (point.getPointType()) {
                     case PLUS:
@@ -162,7 +159,6 @@ public class ReportDtoServiceImpl implements ReportDtoService {
     }
 
 
-
     @Override
     public ReportDetailDto getFromReportDetailDto(int reportSeq) throws TeraException {
         Report report = reportService.get(reportSeq);
@@ -170,36 +166,32 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         ReportDetailDto reportDetailDto = new ReportDetailDto();
 
         reportDetailDto.setReportSeq(report.getReportSeq());
-        reportDetailDto.setName(report.getSecondReceipt().getUser().getName());
-        reportDetailDto.setCarNum(report.getSecondReceipt().getCarNum());
+        reportDetailDto.setName(report.getReceipt().getUser().getName());
+        reportDetailDto.setCarNum(report.getReceipt().getCarNum());
         reportDetailDto.setOverlapCount(0); // TODO : 중복 횟수
         reportDetailDto.setRegDt(report.getRegDt());
-        reportDetailDto.setReportStateType(report.getReportStateType()); ;
-        if ( report.getReportUserSeq() != null) {
+        reportDetailDto.setReportStateType(report.getReportStateType());
+        ;
+        if (report.getReportUserSeq() != null) {
             User governmentUser = userService.get(report.getReportUserSeq());
             reportDetailDto.setGovernmentOfficeName(governmentUser.getGovernMentOffice().getName());
         }
         reportDetailDto.setNote(report.getNote());
 
-        Receipt firstReceipt = report.getFirstReceipt();
-        Receipt secondReceipt = report.getSecondReceipt();
+        Receipt receipt = report.getReceipt();
 
         List<String> comments = Lists.newArrayList();
         List<Integer> receiptSeqs = Lists.newArrayList();
 
-        if (firstReceipt != null) {
-            reportDetailDto.setFirstFileName(firstReceipt.getFileName());
-            reportDetailDto.setFirstRegDt(firstReceipt.getRegDt());
-            reportDetailDto.setFirstAddr(firstReceipt.getAddr());
-            receiptSeqs.add(firstReceipt.getReceiptSeq());
-        }
+        reportDetailDto.setFirstFileName(receipt.getFileName());
+        reportDetailDto.setFirstRegDt(receipt.getRegDt());
+        reportDetailDto.setFirstAddr(receipt.getAddr());
+        receiptSeqs.add(receipt.getReceiptSeq());
 
-        if (secondReceipt != null) {
-            reportDetailDto.setSecondFileName(secondReceipt.getFileName());
-            reportDetailDto.setSecondRegDt(secondReceipt.getRegDt());
-            reportDetailDto.setSecondAddr(secondReceipt.getAddr());
-            receiptSeqs.add(secondReceipt.getReceiptSeq());
-        }
+        reportDetailDto.setSecondFileName(receipt.getFileName());
+        reportDetailDto.setSecondRegDt(receipt.getRegDt());
+        reportDetailDto.setSecondAddr(receipt.getAddr());
+        receiptSeqs.add(receipt.getReceiptSeq());
 
         List<Comment> receiptComments = commentService.gets(receiptSeqs);
         for (Comment receiptComment : receiptComments) {

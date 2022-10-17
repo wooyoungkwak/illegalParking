@@ -43,7 +43,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlReport {
 
     @Autowired
@@ -89,12 +89,10 @@ public class SqlReport {
     public void insertByReport() {
         List<Report> reports = Lists.newArrayList();
 
-        Receipt firstReceipt = receiptService.get(1);
-        Receipt secondReceipt = receiptService.get(2);
+        Receipt receipt = receiptService.get(1);
 
         Report report1 = new Report();
-        report1.setFirstReceipt(firstReceipt);
-        report1.setSecondReceipt(secondReceipt);
+        report1.setReceipt(receipt);
         report1.setRegDt(LocalDateTime.now());
         report1.setReportStateType(ReportStateType.COMPLETE);
         report1.setNote("");
@@ -114,27 +112,30 @@ public class SqlReport {
         Receipt receipt1 = new Receipt();
         receipt1.setIllegalZone(illegalZone);
         receipt1.setUser(user);
-        receipt1.setRegDt(LocalDateTime.now().minusMinutes(3));
         receipt1.setCarNum("123가1234");
         receipt1.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
         receipt1.setCode("5013032000");
         receipt1.setReceiptStateType(ReceiptStateType.REPORT);
         receipt1.setIsDel(false);
         receipt1.setAddr("전라남도 나주시 빛가람동 상야1길 7");
+        receipt1.setSecondFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
+        receipt1.setRegDt(LocalDateTime.now().minusMinutes(5));
+        receipt1.setSecondRegDt(LocalDateTime.now());
         receipts.add(receipt1);
 
         Receipt receipt2 = new Receipt();
         receipt2.setIllegalZone(illegalZone);
         receipt2.setUser(user);
-        receipt2.setRegDt(LocalDateTime.now());
+        receipt2.setRegDt(LocalDateTime.now().minusMinutes(6));
         receipt2.setCarNum("123가1234");
         receipt2.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
         receipt2.setCode("5013032000");
         receipt2.setReceiptStateType(ReceiptStateType.PENALTY);
         receipt2.setIsDel(false);
         receipt2.setAddr("전라남도 나주시 산포면 신도리 378-4");
+        receipt2.setSecondFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
+        receipt2.setSecondRegDt(LocalDateTime.now());
         receipts.add(receipt2);
-
         receiptService.sets(receipts);
     }
 

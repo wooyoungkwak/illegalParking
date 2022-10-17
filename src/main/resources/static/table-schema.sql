@@ -62,15 +62,14 @@ CREATE TABLE parking
 DROP TABLE IF EXISTS report;
 CREATE TABLE report
 (
-    ReportSeq        INT AUTO_INCREMENT PRIMARY KEY,
-    FirstReceiptSeq  INT         NOT NULL,               -- 1차 신고 등록
-    SecondReceiptSeq INT         NOT NULL,               -- 2차 신고 등로
-    ReportUserSeq    INT NULL,                           -- 사용자 ( 기관 사용자 - ROLE(GOVERNMENT))
-    RegDt            Datetime    NOT NULL,               -- 신고 접수 일자
-    ReportStateType  VARCHAR(10) NOT NULL,               -- 신고 접수 등록 여부 ( 정부 기관 사람 - 신고접수(1) / 신고제외(2) / 과태료대상(3) )
-    Note             VARCHAR(100) NULL,                  -- 결과 내용 ( 기관 사용자의 신고 결과내용)
-    IsDel            BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt            Datetime NULL                       -- 삭제 일자
+    ReportSeq       INT AUTO_INCREMENT PRIMARY KEY,
+    ReceiptSeq      INT         NOT NULL,               -- 1차 신고 등록
+    ReportUserSeq   INT NULL,                           -- 사용자 ( 기관 사용자 - ROLE(GOVERNMENT))
+    RegDt           Datetime    NOT NULL,               -- 신고 접수 일자
+    ReportStateType VARCHAR(10) NOT NULL,               -- 신고 접수 등록 여부 ( 정부 기관 사람 - 신고접수(1) / 신고제외(2) / 과태료대상(3) )
+    Note            VARCHAR(100) NULL,                  -- 결과 내용 ( 기관 사용자의 신고 결과내용)
+    IsDel           BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt           Datetime NULL                       -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -81,11 +80,13 @@ CREATE TABLE receipt
 (
     ReceiptSeq       INT AUTO_INCREMENT PRIMARY KEY,
     ReplyType        VARCHAR(30) NULL,                   -- 결과 내용 타입
-    ZoneSeq          INT         NOT NULL,               -- 불법 구역
+    ZoneSeq          INT NULL DEFAULT 0,                 -- 불법 구역
     RegDt            Datetime    NOT NULL,               -- 신고 등록 일자
+    SecondRegDt      Datetime    NOT NULL,               -- 신고 등록 일자
     UserSeq          INT         NOT NULL,               -- 사용자 ( 일반 사용자 )
     CarNum           VARCHAR(10) NULL,                   -- 차량 번호
     FileName         VARCHAR(50) NOT NULL,               -- 파일 이름
+    SecondFileName   VARCHAR(50) NOT NULL,               -- 파일 이름
     Code             VARCHAR(10) NOT NULL,               -- 법정동 코드
     ReceiptStateType VARCHAR(10) NOT NULL,               -- 현재 상태 ( 신고 발생(1), 신고 접수(2), 신고 누락(3), 신고 제외(4), 과태료 대상(5) )
     Addr             VARCHAR(50) NOT NULL,               -- 신고 등록 지역 주소 (지번주소)
@@ -158,9 +159,8 @@ CREATE TABLE point
 (
     PointSeq      INT AUTO_INCREMENT PRIMARY KEY,
     Note          VARCHAR(100) NULL,    -- 비고
-    Value         BIGINT      NOT NULL, -- 포인트 점수
+    Value         BIGINT      NOT NULL, -- 포인트 점수 (제공 포인트)
     GroupSeq      INT NULL,             -- 그룹 키
-    ProductSeq    INT NULL,             -- 제품 키
     PointType     VARCHAR(10) NOT NULL, -- 상태 (추가 포이트(Plug) / 사용 포인트(Minus) )
     LimitValue    BIGINT NULL,          -- 제한 포인트 점수
     residualValue BIGINT NULL,          -- 남은 포인트 점수
@@ -178,12 +178,13 @@ DROP TABLE IF EXISTS calculate;
 CREATE TABLE calculate
 (
     CalculateSeq      INT AUTO_INCREMENT PRIMARY KEY,
-    PointSeq          INT      NOT NULL,              -- 포인트 키
-    UserSeq           INT      NOT NULL,              -- 사용자 키 ( 포인트 추가 or 포인트 사용자 )
-    CurrentPointValue BIGINT   NOT NULL,              -- 현재 포인트 점수
-    BeforePointValue  BIGINT   NOT NULL,              -- 이전 포인트 점수
-    RegDt             Datetime NOT NULL,              -- 등록 일자
-    IsDel             BOOLEAN  NOT NULL DEFAULT FALSE -- 삭제 여부
+    UserSeq           INT         NOT NULL, -- 사용자 키 ( 포인트 추가 or 포인트 사용자 )
+    CurrentPointValue BIGINT      NOT NULL, -- 현재 포인트 점수
+    EventPointValue   BIGINT      NOT NULL, -- 이벤트 발생 포인트 점수 ( 포상금 포인트 / 상품 교환권 포인트 )
+    LocationType      VARCHAR(20) NULL,     -- 위치 이름
+    ProductName       VARCHAR(20) NULL,     -- 상품 이름
+    PointType         VARCHAR(10) NOT NULL, --  이벤트 포인트 차감(MINUS) 또는 제공(PLUS) 상태
+    RegDt             Datetime    NOT NULL  -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
@@ -195,9 +196,9 @@ CREATE TABLE product
     ProductSeq INT AUTO_INCREMENT PRIMARY KEY,
     Name       VARCHAR(30) NOT NULL,              -- 상품 이름
     Brand      VARCHAR(20) NOT NULL,              -- 브랜드 이름
-    PointValue BIGINT      NOT NULL,              -- 포인트 점수
+    PointValue  BIGINT      NOT NULL,              -- 포인트 점수
     UserSeq    INT         NOT NULL,              -- 등록자
-    RegDt      Datetime    NOT NULL,              -- 등록 일자
+    Thumbnail  VARCHAR(30) NULL,                  -- 상품 섬네일
     IsDel      BOOLEAN     NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
@@ -267,6 +268,19 @@ CREATE TABLE environment
 (
     EnvironmentSeq INT AUTO_INCREMENT PRIMARY KEY,
     RegDt          Datetime NOT NULL -- 등록 일자
+) ENGINE = InnoDB
+  CHARSET = utf8;
+
+DROP TABLE IF EXISTS notice;
+CREATE TABLE notice
+(
+    NoticeSeq INT AUTO_INCREMENT PRIMARY KEY,
+    Subject   VARCHAR(50) NOT NULL,               -- 제목
+    Content   VARCHAR(200) NULL,                  -- 내용
+    UserSeq   INT         NOT NULL,               -- 등록자
+    RegDt     Datetime    NOT NULL,               -- 등록 일자
+    IsDel     BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt     Datetime NULL                       -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 

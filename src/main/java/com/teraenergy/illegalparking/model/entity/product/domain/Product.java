@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.product.domain;
 
+import com.teraenergy.illegalparking.model.entity.point.domain.Point;
 import com.teraenergy.illegalparking.model.entity.product.enums.Brand;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.Getter;
@@ -32,15 +33,14 @@ public class Product {
     @Enumerated(EnumType.STRING)
     Brand brand;
 
-    @Column
-    Long pointValue;
-
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "userSeq")
-    User user;
+    @Column (nullable = false)
+    long pointValue;
 
     @Column
-    LocalDateTime regDt;
+    Integer userSeq;
+
+    @Column
+    String thumbnail;
 
     @Column (nullable = false)
     Boolean isDel = false;

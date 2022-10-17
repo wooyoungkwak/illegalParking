@@ -15,5 +15,7 @@ public interface CommentService {
 
     List<Comment> gets(List<Integer> receiptSeqs);
 
+    List<Comment> gets(Integer receiptSeq);
+
     Comment set(Comment comment);
 }

@@ -26,12 +26,8 @@ public class Report {
     Integer reportSeq;
 
     @OneToOne (optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "FirstReceiptSeq")
-    Receipt firstReceipt;
-
-    @OneToOne (optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "SecondReceiptSeq")
-    Receipt secondReceipt;
+    @JoinColumn(name = "ReceiptSeq")
+    Receipt receipt;
 
     @Column
     Integer reportUserSeq;

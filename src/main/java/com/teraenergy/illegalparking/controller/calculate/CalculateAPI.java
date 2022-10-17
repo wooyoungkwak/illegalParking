@@ -107,14 +107,12 @@ public class CalculateAPI {
         if (jsonNode.get("productSeq") != null) {
             product.setProductSeq(jsonNode.get("productSeq").asInt());
         }
-        product.setRegDt(LocalDateTime.now());
         product.setIsDel(false);
         product.setBrand(Brand.valueOf(jsonNode.get("brand").asText()));
         product.setName(jsonNode.get("name").asText());
-        product.setPointValue(jsonNode.get("pointValue").asLong());
         Integer userSeq = jsonNode.get("userSeq").asInt();
         User user = userService.get(userSeq);
-        product.setUser(user);
+        product.setUserSeq(userSeq);
         return product;
     }
 

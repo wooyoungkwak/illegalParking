@@ -68,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
                     query.where(QProduct.product.brand.eq(Brand.valueOf(search)));
                     break;
                 case point:
-                    query.where(QProduct.product.pointValue.eq(Long.parseLong(search)));
+
                     break;
             }
         }
@@ -93,18 +93,8 @@ public class ProductServiceImpl implements ProductService {
                 }
                 break;
             case point:
-                if (orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QProduct.product.pointValue.desc());
-                } else {
-                    query.orderBy(QProduct.product.pointValue.asc());
-                }
                 break;
             case regDt:
-                if (orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QProduct.product.regDt.desc());
-                } else {
-                    query.orderBy(QProduct.product.regDt.asc());
-                }
                 break;
         }
 

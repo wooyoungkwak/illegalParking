@@ -23,7 +23,6 @@ public class ProductDtoServiceImpl implements ProductDtoService{
         productDto.setProductSeq(product.getProductSeq());
         productDto.setBrand(product.getBrand().name());
         productDto.setName(product.getName());
-        productDto.setRegDt(product.getRegDt());
         productDto.setIsDel(product.getIsDel());
         productDto.setPointValue(product.getPointValue());
 

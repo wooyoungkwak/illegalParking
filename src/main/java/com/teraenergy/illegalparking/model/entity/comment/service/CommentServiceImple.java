@@ -33,6 +33,13 @@ public class CommentServiceImple implements CommentService{
     }
 
     @Override
+    public List<Comment> gets(Integer receiptSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QComment.comment);
+        query.where(QComment.comment.receiptSeq.eq(receiptSeq));
+        return query.fetch();
+    }
+
+    @Override
     public Comment set(Comment comment) {
         return commentRepository.save(comment);
     }

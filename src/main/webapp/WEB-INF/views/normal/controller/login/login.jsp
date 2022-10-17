@@ -22,8 +22,8 @@
 
                             <form method="post" id="FormLogin" action="/loginProcess">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" name="email" id="email" type="email" placeholder="user" value="admin"/>
-                                    <label for="email">메일</label>
+                                    <input class="form-control" name="email" id="email" placeholder="user" value="admin"/>
+                                    <label for="email">아이디</label>
                                 </div>
                                 <div class="form-floating mb-3">
                                     <input class="form-control" name="password" id="password" type="password" value="qwer1234"/>
@@ -54,16 +54,29 @@
         <script type="text/javascript">
             $(function () {
 
+                function login(){
+                    if ( $('#email').val() === '' ){
+                        alert("아이디를 입력하세요.");
+                        return;
+                    }
+                    if ($('#password').val() === '') {
+                        alert("패스워드를 입력하세요.");
+                        return;
+                    }
+
+                    $form.submit();
+                }
+
                 let $form = $('#FormLogin');
                 let $btnLogin = $('#BtnLogin');
 
                 $btnLogin.on('click', function () {
-                    $form.submit();
+                    login();
                 });
 
-                $('#inputPassword').on('keydown', function (e) {
+                $('#password').on('keydown', function (e) {
                     if (e.key == 'Enter') { // Enter key
-                        $form.submit();
+                        login();
                     }
                 });
 

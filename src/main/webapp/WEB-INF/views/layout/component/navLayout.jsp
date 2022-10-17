@@ -18,6 +18,9 @@
 
         <ul id="navMenu" class="navbar-nav ms-auto mt-2 mt-lg-0">
             <li class="nav-item me-5">
+                <a class="nav-link" id="navnotice" href="${pageContext.request.contextPath}/notice">공지사항</a>
+            </li>
+            <li class="nav-item me-5">
                 <a class="nav-link" id="navreport" href="${pageContext.request.contextPath}/report">신고</a>
             </li>
             <li class="nav-item me-5">

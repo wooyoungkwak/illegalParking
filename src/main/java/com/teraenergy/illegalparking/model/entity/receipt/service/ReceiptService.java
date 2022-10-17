@@ -27,7 +27,7 @@ public interface ReceiptService {
 
     List<Receipt> gets();
 
-    List<Receipt> gets(Integer user);
+    List<Receipt> gets(Integer userSeq);
 
     int getsOverlabCount(Integer user, LocalDateTime regDt);
 
@@ -45,5 +45,7 @@ public interface ReceiptService {
     long remove(Integer receiptSeq);
 
     long removes(List<Integer> receiptSeqs);
+
+    Receipt getByCarNumAndBetweenNow(Integer userSeq, String carNum, LocalDateTime regDt);
 
 }

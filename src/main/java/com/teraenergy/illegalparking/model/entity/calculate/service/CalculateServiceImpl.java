@@ -45,7 +45,7 @@ public class CalculateServiceImpl implements CalculateService{
     @Override
     public Calculate getAtLast(Integer userSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QCalculate.calculate)
-                .where(QCalculate.calculate.user.userSeq.eq(userSeq))
+                .where(QCalculate.calculate.userSeq.eq(userSeq))
                 .orderBy(QCalculate.calculate.calculateSeq.desc())
                 .limit(1);
         return (Calculate) query.fetchOne();
@@ -57,21 +57,26 @@ public class CalculateServiceImpl implements CalculateService{
     }
 
     @Override
+    public List<Calculate> getsByUser(Integer userSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QCalculate.calculate)
+                .where(QCalculate.calculate.userSeq.eq(userSeq))
+                .orderBy(QCalculate.calculate.calculateSeq.desc());
+        return query.fetch();
+    }
+
+    @Override
     public Page<Calculate> gets(int pageNumber, int pageSize, CalculateFilterColumn filterColumn, String search, CalculateOrderColumn orderColumn, Sort.Direction orderBy) {
         JPAQuery query = jpaQueryFactory.selectFrom(QCalculate.calculate);
 
         if ( search != null && search.length() > 0) {
             switch (filterColumn) {
                 case user:
-                    query.where(QCalculate.calculate.user.name.contains(search));
                     break;
                 case product:
-                    query.where(QCalculate.calculate.point.product.name.contains(search));
                     break;
             }
         }
 
-        query.where(QCalculate.calculate.isDel.isFalse());
         int total = query.fetch().size();
 
         switch (orderColumn) {
@@ -83,18 +88,8 @@ public class CalculateServiceImpl implements CalculateService{
                 }
                 break;
             case user:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QCalculate.calculate.user.name.desc());
-                } else {
-                    query.orderBy(QCalculate.calculate.user.name.asc());
-                }
                 break;
             case product:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QCalculate.calculate.point.product.name.desc());
-                } else {
-                    query.orderBy(QCalculate.calculate.point.product.name.asc());
-                }
                 break;
             case currentPoint:
                 if ( orderBy.equals(Sort.Direction.DESC)) {

@@ -39,7 +39,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public boolean isExist(String carNum) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.secondReceipt.carNum.eq(carNum));
+        query.where(QReport.report.receipt.carNum.eq(carNum));
         query.where(QReport.report.isDel.isFalse());
 
         if (query.fetchOne() == null) {
@@ -65,13 +65,13 @@ public class ReportServiceImpl implements ReportService {
         if (search != null && search.length() > 0) {
             switch (filterColumn) {
                 case CAR_NUM:
-                    query.where(QReport.report.secondReceipt.carNum.contains(search));
+                    query.where(QReport.report.receipt.carNum.contains(search));
                     break;
                 case ADDR:
-                    query.where(QReport.report.secondReceipt.addr.contains(search));
+                    query.where(QReport.report.receipt.addr.contains(search));
                     break;
                 case USER:
-                    query.where(QReport.report.secondReceipt.user.name.contains(search));
+                    query.where(QReport.report.receipt.user.name.contains(search));
                     break;
             }
         }
@@ -96,7 +96,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public int getSizeForReport(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
+        query.where(QReport.report.receipt.illegalZone.in(illegalZones));
         return query.fetch().size();
     }
 
@@ -105,7 +105,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public int getSizeForException(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
+        query.where(QReport.report.receipt.illegalZone.in(illegalZones));
         query.where(QReport.report.reportStateType.eq(ReportStateType.EXCEPTION));
         return query.fetch().size();
     }
@@ -114,7 +114,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public int getSizeForPenalty(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
+        query.where(QReport.report.receipt.illegalZone.in(illegalZones));
         query.where(QReport.report.reportStateType.eq(ReportStateType.PENALTY));
         return query.fetch().size();
     }
@@ -123,7 +123,7 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public int getSizeForCOMPLETE(List<IllegalZone> illegalZones) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.secondReceipt.illegalZone.in(illegalZones));
+        query.where(QReport.report.receipt.illegalZone.in(illegalZones));
         query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
         return query.fetch().size();
     }

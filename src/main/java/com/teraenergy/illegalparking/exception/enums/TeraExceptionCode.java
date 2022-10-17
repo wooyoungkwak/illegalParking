@@ -41,10 +41,17 @@ public enum TeraExceptionCode implements TeraErrCode {
     USER_IS_NOT_EXIST ("존재하지 않는 사용자입니다."),
 
     USER_IS_EXIST ("이미 존재하는 사용자입니다."),
+
     USER_GROUP_IS_EXIST ("이미 존재하는 그룹입니다."),
+
     USER_FAIL_RESiSTER ("등록 실패 하였습니다."),
 
     USER_GET_FAIL ("사용자 정보를 가져오는데 실패 하였습니다."),
+
+    POINT_GET_FAIL("포인트 정보를 가져오는데 실패 하였습니다."),
+    NOTICE_GET_FAIL("공지사항 정보를 가져오는데 실패 하였습니다."),
+    MYPAGE_GET_FAIL("내 페이지 정보를 가져오는데 실패 하였습니다."),
+
 
     /* 파일 */
     UNSUPPORTED_FORMAT("지원되지 않는 형식입니다."),

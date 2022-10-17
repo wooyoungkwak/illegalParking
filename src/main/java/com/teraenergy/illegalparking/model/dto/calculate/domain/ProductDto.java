@@ -22,5 +22,4 @@ public class ProductDto {
     Long pointValue;
     String userName;
     Boolean isDel;
-    LocalDateTime regDt;
 }

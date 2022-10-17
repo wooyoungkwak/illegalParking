@@ -153,4 +153,15 @@ public class ReceiptServiceImpl implements ReceiptService {
         query.where(QReceipt.receipt.receiptSeq.in(receiptSeqs));
         return query.execute();
     }
+
+    @Override
+    public Receipt getByCarNumAndBetweenNow(Integer userSeq, String carNum, LocalDateTime regDt) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
+        query.where(QReceipt.receipt.carNum.eq(carNum));
+        query.where(QReceipt.receipt.regDt.between(regDt.minusMinutes(11), regDt));
+        query.limit(1);
+        return (Receipt) query.fetchOne();
+    }
+
 }
