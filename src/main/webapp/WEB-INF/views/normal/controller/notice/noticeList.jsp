@@ -43,7 +43,7 @@
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
 							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
 							<div class="col-7 d-flex justify-content-lg-start">
-								<a class="btn btn-primary">
+								<a class="btn btn-primary" id="write">
 									<i class="fas fa-pen me-1"></i> 글작성
 								</a>
 							</div>
@@ -86,7 +86,8 @@
 			</div>
 		</main>
 
-		<layoutTags:noticeSetTag/>
+		<layoutTags:noticeSetTag items="${NoticeType.values()}"/>
+
 
 	</stripes:layout-component>
 
@@ -129,6 +130,10 @@
                     // 필터 변경 이벤트
                     $('#filterColumn').find('select').on('change', function (){
                         searchSelect($(this).val());
+					});
+
+					$('#write').on('click', function (){
+						$.openNoticeSet();
 					});
 
                     // 필터에 의한 검색 입력 방식 선택

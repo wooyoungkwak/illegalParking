@@ -7,3 +7,12 @@ $.search = function (pageNumber) {
     location.href = _contextPath + "/noticeList?" + $('form').serialize();
 }
 
+$.closeNoticeSet = function () {
+    $('noticeMain').show();
+    $('$noticeSet').hide();
+}
+
+$.openNoticeSet = function () {
+    $('noticeMain').hide();
+    $('$noticeSet').show();
+}

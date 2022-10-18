@@ -11,6 +11,7 @@
 <%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="layoutTags" tagdir="/WEB-INF/tags/layout" %>
 <% String contextPath = request.getContextPath(); %>
+<%@ attribute name="items" type="java.lang.Object" required="true" %>
 
 <!-- content -->
 <main id="noticeSet">
@@ -35,7 +36,25 @@
 
 			<div class="card-body">
 				<form id="noticeForm">
-
+					<div class="row">
+						<div class="col-4">
+							<tags:selectTagWithType id="noticeType" current="" items="${items}" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-4">
+							<tags:inputTag id="subject" title="제목" placeholder="제목을 입력하세요" />
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-4">
+							내용 :
+						</div>
+						<div class="col-12">
+<%--							<input class="form-control" type="text" name="content" />--%>
+							<div id="editor"></div>
+						</div>
+					</div>
 				</form>
 			</div>
 
@@ -48,9 +67,9 @@
 <script type="application/javascript">
     $(function () {
 
-        $('#noticeSetClose').on('click', function (){
+		$('#noticeSetClose').on('click', function (){
             // 그룹 추가 태그 숨기기
-            $('#noticeSet').hide();
+			$.closeNoticeSet();
         })
 
     });
