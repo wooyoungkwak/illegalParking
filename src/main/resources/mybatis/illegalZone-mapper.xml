@@ -18,6 +18,9 @@
         <foreach collection="codes" item="code" separator="," open="(" close=")">
               #{code}
         </foreach>
+        <if test="isSetting == false">
+            AND EventSeq IS NOT NULL
+        </if>
           AND isDel = 0;
     </select>
 
@@ -31,6 +34,9 @@
         <foreach collection="codes" item="code" separator="," open="(" close=")">
             #{code}
         </foreach>
+        <if test="isSetting == false">
+            AND zone.EventSeq IS NOT NULL
+        </if>
           AND zone.isDel = 0;
     </select>
 

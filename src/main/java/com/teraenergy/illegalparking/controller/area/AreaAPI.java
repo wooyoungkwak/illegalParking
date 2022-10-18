@@ -251,10 +251,10 @@ public class AreaAPI {
                 illegalZones = illegalZoneMapperService.getsByIllegalType(param.get("illegalType").asText());
                 break;
             case "dong":
-                illegalZones = illegalZoneMapperService.getsByCode(codes);
+                illegalZones = illegalZoneMapperService.getsByCode(codes, param.get("isSetting").asBoolean());
                 break;
             case "typeAndDong":
-                illegalZones = illegalZoneMapperService.getsByIllegalTypeAndCode(param.get("illegalType").asText(), codes);
+                illegalZones = illegalZoneMapperService.getsByIllegalTypeAndCode(param.get("illegalType").asText(), codes, param.get("isSetting").asBoolean());
                 break;
             default:
                 illegalZones = illegalZoneMapperService.gets();

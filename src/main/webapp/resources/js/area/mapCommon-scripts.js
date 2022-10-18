@@ -246,7 +246,7 @@ async function getDongCodesBounds(map){
     let east = neLatLng.getLng();
 
     // 동, 서, 남, 북 좌표
-    log(east, west, south, north);
+    // log(east, west, south, north);
 
     let center = getMapCenter(map);
 
@@ -259,9 +259,9 @@ async function getDongCodesBounds(map){
     }
     codes = [...new Set(codes)]
 
-    log('codes : ', codes);
-    log('beforeCodes : ', beforeCodes);
-    log('uniqueCodesCheck : ', uniqueCodesCheck);
+    // log('codes : ', codes);
+    // log('beforeCodes : ', beforeCodes);
+    // log('uniqueCodesCheck : ', uniqueCodesCheck);
 
 
     uniqueCodesCheck = _.isEmpty(_.xor(beforeCodes, codes));

@@ -20,13 +20,13 @@ public interface IllegalZoneMapper {
 
     IllegalZone findById(Integer zoneSeq);
 
-    List<IllegalZone> findByCode(List<String> codes);
+    List<IllegalZone> findByCode(List<String> codes, Boolean isSetting);
 
     List<IllegalZone> findByGeometry(String latitude, String longitude);
 
     List<IllegalZone> findByIllegalType(String illegalType);
 
-    List<IllegalZone> findByIllegalTypeAndCode(String illegalType, List<String> codes);
+    List<IllegalZone> findByIllegalTypeAndCode(String illegalType, List<String> codes, Boolean isSetting);
 
     List<IllegalZone> findAll();
 

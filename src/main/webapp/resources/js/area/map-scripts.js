@@ -1,4 +1,5 @@
 $(function () {
+
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
@@ -12,6 +13,39 @@ $(function () {
 
     let overlays = [] // 지도에 그려진 도형을 담을 배열
     let kakaoEvent = kakao.maps.event;
+
+    //parking
+    let mapId;
+    let markers = [];
+
+    let _url = _contextPath + '/zone/gets';
+
+    let _markerImageSrc = '/resources/assets/img/parking.png';
+
+    $('input:radio[name=mapSelect]').change(function (event){
+        let center = getMapCenter(map);
+        CENTER_LATITUDE = center.y;
+        CENTER_LONGITUDE = center.x;
+        if(event.target.id === 'zone'){
+            removeMarker();
+            initializeKakao();
+            (async () => {
+                getsZone(await getDongCodesBounds(map));
+            })();
+        }
+        if(event.target.id === 'parking'){
+            removeOverlays();
+            _url = '/parking/gets'
+
+            initializeParking();
+            (async () => {
+                await getsParking(await getDongCodesBounds(map));
+            })();
+        }
+        if(event.target.id === 'pm'){
+
+        }
+    });
 
     // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
     let mouseoverOption = {
@@ -78,7 +112,7 @@ $(function () {
         return fillColor;
     }
 
-    // // 보여지는 맵에 포함된 폴리곤 찾기 20221014 동코드로 zone을 가져오기 때문에 기능 제거
+    // 보여지는 맵에 포함된 폴리곤 찾기 20221014 동코드로 zone을 가져오기 때문에 기능 제거
     // function getZonesInBounds() {
     //     //맵 구역
     //     let bounds = map.getBounds();
@@ -198,7 +232,6 @@ $(function () {
                 log('click! ' + latlng.toString());
                 log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
                 let p = new Point(latlng.getLng(), latlng.getLat());
-                // let polys = getPolygonData();
                 let len = overlays.length;
                 for (let i = 0; i < len; i++) {
                     let points = [];
@@ -206,11 +239,11 @@ $(function () {
                         let x = overlay.getLng(), y = overlay.getLat();
                         points.push(new Point(x, y));
                     })
-                    // let onePolygon = polys[i].points;
                     let onePolygon = points;
                     let n = onePolygon.length;
                     if (isInside(onePolygon, n, p)) {
                         log(i + " : Yes");
+                        log(zoneSeqs[i]);
                         break;
                     } else {
                         log(i + " : No");
@@ -224,7 +257,6 @@ $(function () {
             target: map,
             event: 'idle',
             func: async function () {
-                // $('#areaSettingModal').offcanvas('hide');
                 // 지도의  레벨을 얻어옵니다
                 let level = map.getLevel();
 
@@ -234,9 +266,8 @@ $(function () {
                     let codes = await getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     log(uniqueCodesCheck);
-                    // if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
-                    // else getsZone(codes);
-                    if(!uniqueCodesCheck) getsZone(codes);
+                    if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
+                    else getsZone(codes);
 
                 }
             }
@@ -252,7 +283,8 @@ $(function () {
             data: {
                 select: select,
                 illegalType: searchIllegalType,
-                codes: codes
+                codes: codes,
+                isSetting: false,
             }
         })
         log('ok');
@@ -283,6 +315,112 @@ $(function () {
 
     initialize();
 
+
+    // parking
+    // 지도 위에 표시되고 있는 마커를 모두 제거합니다
+    function removeMarker() {
+        for (const marker of markers) {
+            marker.setMap(null);
+        }
+        markers = [];
+    }
+
+    // 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다
+    function markerInfo (type, data) {
+        let dataObj = null;
+        if(type === 'parking') {
+            dataObj = {
+                pkName: data.prkplceNm,
+                pkAddr: data.rdnmadr,
+                pkPrice: data.parkingchrgeInfo === '유료' ? `기본 ${data.basicTime} 분 | ${data.addUnitTime} 분당 ${data.addUnitCharge}원 추가` : '',
+                pkOper: data.parkingchrgeInfo,
+                pkCount: data.prkcmprt,
+                pkPhone: data.phoneNumber
+            }
+        } else if (type === 'pm') {
+            dataObj = {
+                pmName: data.pmNmae,
+                pmPrice: data.pmPrice,
+                pmOper: data.pmOper
+            }
+        }
+
+        return {
+            type: type,
+            data: dataObj
+        };
+        // webToApp.postMessage(JSON.stringify(obj));
+    }
+
+    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+    function addMarker(position) {
+        // let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'; // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        let imageSrc = _markerImageSrc; // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        let imageSize = new kakao.maps.Size(30, 30);  // 마커 이미지의 크기
+        let imageOption = {/*offset: new kakao.maps.Point(18, 55)*/}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+        let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
+        let marker = new kakao.maps.Marker({
+            position: position, // 마커의 위치
+            image: markerImage
+        });
+
+        marker.setMap(map); // 지도 위에 마커를 표출합니다
+        markers.push(marker);  // 배열에 생성된 마커를 추가합니다
+
+        return marker;
+    }
+
+    async function getsParking(codes) {
+        //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
+        let result = $.JJAjaxAsync({
+            url: _url,
+            data: {
+                codes: codes
+            }
+        });
+
+        if (result.success) {
+            removeMarker();
+
+            result.data.forEach(function(data){
+                let marker = addMarker(new kakao.maps.LatLng(data.latitude, data.longitude));
+                kakaoEvent.addListener(marker, 'click', function() {
+                    map.panTo(marker.getPosition());
+                    // 커스텀 오버레이 컨텐츠를 설정합니다
+                    let obj = markerInfo('parking', data);
+                    log(obj);
+                    // webToApp.postMessage(JSON.stringify(obj));
+                });
+            });
+        }
+    }
+
+    // 주차장 초기화
+    function initializeParking() {
+
+        mapId = document.getElementById('map');
+        // 지도를 표시할 지도 옵션으로  지도를 생성합니다
+        map = new kakao.maps.Map(mapId, {
+            center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
+            level: 3, // 지도의 확대 레벨
+            disableDoubleClickZoom: true
+        });
+        /** MAP EVENT */
+        kakaoEvent = kakao.maps.event;
+
+        // 확대, 중심좌표 변경 시
+        kakaoEvent.addListener(map, 'idle', async function () {
+            // 지도의  레벨을 얻어옵니다
+            let level = map.getLevel();
+            let codes = await getDongCodesBounds(map);
+
+            //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
+            if (!uniqueCodesCheck) {
+                await getsParking(codes);
+                beforeCodes = codes;
+            }
+        })
+    }
 
 
     $.setCurrentPosition = function (){

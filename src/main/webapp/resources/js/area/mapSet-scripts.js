@@ -2,7 +2,6 @@ $(function () {
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
-    let drawingDataTargets = [];
     let zoneAreas = [];
 
     let CENTER_LATITUDE = 35.02035492064902;
@@ -14,8 +13,6 @@ $(function () {
     let drawingMap;
 
     let overlays = [] // 지도에 그려진 도형을 담을 배열
-    let customOverlay;
-    let infoWindow;
     let kakaoEvent = kakao.maps.event;
 
     // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
@@ -66,9 +63,8 @@ $(function () {
     // 주정차 별 구역 조회
     $('input:radio[name=searchIllegalType]').change(async function () {
         $('#areaSettingModal').offcanvas('hide');
-
-        if(drawingDataTargets.length > 0){
-            if(confirm("저장하지 않은 구역이 삭제됩니다. 검색하시겠습니까?")) {
+        if(manager.getOverlays().polygon.length > 0){
+            if(confirm("저장하지 않은 구역은 삭제됩니다. 검색하시겠습니까?")) {
                 removeDrawingOverlays();
             }
             else {
@@ -85,7 +81,6 @@ $(function () {
             $('#btnSet').hide();
         }
 
-        log(searchIllegalType);
         let codes = await getDongCodesBounds(drawingMap);
 
         getsZone(codes);
@@ -126,10 +121,14 @@ $(function () {
 
     // 생성한 그리기 도형 삭제
     function removeDrawingOverlays() {
-        drawingDataTargets.forEach(function (target) {
-            manager.remove(target);
-        })
-        drawingDataTargets = [];
+        let getPolygons = manager.getOverlays().polygon;
+        let len = getPolygons.length;
+        for (let i = 0; i < len; i++) {
+            manager.remove(getPolygons[0]);
+        }
+        // overlays['polygon'].forEach(function (target) {
+        //     manager.remove(target);
+        // })
     }
 
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
@@ -161,6 +160,10 @@ $(function () {
     }
 
     function setEventHtml(data) {
+        let locationType = $('#locationType');
+        let btnModify = $('#btnModify');
+        let usedFirst = $('#usedFirst');
+        let usedSecond= $('#usedSecond');
 
         $('#offcanvasRightLabel').text(data.zoneSeq + '번 구역설정')
         if (data.eventSeq === null) {
@@ -168,28 +171,28 @@ $(function () {
             data.usedSecond = true;
 
             $('input:radio[name=illegalType]').eq(0).prop('checked', true);
-            $('#usedFirst').prop('checked', false);
-            $('#usedSecond').prop('checked', false);
+            usedFirst.prop('checked', false);
+            usedSecond.prop('checked', false);
             $('.timeSelect').attr('disabled', true);
-            $('#locationType').trigger('change');
-            $('#btnModify').text('등록');
-            $('#btnModify').addClass('btn-primary');
-            $('#btnModify').removeClass('btn-danger');
-            $('#locationType').trigger('change');
+            locationType.trigger('change');
+            btnModify.text('등록');
+            btnModify.addClass('btn-primary');
+            btnModify.removeClass('btn-danger');
+            locationType.trigger('change');
         } else {
-            data.usedFirst === false ? $('#usedFirst').prop('checked', true) : $('#usedFirst').prop('checked', false);
-            data.usedSecond === false ? $('#usedSecond').prop('checked', true) : $('#usedSecond').prop('checked', false);
-            $('#usedFirst').trigger('change');
-            $('#usedSecond').trigger('change');
+            data.usedFirst === false ? usedFirst.prop('checked', true) : usedFirst.prop('checked', false);
+            data.usedSecond === false ? usedSecond.prop('checked', true) : usedSecond.prop('checked', false);
+            usedFirst.trigger('change');
+            usedSecond.trigger('change');
             $('#eventSeq').val(data.eventSeq);
             $('input:radio[name=illegalType]:input[value="'+ data.illegalType +'"]').prop('checked', true);
             $.setGroupNames(data.locationType);
-            $('#locationType').val(data.locationType).prop('selected', true);
-            $('#locationType').trigger('change');
+            locationType.val(data.locationType).prop('selected', true);
+            locationType.trigger('change');
             $('#name').val(data.groupSeq).prop('selected', true);
-            $('#btnModify').text('수정');
-            $('#btnModify').addClass('btn-danger');
-            $('#btnModify').removeClass('btn-primary');
+            btnModify.text('수정');
+            btnModify.addClass('btn-danger');
+            btnModify.removeClass('btn-primary');
         }
     }
 
@@ -456,8 +459,6 @@ $(function () {
 
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
         drawingMap = new kakao.maps.Map(drawingMapContainer, drawingMap);
-        customOverlay = new kakao.maps.CustomOverlay({})
-        infoWindow = new kakao.maps.InfoWindow({removable: true});
 
         let options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
             map: drawingMap, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
@@ -479,40 +480,6 @@ $(function () {
             }
         };
         manager = new kakao.maps.drawing.DrawingManager(options);
-
-        manager.addListener('drawend', function (data) {
-            drawingDataTargets.push(data.target);
-        });
-
-        // 폴리곤 내부 포함여부 확인
-        setKakaoEvent({
-            target: drawingMap,
-            event: 'click',
-            func: function (mouseEvent) {
-                if (manager._mode === undefined || manager._mode === '') {
-                    let latlng = mouseEvent.latLng;
-                    log('click! ' + latlng.toString());
-                    log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
-                    let p = new Point(latlng.getLng(), latlng.getLat());
-                    let len = overlays.length;
-                    for (let i = 0; i < len; i++) {
-                        let points = [];
-                        overlays[i].getPath().forEach(function (overlay) {
-                            let x = overlay.getLng(), y = overlay.getLat();
-                            points.push(new Point(x, y));
-                        })
-                        let onePolygon = points;
-                        let n = onePolygon.length;
-                        if (isInside(onePolygon, n, p)) {
-                            // log(i + " : Yes");
-                        } else {
-                            $('#areaSettingModal').offcanvas('hide');
-                            // log(i + " : No");
-                        }
-                    }
-                }
-            }
-        });
 
         // 지도에 마우스 오른쪽 클릭 이벤트를 등록합니다
         // 선을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면 그리기를 종료합니다
@@ -567,10 +534,10 @@ $(function () {
             data: {
                 select: select,
                 illegalType: searchIllegalType,
-                codes: codes
+                codes: codes,
+                isSetting: true
             }
         })
-        log('ok');
         beforeCodes = codes;
         drawingPolygon(getPolygonData());
     }

@@ -17,13 +17,13 @@ public interface IllegalZoneMapperService {
 
     IllegalZone get(Integer illegalZoneSeq);
 
-    List<IllegalZone> getsByCode(List<String> codes);
+    List<IllegalZone> getsByCode(List<String> codes, Boolean isSetting);
 
     List<IllegalZone> getsByGeometry(String latitude, String longitude);
 
     List<IllegalZone> getsByIllegalType(String illegalType);
 
-    List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes);
+    List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes, Boolean isSetting);
 
     List<IllegalZone> gets();
 

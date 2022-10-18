@@ -32,8 +32,8 @@ public class IllegalZoneMapperServiceImpl implements IllegalZoneMapperService {
     }
 
     @Override
-    public List<IllegalZone> getsByCode(List<String> codes) {
-        return illegalZoneMapper.findByCode(codes);
+    public List<IllegalZone> getsByCode(List<String> codes, Boolean isSetting) {
+        return illegalZoneMapper.findByCode(codes, isSetting);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class IllegalZoneMapperServiceImpl implements IllegalZoneMapperService {
     }
 
     @Override
-    public List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes) {
-        return illegalZoneMapper.findByIllegalTypeAndCode(illegalType, codes);
+    public List<IllegalZone> getsByIllegalTypeAndCode(String illegalType, List<String> codes, Boolean isSetting) {
+        return illegalZoneMapper.findByIllegalTypeAndCode(illegalType, codes, isSetting);
     }
 
     @Override
