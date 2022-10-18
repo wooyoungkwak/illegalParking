@@ -139,6 +139,9 @@
                     // 필터에 의한 검색 입력 방식 선택
                     searchSelect('${filterColumn}');
 
+                    //
+                    $('#noticeSet').hide();
+
                 }
 
                 initialize();

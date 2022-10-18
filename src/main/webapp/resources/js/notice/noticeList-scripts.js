@@ -8,11 +8,11 @@ $.search = function (pageNumber) {
 }
 
 $.closeNoticeSet = function () {
-    $('noticeMain').show();
-    $('$noticeSet').hide();
+    $('#noticeMain').show();
+    $('#noticeSet').hide();
 }
 
 $.openNoticeSet = function () {
-    $('noticeMain').hide();
-    $('$noticeSet').show();
+    $('#noticeMain').hide();
+    $('#noticeSet').show();
 }
