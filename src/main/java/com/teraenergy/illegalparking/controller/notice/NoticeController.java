@@ -58,16 +58,24 @@ public class NoticeController extends ExtendsController {
             filterColumn = NoticeFilterColumn.valueOf(filterColumnStr);
         }
 
-        String search = paramMap.getAsString("searchStr");
-        if (search == null) {
-            search = "";
+        String search = "";
+        switch (filterColumn) {
+            case NOTICETYPE:
+                search = paramMap.getAsString("searchStr2");
+                break;
+            case SUBJECT:
+            case CONTENT:
+                search = paramMap.getAsString("searchStr");
+                if (search == null) {
+                    search = "";
+                }
+                break;
         }
 
         Integer pageSize = paramMap.getAsInt("pageSize");
         if ( pageSize == null) {
             pageSize = 10;
         }
-
 
         Page<Notice> pages = noticeService.gets(pageNumber, pageSize, filterColumn, search);
 
@@ -88,8 +96,9 @@ public class NoticeController extends ExtendsController {
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);
         model.addAttribute("notices", pages.getContent());
-        model.addAttribute("subTitle", subTitle);
+           model.addAttribute("subTitle", subTitle);
 
         return getPath("/noticeList");
     }
+
 }

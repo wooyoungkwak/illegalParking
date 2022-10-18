@@ -68,6 +68,14 @@ public class ReceiptServiceImpl implements ReceiptService {
         return query.fetch();
     }
 
+    public List<Receipt> gets(Integer userSeq, String carNum) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
+        query.where(QReceipt.receipt.carNum.eq(carNum));
+        query.where(QReceipt.receipt.isDel.isFalse());
+        return query.fetch();
+    }
+
     @Override
     public int getsOverlabCount(Integer user, LocalDateTime regDt) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);

@@ -19,7 +19,7 @@
 
 	<!-- side -->
 	<stripes:layout-component name="side">
-<%--		<jsp:include page="side.jsp" flush="true"/>--%>
+		<%--		<jsp:include page="side.jsp" flush="true"/>--%>
 	</stripes:layout-component>
 
 	<!-- content -->
@@ -27,78 +27,51 @@
 		<main>
 			<div class="container-fluid px-4">
 				<div class="row">
-					<div class="col-2">
-						<div class="mt-4 mb-5"><br /></div>
-						<div class="mt-4 mb-5"><br /></div>
+					<div class="col-6">
 						<div class="row">
-							<div class="col-xl-12 col-md-12">
-								<div class="card text-black mb-4">
-									<div class="card-body fw-bold">금일 신고 건수</div>
-									<div class="card-footer d-flex align-items-center justify-content-between">
-										<a class="small text-white stretched-link" href="#"></a>
-										<div class="text-danger fw-bold fst-italic me-2"><span>50건</span></div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-12 col-md-12">
-								<div class="card text-dark mb-4">
-									<div class="card-body fw-bold">10월 신고 건수</div>
-									<div class="card-footer d-flex align-items-center justify-content-between">
-										<a class="small text-white stretched-link" href="#"></a>
-										<div class="text-danger fw-bold fst-italic me-2"><span>50건</span></div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-12 col-md-12">
-								<div class="card text-dark mb-4">
-									<div class="card-body fw-bold">2022년 신고 건수</div>
-									<div class="card-footer d-flex align-items-center justify-content-between">
-										<a class="small text-white stretched-link" href="#"></a>
-										<div class="text-danger fw-bold fst-italic me-2"><span>50건</span></div>
-									</div>
-								</div>
-							</div>
-							<div class="col-xl-12 col-md-12">
-								<div class="card text-dark mb-4">
-									<div class="card-body fw-bold">2022년도 신고 누락 건수</div>
-									<div class="card-footer d-flex align-items-center justify-content-between">
-										<a class="small text-white stretched-link" href="#"></a>
-										<div class="text-primary fw-bold fst-italic me-2"><span>50건</span></div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-9">
-						<div class="row mt-5 mb-4">
-							<div class="col-4"></div>
-							<div class="col-4 border-bottom text-center"><p class="h1 fw-bold">공지사항</p></div>
-							<div class="col-4"></div>
+							<div class="col-8"><p class="fs-4">안녕하세요.</p></div>
 						</div>
 						<div class="row">
-							<table class="table table-hover">
-								<thead>
-								<tr>
-									<th scope="col" class="text-center" style="width: 5%;">#</th>
-									<th scope="col" class="text-center" style="width: 75%;">내 용</th>
-									<th scope="col" class="text-center" style="width: 10%;">등록자</th>
-									<th scope="col" class="text-center" style="width: 10%;">등록일</th>
-								</tr>
-								</thead>
-								<tbody>
-								<c:forEach begin="1" end="12" varStatus="status">
+							<div class="col-8"><p class="fs-1">'나주시청 차량민원과' 입니다.</p></div>
+						</div>
+						<div class="row">
+							<div class="col-7 d-flex justify-content-lg-center">
+								<div id="pieChart"></div>
+							</div>
+							<div class="col-4">
+								<table class="table border">
 									<tr>
-										<td class="text-center">${status.index}</td>
-										<td>공지사항 내용 ${status.index}.....</td>
-										<td class="text-center">관리자</td>
-										<td class="text-center">2022-10-01</td>
+										<td class="d-flex justify-content-lg-end">총신고건수</td>
+										<td>10</td>
 									</tr>
-								</c:forEach>
-								</tbody>
-							</table>
-							<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}" isRegister="true"/>
+									<tr>
+										<td class="d-flex justify-content-lg-end">대기</td>
+										<td>10</td>
+									</tr>
+									<tr>
+										<td class="d-flex justify-content-lg-end">미처리</td>
+										<td>10</td>
+									</tr>
+									<tr>
+										<td class="d-flex justify-content-lg-end">처리</td>
+										<td>10</td>
+									</tr>
+								</table>
+							</div>
 						</div>
 					</div>
+
+					<div class="col-6">
+						<div class="row">
+							<div class="col-8">
+								<p class="fs-4">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류
+								신고 등 제외를 통하여 1,502의 신고 중 62건의 신고를 담당
+								부서에 전달드렸습니다.</p>
+							</div>
+						</div>
+						<div id="barChart" style="height: 300px; width: 100%;"></div>
+					</div>
+
 				</div>
 
 			</div>
@@ -113,7 +86,78 @@
 
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
+		<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 		<script src="<%=contextPath%>/resources/js/scripts.js"></script>
+		<script type="application/javascript">
+            $(function () {
+                // 신고 접수 건 파이 차트
+                $.drawPieChart = function (opt) {
+                    let options = {
+                        animationEnabled: true,
+                        title: {
+                            text: "신고 건수"
+                        },
+                        data: [{
+                            type: "doughnut",
+                            innerRadius: "40%",
+                            showInLegend: true,
+                            legendText: "{label}",
+                            indexLabel: "{label}",
+                            dataPoints: [
+                                {label: "대기", y: opt.completeCount},
+                                {label: "미처리", y: opt.exceptionCount},
+                                {label: "처리", y: opt.penaltyCount}
+                            ]
+                        }]
+                    };
+
+                    function draw() {
+                        $("#pieChart").css("height", "400px").css("width", "100%");
+                        $("#pieChart").CanvasJSChart(options);
+                        $('.canvasjs-chart-credit').hide();
+                    };
+
+                    setTimeout(() => {
+                        draw();
+                    }, 200);
+                }
+
+                $.drawPieChart({
+                    completeCount: 10,
+                    exceptionCount: 10,
+                    penaltyCount: 10
+                });
+
+
+                $.drawBarChart = function (opt) {
+                    var chart = new CanvasJS.Chart("barChart", {
+                        title: {
+                            text: "신고 발생 / 신고 접수 "
+                        },
+                        data: [
+                            {
+                                type: "column",
+                                dataPoints: [
+                                    { x: 10, y: 71 },
+                                    { x: 20, y: 55},
+                                    { x: 30, y: 50 },
+                                    { x: 40, y: 65 },
+                                    { x: 50, y: 95 },
+                                    { x: 60, y: 68 },
+                                    { x: 70, y: 28 },
+                                    { x: 80, y: 34 },
+                                    { x: 90, y: 14}
+                                ]
+                            }
+                        ]
+                    });
+
+                    chart.render();
+				}
+
+                $.drawBarChart();
+            });
+		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

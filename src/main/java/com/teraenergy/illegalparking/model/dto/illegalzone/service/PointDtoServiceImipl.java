@@ -39,8 +39,8 @@ public class PointDtoServiceImipl implements PointDtoService{
         pointDto.setPointSeq(point.getPointSeq());
         pointDto.setValue(point.getValue().toString());
         pointDto.setPointType(point.getPointType().getValue());
-        pointDto.setStartDate(StringUtil.covertDateToString(point.getStartDate(), "yyyy-MM-dd"));
-        pointDto.setStopDate(StringUtil.covertDateToString(point.getStopDate(), "yyyy-MM-dd"));
+        pointDto.setStartDate(StringUtil.convertDateToString(point.getStartDate(), "yyyy-MM-dd"));
+        pointDto.setStopDate(StringUtil.convertDateToString(point.getStopDate(), "yyyy-MM-dd"));
         pointDto.setLimitValue( point.getLimitValue() == null ? "-" : point.getLimitValue().toString());
         pointDto.setResidualValue(point.getResidualValue() == null ? "-" : point.getResidualValue().toString());
         pointDto.setUseValue(point.getUseValue() == null ? "-" : point.getUseValue().toString());

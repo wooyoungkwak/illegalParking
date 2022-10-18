@@ -58,7 +58,14 @@ public class TeraInterceptor implements HandlerInterceptor {
 
                 // _user
                 modelAndView.getModel().put("_user", userDto);
-                modelAndView.getModel().put("mainTitle", "불법주정차");
+                switch (user.getRole()) {
+                    case ADMIN:
+                        modelAndView.getModel().put("mainTitle", "불법주정차");
+                        break;
+                    case GOVERNMENT:
+                        modelAndView.getModel().put("mainTitle", "불법주정차 신고접수");
+                        break;
+                }
             }
         }
     }

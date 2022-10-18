@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.model.entity.notice.domain.Notice;
 import com.teraenergy.illegalparking.model.entity.notice.domain.QNotice;
 import com.teraenergy.illegalparking.model.entity.notice.enums.NoticeFilterColumn;
+import com.teraenergy.illegalparking.model.entity.notice.enums.NoticeType;
 import com.teraenergy.illegalparking.model.entity.notice.repository.NoticeRepository;
 import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
 import lombok.RequiredArgsConstructor;
@@ -43,11 +44,16 @@ public class NoticeServiceImpl implements NoticeService{
             case SUBJECT:
                 query.where(QNotice.notice.subject.contains(search));
                 break;
+            case NOTICETYPE:
+                query.where(QNotice.notice.noticeType.eq(NoticeType.valueOf(search)));
+                break;
         }
 
         query.where(QNotice.notice.isDel.isFalse());
 
         int total = query.fetch().size();
+
+        query.orderBy(QNotice.notice.noticeType.desc());
 
         pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);
@@ -72,8 +78,14 @@ public class NoticeServiceImpl implements NoticeService{
     }
 
     @Override
+    public List<Notice> sets(List<Notice> notices) {
+        return noticeRepository.saveAll(notices);
+    }
+
+    @Override
     public List<Notice> getsAtFive() {
         JPAQuery query = jpaQueryFactory.selectFrom(QNotice.notice);
+        query.orderBy(QNotice.notice.noticeType.desc());
         query.orderBy(QNotice.notice.noticeSeq.desc());
         query.limit(5);
         return query.fetch();
@@ -82,6 +94,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public List<Notice> getsAtFive(int offset, int limit) {
         JPAQuery query = jpaQueryFactory.selectFrom(QNotice.notice);
+        query.orderBy(QNotice.notice.noticeType.desc());
         query.orderBy(QNotice.notice.noticeSeq.desc());
         query.offset(offset);
         query.limit(5);

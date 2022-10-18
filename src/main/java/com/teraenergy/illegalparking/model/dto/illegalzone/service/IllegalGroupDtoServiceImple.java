@@ -48,9 +48,9 @@ public class IllegalGroupDtoServiceImple implements IllegalGroupDtoService {
             String note = "";
             if ( point != null) {
                 note = "이벤트 " + point.getLimitValue() + " point / ";
-                note += StringUtil.covertDateToString(point.getStartDate(), "yyyy-MM-dd");
+                note += StringUtil.convertDateToString(point.getStartDate(), "yyyy-MM-dd");
                 note += " ~ ";
-                note += StringUtil.covertDateToString(point.getStopDate(), "yyyy-MM-dd");
+                note += StringUtil.convertDateToString(point.getStopDate(), "yyyy-MM-dd");
                 note += " ...";
             }
             illegalGroupDto.setNote(note);

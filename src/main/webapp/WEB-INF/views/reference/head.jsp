@@ -92,7 +92,7 @@
 
             if (_role === 'GOVERNMENT') {
                 $('#navMenu').find('li').each(function (){
-                   if ( $(this).index() != 0 ) {
+                   if ( $(this).children('a').prop('id') !== 'navreport' ) {
                        $(this).hide();
                    }
                 });

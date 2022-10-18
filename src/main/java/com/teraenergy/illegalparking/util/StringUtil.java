@@ -257,7 +257,7 @@ public class StringUtil {
         return UUID.randomUUID().toString().toUpperCase();
     }
 
-    public static String covertDatetimeToString(LocalDateTime time, String pattern) {
+    public static String convertDatetimeToString(LocalDateTime time, String pattern) {
         return time.format(DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -265,7 +265,7 @@ public class StringUtil {
         return LocalDateTime.parse(time, DateTimeFormatter.ofPattern(pattern));
     }
 
-    public static String covertDateToString(LocalDate time, String pattern) {
+    public static String convertDateToString(LocalDate time, String pattern) {
         return time.format(DateTimeFormatter.ofPattern(pattern));
     }
 

@@ -16,6 +16,8 @@ import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.lawdong.domain.LawDong;
 import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService;
+import com.teraenergy.illegalparking.model.entity.mycar.domain.MyCar;
+import com.teraenergy.illegalparking.model.entity.mycar.service.MyCarService;
 import com.teraenergy.illegalparking.model.entity.notice.domain.Notice;
 import com.teraenergy.illegalparking.model.entity.notice.service.NoticeService;
 import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
@@ -78,6 +80,9 @@ public class MobileAPI {
 
     private final CommentService commentService;
 
+    private final MyCarService myCarService;
+
+    /** 사용자 로그인 하기 */
     @PostMapping("/api/login")
     @ResponseBody
     public Object login(@RequestBody String body) throws TeraException {
@@ -100,6 +105,7 @@ public class MobileAPI {
         return userDto;
     }
 
+    /** 사용자 등록 하기 */
     @PostMapping("/api/user/register")
     @ResponseBody
     public Object register(@RequestBody String body) throws TeraException {
@@ -130,6 +136,7 @@ public class MobileAPI {
         }
     }
 
+    /** 사용자 존재 여부 확인하기 */
     @PostMapping("/api/user/isExist")
     @ResponseBody
     public Object isExist(@RequestBody String body) throws TeraException {
@@ -152,8 +159,73 @@ public class MobileAPI {
         }
     }
 
+    /** 프로필 변경 하기 */
+    @PostMapping("/api/user/profile/change")
+    @ResponseBody
+    public Object changeProfile(@RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            String photoName = jsonNode.get("photoName").asText();
 
+            User user = userService.get(userSeq);
+            user.setDecryptPassword();
+            user.setPhotoName(photoName);
+
+            userService.set(user);
+            return "complete ... ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.USER_INSERT_FAIL);
+        }
+    }
+
+    /** 패스워드 체크하기 */
+    @PostMapping("/api/user/password/check")
+    @ResponseBody
+    public Object checkPassword(@RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            String password = jsonNode.get("password").asText();
+
+            User user = userService.get(userSeq);
+            user.setDecryptPassword();
+            if (user.getPassword().equals(password)) {
+                return "complete .. ";
+            } else {
+                throw new TeraException(TeraExceptionCode.USER_FAIL_PASSWORD);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.USER_FAIL_PASSWORD);
+        }
+    }
+
+    /** 패스워드 변경 하기 */
+    @PostMapping("/api/user/password/change")
+    @ResponseBody
+    public Object changePassword(@RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            String password = jsonNode.get("password").asText();
+
+            User user = userService.get(userSeq);
+            user.setPassword(password);
+            userService.set(user);
+
+            return "complete .. ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.USER_INSERT_FAIL);
+        }
+
+    }
+
+    /** 내 페이지 정보 가져오기 */
     @PostMapping("/api/myPage/get")
+    @ResponseBody
     public Object getMyPage(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
@@ -173,9 +245,10 @@ public class MobileAPI {
             List<Map<String, Object>> noticeMap = Lists.newArrayList();
             for (Notice notice : notices) {
                 HashMap<String, Object> map = Maps.newHashMap();
+                map.put("noticeType", notice.getNoticeType().getValue());
                 map.put("subject", notice.getSubject());
                 map.put("content", notice.getContent());
-                map.put("regDt", StringUtil.covertDatetimeToString(notice.getRegDt(), "yyyy-MM-dd HH:mm"));
+                map.put("regDt", StringUtil.convertDatetimeToString(notice.getRegDt(), "yyyy-MM-dd HH:mm"));
 
                 noticeMap.add(map);
             }
@@ -190,12 +263,14 @@ public class MobileAPI {
         }
     }
 
-    @PostMapping("/api/notice/get")
-    public Object getNotice(@RequestBody String body) throws TeraException {
+    /** 공지 사항 정보 리스트 가져오기 */
+    @PostMapping("/api/notice/gets")
+    @ResponseBody
+    public Object getsNotice(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer userSeq = jsonNode.get("userSeq").asInt();
-            Integer offest = jsonNode.get("offest").asInt();
+            Integer offset = jsonNode.get("offset").asInt();
             Integer count = jsonNode.get("count").asInt();
 
             User user = userService.get(userSeq);
@@ -204,14 +279,15 @@ public class MobileAPI {
                 throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
             }
 
-            List<Notice> notices = noticeService.getsAtFive(offest, count);
+            List<Notice> notices = noticeService.getsAtFive(offset, count);
 
             List<Map<String, Object>> noticeMap = Lists.newArrayList();
             for (Notice notice : notices) {
                 HashMap<String, Object> map = Maps.newHashMap();
+                map.put("noticeType", notice.getNoticeType().getValue());
                 map.put("subject", notice.getSubject());
                 map.put("content", notice.getContent());
-                map.put("regDt", StringUtil.covertDatetimeToString(notice.getRegDt(), "yyyy-MM-dd HH:mm"));
+                map.put("regDt", StringUtil.convertDatetimeToString(notice.getRegDt(), "yyyy-MM-dd HH:mm"));
                 noticeMap.add(map);
             }
             return noticeMap;
@@ -221,8 +297,10 @@ public class MobileAPI {
         }
     }
 
-    @PostMapping("/api/point/get")
-    public Object getPoint(@RequestBody String body) throws TeraException {
+    /** 포인트 리스트 정보 가져오기 */
+    @PostMapping("/api/point/gets")
+    @ResponseBody
+    public Object getsPoint(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer userSeq = jsonNode.get("userSeq").asInt();
@@ -234,7 +312,7 @@ public class MobileAPI {
                 map.put("locationType", calculate.getLocationType() != null ? calculate.getLocationType().getValue() : null);
                 map.put("productName", calculate.getProductName());
                 map.put("pointType", calculate.getPointType());
-                map.put("regDt", StringUtil.covertDatetimeToString(calculate.getRegDt(), "yyyy-MM-dd HH:mm"));
+                map.put("regDt", StringUtil.convertDatetimeToString(calculate.getRegDt(), "yyyy-MM-dd HH:mm"));
                 resultMap.add(map);
             }
             return resultMap;
@@ -244,14 +322,16 @@ public class MobileAPI {
         }
     }
 
+    /** 제품 리스트 정보 */
     @PostMapping("/api/product/gets")
+    @ResponseBody
     public Object getsProduct(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer userSeq = jsonNode.get("userSeq").asInt();
 
             User user = userService.get(userSeq);
-            if ( user == null) {
+            if (user == null) {
                 throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
             }
 
@@ -274,15 +354,16 @@ public class MobileAPI {
         }
     }
 
-    // 제품 구매 신청
+    /** 제품 구매 신청 등록 */
     @PostMapping("/api/calculate/set")
-    public Object getProduct(@RequestBody String body) throws TeraException {
+    @ResponseBody
+    public Object setCalculate(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer userSeq = jsonNode.get("userSeq").asInt();
 
             User user = userService.get(userSeq);
-            if ( user == null) {
+            if (user == null) {
                 throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
             }
 
@@ -312,17 +393,88 @@ public class MobileAPI {
     }
 
 
+    /** 차량 알림 이력 정보 */
+    @PostMapping("/api/car/alarmHistory")
+    @ResponseBody
+    public Object alarmHistoryCar(@RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            String carNum = jsonNode.get("carNum").asText();
+
+            List<Receipt> receipts = receiptService.gets(userSeq, carNum);
+
+            List<HashMap<String, Object>> resultMap = Lists.newArrayList();
+            for (Receipt receipt : receipts) {
+                HashMap<String, Object> map = Maps.newHashMap();
+                map.put("addr", receipt.getAddr());
+                String timePattern = "yyyy-MM-dd HH:mm";
+                if (receipt.getSecondRegDt() == null) {
+                    map.put("regDt", StringUtil.convertDatetimeToString(receipt.getRegDt(), timePattern));
+                } else {
+                    map.put("regDt", StringUtil.convertDatetimeToString(receipt.getSecondRegDt(), timePattern));
+                }
+                map.put("stateType", receipt.getReceiptStateType());
+                map.put("fileName", receipt.getFileName());
+                resultMap.add(map);
+            }
+            return resultMap;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.CAR_ALARM_HISTORY_GET_FAIL);
+        }
+    }
+
+    /** 차량 등록 */
+    @PostMapping("/api/car/set")
+    @ResponseBody
+    public Object setCar(@RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            String carNum = jsonNode.get("carNum").asText();
+            String carName = jsonNode.get("carName").asText();
+            String carGrade = jsonNode.get("carGrade").asText();
+
+            MyCar mycar = new MyCar();
+            mycar.setUserSeq(userSeq);
+            mycar.setCarName(carName);
+            mycar.setCarNum(carNum);
+            mycar.setCarGrade(carGrade);
+
+            mycar = myCarService.set(mycar);
+
+            return "complete ... ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.CAR_SET_FAIL);
+        }
+
+    }
 
 
-    /**
-     * 신고 접수
-     * id :
-     * carNum :
-     * addr :
-     * latitude :
-     * longitude :
-     * fileName :
-     */
+    /** 차량 알림 서비스 변경 등록 */
+    @PostMapping("/api/car/modify")
+    @ResponseBody
+    public Object modifyCar(@RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            String carNum = jsonNode.get("carNum").asText();
+            boolean isAlarm = jsonNode.get("isAlarm").isBoolean();
+
+            MyCar myCar = myCarService.get(userSeq, carNum);
+            myCar.setAlarm(isAlarm);
+
+            myCarService.set(myCar);
+            return "complete ... ";
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.CAR_SET_FAIL);
+        }
+    }
+
+    /** 신고 접수 */
     @PostMapping("/api/receipt/set")
     @ResponseBody
     public Object setReceipt(@RequestBody String body) throws TeraException {
@@ -349,7 +501,7 @@ public class MobileAPI {
 
         Receipt receipt = receiptService.getByCarNumAndBetweenNow(user.getUserSeq(), carNum, LocalDateTime.now());
 
-        if ( receipt == null) {
+        if (receipt == null) {
             receipt = new Receipt();
             receipt.setAddr(addr);
             receipt.setCarNum(carNum);
@@ -446,21 +598,22 @@ public class MobileAPI {
         return receipt.getReceiptStateType().getValue() + "가(이) 등록 되었습니다.";
     }
 
+    /** 신고 이력 정보 가져오기 */
     @PostMapping("/api/receipt/gets")
     @ResponseBody
-    public Object getReceiptByApi(@RequestBody String body) throws TeraException {
+    public Object getsReceipt(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         Integer userSeq = jsonNode.get("userSeq").asInt();
         List<Receipt> receipts = receiptService.gets(userSeq);
 
         List<HashMap<String, Object>> resutMap = Lists.newArrayList();
         String timePattern = "yyyy-MM-dd HH:mm";
-        for( Receipt receipt : receipts) {
+        for (Receipt receipt : receipts) {
             HashMap<String, Object> map = Maps.newHashMap();
             map.put("carNum", receipt.getCarNum());
             map.put("addr", receipt.getAddr());
-            map.put("firstRegDt", StringUtil.covertDatetimeToString(receipt.getRegDt(),timePattern));
-            if ( receipt.getSecondRegDt() != null) map.put("secondRegDt", StringUtil.covertDatetimeToString(receipt.getSecondRegDt(),timePattern));
+            map.put("firstRegDt", StringUtil.convertDatetimeToString(receipt.getRegDt(), timePattern));
+            if (receipt.getSecondRegDt() != null) map.put("secondRegDt", StringUtil.convertDatetimeToString(receipt.getSecondRegDt(), timePattern));
             map.put("reportState", receipt.getReceiptStateType().getValue());
             List<Comment> comments = commentService.gets(receipt.getReceiptSeq());
             List<String> commentStrs = comments.stream().map(comment -> comment.getContent()).collect(Collectors.toList());

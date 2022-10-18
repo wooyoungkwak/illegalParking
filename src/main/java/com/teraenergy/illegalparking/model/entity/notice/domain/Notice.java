@@ -1,5 +1,7 @@
 package com.teraenergy.illegalparking.model.entity.notice.domain;
 
+import com.teraenergy.illegalparking.model.entity.notice.enums.NoticeType;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,8 +32,13 @@ public class Notice {
     @Column
     String content;
 
-    @Column
-    Integer userSeq;
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "UserSeq")
+    User user;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    NoticeType noticeType;
 
     @Column
     LocalDateTime regDt = LocalDateTime.now();

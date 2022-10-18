@@ -3,22 +3,23 @@ package com.teraenergy.illegalparking.model.entity.notice.enums;
 import lombok.Getter;
 
 /**
- * Date : 2022-09-19
+ * Date : 2022-10-18
  * Author : young
+ * Editor :
  * Project : illegalParking
  * Description :
  */
-
 @Getter
-public enum NoticeFilterColumn {
-    SUBJECT("제목"),
-    CONTENT("내용"),
-    NOTICETYPE("분류")
+public enum NoticeType {
+
+    DISTRIBUTION("공지"),
+    ANNOUNCEMENT("소식")
     ;
 
-    private String value;
 
-    NoticeFilterColumn(String value) {
+    String value;
+
+    NoticeType(String value){
         this.value = value;
     }
 

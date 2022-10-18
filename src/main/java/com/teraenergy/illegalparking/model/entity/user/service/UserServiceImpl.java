@@ -49,7 +49,6 @@ public class UserServiceImpl implements UserService {
                 return null;
             }
             User user = optional.get();
-//            user.setDecryptPassword();
             return user;
         } catch (EncryptedException e) {
             throw new TeraException(EncryptedExceptionCode.DECRYPT_FAILURE.getMessage(), e);

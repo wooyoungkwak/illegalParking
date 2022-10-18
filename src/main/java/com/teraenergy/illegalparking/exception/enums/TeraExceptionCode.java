@@ -20,6 +20,8 @@ public enum TeraExceptionCode implements TeraErrCode {
 
     UNKNOWN("알 수 없는 오류"),
 
+    CAR_ALARM_HISTORY_GET_FAIL("내차 신고 이력 정보 가져오기를 실패 하였습니다."),
+    CAR_SET_FAIL("내차 등록이 실패 하였습니다."),
     CAST_FAILURE("cast 를 실패 하였습니다."),
 
     ZONE_CREATE_FAIL("불법주정차 구역 생성을 실패 하였습니다."),
@@ -34,7 +36,9 @@ public enum TeraExceptionCode implements TeraErrCode {
 
     USER_WRONG_ID_PASSWORD_AGAIN_CHECK(" 사용자 정보가 잘 못 되었거나 패스워드가 틀렸습니다. \n 다시 확인하여 입력 하세요."),
 
-    USER_INSERT_FAIL ("사용자 등록이 실패 하였습니다. \n 다시 확인하여 입력 하세요"),
+    USER_INSERT_FAIL ("사용자 등록이 실패 하였습니다. \n 다시 확인하여 입력 하세요."),
+
+    USER_FAIL_PASSWORD ("패스워드가 틀렸습니다. 다시 확인하여 입력 하세요."),
 
     USER_FAIL_CHANGE ("사용자 정보 변경을 실패 하였습니다."),
 

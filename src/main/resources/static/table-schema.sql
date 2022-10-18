@@ -196,7 +196,7 @@ CREATE TABLE product
     ProductSeq INT AUTO_INCREMENT PRIMARY KEY,
     Name       VARCHAR(30) NOT NULL,              -- 상품 이름
     Brand      VARCHAR(20) NOT NULL,              -- 브랜드 이름
-    PointValue  BIGINT      NOT NULL,              -- 포인트 점수
+    PointValue BIGINT      NOT NULL,              -- 포인트 점수
     UserSeq    INT         NOT NULL,              -- 등록자
     Thumbnail  VARCHAR(30) NULL,                  -- 상품 섬네일
     IsDel      BOOLEAN     NOT NULL DEFAULT FALSE -- 삭제 여부
@@ -205,17 +205,18 @@ CREATE TABLE product
 
 
 -- 차량 번호 정보 ( 신고 등록 및 접수 알림 차량 정보 )
-DROP TABLE IF EXISTS car;
-CREATE TABLE car
+DROP TABLE IF EXISTS my_car;
+CREATE TABLE my_car
 (
-    CarSeq       INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    CarNum       VARCHAR(10) NULL,               -- 차 번호
-    Name         VARCHAR(10) NULL,               -- 차 이름
-    Displacement VARCHAR(10) NULL,               -- 배기량 ( 몇 CC )
-    IsAlarm      BOOLEAN NOT NULL DEFAULT FALSE, -- 알림 받기 여부
-    UserSeq      BIGINT  NOT NULL,               -- 사용자 키
-    IsDel        BOOLEAN NOT NULL DEFAULT FALSE, -- 삭제 여부
-    DelDt        Datetime NULl                   -- 삭제 일자
+    CarSeq     INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    CarNum     VARCHAR(10) NULL,                   -- 차 번호
+    CarName    VARCHAR(10) NULL,                   -- 차 이름
+    CarGrade   VARCHAR(10) NULL,                   -- 차 등급
+    NoticeType VARCHAR(15) NOT NULL,               -- 분류
+    IsAlarm    BOOLEAN     NOT NULL DEFAULT FALSE, -- 알림 받기 여부
+    UserSeq    BIGINT      NOT NULL,               -- 사용자 키
+    IsDel      BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
+    DelDt      Datetime NULl                       -- 삭제 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;
 

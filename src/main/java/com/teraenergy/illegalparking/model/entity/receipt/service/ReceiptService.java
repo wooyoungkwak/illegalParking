@@ -29,6 +29,8 @@ public interface ReceiptService {
 
     List<Receipt> gets(Integer userSeq);
 
+    List<Receipt> gets(Integer userSeq, String carNum);
+
     int getsOverlabCount(Integer user, LocalDateTime regDt);
 
     List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType);

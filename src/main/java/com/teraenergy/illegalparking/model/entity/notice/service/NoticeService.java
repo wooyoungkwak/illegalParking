@@ -21,6 +21,8 @@ public interface NoticeService {
 
     Notice set(Notice notice);
 
+    List<Notice> sets(List<Notice> notices);
+
     List<Notice> getsAtFive();
 
     List<Notice> getsAtFive(int offset, int limit);
