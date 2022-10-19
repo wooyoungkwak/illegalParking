@@ -54,6 +54,7 @@ public class NoticeServiceImpl implements NoticeService{
         int total = query.fetch().size();
 
         query.orderBy(QNotice.notice.noticeType.desc());
+        query.orderBy(QNotice.notice.noticeSeq.desc());
 
         pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);

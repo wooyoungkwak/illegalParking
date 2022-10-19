@@ -26,7 +26,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-9">
-						<i class="fas fa-table"></i> 관공서 상세 정보
+						<i class="fas fa-pen"></i> 공지 사항
 					</div>
 					<div class="col-3 d-flex justify-content-end">
 						<a class="btn btn-close" id="noticeSetClose"></a>
@@ -36,23 +36,34 @@
 
 			<div class="card-body">
 				<form id="noticeForm">
-					<div class="row">
-						<div class="col-4">
-							<tags:selectTagWithType id="noticeType" current="" items="${items}" />
+					<div class="row mb-3">
+						<div class="col-2">
+							<div class="input-group">
+								<label class="input-group-text" for="noticeType">분류 </label>
+								<tags:selectTagWithType id="noticeType" current="" items="${items}"/>
+							</div>
 						</div>
 					</div>
-					<div class="row">
-						<div class="col-4">
-							<tags:inputTag id="subject" title="제목" placeholder="제목을 입력하세요" />
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-4">
-							내용 :
-						</div>
+					<div class="row mb-3">
 						<div class="col-12">
-<%--							<input class="form-control" type="text" name="content" />--%>
-							<div id="editor"></div>
+							<div class="input-group">
+								<label class="input-group-text" for="noticeType">제목 </label>
+								<tags:inputTag id="subject" placeholder="제목을 입력하세요"/>
+							</div>
+						</div>
+					</div>
+					<div class="row mb-2">
+						<div class="col-12">
+							<%--							<input class="form-control" type="text" name="content" />--%>
+							<div class="form-group">
+								<div id="editor" name="editor"></div>
+								<input type="hidden" id="toastdata" name="toastdata"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12 d-flex justify-content-lg-start">
+							<a class="btn btn-primary" id="register">등록</a>
 						</div>
 					</div>
 				</form>
@@ -63,14 +74,53 @@
 	</div>
 </main>
 
-<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 <script type="application/javascript">
     $(function () {
 
-		$('#noticeSetClose').on('click', function (){
+        $('#noticeSetClose').on('click', function () {
             // 그룹 추가 태그 숨기기
-			$.closeNoticeSet();
+            $.closeNoticeSet();
         })
+
+        const editor = new toastui.Editor({
+            el: document.querySelector('#editor'),
+            height: '500px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            hooks: {
+                addImageBlobHook: async (blob, callback) => {
+                    const upload = uploadImage(blob);
+                    callback(upload, 'alt text');
+                }
+            }
+        });
+
+        const uploadImage = (blob) => {
+            const formData = new FormData();
+            formData.append('image', blob);
+            // 서버로부터 이미지 주소 받아오는거 구현 필요
+            const url = "https://www.premiumoutlets.co.kr/webcontents/20220127_144158_220124_slide_01.jpg";
+            return url;
+        };
+
+        $('#register').on('click', function (){
+            let data = $.getData('noticeForm');
+            data.content = editor.getHTML().replaceAll('<p>', '').replaceAll('</p>', '\n');
+			data.userSeq = _userSeq;
+
+            let result = $.JJAjaxAsync({
+				url: _contextPath + '/set',
+				data: data
+			});
+
+            if (result.success) {
+                $.closeNoticeSet();
+                $.search();
+			} else {
+                alert(result.msg);
+			}
+		});
 
     });
 </script>

@@ -223,15 +223,6 @@ public class AreaAPI {
     }
 
 
-    @PostMapping("/api/zone/gets")
-    @ResponseBody
-    public Object getsZoneByMobile(Device device, HttpServletRequest request, @RequestBody String body) throws Exception {
-        if ( device.isMobile()) {
-            return getsZone(request, body);
-        } else {
-            return "";
-        }
-    }
 
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {
         String select = param.get("select").asText();
@@ -296,4 +287,23 @@ public class AreaAPI {
 
         return resultMap;
     }
+
+
+    /** 모바일 전용 */
+
+    @PostMapping("/api/zone/gets")
+    @ResponseBody
+    public Object getsZoneByMobile(Device device, HttpServletRequest request, @RequestBody String body) throws TeraException {
+        try {
+            if (device.isMobile()) {
+                return getsZone(request, body);
+            } else {
+                return "";
+            }
+        }catch (Exception e) {
+            throw  new TeraException(TeraExceptionCode.UNKNOWN);
+        }
+    }
+
+
 }

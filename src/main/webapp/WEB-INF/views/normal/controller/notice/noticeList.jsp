@@ -68,7 +68,9 @@
 							<tbody>
 							<c:forEach items="${notices}" var="notice" varStatus="status">
 								<tr>
-									<td class="text-center">${notice.noticeType.value}</td>
+									<td class="text-center">
+											${notice.noticeType.value}
+									</td>
 									<td class="text-center">${notice.subject}</td>
 									<td>${notice.content}</td>
 									<td class="text-center">

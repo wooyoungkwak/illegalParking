@@ -1,13 +1,20 @@
 package com.teraenergy.illegalparking.controller.notice;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.notice.domain.Notice;
+import com.teraenergy.illegalparking.model.entity.notice.enums.NoticeType;
 import com.teraenergy.illegalparking.model.entity.notice.service.NoticeService;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import com.teraenergy.illegalparking.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.time.LocalDateTime;
 
 /**
  * Date : 2022-10-17
@@ -21,17 +28,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 @Controller
 public class NoticeAPI {
 
+    private final UserService userService;
     private final NoticeService noticeService;
 
     @PostMapping("/notice/set")
     public Object set(@RequestBody String body) throws TeraException {
         try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            User user = userService.get(userSeq);
+
             Notice notice = new Notice();
+            notice.setUser(user);
+            notice.setNoticeType(NoticeType.valueOf(jsonNode.get("noticeType").asText()));
+            notice.setSubject(jsonNode.get("subject").asText());
+            notice.setContent(jsonNode.get("content").asText());
+            notice.setRegDt(LocalDateTime.now());
 
-
-            return "";
+            notice = noticeService.set(notice);
+            return "complete ... ";
         } catch (Exception e) {
-            throw new TeraException(TeraExceptionCode.UNKNOWN);
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.NOTICE_SET_FAIL);
         }
 
     }

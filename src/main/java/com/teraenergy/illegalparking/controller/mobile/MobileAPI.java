@@ -20,6 +20,7 @@ import com.teraenergy.illegalparking.model.entity.mycar.domain.MyCar;
 import com.teraenergy.illegalparking.model.entity.mycar.service.MyCarService;
 import com.teraenergy.illegalparking.model.entity.notice.domain.Notice;
 import com.teraenergy.illegalparking.model.entity.notice.service.NoticeService;
+import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
 import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.point.service.PointService;
 import com.teraenergy.illegalparking.model.entity.product.domain.Product;
@@ -38,6 +39,7 @@ import com.teraenergy.illegalparking.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
+import org.springframework.mobile.device.Device;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -81,6 +83,8 @@ public class MobileAPI {
     private final CommentService commentService;
 
     private final MyCarService myCarService;
+
+    private final ParkingService parkingService;
 
     /** 사용자 로그인 하기 */
     @PostMapping("/api/login")
@@ -630,4 +634,30 @@ public class MobileAPI {
         comment.setContent(content);
         commentService.set(comment);
     }
+
+
+    @PostMapping("/api/parking/gets")
+    @ResponseBody
+    public Object getsParking(Device device, @RequestBody String body) throws TeraException {
+        try {
+            if (device.isMobile()) {
+                JsonNode jsonNode = JsonUtil.toJsonNode(body);
+                List<String> codes = com.google.common.collect.Lists.newArrayList();
+                JsonNode codesArrNode = jsonNode.get("codes");
+                if (codesArrNode.isArray()) {
+                    for (JsonNode obj : codesArrNode) {
+                        codes.add(obj.asText());
+                    }
+                }
+                return parkingService.gets(codes);
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
+        }
+    }
+
+
 }
