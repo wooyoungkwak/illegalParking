@@ -35,7 +35,7 @@ $(function () {
         }
         if(event.target.id === 'parking'){
             removeOverlays();
-            _url = '/parking/gets'
+            _url = _contextPath + '/parking/gets';
 
             initializeParking();
             (async () => {
@@ -79,7 +79,6 @@ $(function () {
     $('input:radio[name=searchIllegalType]').change(async function () {
         searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
         let codes = await getDongCodesBounds(map);
-
         getsZone(codes);
     });
 
@@ -223,6 +222,8 @@ $(function () {
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
         map = new kakao.maps.Map(mapContainer, map);
 
+        map.setZoomable(false);
+
         // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
             target: map,
@@ -300,7 +301,6 @@ $(function () {
             if (opt.data.select === undefined) {
                 return result;
             }
-
             zonePolygons = result.data.zonePolygons;
             zoneSeqs = result.data.zoneSeqs;
             zoneTypes = result.data.zoneTypes;
@@ -405,6 +405,9 @@ $(function () {
             level: 3, // 지도의 확대 레벨
             disableDoubleClickZoom: true
         });
+
+        map.setZoomable(false);
+
         /** MAP EVENT */
         kakaoEvent = kakao.maps.event;
 

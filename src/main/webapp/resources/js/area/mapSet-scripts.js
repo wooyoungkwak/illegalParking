@@ -126,9 +126,6 @@ $(function () {
         for (let i = 0; i < len; i++) {
             manager.remove(getPolygons[0]);
         }
-        // overlays['polygon'].forEach(function (target) {
-        //     manager.remove(target);
-        // })
     }
 
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
