@@ -109,4 +109,11 @@ public class SqlUser {
             System.out.println("is not .... ");
         }
     }
+
+    @Test
+    public void select() throws TeraException {
+        User user = userService.get(5);
+        user.setDecryptPassword();
+        System.out.println(user.getPassword());
+    }
 }

@@ -4,6 +4,7 @@
   Date: 2022-03-02
   Time: 오후 7:56
   To change this template use File | Settings | File Templates.
+  신고 목록
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
@@ -107,13 +108,159 @@
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/report/receiptList-scripts.js"></script>
 		<script type="application/javascript">
-            if ('${filterColumn}' === 'RESULT') {
-                $('#searchStrGroup').hide();
-                $('#searchStr2Group').show();
-            } else {
-                $('#searchStrGroup').show();
-                $('#searchStr2Group').hide();
-            }
+			$(function (){
+
+                // 검색
+                function search(pageNumber) {
+                    if (pageNumber === undefined) {
+                        $('#pageNumber').val("1");
+                    } else {
+                        $('#pageNumber').val(pageNumber);
+                    }
+                    location.href = _contextPath + "/receiptList?" + $('form').serialize();
+                }
+
+                //
+                function initializeReportSetTagTitle(carNum) {
+                    $('#reportSetTitle').text(carNum);
+                }
+
+                // 검색 입력 방식 선택
+                function searchSelect(filterColumn) {
+                    if (filterColumn === 'RESULT') {
+                        $('#searchStrGroup').hide();
+                        $('#searchStr2Group').show();
+                    } else {
+                        $('#searchStrGroup').show();
+                        $('#searchStr2Group').hide();
+                    }
+                }
+
+                // 신고 목록 초기화 함수
+                function initializeReceiptSetTag(report) {
+                    $.each(report, function (key, value) {
+                        if (key.indexOf('receiptStateType') > -1) {
+                            if (value === 'OCCUR') {
+                                $('#' + key).text("신고발생");
+                            } else if (value === 'FORGET')  {
+                                $('#' + key).text("신고누락");
+                            } else if (value === 'EXCEPTION') {
+                                $('#' + key).text("신고제외");
+                            }
+                        } else if (key.indexOf("firstFileName") > -1) {
+                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
+                        } else if (key === 'firstIllegalType') {
+                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
+                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                        } else if (key === 'secondIllegalType') {
+                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
+                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                        } else if( key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt' ) {
+                            $('#' + key).text(value.replace('T', ' '));
+                        } else if ( key === 'comments') {
+                            let  html = '';
+                            for ( let i =0; value.length > i; i++) {
+                                html = `<div class="col-12"><i class="fas fa-comments"></i>  ${value[i]}</div>`;
+                            }
+                            $('#' + key).append(html);
+                        } else {
+                            $('#' + key).text(value);
+                        }
+                    });
+
+                }
+
+				// 초기화 함수
+                function initialize() {
+
+                    // 검색 이벤트 1
+                    $('#searchStr').next().on('click', function (event) {
+                        search();
+                    });
+
+                    // 검색 이벤트 2
+                    $('#searchStr2').next().on('click', function (event) {
+                        search();
+                    });
+
+                    $('#pagination').find("li").on('click', function () {
+                        let ul = $(this).parent();
+                        let totalSize = ul.children("li").length;
+                        if (totalSize <= 3) {
+                            return;
+                        }
+                        let pageNumber;
+                        if ($(this).text() === "<") {
+                            pageNumber = Number.parseInt(ul.children('.active').text());
+                            if (pageNumber == 1) return;
+                            pageNumber = pageNumber - 1;
+
+                        } else if ($(this).text() === ">") {
+                            pageNumber = Number.parseInt(ul.children('.active').text());
+                            let myLocation = $(this).index();
+                            let activeLocation = ul.children('.active').index();
+                            if (activeLocation == (myLocation - 1)) {
+                                return;
+                            }
+                            pageNumber = pageNumber + 1;
+                        } else {
+                            pageNumber = Number.parseInt($(this).text());
+                        }
+
+                        search(pageNumber);
+                    });
+
+                    $('#pageSize').on("change", function () {
+                        $('#pageNumber').val(1);
+                        search();
+                    });
+
+                    // 신고 등록 표시
+                    $('#reportTable tbody tr').on('click', function () {
+
+                        let reportSeqStr = $(this).children("td:eq(0)").find('input').val();
+                        let carNum = $(this).children("td:eq(1)").text();
+                        let receiptSeq = Number.parseInt(reportSeqStr);
+
+                        let result = $.JJAjaxAsync({
+                            url: _contextPath + '/receipt/get',
+                            data: {
+                                receiptSeq: receiptSeq
+                            }
+                        });
+
+                        if (result.success) {
+                            let receipt = result.data;
+                            initializeReceiptSetTag(receipt);
+                        } else {
+                            alert("데이터 요청을 실패 하였습니다. ");
+                            return;
+                        }
+
+                        initializeReportSetTagTitle(carNum);
+
+                        $('#reportMain').hide();
+                        $('#reportSet').show();
+                    });
+
+                    $('#filterColumn').find('select[name="filterColumn"]').on('change', function () {
+                        searchSelect($(this).val());
+                    });
+
+                    $('#close').on('click', function () {
+                        $('#reportMain').show();
+                        $('#reportSet').hide();
+                    });
+
+                    // 신고 접수
+                    $('#reportSet').hide();
+
+                }
+
+                // 초기화
+                initialize();
+
+            });
 		</script>
 	</stripes:layout-component>
 

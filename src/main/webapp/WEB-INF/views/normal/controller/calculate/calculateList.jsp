@@ -72,10 +72,10 @@
 							<c:forEach var="calculate" items="${calculates}" varStatus="status">
 								<tr>
 									<td>${calculate.calculateSeq}</td>
-									<td>${calculate.user.name}</td>
+									<td>${calculate.userSeq}</td>
 									<c:choose>
-										<c:when test="${calculate.point.pointType == 'PLUS'}">
-											<td class="text-primary">${calculate.point.value}</td>
+										<c:when test="${calculate.pointType == 'PLUS'}">
+											<td class="text-primary">${calculate.eventPointValue}</td>
 											<td></td>
 											<td></td>
 											<td></td>
@@ -83,8 +83,8 @@
 										<c:otherwise>
 											<td></td>
 											<td>-</td>
-											<td class="text-danger">${calculate.point.value}</td>
-											<td>${calculate.point.product.brand.value} - ${calculate.point.product.name}</td>
+											<td class="text-danger">${calculate.eventPointValue}</td>
+											<td>${calculate.productName}</td>
 										</c:otherwise>
 									</c:choose>
 
@@ -109,6 +109,68 @@
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/calculate/calculateList-scripts.js"></script>
+		<script type="application/javascript">
+            $(function (){
+
+                // 검색 함수
+                function search(pageNumber) {
+                    if (pageNumber === undefined) {
+                        $('#pageNumber').val("1");
+                    } else {
+                        $('#pageNumber').val(pageNumber);
+                    }
+                    location.href = _contextPath  + "/calculateList?" + $('form').serialize();
+                }
+
+                // 초기화 함수
+                function initialize() {
+
+                    $('#orderBy a').on('click', function (){
+                        search();
+                    })
+
+                    $('#search').on('click', function (event) {
+                        search();
+                    });
+
+                    $('#pagination').find("li").on('click', function () {
+                        let ul = $(this).parent();
+                        let totalSize = ul.children("li").length;
+                        if (totalSize <= 3) {
+                            return;
+                        }
+                        let pageNumber;
+                        if ($(this).text() === "<") {
+                            pageNumber = Number.parseInt(ul.children('.active').text());
+                            if ( pageNumber == 1) return;
+                            pageNumber = pageNumber - 1;
+
+                        } else if ($(this).text() === ">") {
+                            pageNumber = Number.parseInt(ul.children('.active').text());
+                            let myLocation = $(this).index();
+                            let activeLocation = ul.children('.active').index();
+                            if ( activeLocation == (myLocation-1) ) {
+                                return;
+                            }
+                            pageNumber = pageNumber + 1;
+                        } else {
+                            pageNumber = Number.parseInt($(this).text());
+                        }
+
+                        search(pageNumber);
+                    });
+
+                    $('#pageSize').on("change", function (){
+                        $('#pageNumber').val(1);
+                        search();
+                    })
+                }
+
+                // 초기화 실행
+                initialize();
+
+            });
+		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

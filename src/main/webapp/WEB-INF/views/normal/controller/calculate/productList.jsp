@@ -44,18 +44,13 @@
 						<form class="row mb-3 g-3">
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
 							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
-							<div class="col-1"></div>
-							<div class="col-2"></div>
+							<div class="col-7"></div>
 							<div class="col-1">
 								<tags:filterTag id="filterColumn" enumValues="${ProductFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
 							<div class="col-4">
-								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
-								<tags:searchTagWithSelect searchStr="${searchStr2}" items="${Brand.values()}" id="searchStr2" />
-							</div>
-							<div class="col-1"></div>
-							<div class="col-3">
-								<tags:sortTag id="orderBy" enumValues="${ProductOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
+								<tags:searchTag id="searchStr" searchStr="${searchStr}"/>
+								<tags:searchTagWithSelect searchStr="${searchStr2}" items="${Brand.values()}" id="searchStr2"/>
 							</div>
 						</form>
 						<table class="table table-hover table-bordered" id="productTable">
@@ -66,7 +61,6 @@
 								<th scope="col">상품명</th>
 								<th scope="col">구매포인트</th>
 								<th scope="col">등록자</th>
-								<th scope="col">등록일</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -76,8 +70,7 @@
 									<td>${product.brand.value}</td>
 									<td>${product.name}</td>
 									<td>${product.pointValue}</td>
-									<td>${product.user.name}</td>
-									<td>${product.regDt}</td>
+									<td>${product.userSeq}</td>
 								</tr>
 							</c:forEach>
 							</tbody>
@@ -100,13 +93,10 @@
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/calculate/productList-scripts.js"></script>
 		<script type="application/javascript">
-            if ( '${filterColumn}' === 'brand') {
-                $('#searchStrGroup').hide();
-                $('#searchStr2Group').show();
-            } else {
-                $('#searchStrGroup').show();
-                $('#searchStr2Group').hide();
-            }
+            $(function () {
+                $.searchSelect('${filterColumn}');
+            })
+
 		</script>
 	</stripes:layout-component>
 

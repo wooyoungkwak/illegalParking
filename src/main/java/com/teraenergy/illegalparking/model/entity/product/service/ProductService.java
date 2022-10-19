@@ -23,7 +23,7 @@ public interface ProductService {
 
     List<Product> gets(List<Integer> productSeqs);
 
-    Page<Product> gets(int pageNumber, int pageSize, ProductFilterColumn filterColumn, String search, ProductOrderColumn orderColumn, Sort.Direction orderBy);
+    Page<Product> gets(int pageNumber, int pageSize, ProductFilterColumn filterColumn, String search);
 
     Product set(Product product);
 

@@ -16,7 +16,7 @@ public enum ReplyType {
 
     REPORT_COMPLETE("불법주정차 신고가 접수 완료되어 해당 부서에 전송되었습니다."),
 
-    GIVE_PANELTY("해당 불법주정차 차량에 과태료가 부가되었습니다.")
+    GIVE_PENALTY("해당 불법주정차 차량에 과태료가 부가되었습니다.")
 
     ;
 

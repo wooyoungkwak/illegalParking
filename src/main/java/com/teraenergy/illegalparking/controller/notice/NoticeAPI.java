@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.time.LocalDateTime;
 
@@ -32,6 +33,7 @@ public class NoticeAPI {
     private final NoticeService noticeService;
 
     @PostMapping("/notice/set")
+    @ResponseBody
     public Object set(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
@@ -39,7 +41,10 @@ public class NoticeAPI {
             Integer userSeq = jsonNode.get("userSeq").asInt();
             User user = userService.get(userSeq);
 
+            Integer noticeSeq = jsonNode.get("noticeSeq").asInt();
+
             Notice notice = new Notice();
+            if ( noticeSeq != null) notice.setNoticeSeq(noticeSeq);
             notice.setUser(user);
             notice.setNoticeType(NoticeType.valueOf(jsonNode.get("noticeType").asText()));
             notice.setSubject(jsonNode.get("subject").asText());

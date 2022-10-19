@@ -113,7 +113,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
         query.where(QReceipt.receipt.isDel.isFalse());
 
-        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.REPORT));     // 시고 접수  (처리완료)
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.REPORT));     // 사고접수 (처리완료)
         query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.PENALTY));    // 과태료대상 (처리완료)
 
         int total = query.fetch().size();

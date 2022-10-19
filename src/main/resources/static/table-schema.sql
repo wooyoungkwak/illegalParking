@@ -276,8 +276,8 @@ DROP TABLE IF EXISTS notice;
 CREATE TABLE notice
 (
     NoticeSeq  INT AUTO_INCREMENT PRIMARY KEY,
-    Subject    VARCHAR(50)  NOT NULL,               -- 제목
-    Content    VARCHAR(200) NULL,                   -- 내용
+    Subject    VARCHAR(100)  NOT NULL,               -- 제목
+    Content    VARCHAR(500) NULL,                   -- 내용
     UserSeq    INT          NOT NULL,               -- 등록자
     NoticeType VARCHAR(15)  NOT NULL,               -- 분류 ( 공지 또는 소식 )
     RegDt      Datetime     NOT NULL,               -- 등록 일자

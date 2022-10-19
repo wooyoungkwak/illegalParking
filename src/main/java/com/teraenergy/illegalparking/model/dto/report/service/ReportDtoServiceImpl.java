@@ -85,6 +85,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             receiptDtos.add(receiptDto);
         }
 
+        pageNumber = pageNumber -1;  // 이유 : offset 시작 값이 0부터 이므로
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<ReceiptDto> page = new PageImpl<ReceiptDto>(receiptDtos, pageRequest, receiptDtos.size());
         return page;
@@ -153,6 +154,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             reportDtos.add(reportDto);
         }
 
+        pageNumber = pageNumber -1;  // 이유 : offset 시작 값이 0부터 이므로
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<ReportDto> page = new PageImpl<ReportDto>(reportDtos, pageRequest, reportDtos.size());
         return page;

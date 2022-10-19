@@ -161,18 +161,22 @@
                 // 초기화 함수
                 function initialize() {
 
+                    // 정렬 ??
                     $('#orderBy a').on('click', function () {
                         $.search();
                     });
 
+                    // 일반 검색
                     $('#searchStr').next().on('click', function (event) {
                         $.search();
                     });
 
+                    // 타입 검색
                     $('#searchStr2').next().on('click', function (event) {
                         $.search();
                     });
 
+                    // 페이지 이동 이벤트
                     $('#pagination').find("li").on('click', function () {
                         let ul = $(this).parent();
                         let totalSize = ul.children("li").length;
@@ -201,12 +205,13 @@
                         $.search(pageNumber);
                     });
 
+                    // 페이지 사이즈 변경 이벤트
                     $('#pageSize').on("change", function () {
                         $('#pageNumber').val(1);
                         $.search();
                     });
 
-                    // 신고 등록 표시
+                    // 사용자 테이블 항목 이벤트
                     $('#userTable tbody tr').on('click', function () {
                         let useSeqStr = $(this).attr('seq');
                         let userSeq = Number.parseInt(useSeqStr);

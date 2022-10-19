@@ -105,7 +105,7 @@
         <script type="application/javascript">
             $(function (){
 
-                // 검색
+                // 검색 함수
                 function search(pageNumber) {
                     if (pageNumber === undefined) {
                         $('#pageNumber').val("1");
@@ -178,19 +178,19 @@
                 // 초기화 설정
                 function initialize() {
 
-                    $('#groupSet').hide();
-                    $('#modalGroupAdd').hide();
-                    $('#modalGroupEvent').hide();
-                    $('#searchStr2Group').hide();
 
+
+                    // 검색 이벤트 1
                     $('#searchStr').next().on('click', function (event) {
                         search();
                     });
 
+                    // 검색 이벤트 2
                     $('#searchStr2').next().on('click', function (event) {
                         search();
                     });
 
+                    // 페이지 번호 이벤트
                     $('#pagination').find("li").on('click', function () {
                         let ul = $(this).parent();
                         let totalSize = ul.children("li").length;
@@ -218,12 +218,13 @@
                         search(pageNumber);
                     });
 
-                    $('#pageSize').on("change", function () {
-                        $('#pageNumber').val(1);
+                    // 페이지 사이즈 변경 이벤트
+                    $('#paginationSize').on("change", function () {
+                        $('#pageSize').val($(this).val());
                         search();
                     });
 
-                    // 신고 등록 표시
+                    // 불법 주정차 구역의 그룹 테이블 항목 이벤트
                     $('#userTable tbody tr').on('click', function () {
 
                         let groupSeqStr = $(this).children("td:eq(0)").find('input').val();
@@ -257,10 +258,12 @@
                         $('#groupSet').show();
                     });
 
+                    // 필터 변경 이벤트
                     $('#filterColumn').find('select[name="filterColumn"]').on('change', function () {
                         searchSelect($(this).val());
                     });
 
+                    // 불법 주정차 구역의 그룹 추가 이벤트
                     $('#createGroupAdd').on('click', function () {
                         let data = $.getData("groupAddForm");
 
@@ -343,7 +346,14 @@
                         $('#groupSet').hide();
                     });
 
+                    // 필터에 의한 검색 입력 방식 선택
                     searchSelect('${filterColumn}');
+
+                    // 그룹 설정 / .. / .. / ..  숨김
+                    $('#groupSet').hide();
+                    $('#modalGroupAdd').hide();
+                    $('#modalGroupEvent').hide();
+                    $('#searchStr2Group').hide();
                 }
 
                 initialize();

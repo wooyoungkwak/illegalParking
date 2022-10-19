@@ -11,6 +11,8 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.notice.enums.NoticeFilterColumn" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.notice.enums.NoticeType" %>
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -55,7 +57,7 @@
 								<tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${NoticeType.values()}"/>
 							</div>
 						</form>
-						<table class="table table-hover">
+						<table class="table table-hover table-bordered" id="noticeTable">
 							<thead>
 							<tr>
 								<th scope="col" class="text-center" style="width: 5%;">분류</th>
@@ -67,15 +69,40 @@
 							</thead>
 							<tbody>
 							<c:forEach items="${notices}" var="notice" varStatus="status">
-								<tr>
+								<tr seq="${notice.noticeSeq}">
 									<td class="text-center">
-											${notice.noticeType.value}
+										<input type="hidden" value="${notice.noticeType}">
+										<c:choose>
+											<c:when test="${notice.noticeType == 'DISTRIBUTION'}"><span class="fw-bold text-primary">${notice.noticeType.value}</span></c:when>
+											<c:otherwise><span class="fw-bold">${notice.noticeType.value}</span></c:otherwise>
+										</c:choose>
+
 									</td>
-									<td class="text-center">${notice.subject}</td>
-									<td>${notice.content}</td>
 									<td class="text-center">
-										<fmt:parseDate value="${notice.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both" />
-										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+										<input type="hidden" value="${notice.subject}">
+										<c:choose>
+											<c:when test="${fn:length(notice.subject) gt 25}">
+												<c:out value="${fn:substring(notice.subject, 0, 24)}"></c:out>...
+											</c:when>
+											<c:otherwise>
+												<c:out value="${notice.subject}"></c:out>
+											</c:otherwise>
+										</c:choose>
+									</td>
+									<td>
+										<input type="hidden" value="${notice.content}">
+										<c:choose>
+											<c:when test="${fn:length(notice.content) gt 55}">
+												<c:out value="${fn:substring(notice.content, 0, 54)}"></c:out>...
+											</c:when>
+											<c:otherwise>
+												<c:out value="${notice.content}"></c:out>
+											</c:otherwise>
+										</c:choose>
+									</td>
+									<td class="text-center">
+										<fmt:parseDate value="${notice.regDt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm"/>
 									</td>
 									<td class="text-center">${notice.user.name}</td>
 								</tr>
@@ -90,6 +117,7 @@
 
 		<layoutTags:noticeSetTag items="${NoticeType.values()}"/>
 
+		<layoutTags:noticeViewTag/>
 
 	</stripes:layout-component>
 
@@ -103,7 +131,7 @@
 		<script src="<%=contextPath%>/resources/js/scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/notice/noticeList-scripts.js"></script>
 		<script type="application/javascript">
-			$(function (){
+            $(function () {
 
                 // 검색 입력 방식 선택 함수
                 function searchSelect(filterColumn) {
@@ -119,36 +147,88 @@
                 // 초기화
                 function initialize() {
 
-                    // 검색 이벤트
+                    // 검색 이벤트 1
                     $('#searchStr').next().on('click', function (event) {
                         $.search();
                     });
 
-                    // 검색 이벤트
+                    // 검색 이벤트 2
                     $('#searchStr2').next().on('click', function (event) {
                         $.search();
                     });
 
                     // 필터 변경 이벤트
-                    $('#filterColumn').find('select').on('change', function (){
+                    $('#filterColumn').find('select').on('change', function () {
                         searchSelect($(this).val());
-					});
+                    });
 
-					$('#write').on('click', function (){
-						$.openNoticeSet();
-					});
+                    // 글작성 열기 이벤트
+                    $('#write').on('click', function () {
+                        $.openNoticeSet();
+                    });
+
+                    // 공지 사항 테이블 항목 이벤트
+                    $('#noticeTable tbody tr').on('click', function () {
+
+                        let data = {
+                            noticeSeq: $(this).attr('seq'),
+                            noticeType: $(this).children("td:eq(0)").find('input').val(),
+                            noticeTypeValue: $(this).children("td:eq(0)").text().trim(),
+                            subject: $(this).children("td:eq(1)").find('input').val(),
+                            content: $(this).children("td:eq(2)").find('input').val(),
+                            regDt: $(this).children("td:eq(3)").text().trim()
+                        }
+
+                        $.initializeNoticeView(data)
+                        $.openNoticeView();
+                    });
+
+                    // 페이지 번호 이벤트
+                    $('#pagination').find("li").on('click', function () {
+                        let ul = $(this).parent();
+                        let totalSize = ul.children("li").length;
+                        if (totalSize <= 3) {
+                            return;
+                        }
+                        let pageNumber;
+                        if ($(this).text() === "<") {
+                            pageNumber = Number.parseInt(ul.children('.active').text());
+                            if (pageNumber == 1) return;
+                            pageNumber = pageNumber - 1;
+
+                        } else if ($(this).text() === ">") {
+                            pageNumber = Number.parseInt(ul.children('.active').text());
+                            let myLocation = $(this).index();
+                            let activeLocation = ul.children('.active').index();
+                            if (activeLocation == (myLocation - 1)) {
+                                return;
+                            }
+                            pageNumber = pageNumber + 1;
+                        } else {
+                            pageNumber = Number.parseInt($(this).text());
+                        }
+
+                        $.search(pageNumber);
+                    });
+
+                    // 페이지 사이즈 변경 이벤트
+                    $('#paginationSize').on("change", function () {
+                        $('#pageSize').val($(this).val());
+                        $.search();
+                    });
 
                     // 필터에 의한 검색 입력 방식 선택
                     searchSelect('${filterColumn}');
 
-                    //
+                    // 글작성 / 글보기 숨김
                     $('#noticeSet').hide();
+                    $('#noticeView').hide();
 
                 }
 
                 initialize();
 
-			});
+            });
 		</script>
 	</stripes:layout-component>
 

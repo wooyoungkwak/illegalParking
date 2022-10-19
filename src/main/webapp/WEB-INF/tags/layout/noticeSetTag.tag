@@ -35,7 +35,8 @@
 			</div>
 
 			<div class="card-body">
-				<form id="noticeForm">
+				<form id="noticeSetForm">
+					<input type="hidden" id="noticeSeq" name="noticeSeq" value="">
 					<div class="row mb-3">
 						<div class="col-2">
 							<div class="input-group">
@@ -47,14 +48,13 @@
 					<div class="row mb-3">
 						<div class="col-12">
 							<div class="input-group">
-								<label class="input-group-text" for="noticeType">제목 </label>
+								<label class="input-group-text" for="subject">제목 </label>
 								<tags:inputTag id="subject" placeholder="제목을 입력하세요"/>
 							</div>
 						</div>
 					</div>
 					<div class="row mb-2">
 						<div class="col-12">
-							<%--							<input class="form-control" type="text" name="content" />--%>
 							<div class="form-group">
 								<div id="editor" name="editor"></div>
 								<input type="hidden" id="toastdata" name="toastdata"/>
@@ -78,11 +78,12 @@
 <script type="application/javascript">
     $(function () {
 
+        // 글작성 닫기
         $('#noticeSetClose').on('click', function () {
-            // 그룹 추가 태그 숨기기
             $.closeNoticeSet();
         })
 
+        // 에디터 클래스 생성
         const editor = new toastui.Editor({
             el: document.querySelector('#editor'),
             height: '500px',
@@ -96,6 +97,7 @@
             }
         });
 
+        // 에디터 이미지
         const uploadImage = (blob) => {
             const formData = new FormData();
             formData.append('image', blob);
@@ -104,24 +106,43 @@
             return url;
         };
 
-        $('#register').on('click', function (){
-            let data = $.getData('noticeForm');
-            data.content = editor.getHTML().replaceAll('<p>', '').replaceAll('</p>', '\n');
-			data.userSeq = _userSeq;
+        // 등록 이벤트
+        $('#register').on('click', function () {
+          	register('noticeSetForm');
+        });
+
+        $.initializeNoticeSet = function (opt) {
+            $('#noticeSeq').val(opt.noticeSeq);
+            $('#subject').val(opt.subject);
+            $('#noticeType').val(opt.noticeType);
+            let split = opt.content.split('\n');
+
+            let html = '';
+            for (let i = 0; i < split.length; i++) {
+                html += '<p>' + split[i] + '</p>';
+            }
+            editor.setHTML(html);
+        }
+
+        // 등록 함수
+        function register(id){
+            let data = $.getData(id);
+            data.content = editor.getHTML().replaceAll('<p>', '').replaceAll('</p>', '\n').replaceAll('<br>', '\n');
+            data.userSeq = _userSeq;
 
             let result = $.JJAjaxAsync({
-				url: _contextPath + '/set',
-				data: data
-			});
+                url: _contextPath + '/set',
+                data: data
+            });
 
             if (result.success) {
                 $.closeNoticeSet();
                 $.search();
-			} else {
+            } else {
                 alert(result.msg);
-			}
-		});
-
+            }
+		}
     });
+
 </script>
 

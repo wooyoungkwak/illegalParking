@@ -129,7 +129,6 @@ public class MobileAPI {
         user.setUserCode(1L);
         user.setPhoneNumber(phoneNumber);
         user.setPhotoName(photoName);
-        user.setEncyptPassword();
 
         try {
             userService.set(user);

@@ -3,7 +3,7 @@ $(function () {
     // =========== productAdd 전용 ==========
 
     // 데이터 가져오기
-    function getData() {
+    $.getDataByProduct = function () {
         let arr = $('#data').serializeArray();
         let data = {};
         $(arr).each(function (index, obj) {
@@ -26,7 +26,8 @@ $(function () {
         location.href = _contextPath + "/productList?" + $('form').serialize();
     }
 
-    function searchSelect(filterColumn) {
+    // 검색 입력 방식 선택 함수
+    $.searchSelect = function (filterColumn) {
         if ( filterColumn === 'brand') {
             $('#searchStrGroup').hide();
             $('#searchStr2Group').show();
@@ -39,7 +40,7 @@ $(function () {
     // =========== 공통 ==========
 
     // 초기화
-    function initialize() {
+    $.initialize = function () {
 
         $('#orderBy a').on('click', function () {
             search();
@@ -96,7 +97,7 @@ $(function () {
             }
         });
 
-        // 주차장 정보 표시
+        // 제품 테이블 항목 이벤트
         $('#productTable tbody tr').on('click', function () {
 
             let productSeqStr = $(this).children("td:eq(0)").text();
@@ -120,10 +121,11 @@ $(function () {
             $('#productAddTag').show();
         });
 
+        // 등록 이벤트
         $('#register').on('click', function () {
             $.JJAjaxSync({
                 url: _contextPath + "/product/set",
-                data: getData(),
+                data: $.getDataByProduct(),
                 success: function () {
                     if (confirm(" 등록 되었습니다. \n 계속 등록 하시겠습니까? ")) {
                         location.href = location.href;
@@ -138,8 +140,9 @@ $(function () {
 
         });
 
+        // 수정 이벤트
         $('#modify').on('click', function () {
-            // let data = getData();
+            // let data = getDataByProduct();
             // data.productSeq = Number($('#productSeq').val());
             //
             // $.JJAjaxSync({
@@ -161,19 +164,23 @@ $(function () {
             // });
         });
 
+        // 닫기 이벤트
         $('#close').on('click', function () {
             $('#productTable').show();
             $('#productAddTag').hide();
         });
 
+        //
         $('#filterColumn').find('select[name="filterColumn"]').on('change', function (){
-            searchSelect($(this).val());
+            $.searchSelect($(this).val());
         });
 
+        //
         $('#productAddTag').hide();
+
 
     }
 
-    initialize();
+    $.initialize();
 
 });

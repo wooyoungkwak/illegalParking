@@ -129,14 +129,6 @@ public class CalculateController extends ExtendsController {
             model.addAttribute("pageNumber", pageNumber);
         }
 
-        String orderColumnStr = parameterMap.getAsString("orderColumn");
-        ProductOrderColumn orderColumn;
-        if (orderColumnStr == null) {
-            orderColumn = ProductOrderColumn.productSeq;
-        } else {
-            orderColumn = ProductOrderColumn.valueOf(orderColumnStr);
-        }
-
         String filterColumnStr = parameterMap.getAsString("filterColumn");
         ProductFilterColumn filterColumn;
         if (filterColumnStr == null) {
@@ -158,20 +150,12 @@ public class CalculateController extends ExtendsController {
             }
         }
 
-        String orderDirectionStr = parameterMap.getAsString("orderDirection");
-        Sort.Direction direction;
-        if (orderDirectionStr == null) {
-            direction = Sort.Direction.ASC;
-        } else {
-            direction = Sort.Direction.valueOf(orderDirectionStr);
-        }
-
         Integer pageSize = parameterMap.getAsInt("pageSize");
         if (pageSize == null) {
             pageSize = 10;
         }
 
-        Page<Product> pages = productService.gets(pageNumber, pageSize, filterColumn, search, orderColumn, direction);
+        Page<Product> pages = productService.gets(pageNumber, pageSize, filterColumn, search);
 
         boolean isBeginOver = false;
         boolean isEndOver = false;

@@ -8,7 +8,6 @@
 <%@ attribute name="totalPages" type="java.lang.Integer" required="true" %>
 <%@ attribute name="pageSize" type="java.lang.Integer" required="true" %>
 <%@ attribute name="items" type="java.lang.Object" required="true" %>
-<%@ attribute name="isRegister" type="java.lang.Boolean" required="false" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <!-- Pagination-->
@@ -51,12 +50,5 @@
 				<li class="page-item"><a class="page-link">></a></li>
 			</ul>
 		</div>
-		<c:if test="${isRegister}">
-			<div class="col-1">
-				<div class="my-2">
-					<a id="register" class="btn btn-primary" href="#">등록</a>
-				</div>
-			</div>
-		</c:if>
 	</div>
 </nav>

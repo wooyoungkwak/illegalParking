@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> gets(int pageNumber, int pageSize, ProductFilterColumn filterColumn, String search, ProductOrderColumn orderColumn, Sort.Direction orderBy) {
+    public Page<Product> gets(int pageNumber, int pageSize, ProductFilterColumn filterColumn, String search) {
         JPAQuery query = jpaQueryFactory.selectFrom(QProduct.product);
 
         if (search != null && search.length() > 0) {
@@ -76,27 +76,6 @@ public class ProductServiceImpl implements ProductService {
         query.where(QProduct.product.isDel.isFalse());
 
         int total = query.fetch().size();
-
-        switch (orderColumn) {
-            case productSeq:
-                if (orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QProduct.product.productSeq.desc());
-                } else {
-                    query.orderBy(QProduct.product.productSeq.asc());
-                }
-                break;
-            case name:
-                if (orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QProduct.product.name.desc());
-                } else {
-                    query.orderBy(QProduct.product.name.asc());
-                }
-                break;
-            case point:
-                break;
-            case regDt:
-                break;
-        }
 
         pageNumber = pageNumber - 1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);
