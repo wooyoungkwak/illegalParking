@@ -236,10 +236,10 @@ public class MobileAPI {
 
             HashMap<String, Object> resultMap = Maps.newHashMap();
 
-            // TODO : 차량정보
-            resultMap.put("carNum", "123가1234");
-            resultMap.put("carLevel", "소형");
-            resultMap.put("carName", "모닝");
+            List<MyCar> myCars = myCarService.gets(userSeq);
+            resultMap.put("carNum", myCars.get(0).getCarNum());
+            resultMap.put("carLevel", myCars.get(0).getCarGrade());
+            resultMap.put("carName", myCars.get(0).getCarName());
 
             List<Receipt> receipts = receiptService.gets(userSeq);
             Calculate calculate = calculateService.getAtLast(userSeq);
