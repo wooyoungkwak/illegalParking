@@ -30,7 +30,7 @@
 				<div class="row">
 					<input hidden type="text" id="productSeq" >
 					<form id="data">
-						<img src="https://image.istarbucks.co.kr/common/img/main/rewards-logo.png" id="brandImg" style="width: 300px; height: 300px;">
+						<img src="http://49.50.166.205:8090/americano.jpg" id="brandImg" style="width: 300px; height: 300px;">
 						<div class="g-3 mb-4">
 							<br/>
 							<div class="row mb-2">

@@ -53,9 +53,8 @@
 					</div>
 					<div class="row mb-2">
 						<div class="col-12">
-							<div class="form-group">
-								<textarea id="contentView" name="content" style="width:100%; height: 300px; border: 0px; background: #ffffff;" disabled></textarea>
-							</div>
+							<div id="contentView" name="content"></div>
+<%--						<textarea id="contentView" name="content" style="width:100%; height: 300px; border: 0px; background: #ffffff;" disabled></textarea>--%>
 						</div>
 					</div>
 					<div class="row">

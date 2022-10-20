@@ -13,7 +13,7 @@
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType" %>
+<%@ page import="com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType" %>
 
 <% String contextPath = request.getContextPath(); %>
 
@@ -47,7 +47,7 @@
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
 							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
 							<div class="col-3">
-								<tags:filterTagByButton id="reportStateType" current="${reportStateType}" enumValues="${ReportStateType.values()}"/>
+								<tags:filterTagByButton id="receiptStateType" current="${receiptStateType}" enumValues="${ReceiptStateType.values()}"/>
 							</div>
 
 							<div class="col-4"></div>
@@ -252,8 +252,14 @@
                         $('#reportSet').hide();
                     });
 
-                    // 신고 접수
+                    // 검색 방식 선택
+                    searchSelect();
+
+                    // 신고 등록 화면 감추기
                     $('#reportSet').hide();
+
+                    // 신고접수 / 신고제외 / 과태료대상 버튼 이벤트 설정
+                    $.eventFilterTagByButton('receiptStateType', search);
 
                 }
 

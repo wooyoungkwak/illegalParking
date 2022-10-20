@@ -106,6 +106,9 @@ CREATE TABLE report_statics
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
+CREATE INDEX staticsCode ON report_statics (Code);
+
+
 -- 신고 댓글
 DROP TABLE IF EXISTS comment;
 CREATE TABLE comment
@@ -242,7 +245,7 @@ CREATE TABLE user
     UserCode    BIGINT      NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
     Role        INT         NOT NULL,               -- 역할 ( USER / ADMIN / GOVERNMENT )
     PhoneNumber VARCHAR(15) NULL,                   -- 전화 번호 (모바일)
-    PhotoName   VARCHAR(30) NULL,                   -- 사진 이름 (모바일)
+    PhotoName   VARCHAR(100) NULL,                   -- 사진 이름 (모바일)
     OfficeSeq   INT NULL,                           -- 관공서 키
     IsDel       BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
     DelDt       Datetime NULL                       -- 삭제 일자
@@ -288,6 +291,7 @@ CREATE TABLE notice
     NoticeSeq  INT AUTO_INCREMENT PRIMARY KEY,
     Subject    VARCHAR(100) NOT NULL,               -- 제목
     Content    VARCHAR(500) NULL,                   -- 내용
+    Html       VARCHAR(500) NULL,                   -- 내용 (태그포함)
     UserSeq    INT          NOT NULL,               -- 등록자
     NoticeType VARCHAR(15)  NOT NULL,               -- 분류 ( 공지 또는 소식 )
     RegDt      Datetime     NOT NULL,               -- 등록 일자

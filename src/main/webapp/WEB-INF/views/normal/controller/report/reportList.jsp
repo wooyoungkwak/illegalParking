@@ -297,6 +297,8 @@
                         $('#reportSet').hide();
                     });
 
+                    $.eventFilterTagByButton('reportStateType', search);
+
                     // 검색 방식 선택
                     searchSelect();
 

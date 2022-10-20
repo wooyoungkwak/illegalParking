@@ -150,3 +150,33 @@ $.formatDateYYYYMMDDhhmm = function (date) {
     let timeFormat = [hh,mm].join(":");
     return dataFormat + " " + timeFormat;
 };
+
+// filterTagByButton
+$.eventFilterTagByButton = function (id, callback) {
+    $('#' + id).find('a').on('click', function () {
+
+        $('#' + id).find('a').each(function () {
+            let className = $(this).attr('class');
+            if ( className.indexOf("btn-outline-") == -1 ) {
+                $(this).removeClass(className);
+                className = className.replace('btn-','btn-outline-');
+                $(this).addClass(className);
+            }
+        });
+
+        // 클래스 가져오기
+        let className = $(this).attr('class');
+        $(this).removeClass(className);
+        className = className.replace('btn-outline-', 'btn-' );
+        $(this).addClass(className);
+
+        // input 값 넣기
+        $('#' + id).find('input').val($(this).attr('id'));
+
+        // 콜백 함수 실행
+        if ( callback !== undefined && typeof callback == "function") {
+            callback();
+        }
+
+    });
+}

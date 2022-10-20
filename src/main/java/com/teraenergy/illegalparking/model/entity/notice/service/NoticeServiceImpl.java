@@ -34,6 +34,11 @@ public class NoticeServiceImpl implements NoticeService{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
+    public List<Notice> gets() {
+        return noticeRepository.findAll();
+    }
+
+    @Override
     public Page<Notice> gets(int pageNumber, int pageSize, NoticeFilterColumn filterColumn, String search) {
         JPAQuery query = jpaQueryFactory.selectFrom(QNotice.notice);
 

@@ -49,6 +49,7 @@ public class NoticeAPI {
             notice.setNoticeType(NoticeType.valueOf(jsonNode.get("noticeType").asText()));
             notice.setSubject(jsonNode.get("subject").asText());
             notice.setContent(jsonNode.get("content").asText());
+            notice.setHtml(jsonNode.get("html").asText());
             notice.setRegDt(LocalDateTime.now());
 
             notice = noticeService.set(notice);

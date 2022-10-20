@@ -33,7 +33,7 @@ $.initializeNoticeView = function (opt) {
     $('#noticeTypeView').val(opt.noticeType);
     $('#noticeTypeValueView').val(opt.noticeTypeValue);
     $('#regDtView').val(opt.regDt);
-    $('#contentView').val(opt.content);
+    $('#contentView').append(opt.html);
 }
 
 $.changeNoticeModify = function () {
@@ -41,7 +41,7 @@ $.changeNoticeModify = function () {
         noticeSeq: $('#noticeSeqView').val(),
         subject: $('#subjectView').val(),
         noticeType: $('#noticeTypeView').val(),
-        content: $('#contentView').val(),
+        html: $('#contentView').text().trim(),
     };
 
     $.initializeNoticeSet(data);

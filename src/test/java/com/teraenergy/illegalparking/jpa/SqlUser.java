@@ -26,10 +26,10 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "rdata")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlUser {
 
     @Autowired
@@ -61,8 +61,8 @@ public class SqlUser {
         user.setRole(Role.ADMIN);
         user.setUserCode(1234l);
         user.setName("관리자");
-        user.setPhotoName("sample1");
-        user.setPhoneNumber("010-1234-5678");
+        user.setPhotoName("");
+        user.setPhoneNumber("");
         users.add(user);
 
         User user2 = new User();
@@ -75,7 +75,6 @@ public class SqlUser {
         user2.setPhotoName("sample2");
         user2.setPhoneNumber("010-1234-8901");
         users.add(user2);
-
 
         GovernmentOffice governMentOffice = governmentOfficeService.get(1);
 

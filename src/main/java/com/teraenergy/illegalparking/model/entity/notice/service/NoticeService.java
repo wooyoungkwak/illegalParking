@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface NoticeService {
 
+    List<Notice> gets();
+
     Page<Notice> gets(int pageNumber, int pageSize, NoticeFilterColumn filterColumn, String search);
 
     Notice get(Integer noticeSeq);

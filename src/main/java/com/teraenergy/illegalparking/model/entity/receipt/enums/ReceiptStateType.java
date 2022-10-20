@@ -22,10 +22,11 @@ public enum ReceiptStateType {
      * 신고불가는 추가
      * */
 
+
     OCCUR("신고대기"),
     NOTHING("신고불가"),
-    REPORT("신고접수"),
     FORGET("신고종료"),
+    REPORT("신고접수"),
     EXCEPTION("신고제외"),
     PENALTY("과태료 대상")
     ;

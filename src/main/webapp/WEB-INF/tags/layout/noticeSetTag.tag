@@ -115,19 +115,20 @@
             $('#noticeSeq').val(opt.noticeSeq);
             $('#subject').val(opt.subject);
             $('#noticeType').val(opt.noticeType);
-            let split = opt.content.split('\n');
-
-            let html = '';
-            for (let i = 0; i < split.length; i++) {
-                html += '<p>' + split[i] + '</p>';
-            }
-            editor.setHTML(html);
+            // let split = opt.content.split('\n');
+			//
+            // let html = '';
+            // for (let i = 0; i < split.length; i++) {
+            //     html += '<p>' + split[i] + '</p>';
+            // }
+            editor.setHTML(opt.html);
         }
 
         // 등록 함수
         function register(id){
             let data = $.getData(id);
-            data.content = editor.getHTML().replaceAll('<p>', '').replaceAll('</p>', '\n').replaceAll('<br>', '\n');
+            data.html = editor.getHTML();
+            data.content = data.html.replaceAll('<p>', '').replaceAll('</p>', '\n').replaceAll('<br>', '\n');
             data.userSeq = _userSeq;
 
             let result = $.JJAjaxAsync({
