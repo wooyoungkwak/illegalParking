@@ -22,13 +22,55 @@ $(function () {
 
     let _markerImageSrc = '/resources/assets/img/parking.png';
 
+
+    let mapSelected = 'zone';
+
+    function handleRadioButton(event) {
+        if (event.currentTarget.classList[2] === "btn-dark") {
+            event.currentTarget.classList.remove("btn-dark");
+            event.currentTarget.classList.remove("rounded-pill");
+            event.currentTarget.classList.add("btn-white");
+        } else {
+            let mapType = $('.mapType');
+
+            for (const type of mapType) {
+                type.classList.remove("btn-dark");
+                type.classList.remove("rounded-pill");
+                type.classList.add("btn-white");
+            }
+
+            event.currentTarget.classList.remove("btn-white");
+            event.currentTarget.classList.add("btn-dark");
+            event.currentTarget.classList.add("rounded-pill");
+        }
+    }
+
     $('input:radio[name=mapSelect]').change(function (event){
-        let center = getMapCenter(map);
-        CENTER_LATITUDE = center.y;
-        CENTER_LONGITUDE = center.x;
+        log('1 ::::::::::::::::', CENTER_LONGITUDE);
+        log('1 ::::::::::::::::', CENTER_LATITUDE);
+        if(window.location.pathname.includes('api')){
+            log(gpsLatitude, ':::::::::::', gpsLongitude);
+            // CENTER_LATITUDE = 35.01868444;
+            // CENTER_LONGITUDE = 126.78284599;
+        }
+
+        log('2 ::::::::::::::::', CENTER_LONGITUDE);
+        log('2 ::::::::::::::::', CENTER_LATITUDE);
+
+        log(window.location.pathname);
+        let center = map.getCenter();
+        CENTER_LATITUDE = center.getLat();
+        CENTER_LONGITUDE = center.getLng();
+
+        let mapType = $('.mapType');
+
+        for (const type of mapType) {
+            type.addEventListener("change", handleRadioButton);
+        }
+        mapSelected = event.target.id
+
         if(event.target.id === 'zone'){
             removeMarker();
-            initializeKakao();
             (async () => {
                 getsZone(await getDongCodesBounds(map));
             })();
@@ -37,13 +79,13 @@ $(function () {
             removeOverlays();
             _url = _contextPath + '/parking/gets';
 
-            initializeParking();
             (async () => {
                 await getsParking(await getDongCodesBounds(map));
             })();
         }
         if(event.target.id === 'pm'){
-
+            removeOverlays();
+            _url = _contextPath + '/pm/gets';
         }
     });
 
@@ -224,6 +266,7 @@ $(function () {
 
         map.setZoomable(false);
 
+        log(map.getCenter());
         // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
             target: map,
@@ -245,6 +288,7 @@ $(function () {
                     if (isInside(onePolygon, n, p)) {
                         log(i + " : Yes");
                         log(zoneSeqs[i]);
+                        // alert('hello')
                         break;
                     } else {
                         log(i + " : No");
@@ -267,8 +311,14 @@ $(function () {
                     let codes = await getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     log(uniqueCodesCheck);
-                    if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
-                    else getsZone(codes);
+                    if(mapSelected === 'zone') {
+                        if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
+                        else getsZone(codes);
+                    } else if (mapSelected === 'parking') {
+                        await getsParking(codes);
+                    } else {
+                        log('pm');
+                    }
 
                 }
             }
@@ -292,29 +342,6 @@ $(function () {
         beforeCodes = codes;
         drawingPolygon(getPolygonData());
     }
-
-    // zone 초기화
-    function initializeZone(opt) {
-        let result = $.JJAjaxAsync(opt);
-
-        if ( result.success) {
-            if (opt.data.select === undefined) {
-                return result;
-            }
-            zonePolygons = result.data.zonePolygons;
-            zoneSeqs = result.data.zoneSeqs;
-            zoneTypes = result.data.zoneTypes;
-        }
-    }
-
-    // 초기화
-    function initialize() {
-        initializeKakao();
-        getCurrentPosition(map);
-    }
-
-    initialize();
-
 
     // parking
     // 지도 위에 표시되고 있는 마커를 모두 제거합니다
@@ -388,46 +415,40 @@ $(function () {
                     map.panTo(marker.getPosition());
                     // 커스텀 오버레이 컨텐츠를 설정합니다
                     let obj = markerInfo('parking', data);
-                    log(obj);
-                    // webToApp.postMessage(JSON.stringify(obj));
+                    webToApp.postMessage(JSON.stringify(obj));
                 });
             });
         }
     }
 
-    // 주차장 초기화
-    function initializeParking() {
+    // zone 초기화
+    function initializeZone(opt) {
+        let result = $.JJAjaxAsync(opt);
 
-        mapId = document.getElementById('map');
-        // 지도를 표시할 지도 옵션으로  지도를 생성합니다
-        map = new kakao.maps.Map(mapId, {
-            center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
-            level: 3, // 지도의 확대 레벨
-            disableDoubleClickZoom: true
-        });
-
-        map.setZoomable(false);
-
-        /** MAP EVENT */
-        kakaoEvent = kakao.maps.event;
-
-        // 확대, 중심좌표 변경 시
-        kakaoEvent.addListener(map, 'idle', async function () {
-            // 지도의  레벨을 얻어옵니다
-            let level = map.getLevel();
-            let codes = await getDongCodesBounds(map);
-
-            //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
-            if (!uniqueCodesCheck) {
-                await getsParking(codes);
-                beforeCodes = codes;
+        if ( result.success) {
+            if (opt.data.select === undefined) {
+                return result;
             }
-        })
+            zonePolygons = result.data.zonePolygons;
+            zoneSeqs = result.data.zoneSeqs;
+            zoneTypes = result.data.zoneTypes;
+        }
     }
 
+    // 초기화
+    function initialize() {
+        initializeKakao();
 
+        $('#debug').val(gpsLatitude + "," + gpsLongitude + " :: " + (typeof gpsLatitude));
+
+        if(isMobile) getMobileCurrentPosition(map);
+        else getCurrentPosition(map);
+    }
+
+    initialize();
     $.setCurrentPosition = function (){
-        getCurrentPosition(map);
+        if(isMobile) getMobileCurrentPosition(map);
+        else getCurrentPosition(map);
     }
 
     // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
