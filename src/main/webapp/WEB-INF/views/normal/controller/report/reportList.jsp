@@ -248,7 +248,6 @@
 
                         if (result.success) {
                             let report = result.data;
-                            log(report);
                             initializeReportSetTag(report);
                         } else {
                             alert("데이터 요청을 실패 하였습니다. ");

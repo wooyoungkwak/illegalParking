@@ -36,17 +36,36 @@
                     <div class="col-12 d-flex justify-content-between">
                         <div><span class="ms-3" id="reportStateType"></span></div>
                     </div>
-                    <div class="col-12 ms-3"><label>신고회수:</label><span id="overlapCount"></span></div>
-                    <div class="col-12 ms-3"><label>위치:</label><span id="addr"></span></div>
-                    <div class="col-12 ms-3"><label>신고자:</label><span id="name"></span></div>
-                    <div class="col-12 ms-3"><label>접수시간 : </label><span id="regDt"></span></div>
-                    <div class="col-12 ms-3"><label>신고기관 : </label><span id="GovernmentOfficeName"></span></div>
+                    <div class="col-8 ms-3 mb-3">
+                        <div class="col "><label>신고회수 : </label><span class="ms-2" id="overlapCount"></span></div>
+                        <div class="col "><label>위치 : </label><span class="ms-2" id="addr"></span></div>
+                        <div class="col "><label>신고자 :</label><span class="ms-2" id="name"></span></div>
+                        <div class="col "><label>접수시간 : </label><span class="ms-2" id="regDt"></span></div>
+                        <div class="col "><label>신고기관 : </label><span class="ms-2" id="GovernmentOfficeName"></span></div>
+                    </div>
 
-                    <div class="col-12 ms-3 mb-3"><label>내용:</label><span id="note"></span></div>
-
-                    <div class="row ms-2 mb-3">
-                        <div class="col-12">
-                            <tags:inputTag id="note" placeholder="내용을 입력하세요." value="" title="내용:"/>
+                    <div class="row ms-3 mb-1">
+                        <div class="col-8">
+                            <span class="me-lg-2 fw-bold">신고접수 처리내용 작성</span>
+                            <a class="btn btn-outline-dark">내용임시저장</a>
+                        </div>
+                        <div class="col-4">
+                            <span class="ms-2 fw-bold">어떻게 처리 할가요?</span>
+                        </div>
+                    </div>
+                    <div class="row ms-3 mb-3">
+                        <div class="col-8">
+                            <textarea id="note" placeholder="내용을 입력하세요." style="width: 100%; height: 110px; resize: none;"></textarea>
+                        </div>
+                        <div class="col-2 d-flex justify-content-center">
+                            <div class="col btn-group p-2">
+                                <button class="btn btn-outline-dark" id="btnException">신고제외</button>
+                            </div>
+                        </div>
+                        <div class="col-2 d-flex justify-content-center">
+                            <div class="col btn-group p-2 ps-0">
+                                <button class="btn btn-outline-danger" id="btnPenalty">과태료대상</button>
+                            </div>
                         </div>
                     </div>
 

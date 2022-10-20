@@ -128,7 +128,7 @@ CREATE TABLE illegal_zone
     ZoneSeq  BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     Polygon  POLYGON     NOT NULL,              -- 불법 구역
     Code     VARCHAR(10) NOT NULL,              -- 법정동 코드
-    EventSeq INT         NOT NULL,              -- 불법주정차 구역 이벤트
+    EventSeq INT         NULL,              -- 불법주정차 구역 이벤트
     IsDel    BOOLEAN     NOT NULL DEFAULT FALSE -- 삭제 여부
 ) ENGINE = InnoDB
   CHARSET = utf8;
