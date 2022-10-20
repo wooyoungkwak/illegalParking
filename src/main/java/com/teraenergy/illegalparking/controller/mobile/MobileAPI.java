@@ -624,6 +624,7 @@ public class MobileAPI {
             map.put("firstRegDt", StringUtil.convertDatetimeToString(receipt.getRegDt(), timePattern));
             if (receipt.getSecondRegDt() != null) map.put("secondRegDt", StringUtil.convertDatetimeToString(receipt.getSecondRegDt(), timePattern));
             map.put("reportState", receipt.getReceiptStateType().getValue());
+            map.put("fileName", receipt.getFileName());
             List<Comment> comments = commentService.gets(receipt.getReceiptSeq());
             List<String> commentStrs = comments.stream().map(comment -> comment.getContent()).collect(Collectors.toList());
             map.put("comments", commentStrs);
