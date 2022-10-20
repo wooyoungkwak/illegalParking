@@ -20,11 +20,11 @@
 
 					<div class="map-control bg-white border border-2 shadow-sm btn-group rounded-pill" role="group">
 
-						<label for="zone" class="btn btn-dark rounded-pill"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
+						<label for="zone" class="mapType btn btn-dark rounded-pill"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
 
-						<label for="parking" class="btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">주차장</label>
+						<label for="parking" class="mapType btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">주차장</label>
 
-						<label for="pm" class="btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
+						<label for="pm" class="mapType btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
 					</div>
 					<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
 					<div class="custom_zoomcontrol radius_border">
@@ -37,7 +37,7 @@
 					</div>
 
 				</div>
-				<%--<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>--%>
+				<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>
 			</div>
 		</main>
 	</stripes:layout-component>
@@ -65,7 +65,7 @@
             // INTERFACE : APP TO WEB
             function appToGps(x, y) {
             	$.gpsPoint(x, y);
-                $('#debug').val(x + "," + y + " :: " + (typeof x));
+                // $('#debug').val(x + "," + y + " :: " + (typeof x));
                 log(x + "," + y + " :: " + (typeof x));
             }
 
