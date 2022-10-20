@@ -34,18 +34,18 @@ public class ReportAPI {
 
     private final IllegalZoneService illegalZoneService;
     private final IllegalZoneMapperService illegalZoneMapperService;
-
     private final IllegalEventService illegalEventService;
-
     private final UserService userService;
     private final ReceiptService receiptService;
     private final ReportService reportService;
     private final LawDongService lawDongService;
     private final PointService pointService;
     private final CalculateService calculateService;
+
     private final ReportDtoService reportDtoService;
 
-    @PostMapping("/report/report/get")
+    // 신고 접수 정보 가져오기
+    @PostMapping("/report/get")
     @ResponseBody
     public Object getReport(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
@@ -53,6 +53,7 @@ public class ReportAPI {
         return reportDtoService.getFromReportDetailDto(reportSeq);
     }
 
+    // 신고 접수 정보 등록
     @PostMapping("/report/report/set")
     @ResponseBody
     public Object setReport(@RequestBody String body) throws TeraException {
@@ -61,6 +62,8 @@ public class ReportAPI {
         return null;
     }
 
+
+    // 신고 등록 정보 가져오기
     @PostMapping("/report/receipt/get")
     @ResponseBody
     public Object getReceipt(@RequestBody String body) throws TeraException {
@@ -70,6 +73,13 @@ public class ReportAPI {
     }
 
     // 불법 주정차 신고 코멘트 저장
+//    @PostMapping("/report/comment/set")
+//    @ResponseBody
+//    public Object getCommentByReport(@RequestBody String body) throws TeraException {
+//        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+//        Integer receiptSeq = jsonNode.get("receiptSeq").asInt();
+//
+//    }
 
 
 }

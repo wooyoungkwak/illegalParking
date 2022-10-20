@@ -1,14 +1,22 @@
 package com.teraenergy.illegalparking.scheduler;
 
+import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
+import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
+import com.teraenergy.illegalparking.model.entity.reportstatics.domain.ReportStatics;
+import com.teraenergy.illegalparking.model.entity.reportstatics.service.ReportStaticsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -22,15 +30,60 @@ import java.util.List;
 @Component
 public class reportScheduler {
 
+    /**
+     * cron = "* * * * * *"
+     *  초 / 분 / 시 / 일 / 월 / 요일 / 년도
+     *
+     * <!-- 5분 마다 실행 ex) 00:05, 00:10. 00:15.... -->
+     * cron = "0 0/5 * * * *"
+     *
+     * <!-- 1시간 마다 실행 ex) 01:00, 02:00, 03:00.... -->
+     * cron = "0 0 0/1 * * *"
+     *
+     * <!-- 매일 오후 18시마다 실행 ex) 18:00 -->
+     * cron = "0 0 18 * * *"
+     *
+     * <!-- 2018년도만 매일 오후 18시마다 실행 ex) 18:00 -->
+     * cron = "0 0 18 * * * 2018"
+     *
+     * <!-- 매일 오후 18시00분-18시55분 사이에 5분 간격으로 실행 ex) 18:00, 18:05.....18:55 -->
+     * cron = "0 0/5 18 * * *"
+     *
+     * <!-- 매일 오후 9시00분-9시55분, 18시00분-18시55분 사이에 5분 간격으로 실행  -->
+     * cron = "0 0/5 9,18 * * *"
+     *
+     * <!-- 매일 오후 9시00분-18시55분 사이에 5분 간격으로 실행  -->
+     * cron = "0 0/5 9-18 * * *"
+     *
+     * <!-- 매달 1일 00시에 실행 -->
+     * cron = "0 0 0 1 * *"
+     *
+     * <!-- 매년 3월내 월-금요일 10시 30분에만 실행 -->
+     * cron = "0 30 10 ? 3 MON-FRI"
+     *
+     * <!-- 매월 마지막날 저녁 10시에 실행 -->
+     * cron = "0 0 10 L * ?"
+     * 출처: https://aljjabaegi.tistory.com/400 [알짜배기 프로그래머:티스토리]
+     */
+
+    private final ReportService reportService;
+
     private final ReceiptService receiptService;
+
+    private final IllegalZoneService illegalZoneService;
+
+    private final ReportStaticsService reportStaticsService;
 
     /**
      * OCCUR(신고발생) -> FORGET(신고누락)
      * 11분 전 부터 1시간 11분 전까지의 신고 발생 후 누락이 된 경우 모두 업데이트
      */
     @Scheduled(cron = "0 * * * * *")
-    public void updateTask() {
+    public void updateReceipt() {
+
         LocalDateTime now = LocalDateTime.now();        // 현재 시간
+        LocalDateTime startTaskTime = now;
+
         LocalDateTime startTime = now.minusMinutes(11);   // 11분 전 시간
         LocalDateTime endTime = startTime.minusMinutes(60);   // 11분 전의 60분전 시간
         List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR);
@@ -39,11 +92,59 @@ public class reportScheduler {
             for (Receipt receipt : receipts) {
                 receipt.setReceiptStateType(ReceiptStateType.FORGET);
             }
-
             receiptService.sets(receipts);
         }
 
-        log.info("updateTask running .... {} : {}", startTime, endTime);
+        LocalDateTime endTaskTime = LocalDateTime.now();
+        log.info("updateReceipt time .... {} : {}", startTaskTime, endTaskTime);
+    }
+
+    /**
+     *  1시간 마다 통계 자료 생성
+     */
+    @Scheduled(cron = "0 0 0/1 * * *")
+    public void updateStatics() {
+
+        LocalDateTime startTaskTime = LocalDateTime.now();        // 작업 시작 시간
+
+        // 1. 기존 통계 자료 가져오기
+        List<ReportStatics> reportStaticsList = reportStaticsService.gets();
+
+        // 2. 기존 통계 자료를 Map 으로 변환
+        HashMap<Integer, ReportStatics> reportStaticsMap = Maps.newHashMap();
+
+        for (ReportStatics reportStatics : reportStaticsList) {
+            reportStaticsMap.put(reportStatics.getZoneSeq(), reportStatics);
+        }
+
+        // 3. 불법 주정차 구역
+        List<IllegalZone> illegalZones = illegalZoneService.gets();
+
+        // 새로운 통계 자료
+        List<ReportStatics> newReportStaticsList = Lists.newArrayList();
+        // 기존 통계 자료
+        List<ReportStatics> oldReportStaticsList = Lists.newArrayList();
+
+        for (IllegalZone illegalZone : illegalZones) {
+            ReportStatics reportStatics = reportStaticsMap.get(illegalZone.getZoneSeq());
+            if ( reportStatics == null) {
+                reportStatics = new ReportStatics();
+                reportStatics.setZoneSeq(illegalZone.getZoneSeq());
+                reportStatics.setCode(illegalZone.getCode());
+                reportStatics.setReceiptCount(reportService.getSizeForExceptionAndPenaltyAndComplete(illegalZone));
+                newReportStaticsList.add(reportStatics);
+            } else {
+                reportStatics.setReceiptCount(reportService.getSizeForExceptionAndPenaltyAndComplete(illegalZone));
+                oldReportStaticsList.add(reportStatics);
+            }
+        }
+
+        reportStaticsService.sets(newReportStaticsList);
+        reportStaticsService.sets(oldReportStaticsList);
+
+        LocalDateTime endTaskTime = LocalDateTime.now();   // 작업 종료 시간
+
+        log.info("updateStatics time .... {} : {}", startTaskTime, endTaskTime);
     }
 
 }

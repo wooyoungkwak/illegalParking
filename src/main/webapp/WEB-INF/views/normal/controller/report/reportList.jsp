@@ -134,9 +134,9 @@
                                 $('#' + key).text("과태료대상");
                             }
                         } else if (key.indexOf("firstFileName") > -1) {
-                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
+                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
                         } else if (key.indexOf("secondFileName") > -1) {
-                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
+                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
                         } else if (key === 'firstIllegalType') {
                             if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
                             else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
@@ -240,7 +240,7 @@
                         let reportSeq = Number.parseInt(reportSeqStr);
 
                         let result = $.JJAjaxAsync({
-                            url: _contextPath + '/report/get',
+                            url: _contextPath + '/get',
                             data: {
                                 reportSeq: reportSeq
                             }
@@ -248,6 +248,7 @@
 
                         if (result.success) {
                             let report = result.data;
+                            log(report);
                             initializeReportSetTag(report);
                         } else {
                             alert("데이터 요청을 실패 하였습니다. ");

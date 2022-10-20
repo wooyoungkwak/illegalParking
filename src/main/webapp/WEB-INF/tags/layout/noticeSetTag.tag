@@ -63,14 +63,15 @@
 					</div>
 					<div class="row">
 						<div class="col-12 d-flex justify-content-lg-start">
-							<a class="btn btn-primary" id="register">등록</a>
+							<div class="input-group">
+								<a class="btn btn-primary" id="register">등록</a>
+								<a class="btn btn-outline-dark" id="noticeSetCloseBtn">닫기</a>
+							</div>
 						</div>
 					</div>
 				</form>
 			</div>
-
 		</div>
-
 	</div>
 </main>
 
@@ -79,7 +80,13 @@
     $(function () {
 
         // 글작성 닫기
-        $('#noticeSetClose').on('click', function () {
+        $('#noticeSetClose, #noticeSetCloseBtn').on('click', function () {
+            $.initializeNoticeSet({
+                noticeSeq: '',
+                subject: '',
+                noticeType: 'DISTRIBUTION',
+                html:''
+			});
             $.closeNoticeSet();
         })
 
@@ -108,7 +115,7 @@
 
         // 등록 이벤트
         $('#register').on('click', function () {
-          	register('noticeSetForm');
+            register('noticeSetForm');
         });
 
         $.initializeNoticeSet = function (opt) {
@@ -116,7 +123,7 @@
             $('#subject').val(opt.subject);
             $('#noticeType').val(opt.noticeType);
             // let split = opt.content.split('\n');
-			//
+            //
             // let html = '';
             // for (let i = 0; i < split.length; i++) {
             //     html += '<p>' + split[i] + '</p>';
@@ -125,7 +132,7 @@
         }
 
         // 등록 함수
-        function register(id){
+        function register(id) {
             let data = $.getData(id);
             data.html = editor.getHTML();
             data.content = data.html.replaceAll('<p>', '').replaceAll('</p>', '\n').replaceAll('<br>', '\n');
@@ -142,7 +149,7 @@
             } else {
                 alert(result.msg);
             }
-		}
+        }
     });
 
 </script>

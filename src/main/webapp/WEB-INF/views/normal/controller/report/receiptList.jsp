@@ -80,8 +80,8 @@
 									<td class="text-center">${receipt.carNum}</td>
 									<td>${receipt.addr}</td>
 									<td class="text-center" >
-										<fmt:parseDate value="${receipt.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both" />
-										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+										<fmt:parseDate value="${receipt.regDt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both" />
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm" />
 									</td>
 									<td class="text-center" >${receipt.overlapCount}</td>
 									<td class="text-center" >${receipt.receiptStateType.value}</td>
@@ -148,7 +148,7 @@
                                 $('#' + key).text("신고제외");
                             }
                         } else if (key.indexOf("firstFileName") > -1) {
-                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/image/" + value));
+                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
                         } else if (key === 'firstIllegalType') {
                             if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
                             else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");

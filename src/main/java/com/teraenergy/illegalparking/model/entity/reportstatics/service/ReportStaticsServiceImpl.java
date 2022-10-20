@@ -27,6 +27,11 @@ public class ReportStaticsServiceImpl implements ReportStaticsService{
     private final ReportStaticsRepository reportStaticsRepository;
 
     @Override
+    public List<ReportStatics> gets() {
+        return reportStaticsRepository.findAll();
+    }
+
+    @Override
     public List<ReportStatics> gets(String code) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReportStatics.reportStatics);
         query.where(QReportStatics.reportStatics.code.eq(code));

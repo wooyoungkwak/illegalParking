@@ -82,11 +82,11 @@ CREATE TABLE receipt
     ReplyType        VARCHAR(30) NULL,                   -- 결과 내용 타입
     ZoneSeq          INT NULL DEFAULT 0,                 -- 불법 구역
     RegDt            Datetime    NOT NULL,               -- 신고 등록 일자
-    SecondRegDt      Datetime    NOT NULL,               -- 신고 등록 일자
+    SecondRegDt      Datetime NULL,                      -- 신고 등록 일자
     UserSeq          INT         NOT NULL,               -- 사용자 ( 일반 사용자 )
     CarNum           VARCHAR(10) NULL,                   -- 차량 번호
     FileName         VARCHAR(50) NOT NULL,               -- 파일 이름
-    SecondFileName   VARCHAR(50) NOT NULL,               -- 파일 이름
+    SecondFileName   VARCHAR(50) NULL,                   -- 파일 이름
     Code             VARCHAR(10) NOT NULL,               -- 법정동 코드
     ReceiptStateType VARCHAR(10) NOT NULL,               -- 현재 상태 ( 신고 발생(1), 신고 접수(2), 신고 누락(3), 신고 제외(4), 과태료 대상(5) )
     Addr             VARCHAR(50) NOT NULL,               -- 신고 등록 지역 주소 (지번주소)
@@ -245,7 +245,7 @@ CREATE TABLE user
     UserCode    BIGINT      NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
     Role        INT         NOT NULL,               -- 역할 ( USER / ADMIN / GOVERNMENT )
     PhoneNumber VARCHAR(15) NULL,                   -- 전화 번호 (모바일)
-    PhotoName   VARCHAR(100) NULL,                   -- 사진 이름 (모바일)
+    PhotoName   VARCHAR(100) NULL,                  -- 사진 이름 (모바일)
     OfficeSeq   INT NULL,                           -- 관공서 키
     IsDel       BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
     DelDt       Datetime NULL                       -- 삭제 일자

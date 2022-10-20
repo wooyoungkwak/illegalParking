@@ -12,7 +12,7 @@
         <div class="container-fluid px-4">
             <div class="d-flex align-items-center justify-content-between small">
                 <div class="text-muted">
-                    Copyright &copy; <a href="http://teraenergy.co.kr/">teraenergy.co.kr</a>  All rights reserved.
+                    COPYRIGHT &copy; TERAENERGY INC. ALL RIGHTS RESERVED. ( <a href="http://teraenergy.co.kr/">teraenergy.co.kr</a> )
                 </div>
                 <div>
 <%--                    <a href="#">Privacy Policy</a>--%>

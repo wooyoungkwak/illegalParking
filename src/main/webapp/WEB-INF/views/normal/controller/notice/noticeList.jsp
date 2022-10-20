@@ -164,6 +164,7 @@
 
                     // 글작성 열기 이벤트
                     $('#write').on('click', function () {
+
                         $.openNoticeSet();
                     });
 
@@ -180,6 +181,7 @@
                         }
 
                         $.initializeNoticeView(data)
+
                         $.openNoticeView();
                     });
 

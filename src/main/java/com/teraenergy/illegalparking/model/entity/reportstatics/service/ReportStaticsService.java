@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface ReportStaticsService {
 
+    List<ReportStatics> gets();
+
     List<ReportStatics> gets(String code);
 
     ReportStatics gets(Integer zoneSeq);

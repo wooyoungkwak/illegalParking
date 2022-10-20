@@ -34,6 +34,8 @@ public interface ReportService {
 
     int getSizeForCOMPLETE(List<IllegalZone> illegalZones);
 
+    int getSizeForExceptionAndPenaltyAndComplete(IllegalZone illegalZone);
+
     Report set(Report report);
 
     List<Report> sets(List<Report> reports);

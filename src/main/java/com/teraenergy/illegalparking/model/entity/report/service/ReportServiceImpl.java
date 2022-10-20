@@ -129,6 +129,16 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public int getSizeForExceptionAndPenaltyAndComplete(IllegalZone illegalZone) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.receipt.illegalZone.eq(illegalZone));
+        query.where(QReport.report.reportStateType.eq(ReportStateType.PENALTY));
+        query.where(QReport.report.reportStateType.eq(ReportStateType.EXCEPTION));
+        query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
+        return query.fetch().size();
+    }
+
+    @Override
     public Report set(Report report) {
         return reportRepository.save(report);
     }
