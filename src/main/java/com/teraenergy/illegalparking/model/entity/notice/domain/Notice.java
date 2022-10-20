@@ -32,6 +32,9 @@ public class Notice {
     @Column
     String content;
 
+    @Column
+    String html;
+
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "UserSeq")
     User user;

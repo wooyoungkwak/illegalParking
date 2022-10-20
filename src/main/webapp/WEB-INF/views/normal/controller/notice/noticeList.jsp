@@ -90,7 +90,7 @@
 										</c:choose>
 									</td>
 									<td>
-										<input type="hidden" value="${notice.content}">
+										<input type="hidden" value="${notice.html}">
 										<c:choose>
 											<c:when test="${fn:length(notice.content) gt 55}">
 												<c:out value="${fn:substring(notice.content, 0, 54)}"></c:out>...
@@ -109,7 +109,7 @@
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}" isRegister="false"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>
@@ -164,6 +164,7 @@
 
                     // 글작성 열기 이벤트
                     $('#write').on('click', function () {
+
                         $.openNoticeSet();
                     });
 
@@ -175,11 +176,12 @@
                             noticeType: $(this).children("td:eq(0)").find('input').val(),
                             noticeTypeValue: $(this).children("td:eq(0)").text().trim(),
                             subject: $(this).children("td:eq(1)").find('input').val(),
-                            content: $(this).children("td:eq(2)").find('input').val(),
+                            html: $(this).children("td:eq(2)").find('input').val(),
                             regDt: $(this).children("td:eq(3)").text().trim()
                         }
 
                         $.initializeNoticeView(data)
+
                         $.openNoticeView();
                     });
 
@@ -226,6 +228,7 @@
 
                 }
 
+                // 초기화
                 initialize();
 
             });

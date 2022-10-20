@@ -49,7 +49,7 @@ public class ReportController extends ExtendsController {
         CHashMap paramMap = requestUtil.getParameterMap();
 
         ReceiptStateType receiptStateType = null;
-        String stateTypeStr = paramMap.getAsString("stateType");
+        String stateTypeStr = paramMap.getAsString("receiptStateType");
         if ( stateTypeStr != null) {
             receiptStateType = ReceiptStateType.valueOf(stateTypeStr);
         }
@@ -110,7 +110,7 @@ public class ReportController extends ExtendsController {
         CHashMap paramMap = requestUtil.getParameterMap();
 
         ReportStateType reportStateType = null;
-        String stateTypeStr = paramMap.getAsString("stateType");
+        String stateTypeStr = paramMap.getAsString("reportStateType");
         if ( stateTypeStr != null) {
             reportStateType = ReportStateType.valueOf(stateTypeStr);
         }

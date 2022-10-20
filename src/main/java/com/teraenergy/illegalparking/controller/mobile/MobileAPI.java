@@ -237,9 +237,15 @@ public class MobileAPI {
             HashMap<String, Object> resultMap = Maps.newHashMap();
 
             List<MyCar> myCars = myCarService.gets(userSeq);
-            resultMap.put("carNum", myCars.get(0).getCarNum());
-            resultMap.put("carLevel", myCars.get(0).getCarGrade());
-            resultMap.put("carName", myCars.get(0).getCarName());
+            if ( myCars != null) {
+                resultMap.put("carNum", myCars.get(0).getCarNum());
+                resultMap.put("carLevel", myCars.get(0).getCarGrade());
+                resultMap.put("carName", myCars.get(0).getCarName());
+            } else {
+                resultMap.put("carNum", "");
+                resultMap.put("carLevel", "");
+                resultMap.put("carName", "");
+            }
 
             List<Receipt> receipts = receiptService.gets(userSeq);
             Calculate calculate = calculateService.getAtLast(userSeq);
@@ -618,6 +624,7 @@ public class MobileAPI {
             map.put("firstRegDt", StringUtil.convertDatetimeToString(receipt.getRegDt(), timePattern));
             if (receipt.getSecondRegDt() != null) map.put("secondRegDt", StringUtil.convertDatetimeToString(receipt.getSecondRegDt(), timePattern));
             map.put("reportState", receipt.getReceiptStateType().getValue());
+            map.put("fileName", receipt.getFileName());
             List<Comment> comments = commentService.gets(receipt.getReceiptSeq());
             List<String> commentStrs = comments.stream().map(comment -> comment.getContent()).collect(Collectors.toList());
             map.put("comments", commentStrs);

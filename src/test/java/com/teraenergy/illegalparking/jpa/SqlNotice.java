@@ -104,5 +104,18 @@ public class SqlNotice {
         }
     }
 
+    @Test
+    public void update(){
+        List<Notice> notices = noticeService.gets();
 
+        for(Notice notice : notices) {
+            String html = "<p>";
+            html += notice.getContent();
+            html.replaceAll("\n", "</p><p>");
+            html += "</p>";
+            System.out.println(html);
+            notice.setHtml(html);
+        }
+        noticeService.sets(notices);
+    }
 }

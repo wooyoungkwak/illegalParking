@@ -35,33 +35,32 @@
 
 			<div class="card-body">
 				<form id="noticeViewForm">
-					<div class="row mb-3">
-						<div class="col-1 me-0 border-end-0 pe-0">
+					<div class="row">
+						<div class="col-12 me-0 border-end-0 pe-0">
 							<input type="hidden" id="noticeSeqView" name="noticeSeq">
 							<input type="hidden" id="noticeTypeView" name="noticeType">
-							<input type="text" id="noticeTypeValueView" name="noticeType" class="form-control fw-bold text-primary" style="text-align: right; border: 0px; background: #ffffff;" disabled>
-						</div>
-						<div class="col-11">
-							<input type="text" id="subjectView" name="subject" class="form-control d-flex justify-content-lg-start" style="border: 0px; background: #ffffff;" disabled>
+							<div class="input-group">
+								<span class="input-group-text text-primary" id="noticeTypeValueView" style="border: 0px; background: #ffffff;"></span>
+								<input type="text" id="subjectView" name="subject" class="form-control d-flex justify-content-lg-start" style="border: 0px; background: #ffffff;" disabled>
+							</div>
 						</div>
 					</div>
-					<div class="row mb-3">
-						<div class="col-1"></div>
-						<div class="col-11">
-							<input type="text" id="regDtView" name="regDtView" class="form-control text-primary" style="border: 0px; background: #ffffff;" disabled>
+					<div class="row mb-3 mt-0">
+						<div class="col ms-5 ps-4">
+							<input type="text" id="regDtView" name="regDtView" class="h6" style="border: 0px; background: #ffffff; color: #999999; font-size: 14px;" disabled>
 						</div>
 					</div>
 					<div class="row mb-2">
-						<div class="col-12">
-							<div class="form-group">
-								<textarea id="contentView" name="content" style="width:100%; height: 300px; border: 0px; background: #ffffff;" disabled></textarea>
-							</div>
+						<div class="col ms-1">
+							<div id="contentView" name="content"></div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-12 d-flex justify-content-lg-start">
-							<a class="btn btn-primary" id="modify">수정</a>
-							<a class="btn btn-outline-dark" id="close">닫기</a>
+							<div class="input-group">
+								<a class="btn btn-primary" id="modify">수정</a>
+								<a class="btn btn-outline-dark" id="close">닫기</a>
+							</div>
 						</div>
 					</div>
 				</form>

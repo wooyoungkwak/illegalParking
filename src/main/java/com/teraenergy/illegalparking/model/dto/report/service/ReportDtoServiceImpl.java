@@ -160,42 +160,41 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         return page;
     }
 
-
     @Override
     public ReportDetailDto getFromReportDetailDto(int reportSeq) throws TeraException {
         Report report = reportService.get(reportSeq);
 
         ReportDetailDto reportDetailDto = new ReportDetailDto();
-
         reportDetailDto.setReportSeq(report.getReportSeq());
-        reportDetailDto.setName(report.getReceipt().getUser().getName());
-        reportDetailDto.setCarNum(report.getReceipt().getCarNum());
-        reportDetailDto.setOverlapCount(0); // TODO : 중복 횟수
-        reportDetailDto.setRegDt(report.getRegDt());
-        reportDetailDto.setReportStateType(report.getReportStateType());
-        ;
+        reportDetailDto.setCarNum(report.getReceipt().getCarNum());         // 차량번호
+        reportDetailDto.setOverlapCount(0);                                 // TODO : 중복 횟수
+        reportDetailDto.setAddr(report.getReceipt().getAddr());             // 위치
+        reportDetailDto.setName(report.getReceipt().getUser().getName());   // 신고자
+        reportDetailDto.setRegDt(report.getRegDt());                        // 접수시간
+        reportDetailDto.setReportStateType(report.getReportStateType());    // 신고기관
+
         if (report.getReportUserSeq() != null) {
             User governmentUser = userService.get(report.getReportUserSeq());
             reportDetailDto.setGovernmentOfficeName(governmentUser.getGovernMentOffice().getName());
         }
-        reportDetailDto.setNote(report.getNote());
+        reportDetailDto.setNote(report.getNote());                          // 내용
 
         Receipt receipt = report.getReceipt();
 
-        List<String> comments = Lists.newArrayList();
-        List<Integer> receiptSeqs = Lists.newArrayList();
 
-        reportDetailDto.setFirstFileName(receipt.getFileName());
-        reportDetailDto.setFirstRegDt(receipt.getRegDt());
-        reportDetailDto.setFirstAddr(receipt.getAddr());
+        List<Integer> receiptSeqs = Lists.newArrayList();
+        reportDetailDto.setFirstFileName(receipt.getFileName());    // 첫번째 파일 이름
+        reportDetailDto.setFirstRegDt(receipt.getRegDt());          // 첫번째 등록 일자
+        reportDetailDto.setFirstAddr(receipt.getAddr());            // 첫번째 등록 주소
         receiptSeqs.add(receipt.getReceiptSeq());
 
-        reportDetailDto.setSecondFileName(receipt.getFileName());
-        reportDetailDto.setSecondRegDt(receipt.getRegDt());
-        reportDetailDto.setSecondAddr(receipt.getAddr());
+        reportDetailDto.setSecondFileName(receipt.getFileName());   // 두번째 파일 이름
+        reportDetailDto.setSecondRegDt(receipt.getRegDt());         // 두번째 등록 일자
+        reportDetailDto.setSecondAddr(receipt.getAddr());           // 두번째 등록 주소
         receiptSeqs.add(receipt.getReceiptSeq());
 
         List<Comment> receiptComments = commentService.gets(receiptSeqs);
+        List<String> comments = Lists.newArrayList();
         for (Comment receiptComment : receiptComments) {
             comments.add(receiptComment.getContent());
         }
