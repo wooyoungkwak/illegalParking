@@ -22,11 +22,46 @@ $(function () {
 
     let _markerImageSrc = '/resources/assets/img/parking.png';
 
+    function cssControl(_this) {
+        let label = $(_this.parentNode);
+        if($(_this).is(':checked')){
+            label.addClass('btn-dark');
+            label.addClass('rounded-pill');
+            label.removeClass('btn-white');
+        } else {
+            label.siblings().removeClass('btn-dark');
+            label.siblings().removeClass('rounded-pill');
+            label.siblings().addClass('btn-white');
+        }
+
+
+        // label.addClass('btn-dark');
+        // label.addClass('rounded-pill');
+        // label.removeClass('btn-white');
+        // label.addClass('btn-dark');
+        // label.addClass('rounded-pill');
+        // label.removeClass('btn-white');
+
+    }
+
     $('input:radio[name=mapSelect]').change(function (event){
-        let center = getMapCenter(map);
-        CENTER_LATITUDE = center.y;
-        CENTER_LONGITUDE = center.x;
+        log('1 ::::::::::::::::', CENTER_LONGITUDE);
+        log('1 ::::::::::::::::', CENTER_LATITUDE);
+        if(window.location.pathname.includes('api')){
+            log(gpsLatitude, ':::::::::::', gpsLongitude);
+            // CENTER_LATITUDE = 35.01868444;
+            // CENTER_LONGITUDE = 126.78284599;
+        }
+
+        log('2 ::::::::::::::::', CENTER_LONGITUDE);
+        log('2 ::::::::::::::::', CENTER_LATITUDE);
+
+        log(window.location.pathname);
+        let center = map.getCenter();
+        CENTER_LATITUDE = center.getLat();
+        CENTER_LONGITUDE = center.getLng();
         if(event.target.id === 'zone'){
+            cssControl(this);
             removeMarker();
             initializeKakao();
             (async () => {
@@ -34,6 +69,7 @@ $(function () {
             })();
         }
         if(event.target.id === 'parking'){
+            cssControl(this);
             removeOverlays();
             _url = _contextPath + '/parking/gets';
 
@@ -43,6 +79,7 @@ $(function () {
             })();
         }
         if(event.target.id === 'pm'){
+            cssControl(this);
 
         }
     });
@@ -224,6 +261,7 @@ $(function () {
 
         map.setZoomable(false);
 
+        log(map.getCenter());
         // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
             target: map,
@@ -245,6 +283,7 @@ $(function () {
                     if (isInside(onePolygon, n, p)) {
                         log(i + " : Yes");
                         log(zoneSeqs[i]);
+                        // alert('hello')
                         break;
                     } else {
                         log(i + " : No");
@@ -310,7 +349,8 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-        getCurrentPosition(map);
+        if(isMobile) getMobileCurrentPosition(map);
+        else getCurrentPosition(map);
     }
 
     initialize();
@@ -385,11 +425,12 @@ $(function () {
             result.data.forEach(function(data){
                 let marker = addMarker(new kakao.maps.LatLng(data.latitude, data.longitude));
                 kakaoEvent.addListener(marker, 'click', function() {
+                    // map.setCenter(marker.getPosition());
                     map.panTo(marker.getPosition());
                     // 커스텀 오버레이 컨텐츠를 설정합니다
                     let obj = markerInfo('parking', data);
                     log(obj);
-                    // webToApp.postMessage(JSON.stringify(obj));
+                    webToApp.postMessage(JSON.stringify(obj));
                 });
             });
         }
@@ -427,7 +468,8 @@ $(function () {
 
 
     $.setCurrentPosition = function (){
-        getCurrentPosition(map);
+        if(isMobile) getMobileCurrentPosition(map);
+        else getCurrentPosition(map);
     }
 
     // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다

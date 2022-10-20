@@ -17,13 +17,14 @@
 			<div class="row">
 				<div class="map_wrap">
 					<div id="map"></div>
-					<div class="custom_mapcontrol radius_border btn-group btn-group-sm" role="group">
-						<input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>
-						<label for="zone" class="btn btn-outline-primary">불법주차</label>
-						<input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">
-						<label for="parking" class="btn btn-outline-primary">주차장</label>
-						<input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">
-						<label for="pm" class="btn btn-outline-primary">모빌리티</label>
+
+					<div class="map-control bg-white border border-2 shadow-sm btn-group rounded-pill" role="group">
+
+						<label for="zone" class="btn btn-dark rounded-pill"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
+
+						<label for="parking" class="btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">주차장</label>
+
+						<label for="pm" class="btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
 					</div>
 					<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
 					<div class="custom_zoomcontrol radius_border">
@@ -34,7 +35,9 @@
 					<div class="custom_btncontrol radius_border">
 						<span id="btnFindMe" class="btn"><img src="<%=contextPath%>/resources/assets/img/re_ping.png" alt="내위치"></span>
 					</div>
+
 				</div>
+				<%--<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>--%>
 			</div>
 		</main>
 	</stripes:layout-component>
@@ -61,10 +64,14 @@
 			});
             // INTERFACE : APP TO WEB
             function appToGps(x, y) {
+            	$.gpsPoint(x, y);
                 $('#debug').val(x + "," + y + " :: " + (typeof x));
+                log(x + "," + y + " :: " + (typeof x));
             }
 
+
             $(function () {
+
                 // INTERFACE : WEB TO APP
                 // TYPE : parking / pm
                 // DATA (parking) : pkName ( 주차장이름 ) / pkAddr(주소) / pkPrice(요금) / pkOper(운영 - 유료/무료) / pkCount(주차장면수) / pkPhone(주차장 전화번호)
