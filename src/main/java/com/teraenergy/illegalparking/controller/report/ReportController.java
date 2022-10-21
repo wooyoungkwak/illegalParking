@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class ReportController extends ExtendsController {
 
-
     private final ReportDtoService reportDtoService;
 
     private String subTitle = "신고";
@@ -50,7 +49,7 @@ public class ReportController extends ExtendsController {
 
         ReceiptStateType receiptStateType = null;
         String stateTypeStr = paramMap.getAsString("receiptStateType");
-        if ( stateTypeStr != null) {
+        if ( stateTypeStr != null && stateTypeStr.trim().length() > 0) {
             receiptStateType = ReceiptStateType.valueOf(stateTypeStr);
         }
 
@@ -111,7 +110,7 @@ public class ReportController extends ExtendsController {
 
         ReportStateType reportStateType = null;
         String stateTypeStr = paramMap.getAsString("reportStateType");
-        if ( stateTypeStr != null) {
+        if ( stateTypeStr != null && stateTypeStr.trim().length() > 0) {
             reportStateType = ReportStateType.valueOf(stateTypeStr);
         }
 

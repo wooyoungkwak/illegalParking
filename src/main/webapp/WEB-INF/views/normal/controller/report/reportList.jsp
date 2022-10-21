@@ -73,20 +73,20 @@
 							<tbody>
 							<c:forEach var="report" items="${reports}" varStatus="status">
 								<tr>
-									<td class="text-center" >
+									<td class="text-center">
 										<input type="hidden" value="${report.reportSeq}" id="reportSeq">
-										${report.name}
+											${report.name}
 									</td class="text-center">
 									<td class="text-center">${report.carNum}</td>
 									<td>
 											${report.addr}
 									</td>
-									<td class="text-center" >
-										<fmt:parseDate value="${report.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both" />
-										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss" />
+									<td class="text-center">
+										<fmt:parseDate value="${report.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both"/>
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 									</td>
-									<td class="text-center" ></td>
-									<td class="text-center" >${report.reportStateType.value}</td>
+									<td class="text-center"></td>
+									<td class="text-center">${report.reportStateType.value}</td>
 								</tr>
 							</c:forEach>
 							</tbody>
@@ -110,7 +110,7 @@
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/report/reportList-scripts.js"></script>
 		<script type="application/javascript">
-			$(function () {
+            $(function () {
 
                 // 검색
                 function search(pageNumber) {
@@ -122,17 +122,77 @@
                     location.href = _contextPath + "/reportList?" + $('form').serialize();
                 }
 
+                // 신고 접수 버튼 설정 함수
+                function setBtnReceiptStateType(receiptStateType) {
+                    let $btnException = $('#btnException');
+                    let $btnPenalty = $('#btnPenalty');
+
+                    let $exception = $btnException.parent().parent();
+                    let $penalty = $btnPenalty.parent().parent();
+
+                    $btnException.removeClass();
+                    $btnPenalty.removeClass();
+
+                    switch (receiptStateType) {
+                        case 'EXCEPTION':
+                            $exception.show();
+                            $penalty.hide();
+                            $btnException.addClass("btn btn-dark");
+                            $btnPenalty.addClass("btn btn-outline-danger");
+                            $btnException.attr('disabled', true);
+                            $btnPenalty.attr('disabled', true);
+                            break;
+                        case 'PENALTY':
+                            $exception.hide();
+                            $penalty.show();
+                            $btnException.addClass("btn btn-outline-dark");
+                            $btnPenalty.addClass("btn btn-danger");
+
+                            $btnException.attr('disabled', true);
+                            $btnPenalty.attr('disabled', true);
+                            break;
+                        default:
+                            $btnException.addClass("btn btn-outline-dark");
+                            $btnPenalty.addClass("btn btn-outline-danger");
+                            $btnException.attr('disabled', false);
+                            $btnPenalty.attr('disabled', false);
+                            break;
+                    }
+
+                    $('#btnTemp').hide();
+                }
+
+                // 신고 접수 설정 함수
+                function setReceiptStateType(key, value) {
+                    let text = '';
+                    let className = '';
+                    switch (value) {
+                        case 'COMPLETE':
+                            text = "신고대기";
+                            className = "text-success";
+                            break;
+                        case 'PENALTY':
+                            text = "과태료대상";
+                            className = "text-danger";
+                            break;
+                        case 'EXCEPTION':
+                            text = "신고제외";
+                            className = "text-dark";
+                            break;
+                    }
+                    $('#' + key + 'Value').text(text);
+                    $('#' + key + 'Value').removeClass();
+                    $('#' + key + 'Value').addClass("ms-3 fw-bold " + className);
+
+                    setBtnReceiptStateType(value);
+                }
+
                 // 신고 접수 설정 초기화 함수
                 function initializeReportSetTag(report) {
+                    log(report);
                     $.each(report, function (key, value) {
-                        if (key.indexOf('receiptStateType') > -1) {
-                            if (value === 'COMPLETE') {
-                                $('#' + key).text("신고접수");
-                            } else if (value === 'PENALTY')  {
-                                $('#' + key).text("신고제외");
-                            } else if (value === 'EXCEPTION') {
-                                $('#' + key).text("과태료대상");
-                            }
+                        if (key.indexOf('reportStateType') > -1) {
+                            setReceiptStateType(key, value);
                         } else if (key.indexOf("firstFileName") > -1) {
                             $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
                         } else if (key.indexOf("secondFileName") > -1) {
@@ -145,8 +205,10 @@
                             else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
                         } else if (key === 'note') {
                             $('#' + key).val(value === null ? "" : value);
-                        } else if( key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt' ) {
+                        } else if (key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt') {
                             $('#' + key).text(value.replace('T', ' '));
+                        } else if (key === 'reportSeq') {
+                            $('#reportSeqSetTag').val(value);
                         } else if (key === 'resultType') {
                             if (value === undefined || value === 'WAIT') {
                                 $('#register').show();
@@ -179,7 +241,7 @@
                     }
                 }
 
-				// 초기화 함수
+                // 초기화 함수
                 function initialize() {
 
                     // 검색 이벤트 1
@@ -261,21 +323,26 @@
                     });
 
                     // 신고 접수 등록 이벤트
-                    $('#register').on('click', function () {
+                    $('#btnPenalty, #btnException').on('click', function () {
 
-                        let data = $.getData('data');
-                        if (data.setResultType === 'WAIT') {
-                            alert("결과를 선택 하세요.");
+                        if ( $(this).is('disabled')) {
                             return;
-                        }
-
-                        data.reportSeq = reportSeq;
-                        data.userSeq = _userSeq;
+						}
 
                         if (confirm("등록 하시겠습니까?")) {
+                            let reportSeqStr = $('#reportSeqSetTag').val();
+                            let reportSeq = Number(reportSeqStr);
+                            let note = $('#note').val();
+                            let reportStateType = $(this).attr('name');
+
                             $.JJAjaxSync({
                                 url: _contextPath + '/set',
-                                data: data,
+                                data: {
+                                    userSeq: _userSeq,
+                                    reportSeq: reportSeq,
+                                    note: note,
+									reportStateType: reportStateType
+								},
                                 success: function (data) {
                                     if (data.success) {
                                         alert("등록 되었습니다.");

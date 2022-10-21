@@ -44,4 +44,9 @@ public class CommentServiceImple implements CommentService{
         return commentRepository.save(comment);
     }
 
+    @Override
+    public List<Comment> sets(List<Comment> comments) {
+        return commentRepository.saveAll(comments);
+    }
+
 }

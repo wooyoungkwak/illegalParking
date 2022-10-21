@@ -65,6 +65,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.isDel.isFalse());
+        query.orderBy(QReceipt.receipt.receiptSeq.desc());
         return query.fetch();
     }
 
@@ -73,6 +74,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
         query.where(QReceipt.receipt.isDel.isFalse());
+        query.orderBy(QReceipt.receipt.receiptSeq.desc());
         return query.fetch();
     }
 

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,6 +54,7 @@ public class PointServiceImpl implements PointService{
     public List<Point> getsInGroup(Integer groupSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QPoint.point);
         query.where(QPoint.point.groupSeq.eq(groupSeq));
+        query.where(QPoint.point.residualValue.gt(0));
         query.orderBy(QPoint.point.pointSeq.desc());
         return query.fetch();
     }

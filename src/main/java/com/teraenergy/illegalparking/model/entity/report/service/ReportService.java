@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.report.service;
 
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
@@ -18,7 +19,7 @@ import java.util.List;
 public interface ReportService {
 
 
-    boolean isExist(String carNum);
+    boolean isExist(String carNum, IllegalType illegalType);
 
     Report get(Integer reportSeq);
 

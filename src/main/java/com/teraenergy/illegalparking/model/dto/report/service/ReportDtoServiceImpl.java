@@ -87,7 +87,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
 
         pageNumber = pageNumber -1;  // 이유 : offset 시작 값이 0부터 이므로
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Page<ReceiptDto> page = new PageImpl<ReceiptDto>(receiptDtos, pageRequest, receiptDtos.size());
+        Page<ReceiptDto> page = new PageImpl<ReceiptDto>(receiptDtos, pageRequest, receiptPage.getTotalElements());
         return page;
     }
 
@@ -156,7 +156,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
 
         pageNumber = pageNumber -1;  // 이유 : offset 시작 값이 0부터 이므로
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
-        Page<ReportDto> page = new PageImpl<ReportDto>(reportDtos, pageRequest, reportDtos.size());
+        Page<ReportDto> page = new PageImpl<ReportDto>(reportDtos, pageRequest, reportPage.getTotalElements());
         return page;
     }
 
@@ -166,12 +166,14 @@ public class ReportDtoServiceImpl implements ReportDtoService {
 
         ReportDetailDto reportDetailDto = new ReportDetailDto();
         reportDetailDto.setReportSeq(report.getReportSeq());
-        reportDetailDto.setCarNum(report.getReceipt().getCarNum());         // 차량번호
-        reportDetailDto.setOverlapCount(0);                                 // TODO : 중복 횟수
-        reportDetailDto.setAddr(report.getReceipt().getAddr());             // 위치
-        reportDetailDto.setName(report.getReceipt().getUser().getName());   // 신고자
-        reportDetailDto.setRegDt(report.getRegDt());                        // 접수시간
         reportDetailDto.setReportStateType(report.getReportStateType());    // 신고기관
+        reportDetailDto.setOverlapCount(0);                                 // TODO : 중복 횟수
+        reportDetailDto.setRegDt(report.getRegDt());                        // 접수시간
+
+        Receipt receipt = report.getReceipt();
+        reportDetailDto.setCarNum(receipt.getCarNum());         // 차량번호
+        reportDetailDto.setAddr(receipt.getAddr());             // 위치
+        reportDetailDto.setName(receipt.getUser().getName());   // 신고자
 
         if (report.getReportUserSeq() != null) {
             User governmentUser = userService.get(report.getReportUserSeq());
@@ -179,18 +181,16 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         }
         reportDetailDto.setNote(report.getNote());                          // 내용
 
-        Receipt receipt = report.getReceipt();
-
-
         List<Integer> receiptSeqs = Lists.newArrayList();
+
         reportDetailDto.setFirstFileName(receipt.getFileName());    // 첫번째 파일 이름
         reportDetailDto.setFirstRegDt(receipt.getRegDt());          // 첫번째 등록 일자
         reportDetailDto.setFirstAddr(receipt.getAddr());            // 첫번째 등록 주소
-        receiptSeqs.add(receipt.getReceiptSeq());
 
-        reportDetailDto.setSecondFileName(receipt.getFileName());   // 두번째 파일 이름
-        reportDetailDto.setSecondRegDt(receipt.getRegDt());         // 두번째 등록 일자
-        reportDetailDto.setSecondAddr(receipt.getAddr());           // 두번째 등록 주소
+        reportDetailDto.setSecondFileName(receipt.getSecondFileName());     // 두번째 파일 이름
+        reportDetailDto.setSecondRegDt(receipt.getSecondRegDt());           // 두번째 등록 일자
+        reportDetailDto.setSecondAddr(receipt.getAddr());                   // 두번째 등록 주소
+
         receiptSeqs.add(receipt.getReceiptSeq());
 
         List<Comment> receiptComments = commentService.gets(receiptSeqs);

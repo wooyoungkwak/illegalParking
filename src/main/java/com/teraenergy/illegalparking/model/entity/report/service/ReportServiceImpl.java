@@ -4,8 +4,10 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.QIllegalGroup;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -37,11 +40,24 @@ public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
 
     @Override
-    public boolean isExist(String carNum) {
+    public boolean isExist( String carNum, IllegalType illegalType) {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = null;
+        switch (illegalType) {
+            case FIVE_MINUTE:   // 5분 주정차
+                startTime = now.minusMinutes(16);
+                break;
+            case ILLEGAL:       // 불법 주정차
+                startTime = now.minusMinutes(11);
+                break;
+        }
+        LocalDateTime endTime = now;
+
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.receipt.carNum.eq(carNum));
+        query.where(QReport.report.receipt.receiptStateType.eq(ReceiptStateType.OCCUR));
+        query.where(QReport.report.receipt.regDt.between(startTime, endTime));
         query.where(QReport.report.isDel.isFalse());
-
         if (query.fetchOne() == null) {
             return false;
         }

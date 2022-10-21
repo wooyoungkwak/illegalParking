@@ -18,4 +18,6 @@ public interface CommentService {
     List<Comment> gets(Integer receiptSeq);
 
     Comment set(Comment comment);
+
+    List<Comment> sets(List<Comment> comments);
 }

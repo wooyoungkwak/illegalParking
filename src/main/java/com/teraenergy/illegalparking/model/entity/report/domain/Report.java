@@ -32,8 +32,8 @@ public class Report {
     @Column
     Integer reportUserSeq;
 
-    @Column
-    LocalDateTime regDt;
+    @Column (nullable = false)
+    LocalDateTime regDt = LocalDateTime.now();
 
     @Column
     @Enumerated (EnumType.STRING)
@@ -42,8 +42,8 @@ public class Report {
     @Column
     String note;
 
-    @Column
-    Boolean isDel;
+    @Column (nullable = false)
+    Boolean isDel = false;
 
     @Column
     LocalDateTime delDt;

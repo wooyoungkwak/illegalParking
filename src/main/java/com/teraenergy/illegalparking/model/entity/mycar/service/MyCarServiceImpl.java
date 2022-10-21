@@ -36,7 +36,9 @@ public class MyCarServiceImpl implements MyCarService{
 
     @Override
     public List<MyCar> gets(Integer userSeq) {
-        return null;
+        JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
+        query.where(QMyCar.myCar.userSeq.eq(userSeq));
+        return query.fetch();
     }
 
     @Override

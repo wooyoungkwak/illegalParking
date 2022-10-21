@@ -33,6 +33,7 @@ public enum TeraExceptionCode implements TeraErrCode {
     ILLEGAL_PARKING_NOT_CRACKDOWN_TIME("불법 주정차 단속 시간이 아닙니다."),
 
     ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM("동일 차량번호 불법 주정차 신고 접수가 타인에 의해 먼저 접수 되었습니다."),
+    REPORT_REGISTER_FAIL("신고 접수 처리가 실패하였습니다."),
 
     USER_WRONG_ID_PASSWORD_AGAIN_CHECK(" 사용자 정보가 잘 못 되었거나 패스워드가 틀렸습니다. \n 다시 확인하여 입력 하세요."),
 

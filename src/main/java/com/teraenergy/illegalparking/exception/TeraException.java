@@ -25,6 +25,7 @@ public class TeraException extends Exception{
     public TeraException(String code, String message) {
         super(message);
         this.code = code;
+        this.message = message;
     }
 
     public TeraException(String message, Throwable e) {
@@ -35,10 +36,11 @@ public class TeraException extends Exception{
     public TeraException(String code, String message, Throwable e) {
         super(message, e);
         this.code = code;
+        this.message = message;
     }
 
     public TeraException(TeraErrCode teraErrCode) {
-        this(teraErrCode.getMessage(new String[0]));
+        this(teraErrCode.getCode(), teraErrCode.getMessage(new String[0]));
     }
 
     public TeraException(TeraErrCode teraErrCode, Throwable e){

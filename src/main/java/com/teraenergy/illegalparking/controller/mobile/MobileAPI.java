@@ -45,6 +45,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -86,7 +87,9 @@ public class MobileAPI {
 
     private final ParkingService parkingService;
 
-    /** 사용자 로그인 하기 */
+    /**
+     * 사용자 로그인 하기
+     */
     @PostMapping("/api/login")
     @ResponseBody
     public Object login(@RequestBody String body) throws TeraException {
@@ -109,7 +112,9 @@ public class MobileAPI {
         return userDto;
     }
 
-    /** 사용자 등록 하기 */
+    /**
+     * 사용자 등록 하기
+     */
     @PostMapping("/api/user/register")
     @ResponseBody
     public Object register(@RequestBody String body) throws TeraException {
@@ -139,7 +144,9 @@ public class MobileAPI {
         }
     }
 
-    /** 사용자 존재 여부 확인하기 */
+    /**
+     * 사용자 존재 여부 확인하기
+     */
     @PostMapping("/api/user/isExist")
     @ResponseBody
     public Object isExist(@RequestBody String body) throws TeraException {
@@ -162,7 +169,9 @@ public class MobileAPI {
         }
     }
 
-    /** 프로필 변경 하기 */
+    /**
+     * 프로필 변경 하기
+     */
     @PostMapping("/api/user/profile/change")
     @ResponseBody
     public Object changeProfile(@RequestBody String body) throws TeraException {
@@ -183,7 +192,9 @@ public class MobileAPI {
         }
     }
 
-    /** 패스워드 체크하기 */
+    /**
+     * 패스워드 체크하기
+     */
     @PostMapping("/api/user/password/check")
     @ResponseBody
     public Object checkPassword(@RequestBody String body) throws TeraException {
@@ -205,7 +216,9 @@ public class MobileAPI {
         }
     }
 
-    /** 패스워드 변경 하기 */
+    /**
+     * 패스워드 변경 하기
+     */
     @PostMapping("/api/user/password/change")
     @ResponseBody
     public Object changePassword(@RequestBody String body) throws TeraException {
@@ -226,7 +239,9 @@ public class MobileAPI {
 
     }
 
-    /** 내 페이지 정보 가져오기 */
+    /**
+     * 내 페이지 정보 가져오기
+     */
     @PostMapping("/api/myPage/get")
     @ResponseBody
     public Object getMyPage(@RequestBody String body) throws TeraException {
@@ -237,7 +252,7 @@ public class MobileAPI {
             HashMap<String, Object> resultMap = Maps.newHashMap();
 
             List<MyCar> myCars = myCarService.gets(userSeq);
-            if ( myCars.size() > 0) {
+            if (myCars.size() > 0) {
                 resultMap.put("carNum", myCars.get(0).getCarNum());
                 resultMap.put("carLevel", myCars.get(0).getCarGrade());
                 resultMap.put("carName", myCars.get(0).getCarName());
@@ -272,7 +287,9 @@ public class MobileAPI {
         }
     }
 
-    /** 공지 사항 정보 리스트 가져오기 */
+    /**
+     * 공지 사항 정보 리스트 가져오기
+     */
     @PostMapping("/api/notice/gets")
     @ResponseBody
     public Object getsNotice(@RequestBody String body) throws TeraException {
@@ -306,7 +323,9 @@ public class MobileAPI {
         }
     }
 
-    /** 포인트 리스트 정보 가져오기 */
+    /**
+     * 포인트 리스트 정보 가져오기
+     */
     @PostMapping("/api/point/gets")
     @ResponseBody
     public Object getsPoint(@RequestBody String body) throws TeraException {
@@ -331,7 +350,9 @@ public class MobileAPI {
         }
     }
 
-    /** 제품 리스트 정보 */
+    /**
+     * 제품 리스트 정보
+     */
     @PostMapping("/api/product/gets")
     @ResponseBody
     public Object getsProduct(@RequestBody String body) throws TeraException {
@@ -363,7 +384,9 @@ public class MobileAPI {
         }
     }
 
-    /** 제품 구매 신청 등록 */
+    /**
+     * 제품 구매 신청 등록
+     */
     @PostMapping("/api/calculate/set")
     @ResponseBody
     public Object setCalculate(@RequestBody String body) throws TeraException {
@@ -402,7 +425,9 @@ public class MobileAPI {
     }
 
 
-    /** 차량 알림 이력 정보 */
+    /**
+     * 차량 알림 이력 정보
+     */
     @PostMapping("/api/car/alarmHistory")
     @ResponseBody
     public Object alarmHistoryCar(@RequestBody String body) throws TeraException {
@@ -434,7 +459,9 @@ public class MobileAPI {
         }
     }
 
-    /** 차량 등록 */
+    /**
+     * 차량 등록
+     */
     @PostMapping("/api/car/set")
     @ResponseBody
     public Object setCar(@RequestBody String body) throws TeraException {
@@ -462,7 +489,9 @@ public class MobileAPI {
     }
 
 
-    /** 차량 알림 서비스 변경 등록 */
+    /**
+     * 차량 알림 서비스 변경 등록
+     */
     @PostMapping("/api/car/modify")
     @ResponseBody
     public Object modifyCar(@RequestBody String body) throws TeraException {
@@ -483,69 +512,52 @@ public class MobileAPI {
         }
     }
 
-    /** 신고 접수 */
+    /**
+     * 신고 접수
+     */
+    @Transactional
     @PostMapping("/api/receipt/set")
     @ResponseBody
     public Object setReceipt(@RequestBody String body) throws TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        double latitude = jsonNode.get("latitude").asDouble();      // 위도
-        double longitude = jsonNode.get("longitude").asDouble();    // 경도
-        String addr = jsonNode.get("addr").asText();
-        String temp[] = addr.split(" ");
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            double latitude = jsonNode.get("latitude").asDouble();      // 위도
+            double longitude = jsonNode.get("longitude").asDouble();    // 경도
+            String addr = jsonNode.get("addr").asText();
+            String temp[] = addr.split(" ");
 
-        // 동 코드
-        LawDong lawDong = lawDongService.getFromLnmadr(temp[0] + " " + temp[1] + " " + temp[2]);
+            // 동 코드
+            LawDong lawDong = lawDongService.getFromLnmadr(temp[0] + " " + temp[1] + " " + temp[2]);
 
-        // 불법 주정차 구역 ( mybatis 로 가져오기 때문에 illegal_event 데이터는 따로 요청 해야함)
-        IllegalZone illegalZone = illegalZoneMapperService.get(lawDong.getCode(), latitude, longitude);
-        IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-        illegalZone.setIllegalEvent(illegalEvent);
 
-        String carNum = jsonNode.get("carNum").asText();
-        String regDtStr = jsonNode.get("regDt").asText();
-        LocalDateTime regDt = StringUtil.convertStringToDateTime(regDtStr, "yyyy-MM-dd HH:mm");
+            String carNum = jsonNode.get("carNum").asText();
+            String regDtStr = jsonNode.get("regDt").asText();
+            LocalDateTime regDt = StringUtil.convertStringToDateTime(regDtStr, "yyyy-MM-dd HH:mm");
 
-        // 사용자
-        User user = userService.get(jsonNode.get("userSeq").asInt());
+            // 불법 주정차 구역 ( mybatis 로 가져오기 때문에 illegal_event 데이터는 따로 요청 해야함)
+            IllegalZone illegalZone = illegalZoneMapperService.get(lawDong.getCode(), latitude, longitude);
 
-        Receipt receipt = receiptService.getByCarNumAndBetweenNow(user.getUserSeq(), carNum, LocalDateTime.now());
+            // 사용자
+            User user = userService.get(jsonNode.get("userSeq").asInt());
 
-        if (receipt == null) {
-            receipt = new Receipt();
-            receipt.setAddr(addr);
-            receipt.setCarNum(carNum);
-            receipt.setFileName(jsonNode.get("fileName").asText());
-            receipt.setRegDt(regDt);
-            receipt.setUser(user);
-            receipt.setCode(lawDong.getCode());
-            receipt.setIllegalZone(illegalZone);
-        } else {
-            receipt.setSecondFileName(jsonNode.get("fileName").asText());
-            receipt.setSecondRegDt(LocalDateTime.now());
-        }
+            Receipt receipt = receiptService.getByCarNumAndBetweenNow(user.getUserSeq(), carNum, LocalDateTime.now());
 
-        // 1. 불법 주정자 지역 체크
-        if (illegalZone == null) {
-            receipt = new Receipt();
-            receipt.setAddr(addr);
-            receipt.setCarNum(carNum);
-            receipt.setFileName(jsonNode.get("fileName").asText());
-            receipt.setRegDt(regDt);
-            receipt.setUser(user);
-            receipt.setCode(lawDong.getCode());
-            receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+            if (receipt == null) {
+                receipt = new Receipt();
+                receipt.setAddr(addr);
+                receipt.setCarNum(carNum);
+                receipt.setFileName(jsonNode.get("fileName").asText());
+                receipt.setRegDt(regDt);
+                receipt.setUser(user);
+                receipt.setCode(lawDong.getCode());
+                receipt.setIllegalZone(illegalZone);
+            } else {
+                receipt.setSecondFileName(jsonNode.get("fileName").asText());
+                receipt.setSecondRegDt(LocalDateTime.now());
+            }
 
-            _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA.getMessage());
-            receipt = receiptService.set(receipt);
-            throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA);
-        }
-
-        // 2. 불법 주정차 시간 체크
-        String dateStr = regDtStr.split(" ")[0];
-        if (illegalZone.getIllegalEvent().isUsedFirst()) {
-            LocalDateTime fs = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getFirstStartTime(), "yyyy-MM-dd HH:mm");
-            LocalDateTime fe = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getFirstEndTime(), "yyyy-MM-dd HH:mm");
-            if (fs.isAfter(regDt) && fe.isBefore(regDt)) {
+            // 1. 불법 주정자 지역 체크
+            if (illegalZone == null) {
                 receipt = new Receipt();
                 receipt.setAddr(addr);
                 receipt.setCarNum(carNum);
@@ -556,58 +568,101 @@ public class MobileAPI {
                 receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
 
                 receipt = receiptService.set(receipt);
-                _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME.getMessage());
-                throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME);
+                _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA.getMessage());
+                throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA);
             }
-        }
 
-        if (illegalZone.getIllegalEvent().isUsedSecond()) {
-            LocalDateTime ss = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getSecondStartTime(), "yyyy-MM-dd HH:mm");
-            LocalDateTime se = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getSecondEndTime(), "yyyy-MM-dd HH:mm");
+            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+            illegalZone.setIllegalEvent(illegalEvent);
 
-            if (ss.isAfter(regDt) && se.isBefore(regDt)) {
-                receipt = new Receipt();
-                receipt.setAddr(addr);
-                receipt.setCarNum(carNum);
-                receipt.setFileName(jsonNode.get("fileName").asText());
-                receipt.setRegDt(regDt);
-                receipt.setUser(user);
-                receipt.setCode(lawDong.getCode());
-                receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+            // 2. 불법 주정차 시간 체크
+            String dateStr = regDtStr.split(" ")[0];
+            if (!illegalZone.getIllegalEvent().isUsedFirst()) {
+                LocalDateTime fs = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getFirstStartTime(), "yyyy-MM-dd HH:mm");
+                LocalDateTime fe = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getFirstEndTime(), "yyyy-MM-dd HH:mm");
+                if (fs.isBefore(regDt) && fe.isAfter(regDt)) {
+                    receipt = new Receipt();
+                    receipt.setAddr(addr);
+                    receipt.setCarNum(carNum);
+                    receipt.setFileName(jsonNode.get("fileName").asText());
+                    receipt.setRegDt(regDt);
+                    receipt.setUser(user);
+                    receipt.setCode(lawDong.getCode());
+                    receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
 
+                    receipt = receiptService.set(receipt);
+                    _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME.getMessage());
+                    throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME);
+                }
+            }
+
+            if (!illegalZone.getIllegalEvent().isUsedSecond()) {
+                LocalDateTime ss = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getSecondStartTime(), "yyyy-MM-dd HH:mm");
+                LocalDateTime se = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getSecondEndTime(), "yyyy-MM-dd HH:mm");
+
+                if (ss.isBefore(regDt) && se.isAfter(regDt)) {
+                    receipt = new Receipt();
+                    receipt.setAddr(addr);
+                    receipt.setCarNum(carNum);
+                    receipt.setFileName(jsonNode.get("fileName").asText());
+                    receipt.setRegDt(regDt);
+                    receipt.setUser(user);
+                    receipt.setCode(lawDong.getCode());
+                    receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+
+                    receipt = receiptService.set(receipt);
+                    _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME.getMessage());
+                    throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME);
+                }
+            }
+
+            // 3. 내가 신고를 최초 했느지 차량 여부 체크
+            if (reportService.isExist(carNum, illegalEvent.getIllegalType())) {
+                if ( receipt == null) {
+                    receipt = new Receipt();
+                    receipt.setAddr(addr);
+                    receipt.setCarNum(carNum);
+                    receipt.setRegDt(regDt);
+                    receipt.setUser(user);
+                    receipt.setCode(lawDong.getCode());
+                    receipt.setFileName(jsonNode.get("fileName").asText());
+                    receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+                } else {
+                    receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+                }
                 receipt = receiptService.set(receipt);
-                _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME.getMessage());
-                throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME);
+                _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM.getMessage());
+                throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM);
             }
+
+            // 4. 기존에 발생 여부 체크
+            if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode())) {
+                receipt.setReceiptStateType(ReceiptStateType.REPORT);
+                receipt = receiptService.set(receipt);
+
+                // 신고 접수
+                Report report = new Report();
+                report.setReceipt(receipt);
+                report.setReportStateType(ReportStateType.COMPLETE);
+                reportService.set(report);
+            } else {
+                receipt.setReceiptStateType(ReceiptStateType.OCCUR);
+                receipt = receiptService.set(receipt);
+            }
+
+            return receipt.getReceiptStateType().getValue() + "가(이) 등록 되었습니다.";
+        } catch (TeraException e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.valueOf(e.getCode()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
         }
-
-        // 3. 이미 신고된 차량 여부 체크
-        if (reportService.isExist(carNum)) {
-            receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
-            receipt = receiptService.set(receipt);
-            _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM.getMessage());
-            throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM);
-        }
-
-        // 4. 기존에 발생 여부 체크
-        if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode())) {
-            receipt.setReceiptStateType(ReceiptStateType.REPORT);
-            receipt = receiptService.set(receipt);
-
-            // 신고 접수
-            Report report = new Report();
-            report.setReceipt(receipt);
-            report.setReportStateType(ReportStateType.COMPLETE);
-            reportService.set(report);
-        } else {
-            receipt.setReceiptStateType(ReceiptStateType.OCCUR);
-            receipt = receiptService.set(receipt);
-        }
-
-        return receipt.getReceiptStateType().getValue() + "가(이) 등록 되었습니다.";
     }
 
-    /** 신고 이력 정보 가져오기 */
+    /**
+     * 신고 이력 정보 가져오기
+     */
     @PostMapping("/api/receipt/gets")
     @ResponseBody
     public Object getsReceipt(@RequestBody String body) throws TeraException {
