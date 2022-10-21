@@ -430,8 +430,8 @@ $(function () {
                 target: polygon,
                 event: 'click',
                 func: function (mouseEvent) {
-                    kakao.maps.event.preventMap();
                     // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
+                    kakao.maps.event.preventMap();
                     // let resultDiv = document.getElementById('result');
                     // resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
                     if(manager._mode === undefined || manager._mode === '') {
@@ -499,6 +499,15 @@ $(function () {
             }
         });
 
+        // 맵 클릭 이벤트 등록
+        setKakaoEvent({
+            target: drawingMap,
+            event: 'click',
+            func: function (mouseEvent) {
+                $('#areaSettingModal').offcanvas('hide');
+            }
+        });
+
         // 중심 좌표나 확대 수준이 변경되면 발생한다.
         setKakaoEvent({
             target: drawingMap,
@@ -557,10 +566,14 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-        getCurrentPosition(drawingMap);
+        getCurrentPosition();
     }
 
     initialize();
+
+    $.geoLocation = function(position){
+        drawingMap.panTo(position);
+    }
 
     $.setGroupNames = function (locationType) {
 

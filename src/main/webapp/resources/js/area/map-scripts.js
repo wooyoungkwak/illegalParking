@@ -50,17 +50,16 @@ $(function () {
         log('1 ::::::::::::::::', CENTER_LATITUDE);
         if(window.location.pathname.includes('api')){
             log(gpsLatitude, ':::::::::::', gpsLongitude);
-            // CENTER_LATITUDE = 35.01868444;
-            // CENTER_LONGITUDE = 126.78284599;
-        }
+            CENTER_LATITUDE = gpsLatitude;
+            CENTER_LONGITUDE = gpsLongitude;
 
-        log('2 ::::::::::::::::', CENTER_LONGITUDE);
-        log('2 ::::::::::::::::', CENTER_LATITUDE);
+
+            // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
+        }
+        log('2 2222::::::::::::::::', CENTER_LONGITUDE);
+        log('2 222::::::::::::::::', CENTER_LATITUDE);
 
         log(window.location.pathname);
-        let center = map.getCenter();
-        CENTER_LATITUDE = center.getLat();
-        CENTER_LONGITUDE = center.getLng();
 
         let mapType = $('.mapType');
 
@@ -362,7 +361,9 @@ $(function () {
                 pkPrice: data.parkingchrgeInfo === '유료' ? `기본 ${data.basicTime} 분 | ${data.addUnitTime} 분당 ${data.addUnitCharge}원 추가` : '',
                 pkOper: data.parkingchrgeInfo,
                 pkCount: data.prkcmprt,
-                pkPhone: data.phoneNumber
+                pkPhone: data.phoneNumber,
+                pkLat: data.latitude,
+                pkLng: data.longitude
             }
         } else if (type === 'pm') {
             dataObj = {
@@ -415,6 +416,7 @@ $(function () {
                     map.panTo(marker.getPosition());
                     // 커스텀 오버레이 컨텐츠를 설정합니다
                     let obj = markerInfo('parking', data);
+                    log(obj);
                     webToApp.postMessage(JSON.stringify(obj));
                 });
             });
@@ -438,17 +440,18 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-
         $('#debug').val(gpsLatitude + "," + gpsLongitude + " :: " + (typeof gpsLatitude));
 
-        if(isMobile) getMobileCurrentPosition(map);
-        else getCurrentPosition(map);
+        if(isMobile) getMobileCurrentPosition();
+        else getCurrentPosition();
+
     }
 
     initialize();
+
     $.setCurrentPosition = function (){
-        if(isMobile) getMobileCurrentPosition(map);
-        else getCurrentPosition(map);
+        if(isMobile) getMobileCurrentPosition();
+        else getCurrentPosition();
     }
 
     // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
@@ -459,6 +462,10 @@ $(function () {
 // 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
     $.zoomOut = function() {
         map.setLevel(map.getLevel() + 1);
+    }
+
+    $.geoLocation = function(position){
+        map.panTo(position);
     }
 
 });

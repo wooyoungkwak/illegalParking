@@ -196,50 +196,37 @@ async function coordinatesToDongCodeKakaoApi(x, y, stat){
 
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-function getCurrentPosition(map) {
-    let lat;
-    let lng;
-    // if(window.location.pathname.includes('api')){
-    //     log(gpsLatitude, ':::::::::::', gpsLongitude);
-    //
-    //     lat = gpsLatitude === 0 ? 33.450701 : gpsLatitude;
-    //     lng = gpsLongitude === 0 ? 126.570667 : gpsLongitude;
-    //     let currentPosition = new kakao.maps.LatLng(lat, lng);
-    //     //map.setCenter(currentPosition);
-    //     map.panTo(currentPosition);
-    // } else {
-        if (navigator.geolocation) {
-            // GPS를 지원하면
-            navigator.geolocation.getCurrentPosition(
-                async (position) => {
-                    // drawingMap.center = new kakao.maps.LatLng(`${position.coords.latitude}`, `${position.coords.longitude}`) // 지도의 중심좌표
-                    let currentLat = `${position.coords.latitude}`; // y
-                    let currentLng = `${position.coords.longitude}`; // x
-                    // 도 중심좌표를 접속위치로 변경합니다지
-                    let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
-                    //map.setCenter(currentPosition);
-                    log(currentPosition, typeof(currentLat));
-                    map.panTo(currentPosition);
-                },
-                (error) => {
-                    console.error(error);
-                },
-                {
-                    enableHighAccuracy: true, // 위치정보를 가장 높은 정확도로 수신 true, 기본 false, 응답이 느리고 전력소모량 증가
-                    maximumAge: 0,
-                    timeout: Infinity,
-                }
-            );
-        } else {
-            let position = new kakao.maps.LatLng(33.450701, 126.570667);
-            alert("위치 권한을 설정하시기 바랍니다.");
-            map.panTo(position);
-        }
-    // }
+function getCurrentPosition() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                let currentLat = `${position.coords.latitude}`; // y
+                let currentLng = `${position.coords.longitude}`; // x
+                // 지도 중심좌표를 접속위치로 변경합니다
+                let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
+                log(currentPosition, typeof(currentLat));
+                $.geoLocation(currentPosition);
+            },
+            (error) => {
+                console.error(error);
+            },
+            {
+                enableHighAccuracy: true, // 위치정보를 가장 높은 정확도로 수신 true, 기본 false, 응답이 느리고 전력소모량 증가
+                maximumAge: 0,
+                timeout: Infinity,
+            }
+        );
+    } else {
+        let position = new kakao.maps.LatLng(35.01868444, 126.78284599);
+        alert("위치 권한을 설정하시기 바랍니다.");
+        $.geoLocation(position);
+        // map.panTo(position);
+    }
+
 }
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-function getMobileCurrentPosition(map) {
+function getMobileCurrentPosition() {
     log(gpsLatitude, ':::::::::::', gpsLongitude);
 
     gpsLatitude = gpsLatitude === 0 ? '35.01868444' : gpsLatitude.toString();
@@ -249,7 +236,8 @@ function getMobileCurrentPosition(map) {
     log(gpsLatitude, typeof(gpsLatitude));
     log(  'getMobileCurrentPosition::::::::::::::::::',  gpsLatitude, gpsLongitude )
     //map.setCenter(currentPosition);
-    map.panTo(currentPosition);
+
+    $.geoLocation(currentPosition);
 }
 
 let uniqueCodesCheck = false;
@@ -271,8 +259,6 @@ async function getDongCodesBounds(map){
     // 동, 서, 남, 북 좌표
     // log(east, west, south, north);
     let center = map.getCenter();
-
-    log(center);
 
     let latLngs = [{x: east, y: north}, {x: west, y: north}, {x: east, y: south}, {x: west, y: south}, {x: center.getLng(), y: center.getLat()}]
     let codes = [];
