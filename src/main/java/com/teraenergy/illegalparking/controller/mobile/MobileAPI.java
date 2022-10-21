@@ -237,7 +237,7 @@ public class MobileAPI {
             HashMap<String, Object> resultMap = Maps.newHashMap();
 
             List<MyCar> myCars = myCarService.gets(userSeq);
-            if ( myCars != null) {
+            if ( myCars.size() > 0) {
                 resultMap.put("carNum", myCars.get(0).getCarNum());
                 resultMap.put("carLevel", myCars.get(0).getCarGrade());
                 resultMap.put("carName", myCars.get(0).getCarName());
@@ -262,8 +262,8 @@ public class MobileAPI {
                 noticeMap.add(map);
             }
 
-            resultMap.put("reportCount", receipts.size());
-            resultMap.put("currentPoint", calculate.getCurrentPointValue());
+            resultMap.put("reportCount", receipts == null ? 0 : receipts.size());
+            resultMap.put("currentPoint", calculate == null ? 0 : calculate.getCurrentPointValue());
             resultMap.put("notices", noticeMap);
 
             return resultMap;
@@ -423,7 +423,7 @@ public class MobileAPI {
                 } else {
                     map.put("regDt", StringUtil.convertDatetimeToString(receipt.getSecondRegDt(), timePattern));
                 }
-                map.put("stateType", receipt.getReceiptStateType());
+                map.put("stateType", receipt.getReceiptStateType().getValue());
                 map.put("fileName", receipt.getFileName());
                 resultMap.add(map);
             }
