@@ -571,10 +571,6 @@ $(function () {
 
     initialize();
 
-    $.geoLocation = function(position){
-        drawingMap.panTo(position);
-    }
-
     $.setGroupNames = function (locationType) {
 
         function getNamesSelectHtml(groups) {

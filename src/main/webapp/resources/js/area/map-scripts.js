@@ -442,30 +442,21 @@ $(function () {
         initializeKakao();
         $('#debug').val(gpsLatitude + "," + gpsLongitude + " :: " + (typeof gpsLatitude));
 
-        if(isMobile) getMobileCurrentPosition();
-        else getCurrentPosition();
-
+        if(isMobile) getMobileCurrentPosition(map);
+        else getCurrentPosition(map);
     }
 
     initialize();
 
-    $.setCurrentPosition = function (){
-        if(isMobile) getMobileCurrentPosition();
-        else getCurrentPosition();
-    }
-
-    // 지도 확대, 축소 컨트롤에서 확대 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
-    $.zoomIn = function() {
+    $('#btnFindMe').on('click', function() {
+        if(isMobile) getMobileCurrentPosition(map);
+        else getCurrentPosition(map);
+    });
+    $('#zoomIn').on('click', function() {
         map.setLevel(map.getLevel() - 1);
-    }
-
-// 지도 확대, 축소 컨트롤에서 축소 버튼을 누르면 호출되어 지도를 확대하는 함수입니다
-    $.zoomOut = function() {
+    });
+    $('#zoomOut').on('click', function() {
         map.setLevel(map.getLevel() + 1);
-    }
-
-    $.geoLocation = function(position){
-        map.panTo(position);
-    }
+    });
 
 });

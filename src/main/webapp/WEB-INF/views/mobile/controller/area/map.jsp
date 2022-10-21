@@ -53,15 +53,7 @@
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 		<script type="application/javascript">
 
-			$('#btnFindMe').on('click', function() {
-				$.setCurrentPosition();
-			});
-			$('#zoomIn').on('click', function() {
-				$.zoomIn();
-			});
-			$('#zoomOut').on('click', function() {
-				$.zoomOut();
-			});
+
             // INTERFACE : APP TO WEB
             function appToGps(x, y) {
             	$.gpsPoint(x, y);

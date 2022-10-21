@@ -196,16 +196,23 @@ async function coordinatesToDongCodeKakaoApi(x, y, stat){
 
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-function getCurrentPosition() {
+function getCurrentPosition(map) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-            (position) => {
+            async (position) => {
                 let currentLat = `${position.coords.latitude}`; // y
                 let currentLng = `${position.coords.longitude}`; // x
                 // 지도 중심좌표를 접속위치로 변경합니다
                 let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
                 log(currentPosition, typeof(currentLat));
-                $.geoLocation(currentPosition);
+
+                let marker = new kakao.maps.Marker({
+                    position: currentPosition, // 마커의 위치
+                    // image: markerImage
+                });
+
+                marker.setMap(map); // 지도 위에 마커를 표출합니다
+                map.panTo(currentPosition);
             },
             (error) => {
                 console.error(error);
@@ -219,25 +226,27 @@ function getCurrentPosition() {
     } else {
         let position = new kakao.maps.LatLng(35.01868444, 126.78284599);
         alert("위치 권한을 설정하시기 바랍니다.");
-        $.geoLocation(position);
-        // map.panTo(position);
+        map.panTo(position);
     }
-
 }
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-function getMobileCurrentPosition() {
+function getMobileCurrentPosition(map) {
     log(gpsLatitude, ':::::::::::', gpsLongitude);
 
     gpsLatitude = gpsLatitude === 0 ? '35.01868444' : gpsLatitude.toString();
     gpsLongitude = gpsLongitude === 0 ? '126.78284599' : gpsLongitude.toString();
 
-    let currentPosition = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
     log(gpsLatitude, typeof(gpsLatitude));
     log(  'getMobileCurrentPosition::::::::::::::::::',  gpsLatitude, gpsLongitude )
+    let gpsPosition = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
     //map.setCenter(currentPosition);
-
-    $.geoLocation(currentPosition);
+    let marker = new kakao.maps.Marker({
+        position: gpsPosition, // 마커의 위치
+        // image: markerImage
+    });
+    marker.setMap(map); // 지도 위에 마커를 표출합니다
+    map.panTo(gpsPosition);
 }
 
 let uniqueCodesCheck = false;
