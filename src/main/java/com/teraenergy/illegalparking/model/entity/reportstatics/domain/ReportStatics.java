@@ -15,7 +15,7 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@Entity
+@Entity (name = "report_statics")
 public class ReportStatics {
 
     @Id

@@ -40,7 +40,7 @@ public class ReportServiceImpl implements ReportService {
     private final ReportRepository reportRepository;
 
     @Override
-    public boolean isExist( String carNum, IllegalType illegalType) {
+    public boolean isExist(String carNum, IllegalType illegalType) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime startTime = null;
         switch (illegalType) {
@@ -62,6 +62,28 @@ public class ReportServiceImpl implements ReportService {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean isExistByReceipt(String carNum, LocalDateTime regDt, IllegalType illegalType) {
+        LocalDateTime startTime = null;
+        switch (illegalType) {
+            case ILLEGAL:
+                startTime = regDt.minusMinutes(11);
+                break;
+            case FIVE_MINUTE:
+                startTime = regDt.minusMinutes(16);
+                break;
+        }
+        LocalDateTime endTime = regDt;
+
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.receipt.carNum.eq(carNum));
+        query.where(QReport.report.receipt.secondRegDt.between(startTime, endTime));
+        if (query.fetch().size() > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -145,12 +167,10 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public int getSizeForExceptionAndPenaltyAndComplete(IllegalZone illegalZone) {
+    public int getSizeForPenalty(IllegalZone illegalZone) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.receipt.illegalZone.eq(illegalZone));
         query.where(QReport.report.reportStateType.eq(ReportStateType.PENALTY));
-        query.where(QReport.report.reportStateType.eq(ReportStateType.EXCEPTION));
-        query.where(QReport.report.reportStateType.eq(ReportStateType.COMPLETE));
         return query.fetch().size();
     }
 

@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.receipt.service;
 
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
@@ -25,6 +26,8 @@ public interface ReceiptService {
 
     boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code);
 
+    boolean isExistByIllegalType(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType);
+
     List<Receipt> gets();
 
     List<Receipt> gets(Integer userSeq);
@@ -33,7 +36,7 @@ public interface ReceiptService {
 
     int getsOverlabCount(Integer user, LocalDateTime regDt);
 
-    List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType);
+    List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType, IllegalType illegalType);
 
     Page<Receipt> gets(int pageNumber, int pageSize, ReceiptStateType receiptStateType, ReceiptFilterColumn filterColumn, String search);
 

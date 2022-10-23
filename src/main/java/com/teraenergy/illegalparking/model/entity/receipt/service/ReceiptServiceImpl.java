@@ -3,6 +3,7 @@ package com.teraenergy.illegalparking.model.entity.receipt.service;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.QReceipt;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
@@ -49,9 +50,36 @@ public class ReceiptServiceImpl implements ReceiptService {
         if (query.fetch().size() > 0) {
             return true;
         }
-
         return false;
+    }
 
+    @Override
+    public boolean isExistByIllegalType(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType) {
+
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
+        query.where(QReceipt.receipt.carNum.eq(carNum));
+        query.where(QReceipt.receipt.illegalZone.code.eq(code));
+
+        LocalDateTime startTime = null;
+        LocalDateTime endTime = null;
+        switch (illegalType) {
+            case ILLEGAL:
+                startTime = regDt.minusMinutes(1);
+                endTime = regDt;
+                query.where(QReceipt.receipt.regDt.between(startTime, endTime));
+                break;
+            case FIVE_MINUTE:
+                startTime = regDt.minusMinutes(5);
+                endTime = regDt;
+                query.where(QReceipt.receipt.regDt.between(startTime, endTime));
+                break;
+        }
+
+        if (query.fetch().size() > 0) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -86,11 +114,13 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
     @Override
-    public List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType) {
+    public List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType, IllegalType illegalType) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.regDt.between(now, old));
         query.where(QReceipt.receipt.isDel.isFalse());
         query.where(QReceipt.receipt.receiptStateType.eq(receiptStateType));
+        query.where(QReceipt.receipt.illegalZone.illegalEvent.illegalType.eq(illegalType));
+
         return query.fetch();
     }
 

@@ -1,6 +1,10 @@
 package com.teraenergy.illegalparking.scheduler;
 
 import com.google.common.collect.Maps;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
+import com.teraenergy.illegalparking.model.entity.comment.domain.Comment;
+import com.teraenergy.illegalparking.model.entity.comment.service.CommentService;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
@@ -74,7 +78,10 @@ public class reportScheduler {
 
     private final ReportStaticsService reportStaticsService;
 
+    private final CommentService commentService;
+
     /**
+     * 1분만다 한번씩 실행
      * OCCUR(신고발생) -> FORGET(신고누락)
      * 11분 전 부터 1시간 11분 전까지의 신고 발생 후 누락이 된 경우 모두 업데이트
      */
@@ -84,15 +91,35 @@ public class reportScheduler {
         LocalDateTime now = LocalDateTime.now();        // 현재 시간
         LocalDateTime startTaskTime = now;
 
-        LocalDateTime startTime = now.minusMinutes(11);   // 11분 전 시간
-        LocalDateTime endTime = startTime.minusMinutes(60);   // 11분 전의 60분전 시간
-        List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR);
+        LocalDateTime startTimeByIllegal = now.minusMinutes(60);   // 11분 전의 60분전 시간
+        LocalDateTime endTimeByIllegal = startTimeByIllegal.minusMinutes(11);   // 11분 전 시간
+        List<Receipt> receiptsByIllegal = receiptService.gets(startTimeByIllegal, endTimeByIllegal, ReceiptStateType.OCCUR, IllegalType.ILLEGAL);
+
+        LocalDateTime startTimeByFiveMinute = now.minusMinutes(60);   // 16분 전 시간
+        LocalDateTime endTimeByFiveMinute = startTimeByIllegal.minusMinutes(16);   // 11분 전의 60분전 시간
+        List<Receipt> receiptsByFiveMinute = receiptService.gets(startTimeByIllegal, endTimeByIllegal, ReceiptStateType.OCCUR, IllegalType.FIVE_MINUTE);
+
+        List<Receipt> receipts = Lists.newArrayList();
+        for(Receipt receipt : receiptsByIllegal) {
+            receipts.add(receipt);
+        }
+
+        for (Receipt receipt : receiptsByFiveMinute) {
+            receipts.add(receipt);
+        }
 
         if ( receipts.size() > 0) {
+            List<Comment> comments = Lists.newArrayList();
+
             for (Receipt receipt : receipts) {
                 receipt.setReceiptStateType(ReceiptStateType.FORGET);
+                Comment comment = new Comment();
+                comment.setReceiptSeq(receipt.getReceiptSeq());
+                comment.setContent(TeraExceptionCode.REPORT_NOT_ADD_FINISH.getMessage());
+                comments.add(comment);
             }
             receiptService.sets(receipts);
+            commentService.sets(comments);
         }
 
         LocalDateTime endTaskTime = LocalDateTime.now();
@@ -100,7 +127,8 @@ public class reportScheduler {
     }
 
     /**
-     *  1시간 마다 통계 자료 생성
+     *  1시간 마다 한번식 실행
+     *  1시간 단위 통계 자료 생성
      */
     @Scheduled(cron = "0 0 0/1 * * *")
     public void updateStatics() {
@@ -131,10 +159,10 @@ public class reportScheduler {
                 reportStatics = new ReportStatics();
                 reportStatics.setZoneSeq(illegalZone.getZoneSeq());
                 reportStatics.setCode(illegalZone.getCode());
-                reportStatics.setReceiptCount(reportService.getSizeForExceptionAndPenaltyAndComplete(illegalZone));
+                reportStatics.setReceiptCount(reportService.getSizeForPenalty(illegalZone));
                 newReportStaticsList.add(reportStatics);
             } else {
-                reportStatics.setReceiptCount(reportService.getSizeForExceptionAndPenaltyAndComplete(illegalZone));
+                reportStatics.setReceiptCount(reportService.getSizeForPenalty(illegalZone));
                 oldReportStaticsList.add(reportStatics);
             }
         }

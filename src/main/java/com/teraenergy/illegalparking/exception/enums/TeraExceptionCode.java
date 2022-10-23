@@ -19,6 +19,11 @@ public enum TeraExceptionCode implements TeraErrCode {
      */
 
     UNKNOWN("알 수 없는 오류"),
+    REPORT_OCCUR_ONE("1분 이후 접수가 필요합니다."),
+    REPORT_OCCUR_FIVE("5분 이후 접수가 필요합니다."),
+
+    REPORT_EXIST("동일 차량번호 불법주정차 신고 접수가 타인에 의해 먼저 접수되었습니다."),
+    REPORT_NOT_ADD_FINISH("추가 신고가 없어 종료가 되었습니다."),
 
     CAR_ALARM_HISTORY_GET_FAIL("내차 신고 이력 정보 가져오기를 실패 하였습니다."),
     CAR_SET_FAIL("내차 등록이 실패 하였습니다."),

@@ -2,10 +2,13 @@ package com.teraenergy.illegalparking.jpa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.ApplicationTests;
 import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
 import com.teraenergy.illegalparking.model.entity.illegalEvent.domain.IllegalEvent;
+import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.point.service.PointService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
@@ -18,6 +21,8 @@ import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
+import com.teraenergy.illegalparking.model.entity.reportstatics.domain.ReportStatics;
+import com.teraenergy.illegalparking.model.entity.reportstatics.service.ReportStaticsService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import org.apache.commons.compress.utils.Lists;
@@ -30,6 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -43,7 +49,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlReport {
 
     @Autowired
@@ -73,6 +79,9 @@ public class SqlReport {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private ReportStaticsService reportStaticsService;
+
 
     @Test
     public void insert(){
@@ -100,6 +109,48 @@ public class SqlReport {
         reports.add(report1);
 
         reportService.sets(reports);
+    }
+
+    @Test
+    public void updateReciptByILLEGAL(){
+        LocalDateTime now = LocalDateTime.now();        // 현재 시간
+        LocalDateTime startTime = now.minusDays(30);   // 11분 전 시간
+        LocalDateTime endTime = now.minusMinutes(11);
+
+        List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR, IllegalType.ILLEGAL);
+        List<Comment> comments = Lists.newArrayList();
+
+        for (Receipt receipt : receipts) {
+            receipt.setReceiptStateType(ReceiptStateType.FORGET);
+            Comment comment = new Comment();
+            comment.setReceiptSeq(receipt.getReceiptSeq());
+            comment.setContent(TeraExceptionCode.REPORT_NOT_ADD_FINISH.getMessage());
+            comments.add(comment);
+        }
+
+        receiptService.sets(receipts);
+        commentService.sets(comments);
+    }
+
+    @Test
+    public void updateReciptByFIVE_MINUTE(){
+        LocalDateTime now = LocalDateTime.now();        // 현재 시간
+        LocalDateTime startTime = now.minusDays(30);   // 11분 전 시간
+        LocalDateTime endTime = now.minusMinutes(16);
+
+        List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR, IllegalType.FIVE_MINUTE);
+        List<Comment> comments = Lists.newArrayList();
+
+        for (Receipt receipt : receipts) {
+            receipt.setReceiptStateType(ReceiptStateType.FORGET);
+            Comment comment = new Comment();
+            comment.setReceiptSeq(receipt.getReceiptSeq());
+            comment.setContent(TeraExceptionCode.REPORT_NOT_ADD_FINISH.getMessage());
+            comments.add(comment);
+        }
+
+        receiptService.sets(receipts);
+        commentService.sets(comments);
     }
 
     @Test
@@ -225,4 +276,52 @@ public class SqlReport {
         }
     }
 
+
+    @Test
+    public void insertByReportstatics(){
+
+        // 1. 기존 통계 자료 가져오기
+        List<ReportStatics> reportStaticsList = reportStaticsService.gets();
+
+        // 2. 기존 통계 자료를 Map 으로 변환
+        HashMap<Integer, ReportStatics> reportStaticsMap = Maps.newHashMap();
+
+        for (ReportStatics reportStatics : reportStaticsList) {
+            reportStaticsMap.put(reportStatics.getZoneSeq(), reportStatics);
+        }
+
+        // 3. 불법 주정차 구역
+        List<IllegalZone> illegalZones = illegalZoneService.gets();
+
+        // 새로운 통계 자료
+        List<ReportStatics> newReportStaticsList = Lists.newArrayList();
+        // 기존 통계 자료
+        List<ReportStatics> oldReportStaticsList = Lists.newArrayList();
+
+        for (IllegalZone illegalZone : illegalZones) {
+            ReportStatics reportStatics = reportStaticsMap.get(illegalZone.getZoneSeq());
+            if ( reportStatics == null) {
+                reportStatics = new ReportStatics();
+                reportStatics.setZoneSeq(illegalZone.getZoneSeq());
+                reportStatics.setCode(illegalZone.getCode());
+                reportStatics.setReceiptCount(reportService.getSizeForPenalty(illegalZone));
+                newReportStaticsList.add(reportStatics);
+            } else {
+                reportStatics.setReceiptCount(reportService.getSizeForPenalty(illegalZone));
+                oldReportStaticsList.add(reportStatics);
+            }
+        }
+
+        reportStaticsService.sets(newReportStaticsList);
+        reportStaticsService.sets(oldReportStaticsList);
+
+    }
+
+
+    @Test
+    public void test(){
+        IllegalZone illegalZone = illegalZoneService.get(4);
+        int count = reportService.getSizeForPenalty(illegalZone);
+        System.out.println(count);
+    }
 }

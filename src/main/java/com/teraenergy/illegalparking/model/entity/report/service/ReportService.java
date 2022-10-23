@@ -8,6 +8,7 @@ import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColum
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ public interface ReportService {
 
 
     boolean isExist(String carNum, IllegalType illegalType);
+
+    boolean isExistByReceipt(String carNum, LocalDateTime regDt, IllegalType illegalType);
 
     Report get(Integer reportSeq);
 
@@ -35,7 +38,7 @@ public interface ReportService {
 
     int getSizeForCOMPLETE(List<IllegalZone> illegalZones);
 
-    int getSizeForExceptionAndPenaltyAndComplete(IllegalZone illegalZone);
+    int getSizeForPenalty(IllegalZone illegalZone);
 
     Report set(Report report);
 

@@ -26,6 +26,16 @@ public class MyCarServiceImpl implements MyCarService{
 
     private final MyCarRepository myCarRepository;
 
+
+    @Override
+    public MyCar getByAlarm(Integer userSeq, String carNum) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
+        query.where(QMyCar.myCar.userSeq.eq(userSeq));
+        query.where(QMyCar.myCar.carNum.eq(carNum));
+        query.where(QMyCar.myCar.isAlarm.isTrue());
+        return (MyCar) query.fetchFirst();
+    }
+
     @Override
     public MyCar get(Integer userSeq, String carNum) {
         JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
