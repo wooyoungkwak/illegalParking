@@ -31,17 +31,17 @@
                                 </div>
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" id="inputRememberPassword" type="checkbox" value=""/>
-                                    <label class="form-check-label" for="inputRememberPassword">패스워드 기억</label>
+                                    <label class="form-check-label" for="inputRememberPassword">아이디 저장</label>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                    <a class="small" href="password">패스워드 분실?</a>
+                                    <a class="small" href="password"></a>
                                     <a class="btn btn-primary" id="BtnLogin">로그인</a>
                                 </div>
                             </form>
 
                         </div>
                         <div class="card-footer text-center py-3">
-                            <div class="small"><a href="register"> 계정의 없다면 회원 가입하세요!</a></div>
+                            <div class="small">문의 : 061-930-7071</div>
                         </div>
                     </div>
                 </div>

@@ -8,7 +8,6 @@ import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.receipt.repository.ReceiptRepository;
-import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;

@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -515,7 +514,6 @@ public class MobileAPI {
     /**
      * 신고 접수
      */
-    @Transactional
     @PostMapping("/api/receipt/set")
     @ResponseBody
     public Object setReceipt(@RequestBody String body) throws TeraException {
