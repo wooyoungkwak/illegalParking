@@ -59,6 +59,16 @@ public class MyCarServiceImpl implements MyCarService{
     }
 
     @Override
+    public boolean isExist(String carNum) {
+        JPAQuery jpaQuery = jpaQueryFactory.selectFrom(QMyCar.myCar);
+        jpaQuery.where(QMyCar.myCar.carNum.eq(carNum));
+        if ( jpaQuery.fetch().size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public MyCar set(MyCar myCar) {
         return myCarRepository.save(myCar);
     }

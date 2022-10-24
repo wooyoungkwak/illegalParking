@@ -26,6 +26,7 @@ public enum TeraExceptionCode implements TeraErrCode {
     REPORT_NOT_ADD_FINISH("추가 신고가 없어 종료가 되었습니다."),
 
     CAR_ALARM_HISTORY_GET_FAIL("내차 신고 이력 정보 가져오기를 실패 하였습니다."),
+    CAR_EXIST("이미지 존재하는 차량번호입니다."),
     CAR_SET_FAIL("내차 등록이 실패 하였습니다."),
     CAST_FAILURE("cast 를 실패 하였습니다."),
 

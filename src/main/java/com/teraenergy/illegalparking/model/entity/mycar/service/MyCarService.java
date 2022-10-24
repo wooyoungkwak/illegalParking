@@ -19,6 +19,8 @@ public interface MyCarService {
 
     List<MyCar> gets(Integer userSeq);
 
+    boolean isExist(String carNum);
+
     MyCar set(MyCar myCar);
 
     MyCar modify(MyCar myCar);

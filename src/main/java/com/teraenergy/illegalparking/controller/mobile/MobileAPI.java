@@ -485,9 +485,16 @@ public class MobileAPI {
             mycar.setCarNum(carNum);
             mycar.setCarGrade(carGrade);
 
+            if (myCarService.isExist(carNum)) {
+                throw new TeraException(TeraExceptionCode.CAR_EXIST);
+            }
+
             mycar = myCarService.set(mycar);
 
             return "complete ... ";
+        }catch (TeraException e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.valueOf(e.getCode()));
         } catch (Exception e) {
             e.printStackTrace();
             throw new TeraException(TeraExceptionCode.CAR_SET_FAIL);
