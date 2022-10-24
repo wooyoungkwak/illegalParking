@@ -143,6 +143,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isUserByDuplicate(String userName) throws TeraException {
+        try {
+            if (jpaQueryFactory.selectFrom(QUser.user)
+                    .where(QUser.user.username.eq(userName))
+                    .where(QUser.user.role.eq(Role.USER))
+                    .fetch().size() > 0) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST, e);
+        }
+    }
+
+    @Override
     public User set(User user) throws TeraException {
         try {
             user.setEncyptPassword();

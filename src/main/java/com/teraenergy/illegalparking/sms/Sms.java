@@ -34,14 +34,19 @@ import java.util.List;
 public class Sms {
 
     // 문자 전송
-    static public void sendSMS(String phoneNumber, String messgae) throws TeraException {
+    static public void sendSMS(String phoneNumber, String content) throws TeraException {
         String hostNameUrl = "https://sens.apigw.ntruss.com";            // 호스트 URL
         String requestUrl = "/sms/v2/services/";                         // 요청 URL
         String requestUrlType = "/messages";                             // 요청 URL
 
-        String accessKey = "4VqjVzPCbUUnTO9nDy92";                       // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키			// Access Key : https://www.ncloud.com/mypage/manage/info > 인증키 관리 > Access Key ID
-        String secretKey = "6Pm4jOKBTTtAYDR3rWQhdSnwXFzk6xxuNx7JJYWJ";   // 2차 인증을 위해 서비스마다 할당되는 service secret key	// Service Key : https://www.ncloud.com/mypage/manage/info > 인증키 관리 > Access Key ID
-        String serviceId = "ncp:sms:kr:294175196378:sms_auth_test";        // 프로젝트에 할당된 SMS 서비스 ID							// service ID : https://console.ncloud.com/sens/project > Simple & ... > Project > 서비스 ID
+        String accessKey = "Z5cIzHss1rH6qzBzZDEi";                          // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키			// Access Key : https://www.ncloud.com/mypage/manage/info > 인증키 관리 > Access Key ID
+        String secretKey = "AB4tsaR7TtnFkgCUxC31LeTo6onaI3e0npRNSLc5";      // 2차 인증을 위해 서비스마다 할당되는 service secret key	// Service Key : https://www.ncloud.com/mypage/manage/info > 인증키 관리 > Access Key ID
+        String serviceId = "ncp:sms:kr:283490566916:illegalparking_app";    // 프로젝트에 할당된 SMS 서비스 ID							// service ID : https://console.ncloud.com/sens/project > Simple & ... > Project > 서비스 ID
+
+        // 박성수 주임 - 키
+//        String accessKey = "4VqjVzPCbUUnTO9nDy92";                       // 네이버 클라우드 플랫폼 회원에게 발급되는 개인 인증키			// Access Key : https://www.ncloud.com/mypage/manage/info > 인증키 관리 > Access Key ID
+//        String secretKey = "6Pm4jOKBTTtAYDR3rWQhdSnwXFzk6xxuNx7JJYWJ";   // 2차 인증을 위해 서비스마다 할당되는 service secret key	// Service Key : https://www.ncloud.com/mypage/manage/info > 인증키 관리 > Access Key ID
+//        String serviceId = "ncp:sms:kr:294175196378:sms_auth_test";        // 프로젝트에 할당된 SMS 서비스 ID							// service ID : https://console.ncloud.com/sens/project > Simple & ... > Project > 서비스 ID
 
         String method = "POST";                                          // 요청 method
         String timestamp = Long.toString(System.currentTimeMillis());    // current timestamp (epoch)
@@ -55,9 +60,9 @@ public class Sms {
 
         HashMap<String, Object> toMessage = Maps.newHashMap();
         toMessage.put("subject","111");							 // Optional, messages.subject	개별 메시지 제목, LMS, MMS에서만 사용 가능
-//        toMessage.put("to", phoneNumber);                      // Mandatory(필수), messages.to	수신번호, -를 제외한 숫자만 입력 가능
-        toMessage.put("to", "01031615156");                      // Mandatory(필수), messages.to	수신번호, -를 제외한 숫자만 입력 가능
-        toMessage.put("content",messgae);	                     // Optional, messages.content	개별 메시지 내용, SMS: 최대 80byte, LMS, MMS: 최대 2000byte
+        toMessage.put("to", phoneNumber);                      // Mandatory(필수), messages.to	수신번호, -를 제외한 숫자만 입력 가능
+//        toMessage.put("to", "01031615156");                      // Mandatory(필수), messages.to	수신번호, -를 제외한 숫자만 입력 가능
+        toMessage.put("content",content);	                     // Optional, messages.content	개별 메시지 내용, SMS: 최대 80byte, LMS, MMS: 최대 2000byte
 
         toMessages.add(toMessage);
 
@@ -66,8 +71,8 @@ public class Sms {
         bodyMap.put("countryCode","82");					 // Optional, 국가 전화번호, (default: 82)
         bodyMap.put("from", "01079297878");                  // Mandatory, 발신번호, 사전 등록된 발신번호만 사용 가능
         bodyMap.put("subject","222");						 // Optional, 기본 메시지 제목, LMS, MMS에서만 사용 가능
-        bodyMap.put("content", "sms test in spring 222");    // Mandatory(필수), 기본 메시지 내용, SMS: 최대 80byte, LMS, MMS: 최대 2000byte
-        bodyMap.put("messages", toMessages);                      // Mandatory(필수), 아래 항목들 참조 (messages.XXX), 최대 1,000개
+        bodyMap.put("content", "불법주정차 신고 알림.");    // Mandatory(필수), 기본 메시지 내용, SMS: 최대 80byte, LMS, MMS: 최대 2000byte
+        bodyMap.put("messages", toMessages);                 // Mandatory(필수), 아래 항목들 참조 (messages.XXX), 최대 1,000개
 
         JsonNode bodyJson = JsonUtil.toJsonNode(bodyMap);
         String body = bodyJson.toString();

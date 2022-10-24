@@ -20,6 +20,7 @@ import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import com.teraenergy.illegalparking.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
@@ -168,9 +169,9 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         reportDetailDto.setReportSeq(report.getReportSeq());
         reportDetailDto.setReportStateType(report.getReportStateType());    // 신고기관
         reportDetailDto.setOverlapCount(0);                                 // TODO : 중복 횟수
-        reportDetailDto.setRegDt(report.getRegDt());                        // 접수시간
 
         Receipt receipt = report.getReceipt();
+        reportDetailDto.setRegDt(receipt.getSecondRegDt());     // 접수시간 ( 접수시간 : 두번째 신고가 발생 시간 )
         reportDetailDto.setCarNum(receipt.getCarNum());         // 차량번호
         reportDetailDto.setAddr(receipt.getAddr());             // 위치
         reportDetailDto.setName(receipt.getUser().getName());   // 신고자
@@ -179,7 +180,29 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             User governmentUser = userService.get(report.getReportUserSeq());
             reportDetailDto.setGovernmentOfficeName(governmentUser.getGovernMentOffice().getName());
         }
-        reportDetailDto.setNote(report.getNote());                          // 내용
+
+        // 내용
+        String note = "";
+        switch (report.getReportStateType()) {
+            case EXCEPTION:
+                note += report.getNote();
+                note += StringUtil.convertDatetimeToString(report.getRegDt(), "yyyy-MM-dd HH:mm");
+                note += "에 '신고 제외' 처리되었습니다. <br>";
+                note += "신고제외 되었습니다.";
+                reportDetailDto.setNote(note);                          // 내용
+                break;
+            case PENALTY:
+                note += report.getNote();
+                note += StringUtil.convertDatetimeToString(report.getRegDt(), "yyyy-MM-dd HH:mm");
+                note += "에 '과태료 대상' 처리되었습니다. <br>";
+                note += "주차하신 위치는 불법주정차 집중단속구역입니다. <br>";
+                note += "과태로 대상입니다.";
+                reportDetailDto.setNote(note);                          // 내용
+                break;
+        }
+
+
+
 
         List<Integer> receiptSeqs = Lists.newArrayList();
 

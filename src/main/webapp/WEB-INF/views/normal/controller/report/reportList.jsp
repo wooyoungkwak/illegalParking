@@ -33,9 +33,9 @@
 	<stripes:layout-component name="contents">
 		<main id="reportMain">
 			<div class="container-fluid px-4">
-				<h1 class="mt-4">신고목록</h1>
+				<h1 class="mt-4">접수목록</h1>
 				<ol class="breadcrumb mb-4">
-					<li class="breadcrumb-item active">${subTitle} > 신고목록</li>
+					<li class="breadcrumb-item active">${subTitle} > 접수목록</li>
 				</ol>
 				<div class="card mb-4 shadow-sm rounded">
 					<div class="card-header">
@@ -189,7 +189,6 @@
 
                 // 신고 접수 설정 초기화 함수
                 function initializeReportSetTag(report) {
-                    log(report);
                     $.each(report, function (key, value) {
                         if (key.indexOf('reportStateType') > -1) {
                             setReceiptStateType(key, value);
@@ -204,7 +203,15 @@
                             if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
                             else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
                         } else if (key === 'note') {
-                            $('#' + key).val(value === null ? "" : value);
+                            if (report.governmentOfficeName === null) {
+                                $('#' + key).val("");
+                                $('#' + key).show();
+                                $('#' + key + 'View').hide();
+							} else {
+                                $('#' + key).hide();
+                                $('#' + key + 'View').html(value);
+                                $('#' + key + 'View').show();
+							}
                         } else if (key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt') {
                             $('#' + key).text(value.replace('T', ' '));
                         } else if (key === 'reportSeq') {
@@ -218,11 +225,16 @@
                                 $('#note').attr("disabled", true);
                             }
                             $('#setResultType').val(value);
+                        } else if ( key === 'comments') {
+                            let html ='';
+                            for( let i=0; i<value.length; i++) {
+                                html += '<i class="far	fa-hand-point-right"></i>' + value[i] + '<br>';
+							}
+                            $('#' + key).html(html);
                         } else {
                             $('#' + key).text(value);
                         }
                     });
-
                 }
 
                 // 신고 접수 설정 타이틀 설정 함수

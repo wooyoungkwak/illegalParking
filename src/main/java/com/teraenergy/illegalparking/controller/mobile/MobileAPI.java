@@ -136,11 +136,19 @@ public class MobileAPI {
         user.setPhotoName(photoName);
 
         try {
-            userService.set(user);
+            if (!userService.isUserByDuplicate(user.getUsername())) {
+                userService.set(user);
+            } else {
+                throw new TeraException(TeraExceptionCode.USER_IS_EXIST);
+            }
             return "";
         } catch (TeraException e) {
             e.printStackTrace();
-            throw new TeraException(TeraExceptionCode.USER_FAIL_RESiSTER);
+            if (e.getCode() == TeraExceptionCode.USER_IS_EXIST.getCode()) {
+                throw new TeraException(TeraExceptionCode.USER_IS_EXIST);
+            } else {
+                throw new TeraException(TeraExceptionCode.USER_FAIL_RESiSTER);
+            }
         }
     }
 
@@ -154,10 +162,10 @@ public class MobileAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         String userName = jsonNode.get("userName").asText();
 
-        HashMap<String, Object> resultMap = Maps.newHashMap();
+              HashMap<String, Object> resultMap = Maps.newHashMap();
 
         try {
-            if (userService.isUser(userName)) {
+            if (userService.isUserByDuplicate(userName)) {
                 resultMap.put("isExist", true);
                 resultMap.put("msg", TeraExceptionCode.USER_IS_NOT_EXIST.getMessage());
             } else {

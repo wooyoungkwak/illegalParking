@@ -65,7 +65,7 @@ CREATE TABLE report
     ReportSeq       INT AUTO_INCREMENT PRIMARY KEY,
     ReceiptSeq      INT         NOT NULL,               -- 1차 신고 등록
     ReportUserSeq   INT NULL,                           -- 사용자 ( 기관 사용자 - ROLE(GOVERNMENT))
-    RegDt           Datetime    NOT NULL,               -- 신고 접수 일자
+    RegDt           Datetime    NULL,               -- 신고 처리 시간
     ReportStateType VARCHAR(10) NOT NULL,               -- 신고 접수 등록 여부 ( 정부 기관 사람 - 신고접수(1) / 신고제외(2) / 과태료대상(3) )
     Note            VARCHAR(100) NULL,                  -- 결과 내용 ( 기관 사용자의 신고 결과내용)
     IsDel           BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부

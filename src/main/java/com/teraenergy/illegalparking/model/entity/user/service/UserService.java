@@ -27,6 +27,8 @@ public interface UserService {
 
     boolean isUser(String userName) throws TeraException;
 
+    boolean isUserByDuplicate(String userName) throws TeraException;
+
     User set(User user) throws TeraException;
 
     List<User> sets(List<User> users) throws TeraException;

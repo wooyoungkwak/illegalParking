@@ -98,6 +98,8 @@
                        $(this).hide();
                    }
                 });
+
+                $('#side_receiptList').hide();
             }
 
         });

@@ -59,17 +59,7 @@ public class ReportAPI {
     private final ReportDtoService reportDtoService;
     private final CommentService commentService;
 
-    // 신고 접수 정보 가져오기
-    @PostMapping("/report/get")
-    @ResponseBody
-    public Object getReport(@RequestBody String body) throws TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        Integer reportSeq = jsonNode.get("reportSeq").asInt();
-        return reportDtoService.getFromReportDetailDto(reportSeq);
-    }
-
     // 신고 접수 정보 등록
-    @Transactional
     @PostMapping("/report/report/set")
     @ResponseBody
     public Object setReport(@RequestBody String body) throws TeraException {
@@ -184,6 +174,15 @@ public class ReportAPI {
             e.printStackTrace();
             throw new TeraException(TeraExceptionCode.REPORT_REGISTER_FAIL);
         }
+    }
+
+    // 신고 접수 정보 가져오기
+    @PostMapping("/report/get")
+    @ResponseBody
+    public Object getReport(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        Integer reportSeq = jsonNode.get("reportSeq").asInt();
+        return reportDtoService.getFromReportDetailDto(reportSeq);
     }
 
     // 신고 등록 정보 가져오기

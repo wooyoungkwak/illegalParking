@@ -27,20 +27,20 @@ public class Report {
 
     @OneToOne (optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ReceiptSeq")
-    Receipt receipt;
+    Receipt receipt;                                            // 신고 접수건 ( 1차 / 2차 )
 
     @Column
-    Integer reportUserSeq;
+    Integer reportUserSeq;                                      // 신고 처리자
 
-    @Column (nullable = false)
-    LocalDateTime regDt = LocalDateTime.now();
+    @Column
+    LocalDateTime regDt = LocalDateTime.now();                  // 신고 처리 등록 시간
 
     @Column
     @Enumerated (EnumType.STRING)
-    ReportStateType reportStateType;
+    ReportStateType reportStateType;                            // 신고 처리 상태
 
     @Column
-    String note;
+    String note;                                                // 신고 처리 내용
 
     @Column (nullable = false)
     Boolean isDel = false;
