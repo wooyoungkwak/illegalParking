@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.controller.calculate;
 
+import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.controller.ExtendsController;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
@@ -10,9 +11,12 @@ import com.teraenergy.illegalparking.model.entity.product.enums.ProductFilterCol
 import com.teraenergy.illegalparking.model.entity.product.enums.ProductOrderColumn;
 import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
 import com.teraenergy.illegalparking.model.entity.product.service.ProductService;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import com.teraenergy.illegalparking.util.CHashMap;
 import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -22,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Date : 2022-09-14
@@ -38,6 +44,8 @@ public class CalculateController extends ExtendsController {
     private final CalculateService calculateService;
 
     private final ProductService productService;
+
+    private final UserService userService;
 
     private String subTitle = "결재";
 
@@ -58,14 +66,6 @@ public class CalculateController extends ExtendsController {
             model.addAttribute("pageNumber", pageNumber);
         }
 
-        String orderColumnStr = parameterMap.getAsString("orderColumn");
-        CalculateOrderColumn orderColumn;
-        if (orderColumnStr == null) {
-            orderColumn = CalculateOrderColumn.calculateSeq;
-        } else {
-            orderColumn = CalculateOrderColumn.valueOf(orderColumnStr);
-        }
-
         String filterColumnStr = parameterMap.getAsString("filterColumn");
         CalculateFilterColumn filterColumn;
         if (filterColumnStr == null) {
@@ -79,21 +79,31 @@ public class CalculateController extends ExtendsController {
             searchStr = "";
         }
 
-        String orderDirectionStr = parameterMap.getAsString("orderDirection");
-        Sort.Direction direction;
-        if (orderDirectionStr == null) {
-            direction = Sort.Direction.ASC;
-        } else {
-            direction = Sort.Direction.valueOf(orderDirectionStr);
-        }
-
-
         Integer pageSize = parameterMap.getAsInt("pageSize");
         if (pageSize == null) {
             pageSize = 10;
         }
 
-        Page<Calculate> pages = calculateService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
+        Page<Calculate> pages = calculateService.gets(pageNumber, pageSize, filterColumn, searchStr);
+
+        List<HashMap<String, Object>> calculates = Lists.newArrayList();
+
+        for(Calculate calculate : pages.getContent()) {
+            HashMap<String, Object> map = Maps.newHashMap();
+
+            User user = userService.get(calculate.getUserSeq());
+
+            map.put("calculateSeq", calculate.getCalculateSeq());
+            map.put("userName", user.getName());
+            map.put("currentPointValue", calculate.getCurrentPointValue());
+            map.put("eventPointValue", calculate.getEventPointValue());
+            map.put("locationType", calculate.getLocationType());
+            map.put("pointType", calculate.getPointType());
+            map.put("productName", calculate.getProductName());
+            map.put("regDt", calculate.getRegDt());
+
+            calculates.add(map);
+        }
 
         boolean isBeginOver = false;
         boolean isEndOver = false;
@@ -112,7 +122,7 @@ public class CalculateController extends ExtendsController {
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);
         model.addAttribute("totalPages", totalPages);
-        model.addAttribute("calculates", pages.getContent());
+        model.addAttribute("calculates", calculates);
         model.addAttribute("subTitle", subTitle);
         return getPath("/calculateList");
     }

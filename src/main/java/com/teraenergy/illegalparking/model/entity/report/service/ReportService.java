@@ -1,5 +1,6 @@
 package com.teraenergy.illegalparking.model.entity.report.service;
 
+import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
@@ -43,6 +44,8 @@ public interface ReportService {
     Report set(Report report);
 
     List<Report> sets(List<Report> reports);
+
+    Report modifyByGovernmentOffice(Integer reportSeq, Integer userSeq, ReportStateType reportStateType, String note) throws TeraException;
 
     Report modify(Report report);
 

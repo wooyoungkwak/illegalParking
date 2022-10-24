@@ -205,13 +205,22 @@ public class AreaAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
 
         Point point = new Point();
-        point.setPointType(PointType.valueOf(jsonNode.get("pointType").asText()));
-        point.setLimitValue(jsonNode.get("limitValue").asLong());
-        point.setValue(jsonNode.get("value").asLong());
-        point.setStartDate(StringUtil.convertStringToDate(jsonNode.get("startDate").asText(), "yyyy-MM-dd"));
-        point.setStopDate(StringUtil.convertStringToDate(jsonNode.get("stopDate").asText(), "yyyy-MM-dd"));
+        point.setPointType(PointType.PLUS);
+
         point.setIsPointLimit(jsonNode.get("isPointLimit").asBoolean());
+        if (!point.getIsPointLimit()) {
+            point.setLimitValue(jsonNode.get("limitValue").asLong());
+            point.setUseValue(jsonNode.get("limitValue").asLong());
+        } else {
+            point.setLimitValue(999999L);
+            point.setUseValue(999999L);
+        }
         point.setIsTimeLimit(jsonNode.get("isTimeLimit").asBoolean());
+        if (!point.getIsTimeLimit()) {
+            point.setStartDate(StringUtil.convertStringToDate(jsonNode.get("startDate").asText(), "yyyy-MM-dd"));
+            point.setStopDate(StringUtil.convertStringToDate(jsonNode.get("stopDate").asText(), "yyyy-MM-dd"));
+        }
+        point.setValue(jsonNode.get("value").asLong());
         point.setGroupSeq(jsonNode.get("groupSeq").asInt());
         point = pointService.set(point);
 

@@ -162,11 +162,11 @@
                         let html = `<tr>`;
                         html += `<td><input type="hidden" value="` + data.pointSeq + `">` + data.pointType + `</td>`;
                         html += `<td>` + data.limitValue + `</td>`;
-                        html += `<td>` + data.value + `'</td>`;
+                        html += `<td>` + data.value + `</td>`;
                         html += `<td>` + data.useValue + `</td>`;
-                        html += `<td>` + data.residualValue + `'</td>`;
+                        html += `<td>` + data.residualValue + `</td>`;
                         html += `<td>` + data.startDate + `</td>`;
-                        html += `<td>` + data.stopDate + `'</td>`;
+                        html += `<td>` + data.stopDate + `</td>`;
                         html += `<td>` + data.finish + `</td>`;
                         html += `</tr>`;
                         return html;

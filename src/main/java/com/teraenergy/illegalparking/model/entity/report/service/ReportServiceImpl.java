@@ -4,16 +4,27 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
+import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.model.entity.calculate.domain.Calculate;
+import com.teraenergy.illegalparking.model.entity.calculate.service.CalculateService;
+import com.teraenergy.illegalparking.model.entity.comment.domain.Comment;
+import com.teraenergy.illegalparking.model.entity.comment.service.CommentService;
 import com.teraenergy.illegalparking.model.entity.illegalEvent.enums.IllegalType;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.domain.QIllegalGroup;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
+import com.teraenergy.illegalparking.model.entity.point.domain.Point;
+import com.teraenergy.illegalparking.model.entity.point.service.PointService;
+import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
+import com.teraenergy.illegalparking.model.entity.receipt.enums.ReplyType;
 import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
 import com.teraenergy.illegalparking.model.entity.report.domain.Report;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportFilterColumn;
 import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
 import com.teraenergy.illegalparking.model.entity.report.repository.ReportRepository;
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
+import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
@@ -21,6 +32,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,6 +51,14 @@ public class ReportServiceImpl implements ReportService {
     private final JPAQueryFactory jpaQueryFactory;
 
     private final ReportRepository reportRepository;
+
+    private final CommentService commentService;
+
+    private final UserService userService;
+
+    private final PointService pointService;
+
+    private final CalculateService calculateService;
 
     @Override
     public boolean isExist(String carNum, IllegalType illegalType) {
@@ -182,6 +203,127 @@ public class ReportServiceImpl implements ReportService {
     @Override
     public List<Report> sets(List<Report> reports) {
         return reportRepository.saveAll(reports);
+    }
+
+    @Transactional
+    @Override
+    public Report modifyByGovernmentOffice(Integer reportSeq, Integer userSeq, ReportStateType reportStateType, String note) throws TeraException {
+        // 신고 접수를 판단하는 사용자 (관공서)
+        User user = userService.get(userSeq);
+
+        Report report = get(reportSeq);
+        report.setNote(note);
+        report.setReportStateType(reportStateType);
+        report.setReportUserSeq(userSeq);
+
+        // 신고 등록 (Receipt) 에 대한 결과 정보 변경
+        Receipt receipt = report.getReceipt();
+
+        switch (reportStateType) {
+            case PENALTY:
+                receipt.setReceiptStateType(ReceiptStateType.PENALTY);
+
+                Integer groupSeq = receipt.getIllegalZone().getIllegalEvent().getGroupSeq();
+                List<Point> points = pointService.getsInGroup(groupSeq);
+
+                long pointValue = 0L;
+                Point updatePoint = null;
+                for ( Point point : points) {
+
+                    updatePoint = point;
+
+                    // 포인트 제한 없음
+                    if (point.getIsPointLimit()) {
+                        pointValue = point.getValue();
+                        break;
+                    }
+
+                    // 시간 제한 없음
+                    if ( point.getIsTimeLimit()) {
+                        if (point.getValue() > point.getResidualValue()) {
+                            continue;
+                        } else {
+                            pointValue = point.getValue();
+                            point.setResidualValue(point.getResidualValue() - pointValue);      // 남은 포인트
+                            point.setUseValue(point.getUseValue() + pointValue);                // 누적 포인트
+                        }
+                    } else {
+                        // 제한 시간에서 포인트 체크
+                        if ( point.getStartDate().isBefore(LocalDate.now()) && point.getStopDate().isAfter(LocalDate.now()) ) {
+                            if (point.getValue() > point.getResidualValue()) {
+                                continue;
+                            } else {
+                                pointValue = point.getValue();
+                                point.setResidualValue(point.getResidualValue() - pointValue);      // 남은 포인트
+                                point.setUseValue( (point.getUseValue() == null ? 0L : point.getUseValue() ) + pointValue);                // 누적 포인트
+                            }
+                        }
+                    }
+                }
+
+                List<Comment> commentList = Lists.newArrayList();
+
+                // 댓글 1
+                Comment firstComment = new Comment();
+                firstComment.setReceiptSeq(receipt.getReceiptSeq());
+                firstComment.setContent(ReplyType.REPORT_COMPLETE.getValue());
+
+                // 댓글 2
+                Comment secondComment = new Comment();
+                secondComment.setReceiptSeq(receipt.getReceiptSeq());
+                secondComment.setContent(ReplyType.GIVE_PENALTY.getValue());
+
+                // 댓글 3 ( 관공서 내용 )
+                Comment thirdComment = new Comment();
+                thirdComment.setReceiptSeq(receipt.getReceiptSeq());
+                thirdComment.setContent(note);
+
+                // 댓글 4
+                Comment forthComment = new Comment();
+                forthComment.setReceiptSeq(receipt.getReceiptSeq());
+                String pointContent = "";
+
+                if (updatePoint != null) {
+                    pointService.set(updatePoint);
+                    pointContent = user.getGovernMentOffice().getLocationType().getValue();
+                    pointContent += ( "(으)로 부터 포상금 " + updatePoint.getValue()  );
+                    pointContent += "포인트가 제공되었습니다.";
+
+                    Calculate calculate = calculateService.getAtLast(userSeq);
+                    if ( calculate == null) {
+                        calculate = new Calculate();
+                        calculate.setCurrentPointValue(updatePoint.getValue());
+                    } else {
+                        calculate.setCurrentPointValue(calculate.getCurrentPointValue() + updatePoint.getValue());
+                    }
+                    calculate.setUserSeq(userSeq);
+                    calculate.setPointType(updatePoint.getPointType());
+                    calculate.setEventPointValue(updatePoint.getValue());
+                    calculate.setLocationType(user.getGovernMentOffice().getLocationType());
+                    calculateService.set(calculate);
+                } else {
+                    pointContent = "포인트가 모두 소진되어 제공이 불가합니다.";
+                }
+                forthComment.setContent(pointContent);
+
+                commentList.add(firstComment);
+                commentList.add(secondComment);
+                commentList.add(thirdComment);
+                commentList.add(forthComment);
+
+                commentService.sets(commentList);
+                break;
+            case EXCEPTION:
+                Comment comment = new Comment();
+                receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+                comment.setContent(ReplyType.REPORT_EXCEPTION.getValue());
+                comment.setReceiptSeq(receipt.getReceiptSeq());
+                commentService.set(comment);
+                break;
+        }
+
+        report.setReceipt(receipt);
+        return set(report);
     }
 
     @Override

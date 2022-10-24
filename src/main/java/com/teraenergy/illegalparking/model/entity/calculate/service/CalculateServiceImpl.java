@@ -65,7 +65,7 @@ public class CalculateServiceImpl implements CalculateService{
     }
 
     @Override
-    public Page<Calculate> gets(int pageNumber, int pageSize, CalculateFilterColumn filterColumn, String search, CalculateOrderColumn orderColumn, Sort.Direction orderBy) {
+    public Page<Calculate> gets(int pageNumber, int pageSize, CalculateFilterColumn filterColumn, String search) {
         JPAQuery query = jpaQueryFactory.selectFrom(QCalculate.calculate);
 
         if ( search != null && search.length() > 0) {
@@ -78,27 +78,6 @@ public class CalculateServiceImpl implements CalculateService{
         }
 
         int total = query.fetch().size();
-
-        switch (orderColumn) {
-            case calculateSeq:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QCalculate.calculate.calculateSeq.desc());
-                } else {
-                    query.orderBy(QCalculate.calculate.calculateSeq.asc());
-                }
-                break;
-            case user:
-                break;
-            case product:
-                break;
-            case currentPoint:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QCalculate.calculate.currentPointValue.desc());
-                } else {
-                    query.orderBy(QCalculate.calculate.currentPointValue.asc());
-                }
-                break;
-        }
 
         pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);

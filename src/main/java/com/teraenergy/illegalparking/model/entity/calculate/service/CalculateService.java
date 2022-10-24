@@ -24,7 +24,7 @@ public interface CalculateService {
 
     public List<Calculate> getsByUser(Integer userSeq);
 
-    public Page<Calculate> gets(int pageNumber, int pageSize, CalculateFilterColumn filterColumn, String search, CalculateOrderColumn orderColumn, Sort.Direction orderBy);
+    public Page<Calculate> gets(int pageNumber, int pageSize, CalculateFilterColumn filterColumn, String search);
 
     public Calculate set(Calculate calculate);
 

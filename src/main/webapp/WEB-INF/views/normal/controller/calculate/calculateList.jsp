@@ -42,17 +42,12 @@
 						<form class="row mb-3 g-3">
 							<input type="hidden" id="pageNumber" name="pageNumber" value="${pageNumber}"/>
 							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
-							<div class="col-1"></div>
-							<div class="col-2"></div>
+							<div class="col-7"></div>
 							<div class="col-1">
 								<tags:filterTag id="filterColumn" enumValues="${CalculateFilterColumn.values()}" column="${filterColumn}"/>
 							</div>
 							<div class="col-4">
 								<tags:searchTag id="searchStr" searchStr="${searchStr}" />
-							</div>
-							<div class="col-1"></div>
-							<div class="col-3">
-								<tags:sortTag id="orderBy" enumValues="${CalculateOrderColumn.values()}" column="${orderColumn}" direction="${orderDirection}"/>
 							</div>
 						</form>
 						<table class="table table-hover table-bordered">
@@ -72,7 +67,7 @@
 							<c:forEach var="calculate" items="${calculates}" varStatus="status">
 								<tr>
 									<td>${calculate.calculateSeq}</td>
-									<td>${calculate.userSeq}</td>
+									<td>${calculate.userName}</td>
 									<c:choose>
 										<c:when test="${calculate.pointType == 'PLUS'}">
 											<td class="text-primary">${calculate.eventPointValue}</td>
@@ -124,10 +119,6 @@
 
                 // 초기화 함수
                 function initialize() {
-
-                    $('#orderBy a').on('click', function (){
-                        search();
-                    })
 
                     $('#search').on('click', function (event) {
                         search();

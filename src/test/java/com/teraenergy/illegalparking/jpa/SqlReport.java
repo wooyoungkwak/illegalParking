@@ -49,7 +49,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-//@Transactional
+@Transactional
 public class SqlReport {
 
     @Autowired
@@ -98,7 +98,7 @@ public class SqlReport {
     public void insertByReport() {
         List<Report> reports = Lists.newArrayList();
 
-        Receipt receipt = receiptService.get(1);
+        Receipt receipt = receiptService.get(4);
 
         Report report1 = new Report();
         report1.setReceipt(receipt);
@@ -114,8 +114,8 @@ public class SqlReport {
     @Test
     public void updateReciptByILLEGAL(){
         LocalDateTime now = LocalDateTime.now();        // 현재 시간
-        LocalDateTime startTime = now.minusDays(30);   // 11분 전 시간
-        LocalDateTime endTime = now.minusMinutes(11);
+        LocalDateTime startTime = now.minusDays(30);
+        LocalDateTime endTime = now.minusMinutes(11);   // 11분 전 시간
 
         List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR, IllegalType.ILLEGAL);
         List<Comment> comments = Lists.newArrayList();
@@ -135,8 +135,8 @@ public class SqlReport {
     @Test
     public void updateReciptByFIVE_MINUTE(){
         LocalDateTime now = LocalDateTime.now();        // 현재 시간
-        LocalDateTime startTime = now.minusDays(30);   // 11분 전 시간
-        LocalDateTime endTime = now.minusMinutes(16);
+        LocalDateTime startTime = now.minusDays(30);
+        LocalDateTime endTime = now.minusMinutes(16);   // 16분 전 시간
 
         List<Receipt> receipts = receiptService.gets(startTime, endTime, ReceiptStateType.OCCUR, IllegalType.FIVE_MINUTE);
         List<Comment> comments = Lists.newArrayList();
@@ -174,19 +174,19 @@ public class SqlReport {
         receipt1.setSecondRegDt(LocalDateTime.now());
         receipts.add(receipt1);
 
-        Receipt receipt2 = new Receipt();
-        receipt2.setIllegalZone(illegalZone);
-        receipt2.setUser(user);
-        receipt2.setRegDt(LocalDateTime.now().minusMinutes(6));
-        receipt2.setCarNum("123가1234");
-        receipt2.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
-        receipt2.setCode("5013032000");
-        receipt2.setReceiptStateType(ReceiptStateType.PENALTY);
-        receipt2.setIsDel(false);
-        receipt2.setAddr("전라남도 나주시 산포면 신도리 378-4");
-        receipt2.setSecondFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
-        receipt2.setSecondRegDt(LocalDateTime.now());
-        receipts.add(receipt2);
+//        Receipt receipt2 = new Receipt();
+//        receipt2.setIllegalZone(illegalZone);
+//        receipt2.setUser(user);
+//        receipt2.setRegDt(LocalDateTime.now().minusMinutes(6));
+//        receipt2.setCarNum("123가1234");
+//        receipt2.setFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
+//        receipt2.setCode("5013032000");
+//        receipt2.setReceiptStateType(ReceiptStateType.PENALTY);
+//        receipt2.setIsDel(false);
+//        receipt2.setAddr("전라남도 나주시 산포면 신도리 378-4");
+//        receipt2.setSecondFileName("2F0D5DABDE074B3BA8BF9E82A89B3F81.jpg");
+//        receipt2.setSecondRegDt(LocalDateTime.now());
+//        receipts.add(receipt2);
         receiptService.sets(receipts);
     }
 
