@@ -10,21 +10,21 @@
   z-index: 1;
 }
 
-.getdata {
-  position: absolute;
-  top: 370px;
-  left: 10px;
-  z-index: 1;
-}
+/*.getdata {*/
+/*  position: absolute;*/
+/*  top: 370px;*/
+/*  left: 10px;*/
+/*  z-index: 1;*/
+/*}*/
 
 #drawingMap, #map {
   width: 100%;
-  height: 600px;
+  height: 100vh;
 }
 
-#map {
+/*#map {
   margin-top: 10px;
-}
+}*/
 
 .radius_border {
   border: 1px solid #919191;
@@ -67,7 +67,7 @@
 }
 .test {
   position: absolute;
-  top: 300px;
+  top: 450px;
   right: 30px;
   width: 284px;
   height: 80px;
@@ -121,3 +121,38 @@
   /*background: linear-gradient(#fff, #e6e6e6);*/
 }
 
+/*
+.balloon {
+  position: relative;
+  display: inline-block;
+}
+*/
+
+/*
+.balloon span {
+  display: inline-block;
+  padding: 10px;
+  color: #fff;
+  background: #FF5050;
+  border-radius: 10px;
+  border: 1px solid #981515;
+}
+
+.balloon:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.balloon.top:after, .balloon.bottom:after {
+  border-width: 15px 10px;
+  left: 50%;
+  margin-left: -10px;
+}
+
+.balloon.top:after {
+  border-color: #FF5050 transparent transparent transparent;
+  bottom: -25px;
+}*/

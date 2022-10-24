@@ -425,15 +425,15 @@ $(function () {
             });
 
         // 다각형에 클릭 이벤트를 등록합니다
-        let upCount = 0;
         setKakaoEvent({
                 target: polygon,
                 event: 'click',
                 func: function (mouseEvent) {
                     // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
                     kakao.maps.event.preventMap();
-                    // let resultDiv = document.getElementById('result');
-                    // resultDiv.innerHTML = '다각형에 mouseup 이벤트가 발생했습니다!' + (++upCount);
+
+
+
                     if(manager._mode === undefined || manager._mode === '') {
                         $('#areaSettingModal').offcanvas('show');
                         let center = centroid(area.points);
@@ -566,7 +566,7 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-        getCurrentPosition();
+        getCurrentPosition(drawingMap);
     }
 
     initialize();

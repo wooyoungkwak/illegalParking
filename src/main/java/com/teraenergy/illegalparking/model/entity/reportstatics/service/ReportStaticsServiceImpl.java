@@ -47,6 +47,13 @@ public class ReportStaticsServiceImpl implements ReportStaticsService{
     }
 
     @Override
+    public List<ReportStatics> gets(List<String> codes) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReportStatics.reportStatics);
+        query.where(QReportStatics.reportStatics.code.in(codes));
+        return query.fetch();
+    }
+
+    @Override
     public ReportStatics set(ReportStatics reportStatics) {
         return reportStaticsRepository.save(reportStatics);
     }

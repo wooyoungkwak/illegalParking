@@ -19,7 +19,10 @@ public interface ReportStaticsService {
 
     ReportStatics gets(Integer zoneSeq);
 
+	List<ReportStatics> gets(List<String> codes);
+
     ReportStatics set(ReportStatics reportStatics);
 
     List<ReportStatics> sets(List<ReportStatics> reportStaticsList);
+
 }

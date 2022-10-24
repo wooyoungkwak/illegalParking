@@ -21,6 +21,8 @@ import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZon
 import com.teraenergy.illegalparking.model.entity.point.domain.Point;
 import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.point.service.PointService;
+import com.teraenergy.illegalparking.model.entity.reportstatics.domain.ReportStatics;
+import com.teraenergy.illegalparking.model.entity.reportstatics.service.ReportStaticsService;
 import com.teraenergy.illegalparking.util.JsonUtil;
 import com.teraenergy.illegalparking.util.StringUtil;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +66,8 @@ public class AreaAPI {
     private final PointDtoService pointDtoService;
 
     private final PointService pointService;
+
+    private final ReportStaticsService reportstaticsService;
 
     @PostMapping("/area/markers")
     @ResponseBody
@@ -149,7 +153,7 @@ public class AreaAPI {
             IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
             IllegalEvent illegalEvent = new IllegalEvent();
             illegalEvent.setIllegalType(
-                    IllegalType.valueOf(jsonNode.get("illegalType").asText()));
+                IllegalType.valueOf(jsonNode.get("illegalType").asText()));
 //            illegalEvent.setName(jsonNode.get("name").asText());
             illegalEvent.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
             illegalEvent.setFirstStartTime(jsonNode.get("firstStartTime").asText());
@@ -199,9 +203,9 @@ public class AreaAPI {
     @ResponseBody
     public Object setPoint(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        PointType pointType = PointType.PLUS;
+
         Point point = new Point();
-        point.setPointType(pointType);
+        point.setPointType(PointType.valueOf(jsonNode.get("pointType").asText()));
         point.setLimitValue(jsonNode.get("limitValue").asLong());
         point.setValue(jsonNode.get("value").asLong());
         point.setStartDate(StringUtil.convertStringToDate(jsonNode.get("startDate").asText(), "yyyy-MM-dd"));
@@ -252,6 +256,8 @@ public class AreaAPI {
                 break;
         }
 
+        List<ReportStatics> reportStaticsList = reportstaticsService.gets(codes);
+
         List<Integer> zoneSeqs = Lists.newArrayList();
         List<String> zoneTypes = Lists.newArrayList();
         List<String> polygons = Lists.newArrayList();
@@ -266,13 +272,13 @@ public class AreaAPI {
                     firstCoordinate = coordinate;
                 }
                 builder.append(coordinate.getX())
-                        .append(" ")
-                        .append(coordinate.getY()).append(",");
+                    .append(" ")
+                    .append(coordinate.getY()).append(",");
                 first++;
             }
             builder.append(firstCoordinate.getX())
-                    .append(" ")
-                    .append(firstCoordinate.getY());
+                .append(" ")
+                .append(firstCoordinate.getY());
 
             polygons.add(builder.toString());
             if (illegalZone.getEventSeq() == null) zoneTypes.add("");
@@ -284,6 +290,7 @@ public class AreaAPI {
         resultMap.put("zonePolygons", polygons);
         resultMap.put("zoneSeqs", zoneSeqs);
         resultMap.put("zoneTypes", zoneTypes);
+        resultMap.put("reportStaticsList", reportStaticsList);
 
         return resultMap;
     }

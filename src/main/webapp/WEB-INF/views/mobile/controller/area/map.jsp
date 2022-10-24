@@ -38,6 +38,7 @@
 
 				</div>
 				<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>
+
 			</div>
 		</main>
 	</stripes:layout-component>
