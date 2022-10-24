@@ -26,7 +26,7 @@ public class PointDtoServiceImipl implements PointDtoService{
     @Override
     public List<PointDto> gets(Integer groupSeq) {
         List<PointDto> pointDtos = Lists.newArrayList();
-        List<Point> points = pointService.getsInGroup(groupSeq);
+        List<Point> points = pointService.getsAllInGroup(groupSeq);
         for (Point point : points ) {
             pointDtos.add(get(point));
         }

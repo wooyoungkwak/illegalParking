@@ -652,7 +652,7 @@ public class MobileAPI {
             }
 
             // 5. 기존에 발생 여부 체크 ( 신고가 최종 접수 되었나 ? )
-            if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode())) {
+            if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode(), illegalEvent.getIllegalType() )) {
                 // 신고 일 때 기본의 접수 확인 의 방식
                 // * 기존 방식 : 신고 접수 일때 현재 시간 기준으로 11분 전까지 (또는 16분 전까지)
                 // * TODO : 사장님 요청에 의한 변경 .... ( 확인 후 적용 )

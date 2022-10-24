@@ -32,7 +32,11 @@ public class MyCarServiceImpl implements MyCarService{
         JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
         query.where(QMyCar.myCar.carNum.eq(carNum));
         query.where(QMyCar.myCar.isAlarm.isTrue());
-        return (MyCar) query.fetchFirst();
+        if ( query.fetchFirst() != null) {
+            return (MyCar) query.fetchFirst();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -40,7 +44,11 @@ public class MyCarServiceImpl implements MyCarService{
         JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
         query.where(QMyCar.myCar.userSeq.eq(userSeq));
         query.where(QMyCar.myCar.carNum.eq(carNum));
-        return (MyCar) query.fetchFirst();
+        if ( query.fetchFirst() != null) {
+            return (MyCar) query.fetchFirst();
+        } else {
+            return null;
+        }
     }
 
     @Override

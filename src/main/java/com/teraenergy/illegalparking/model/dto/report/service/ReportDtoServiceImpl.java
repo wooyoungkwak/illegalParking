@@ -8,6 +8,7 @@ import com.teraenergy.illegalparking.model.dto.report.domain.ReportDto;
 import com.teraenergy.illegalparking.model.entity.comment.domain.Comment;
 import com.teraenergy.illegalparking.model.entity.comment.service.CommentService;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
+import com.teraenergy.illegalparking.model.entity.mycar.service.MyCarService;
 import com.teraenergy.illegalparking.model.entity.point.domain.Point;
 import com.teraenergy.illegalparking.model.entity.point.service.PointService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
@@ -55,6 +56,8 @@ public class ReportDtoServiceImpl implements ReportDtoService {
 
     private final PointService pointService;
 
+    private final MyCarService myCarService;
+
     @Override
     public ReportDto get(Report report) {
         ReportDto reportDto = new ReportDto();
@@ -77,9 +80,15 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             ReceiptDto receiptDto = new ReceiptDto();
             receiptDto.setReceiptSeq(receipt.getReceiptSeq());
             receiptDto.setAddr(receipt.getAddr());
-            receiptDto.setCarNum(receipt.getCarNum());
+
+            if ( myCarService.get(receipt.getUser().getUserSeq(), receipt.getCarNum()) != null ){
+                receiptDto.setCarNum(receipt.getCarNum() + "(등록)");
+            } else {
+                receiptDto.setCarNum(receipt.getCarNum());
+            }
+
             receiptDto.setName(receipt.getUser().getName());
-            receiptDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getRegDt()));
+            receiptDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum()));
             receiptDto.setRegDt(receipt.getRegDt());
             receiptDto.setReceiptStateType(receipt.getReceiptStateType());
 
@@ -100,8 +109,15 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         ReceiptDetailDto receiptDetailDto = new ReceiptDetailDto();
         receiptDetailDto.setReceiptSeq(receipt.getReceiptSeq());
         receiptDetailDto.setName(receipt.getUser().getName());
-        receiptDetailDto.setCarNum(receipt.getCarNum());
-        receiptDetailDto.setOverlapCount(0); // TODO : 중복 횟수
+        receiptDetailDto.setAddr(receipt.getAddr());
+
+        if ( myCarService.get(receipt.getUser().getUserSeq(), receipt.getCarNum()) != null ){
+            receiptDetailDto.setCarNum(receipt.getCarNum() + "(등록)");
+        } else {
+            receiptDetailDto.setCarNum(receipt.getCarNum());
+        }
+
+        receiptDetailDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum())); // 중복 횟수
         receiptDetailDto.setRegDt(receipt.getRegDt());
         receiptDetailDto.setReceiptStateType(receipt.getReceiptStateType());
 
@@ -111,6 +127,15 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         receiptDetailDto.setFirstFileName(receipt.getFileName());
         receiptDetailDto.setFirstRegDt(receipt.getRegDt());
         receiptDetailDto.setFirstAddr(receipt.getAddr());
+        receiptDetailDto.setFirstIllegalType(receipt.getIllegalZone().getIllegalEvent().getIllegalType());
+
+        if ( receipt.getSecondRegDt() != null ) {
+            receiptDetailDto.setSecondFileName(receipt.getSecondFileName());
+            receiptDetailDto.setSecondRegDt(receipt.getSecondRegDt());
+            receiptDetailDto.setSecondAddr(receipt.getAddr());
+            receiptDetailDto.setSecondIllegalType(receipt.getIllegalZone().getIllegalEvent().getIllegalType());
+        }
+
         receiptSeqs.add(receipt.getReceiptSeq());
 
         List<Comment> receiptComments = commentService.gets(receiptSeqs);
@@ -168,9 +193,9 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         ReportDetailDto reportDetailDto = new ReportDetailDto();
         reportDetailDto.setReportSeq(report.getReportSeq());
         reportDetailDto.setReportStateType(report.getReportStateType());    // 신고기관
-        reportDetailDto.setOverlapCount(0);                                 // TODO : 중복 횟수
 
         Receipt receipt = report.getReceipt();
+        reportDetailDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum())); // 중복 횟수
         reportDetailDto.setRegDt(receipt.getSecondRegDt());     // 접수시간 ( 접수시간 : 두번째 신고가 발생 시간 )
         reportDetailDto.setCarNum(receipt.getCarNum());         // 차량번호
         reportDetailDto.setAddr(receipt.getAddr());             // 위치

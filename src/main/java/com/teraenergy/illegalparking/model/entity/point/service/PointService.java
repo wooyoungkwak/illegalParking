@@ -19,6 +19,8 @@ public interface PointService {
 
     Point getInGroup(Integer groupSeq);
 
+    List<Point> getsAllInGroup(Integer groupSeq);
+
     List<Point> getsInGroup(Integer groupSeq);
 
     Point set(Point point);

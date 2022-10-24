@@ -84,7 +84,13 @@
 										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm" />
 									</td>
 									<td class="text-center" >${receipt.overlapCount}</td>
-									<td class="text-center" >${receipt.receiptStateType.value}</td>
+									<td class="text-center" >
+										<c:choose>
+											<c:when test="${receipt.receiptStateType == 'EXCEPTION'}"><span class="text-danger fw-bold">${receipt.receiptStateType.value}</span></c:when>
+											<c:when test="${receipt.receiptStateType == 'FORGET'}"><span class="text-dark fw-bold">${receipt.receiptStateType.value}</span></c:when>
+											<c:otherwise><span class="text-success fw-bold">${receipt.receiptStateType.value}</span></c:otherwise>
+										</c:choose>
+									</td>
 								</tr>
 							</c:forEach>
 							</tbody>
@@ -141,28 +147,30 @@
                     $.each(report, function (key, value) {
                         if (key.indexOf('receiptStateType') > -1) {
                             if (value === 'OCCUR') {
-                                $('#' + key).text("신고발생");
+                                $('#' + key + 'View').text("신고발생");
                             } else if (value === 'FORGET')  {
-                                $('#' + key).text("신고누락");
+                                $('#' + key + 'View').text("신고종료");
                             } else if (value === 'EXCEPTION') {
-                                $('#' + key).text("신고제외");
+                                $('#' + key + 'View').text("신고제외");
                             }
                         } else if (key.indexOf("firstFileName") > -1) {
-                            $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
+                            if ( value !== null) $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
+                        } else if (key.indexOf("secondFileName") > -1) {
+                            if ( value !== null) $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
                         } else if (key === 'firstIllegalType') {
-                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
-                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차 구역");
+                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차 구역");
                         } else if (key === 'secondIllegalType') {
-                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
-                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차 구역");
+                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차 구역");
                         } else if( key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt' ) {
-                            $('#' + key).text(value.replace('T', ' '));
+                            $('#' + key).text(value == null ? '' : value.replace('T', ' '));
                         } else if ( key === 'comments') {
                             let  html = '';
                             for ( let i =0; value.length > i; i++) {
-                                html = `<div class="col-12"><i class="fas fa-comments"></i>  ${value[i]}</div>`;
+                                html += '<i class="far fa-hand-point-right"></i> ' + value[i] + '<br>';
                             }
-                            $('#' + key).append(html);
+                            $('#' + key).html(html);
                         } else {
                             $('#' + key).text(value);
                         }
@@ -248,6 +256,29 @@
                     });
 
                     $('#close').on('click', function () {
+
+                        initializeReceiptSetTag({
+                            "receiptSeq": '',
+                            "name": '',
+                            "carNum": '',
+                            "overlapCount": '',
+                            "regDt": '',
+                            "addr": '',
+                            "receiptStateType": '',
+                            "firstFileName": null,
+                            "firstRegDt": '',
+                            "firstAddr": '',
+                            "firstIllegalType": '',
+                            "secondFileName": null,
+                            "secondRegDt": '',
+                            "secondAddr": '',
+                            "secondIllegalType": '',
+                            "comments": [
+                                ''
+                            ],
+                            "governmentOfficeName": ''
+						});
+
                         $('#reportMain').show();
                         $('#reportSet').hide();
                     });

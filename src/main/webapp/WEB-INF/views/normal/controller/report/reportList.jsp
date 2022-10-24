@@ -92,7 +92,6 @@
 											<c:when test="${report.reportStateType == 'EXCEPTION'}"><span class="text-dark fw-bold">${report.reportStateType.value}</span></c:when>
 											<c:otherwise><span class="text-success fw-bold">${report.reportStateType.value}</span></c:otherwise>
 										</c:choose>
-
 									</td>
 								</tr>
 							</c:forEach>
@@ -227,7 +226,7 @@
                             if ( _role === "ADMIN" ) {
                                 let html = '';
                                 for (let i = 0; i < value.length; i++) {
-                                    html += '<i class="far	fa-hand-point-right"></i> ' + value[i] + '<br>';
+                                    html += '<i class="far fa-hand-point-right"></i> ' + value[i] + '<br>';
                                 }
                                 $('#' + key).html(html);
                             } else {

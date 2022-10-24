@@ -33,12 +33,30 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 d-flex justify-content-between">
-                        <div class="ms-3"><span id="receiptStateType"></span></div>
-                    </div>
-                    <div class="col-12 ms-3"><label>신고회수 : </label><span id="overlapCount"></span></div>
-                    <div class="col-12 ms-3"><label>위치 : </label><span id="addr"></span></div>
-                    <div class="col-12 ms-3 mt-3"><label>신고자 : </label><span id="name"></span></div>
+                    <table class="table  table-borderless">
+                        <colgroup>
+                            <col width="10%">
+                            <col >
+                        </colgroup>
+                        <tbody>
+                            <tr>
+                                <td class="h3" colspan="2"><span class="ms-3 fw-bold" id="receiptStateTypeView"></span></td>
+                            </tr>
+                            <tr>
+                                <td><label class="ms-lg-5">신고회수 : </label></td>
+                                <td><span class="ms-lg-2" id="overlapCount"></span></td>
+                            </tr>
+                            <tr>
+                                <td><label class="ms-lg-5">위치 : </label></td>
+                                <td><span class="ms-lg-2" id="addr"></span></td>
+                            </tr>
+                            <tr>
+                                <td><label class="ms-lg-5">신고자 : </label></td>
+                                <td><span class="ms-lg-2" id="name"></span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     <form id="data">
                         <div class="row mb-2 ms-2">
                             <div class="col-6">
@@ -68,18 +86,10 @@
                                 </div>
                             </div>
                         </div>
-
-                        <%--						<div class="row ms-2 ">--%>
-                        <%--							<div class="col-2 btn-group">--%>
-                        <%--								<a type="submit" class="btn btn-primary" id="register">등록</a>--%>
-                        <%--								<a class="btn btn-outline-secondary" id="close">닫기</a>--%>
-                        <%--							</div>--%>
-                        <%--						</div>--%>
                     </form>
                 </div>
             </div>
             <div class="card-footer" id="comments"></div>
         </div>
-
     </div>
 </main>

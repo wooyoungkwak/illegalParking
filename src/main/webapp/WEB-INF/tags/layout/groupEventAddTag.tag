@@ -29,7 +29,7 @@
 			<div class="row mb-2">
 				<div class="col-4 d-flex flex-row-reverse"><span class="mt-2">분류</span></div>
 				<div class="col-5 d-flex flex-row">
-					<select class="form-select" id="pointType" name="pointType">
+					<select class="form-select" id="pointType" name="pointType" disabled>
 						<c:forEach items="${enumValues}" var="enumValue">
 							<option value="${enumValue}" <c:if test="${enumValue eq current}">selected</c:if>>${enumValue.value}</option>
 						</c:forEach>
@@ -85,6 +85,25 @@
 </div>
 <script type="application/javascript">
     $(function () {
+
+        $('#isPointLimit').on('click', function (event) {
+            if ($(this).is(':checked')) {
+                $('#limitValue').attr('disabled', true);
+            } else {
+                $('#limitValue').attr('disabled', false);
+            }
+        });
+
+        $('#isTimeLimit').on('change', function (event) {
+            if ($(this).is(':checked')) {
+                $('#startDate').attr('disabled', true);
+                $('#stopDate').attr('disabled', true);
+            } else {
+                $('#startDate').attr('disabled', false);
+                $('#stopDate').attr('disabled', false);
+            }
+        });
+
         // 그룹 이벤트 팝업창 닫기 이벤트
         $('#closeGroupEvent').on('click', function () {
             $.closeGroupEvent();

@@ -50,11 +50,22 @@ public class PointServiceImpl implements PointService{
         return (Point) query.fetchFirst();
     }
 
+    
+    // 그룹에 속한 남은 포인트가 존재하는 정보만 가져오기
     @Override
     public List<Point> getsInGroup(Integer groupSeq) {
         JPAQuery query = jpaQueryFactory.selectFrom(QPoint.point);
         query.where(QPoint.point.groupSeq.eq(groupSeq));
         query.where(QPoint.point.residualValue.gt(0));
+        query.orderBy(QPoint.point.pointSeq.desc());
+        return query.fetch();
+    }
+
+    // 그룹에 속한 모든 Point 정보 가져오기
+    @Override
+    public List<Point> getsAllInGroup(Integer groupSeq) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QPoint.point);
+        query.where(QPoint.point.groupSeq.eq(groupSeq));
         query.orderBy(QPoint.point.pointSeq.desc());
         return query.fetch();
     }

@@ -199,9 +199,9 @@ public class AreaAPI {
     @ResponseBody
     public Object setPoint(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
-
+        PointType pointType = PointType.PLUS;
         Point point = new Point();
-        point.setPointType(PointType.valueOf(jsonNode.get("pointType").asText()));
+        point.setPointType(pointType);
         point.setLimitValue(jsonNode.get("limitValue").asLong());
         point.setValue(jsonNode.get("value").asLong());
         point.setStartDate(StringUtil.convertStringToDate(jsonNode.get("startDate").asText(), "yyyy-MM-dd"));

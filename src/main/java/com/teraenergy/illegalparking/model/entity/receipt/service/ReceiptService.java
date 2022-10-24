@@ -24,7 +24,7 @@ public interface ReceiptService {
 
     Receipt get(Integer receiptSeq);
 
-    boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code);
+    boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType);
 
     boolean isExistByIllegalType(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType);
 
@@ -34,7 +34,7 @@ public interface ReceiptService {
 
     List<Receipt> gets(Integer userSeq, String carNum);
 
-    int getsOverlabCount(Integer user, LocalDateTime regDt);
+    int getsOverlabCount(Integer user, String carNum);
 
     List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType, IllegalType illegalType);
 

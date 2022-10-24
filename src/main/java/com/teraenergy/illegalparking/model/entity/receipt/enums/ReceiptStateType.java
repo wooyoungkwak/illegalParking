@@ -24,10 +24,10 @@ public enum ReceiptStateType {
 
 
     OCCUR("신고대기"),
-    NOTHING("신고불가"),
-    FORGET("신고종료"),
-    REPORT("신고접수"),
     EXCEPTION("신고제외"),
+    FORGET("신고종료"),
+    NOTHING("신고불가"),
+    REPORT("신고접수"),
     PENALTY("과태료 대상")
     ;
 

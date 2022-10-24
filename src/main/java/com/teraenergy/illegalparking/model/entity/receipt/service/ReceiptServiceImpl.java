@@ -38,9 +38,18 @@ public class ReceiptServiceImpl implements ReceiptService {
         return receiptRepository.findByReceiptSeqAndIsDel(receiptSeq, false);
     }
 
+    // 법정동 코드를 이용하여 신고자가 신고 차량번호를 등록했는지 여부 확인
     @Override
-    public boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code) {
+    public boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType) {
         LocalDateTime beforeRegDt = regDt.minusMinutes(11);
+        switch (illegalType) {
+            case ILLEGAL:
+                beforeRegDt = regDt.minusMinutes(11);
+                break;
+            case FIVE_MINUTE:
+                beforeRegDt = regDt.minusMinutes(16);
+                break;
+        }
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
@@ -53,6 +62,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         return false;
     }
 
+    // 불법 주정차 그룹위치 정보에 의한 신고 정보가 있는지 확인
     @Override
     public boolean isExistByIllegalType(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType) {
 
@@ -105,11 +115,12 @@ public class ReceiptServiceImpl implements ReceiptService {
         return query.fetch();
     }
 
+    // 신고 목록에서 - 중복 회수
     @Override
-    public int getsOverlabCount(Integer user, LocalDateTime regDt) {
+    public int getsOverlabCount(Integer user, String carNum) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.user.userSeq.eq(user));
-        query.where(QReceipt.receipt.regDt.before(regDt));
+        query.where(QReceipt.receipt.carNum.eq(carNum));
         return query.fetch().size();
     }
 
@@ -193,6 +204,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         return query.execute();
     }
 
+    // 현재 기준에서 11분전 사이의 해당 차량 번호로 신고등록 정보 가져오기
     @Override
     public Receipt getByCarNumAndBetweenNow(Integer userSeq, String carNum, LocalDateTime regDt) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
