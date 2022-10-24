@@ -93,7 +93,6 @@ public class MobileAPI {
     @PostMapping("/api/login")
     @ResponseBody
     public Object login(@RequestBody String body) throws TeraException {
-
         boolean result = false;
         UserDto userDto = null;
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
@@ -106,7 +105,7 @@ public class MobileAPI {
             User user = userService.get(username);
             userDto = userDtoService.get(user);
         } else {
-            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
+            throw new TeraException(TeraExceptionCode.USER_PASSWORD_IS_NOT_EXIST);
         }
 
         return userDto;
@@ -623,7 +622,7 @@ public class MobileAPI {
                 }
             }
 
-            // 3. 내가 신고를 최초 했느지 차량 여부 체크
+            // 3. 내가 신고를 최초 했는지 차량 여부 체크
             if (reportService.isExist(carNum, illegalEvent.getIllegalType())) {
                 if ( receipt == null) {
                     receipt = new Receipt();
@@ -676,9 +675,10 @@ public class MobileAPI {
                 receipt.setReceiptStateType(ReceiptStateType.OCCUR);
                 receipt = receiptService.set(receipt);
 
-                MyCar car = myCarService.getByAlarm(user.getUserSeq(), carNum);
+                MyCar car = myCarService.getByAlarm(carNum);
                 if ( car != null) {
-                    String phoneNumber = user.getPhoneNumber();
+                    User carUser = userService.get(car.getUserSeq());
+                    String phoneNumber = carUser.getPhoneNumber();
                     String message = "불법주정차 위반에 신고 되었습니다.\n 1분내로 차를 이동하여 주차하시길 바랍니다. ";
 
                     // TODO : 문자 서비스 ..

@@ -60,13 +60,13 @@ public class ReportAPI {
     private final CommentService commentService;
 
     // 신고 접수 정보 등록
-    @PostMapping("/report/report/set")
+    @PostMapping("/report/set")
     @ResponseBody
     public Object setReport(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer reportSeq = jsonNode.get("reportSeq").asInt();
-            String note = jsonNode.get("reportSeq").asText();
+            String note = jsonNode.get("note").asText();
             ReportStateType reportStateType = ReportStateType.valueOf(jsonNode.get("reportStateType").asText());
             Integer userSeq = jsonNode.get("userSeq").asInt();
 
@@ -122,8 +122,26 @@ public class ReportAPI {
                         }
                     }
 
+                    List<Comment> commentList = Lists.newArrayList();
+
+                    // 댓글 1
+                    Comment firstComment = new Comment();
+                    firstComment.setReceiptSeq(receipt.getReceiptSeq());
+                    firstComment.setContent(ReplyType.REPORT_COMPLETE.getValue());
+
+                    // 댓글 2
+                    Comment secondComment = new Comment();
+                    secondComment.setReceiptSeq(receipt.getReceiptSeq());
+                    secondComment.setContent(ReplyType.GIVE_PENALTY.getValue());
+
+                    // 댓글 3 ( 관공서 내용 )
+                    Comment thirdComment = new Comment();
+                    thirdComment.setReceiptSeq(receipt.getReceiptSeq());
+                    thirdComment.setContent(note);
+
                     // 댓글 4
                     Comment forthComment = new Comment();
+                    forthComment.setReceiptSeq(receipt.getReceiptSeq());
                     String pointContent = "";
                     if (updatePoint != null) {
                         pointService.set(updatePoint);
@@ -136,20 +154,6 @@ public class ReportAPI {
                     }
                     forthComment.setContent(pointContent);
 
-
-                    List<Comment> commentList = Lists.newArrayList();
-
-                    // 댓글 1
-                    Comment firstComment = new Comment();
-                    firstComment.setContent(ReplyType.REPORT_COMPLETE.getValue());
-
-                    // 댓글 2
-                    Comment secondComment = new Comment();
-                    secondComment.setContent(ReplyType.GIVE_PENALTY.getValue());
-
-                    // 댓글 3 ( 관공서 내용 )
-                    Comment thirdComment = new Comment();
-                    thirdComment.setContent(note);
 
                     commentList.add(firstComment);
                     commentList.add(secondComment);
@@ -169,6 +173,7 @@ public class ReportAPI {
 
             report.setReceipt(receipt);
             reportService.set(report);
+
             return "complete ... ";
         } catch (Exception e) {
             e.printStackTrace();

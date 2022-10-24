@@ -186,6 +186,9 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         switch (report.getReportStateType()) {
             case EXCEPTION:
                 note += report.getNote();
+                if ( report.getNote() != null && report.getNote().length() > 0) {
+                    note += "<br>";
+                }
                 note += StringUtil.convertDatetimeToString(report.getRegDt(), "yyyy-MM-dd HH:mm");
                 note += "에 '신고 제외' 처리되었습니다. <br>";
                 note += "신고제외 되었습니다.";
@@ -193,16 +196,16 @@ public class ReportDtoServiceImpl implements ReportDtoService {
                 break;
             case PENALTY:
                 note += report.getNote();
+                if ( report.getNote() != null && report.getNote().length() > 0) {
+                    note += "<br>";
+                }
                 note += StringUtil.convertDatetimeToString(report.getRegDt(), "yyyy-MM-dd HH:mm");
                 note += "에 '과태료 대상' 처리되었습니다. <br>";
                 note += "주차하신 위치는 불법주정차 집중단속구역입니다. <br>";
-                note += "과태로 대상입니다.";
+                note += "과태료 대상입니다.";
                 reportDetailDto.setNote(note);                          // 내용
                 break;
         }
-
-
-
 
         List<Integer> receiptSeqs = Lists.newArrayList();
 

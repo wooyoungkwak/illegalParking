@@ -49,6 +49,7 @@ public enum TeraExceptionCode implements TeraErrCode {
     USER_FAIL_CHANGE ("사용자 정보 변경을 실패 하였습니다."),
 
     USER_IS_NOT_EXIST ("존재하지 않는 사용자입니다."),
+    USER_PASSWORD_IS_NOT_EXIST ("mail 또는 패스워드가 잘못 되었습니다. 확인후 다시 시도하세요."),
 
     USER_IS_EXIST ("이미 존재하는 사용자입니다."),
 

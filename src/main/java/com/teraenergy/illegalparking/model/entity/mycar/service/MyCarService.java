@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface MyCarService {
 
-    MyCar getByAlarm( Integer userSeq, String carNum);
+    MyCar getByAlarm( String carNum);
 
     MyCar get( Integer userSeq, String carNum);
 

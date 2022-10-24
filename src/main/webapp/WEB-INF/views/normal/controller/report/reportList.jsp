@@ -86,7 +86,14 @@
 										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 									</td>
 									<td class="text-center"></td>
-									<td class="text-center">${report.reportStateType.value}</td>
+									<td class="text-center">
+										<c:choose>
+											<c:when test="${report.reportStateType == 'PENALTY'}"><span class="text-danger fw-bold">${report.reportStateType.value}</span></c:when>
+											<c:when test="${report.reportStateType == 'EXCEPTION'}"><span class="text-dark fw-bold">${report.reportStateType.value}</span></c:when>
+											<c:otherwise><span class="text-success fw-bold">${report.reportStateType.value}</span></c:otherwise>
+										</c:choose>
+
+									</td>
 								</tr>
 							</c:forEach>
 							</tbody>
@@ -205,32 +212,27 @@
                         } else if (key === 'note') {
                             if (report.governmentOfficeName === null) {
                                 $('#' + key).val("");
-                                $('#' + key).show();
+                                if (_role !== 'ADMIN') $('#' + key).show();
                                 $('#' + key + 'View').hide();
-							} else {
+                            } else {
                                 $('#' + key).hide();
                                 $('#' + key + 'View').html(value);
                                 $('#' + key + 'View').show();
-							}
+                            }
                         } else if (key === 'regDt' || key === 'firstRegDt' || key === 'secondRegDt') {
                             $('#' + key).text(value.replace('T', ' '));
                         } else if (key === 'reportSeq') {
                             $('#reportSeqSetTag').val(value);
-                        } else if (key === 'resultType') {
-                            if (value === undefined || value === 'WAIT') {
-                                $('#register').show();
+                        } else if (key === 'comments') {
+                            if ( _role === "ADMIN" ) {
+                                let html = '';
+                                for (let i = 0; i < value.length; i++) {
+                                    html += '<i class="far	fa-hand-point-right"></i> ' + value[i] + '<br>';
+                                }
+                                $('#' + key).html(html);
                             } else {
-                                $('#register').hide();
-                                $('#setResultType').attr("disabled", true);
-                                $('#note').attr("disabled", true);
-                            }
-                            $('#setResultType').val(value);
-                        } else if ( key === 'comments') {
-                            let html ='';
-                            for( let i=0; i<value.length; i++) {
-                                html += '<i class="far	fa-hand-point-right"></i>' + value[i] + '<br>';
+                                $('#' + key).hide();
 							}
-                            $('#' + key).html(html);
                         } else {
                             $('#' + key).text(value);
                         }
@@ -337,9 +339,9 @@
                     // 신고 접수 등록 이벤트
                     $('#btnPenalty, #btnException').on('click', function () {
 
-                        if ( $(this).is('disabled')) {
+                        if ($(this).is('disabled')) {
                             return;
-						}
+                        }
 
                         if (confirm("등록 하시겠습니까?")) {
                             let reportSeqStr = $('#reportSeqSetTag').val();
@@ -353,8 +355,8 @@
                                     userSeq: _userSeq,
                                     reportSeq: reportSeq,
                                     note: note,
-									reportStateType: reportStateType
-								},
+                                    reportStateType: reportStateType
+                                },
                                 success: function (data) {
                                     if (data.success) {
                                         alert("등록 되었습니다.");
@@ -383,6 +385,17 @@
 
                     // 신고 등록 화면 감추기
                     $('#reportSet').hide();
+
+                    // 관리자 일때 신고 접수 기능 감추기
+                    if (_role === 'ADMIN') {
+                        $('#note').hide();
+                        $('#labelHow').hide();
+                        $('#btnException').hide();
+                        $('#btnPenalty').hide();
+                        $('#noteViewContain').css({
+                            "height": "auto"
+                        })
+                    }
                 }
 
                 // 초기화

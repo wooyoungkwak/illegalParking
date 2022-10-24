@@ -110,9 +110,9 @@
                             legendText: "{label}",
                             indexLabel: "{label}",
                             dataPoints: [
-                                {label: "대기", y: opt.completeCount},
-                                {label: "미처리", y: opt.exceptionCount},
-                                {label: "처리", y: opt.penaltyCount}
+                                {label: "대기", y: Number(opt.completeCount)},
+                                {label: "미처리", y: Number(opt.exceptionCount)},
+                                {label: "처리", y: Number(opt.penaltyCount)}
                             ]
                         }]
                     };

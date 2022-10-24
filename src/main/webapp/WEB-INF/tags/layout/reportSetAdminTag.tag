@@ -78,7 +78,7 @@
 						</td>
 						<td>
 							<div class="ms-5">
-								<span class="fw-bold text-decoration-underline" id="labelHow">어떻게 처리 할가요?</span>
+								<span class="fw-bold text-decoration-underline">어떻게 처리 할가요?</span>
 							</div>
 						</td>
 					</tr>
@@ -92,7 +92,7 @@
 							</div>
 						</td>
 						<td>
-							<div class="row" id="noteViewContain" style="height: 100px; padding: 0; margin: 0">
+							<div class="row" style="height: 100px;">
 								<div class="col-6 d-flex justify-content-center">
 									<div class="col btn-group pb-2">
 										<button class="btn btn-outline-dark" id="btnException" name="EXCEPTION">신고제외</button>
