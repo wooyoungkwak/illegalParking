@@ -92,6 +92,7 @@
         <script src="<%=contextPath%>/resources/js/scripts.js"></script>
         <script type="application/javascript">
             $(function () {
+
                 let completeCount = '${completeCount}';
                 let exceptionCount = '${exceptionCount}';
                 let penaltyCount = '${penaltyCount}';
@@ -128,12 +129,6 @@
                     }, 200);
                 }
 
-                $.drawPieChart({
-                    completeCount: completeCount,
-                    exceptionCount: exceptionCount,
-                    penaltyCount: penaltyCount
-                });
-
                 // 월별 신고 건수
                 $.drawBarChart = function (opt) {
                     var chart = new CanvasJS.Chart("barChart", {
@@ -146,15 +141,15 @@
                                 // 신고 발생 건수
                                 type: "column",
                                 dataPoints: [
-                                    {label: "1월", y: 71},
-                                    {label: "2월", y: 55},
-                                    {label: "3월", y: 50},
-                                    {label: "4월", y: 65},
-                                    {label: "5월", y: 95},
-                                    {label: "6월", y: 68},
-                                    {label: "7월", y: 28},
-                                    {label: "8월", y: 34},
-                                    {label: "9월", y: 14},
+                                    {label: "1월",  y: 71},
+                                    {label: "2월",  y: 55},
+                                    {label: "3월",  y: 50},
+                                    {label: "4월",  y: 65},
+                                    {label: "5월",  y: 95},
+                                    {label: "6월",  y: 68},
+                                    {label: "7월",  y: 28},
+                                    {label: "8월",  y: 34},
+                                    {label: "9월",  y: 14},
                                     {label: "10월", y: 14},
                                     {label: "11월", y: 14},
                                     {label: "12월", y: 14}
@@ -184,7 +179,15 @@
                     chart.render();
                 }
 
+                // bar 차트
                 $.drawBarChart();
+
+                // 파이 차트
+                $.drawPieChart({
+                    completeCount: completeCount,
+                    exceptionCount: exceptionCount,
+                    penaltyCount: penaltyCount
+                });
             });
         </script>
     </stripes:layout-component>

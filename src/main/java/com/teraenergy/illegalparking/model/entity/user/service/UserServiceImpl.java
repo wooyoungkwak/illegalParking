@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.teraenergy.illegalparking.encrypt.YoungEncoder;
+import com.teraenergy.illegalparking.encrypt.YoungEncrypter;
 import com.teraenergy.illegalparking.exception.EncryptedException;
 import com.teraenergy.illegalparking.exception.enums.EncryptedExceptionCode;
 import com.teraenergy.illegalparking.exception.TeraException;
@@ -68,6 +69,19 @@ public class UserServiceImpl implements UserService {
             return user;
         } catch (Exception e) {
             throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST, e);
+        }
+    }
+
+    @Override
+    public User getByGovernmentOffice(String userName, String password) throws TeraException {
+        String encryptPassword = YoungEncoder.encrypt(password);
+        JPAQuery query = jpaQueryFactory.selectFrom(QUser.user);
+        query.where(QUser.user.username.eq(userName));
+        query.where(QUser.user.password.eq(encryptPassword));
+        if ( query.fetchOne() != null) {
+            return (User) query.fetchOne();
+        } else {
+            return null;
         }
     }
 

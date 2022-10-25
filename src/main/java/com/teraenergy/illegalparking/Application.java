@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         basePackageClasses = {Jsr310JpaConverters.class},
         basePackages = {"com.teraenergy.illegalparking.model"}
 )
-//@EnableScheduling
+@EnableScheduling
 public class Application {
 
     public static void main(String[] args) {

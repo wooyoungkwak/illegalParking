@@ -86,7 +86,7 @@ public class HomeController extends ExtendsController {
 
                 model.addAttribute("officeName", user.getGovernMentOffice().getName());
                 model.addAttribute("totalCount", totalCount);// 년 전체 건수
-                model.addAttribute("sendPenaltyCount", penaltyCount);// 기관에 전송한 건수
+                model.addAttribute("sendPenaltyCount", (penaltyCount + exceptionCount ));// 기관에 전송한 건수
                 model.addAttribute("completeCount", completeCount); // 대기 건수
                 model.addAttribute("exceptionCount", exceptionCount); // 미처리 건수
                 model.addAttribute("penaltyCount", penaltyCount); // 처리 건수

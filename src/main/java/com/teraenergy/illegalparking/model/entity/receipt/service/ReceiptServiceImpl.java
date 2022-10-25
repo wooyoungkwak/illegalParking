@@ -106,9 +106,8 @@ public class ReceiptServiceImpl implements ReceiptService {
         return query.fetch();
     }
 
-    public List<Receipt> gets(Integer userSeq, String carNum) {
+    public List<Receipt> gets(String carNum) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
-        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
         query.where(QReceipt.receipt.isDel.isFalse());
         query.orderBy(QReceipt.receipt.receiptSeq.desc());
@@ -157,7 +156,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
         query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.REPORT));     // 사고접수 (처리완료)
         query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.PENALTY));    // 과태료대상 (처리완료)
-
+        query.orderBy(QReceipt.receipt.receiptSeq.desc());
         int total = query.fetch().size();
 
         if (receiptStateType != null) {

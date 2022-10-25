@@ -44,4 +44,7 @@ public class MyCar {
     @Column
     LocalDateTime delDt;
 
+    public void setIsAlarm(boolean isAlarm) {
+        this.isAlarm = isAlarm;
+    }
 }

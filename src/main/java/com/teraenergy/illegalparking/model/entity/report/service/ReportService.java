@@ -26,8 +26,11 @@ public interface ReportService {
     boolean isExistByReceipt(String carNum, LocalDateTime regDt, IllegalType illegalType);
 
     Report get(Integer reportSeq);
+    List<Report> getByGovernmentOffice(Integer reportSeq, LocalDateTime startDate, LocalDateTime endDate);
 
     List<Report> gets();
+
+    Integer getsOverlabCount(String carNum);
 
     Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
 

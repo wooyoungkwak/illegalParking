@@ -113,8 +113,22 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
+    public List<Report> getByGovernmentOffice(Integer reportSeq, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.regDt.between(startDateTime, endDateTime));
+        return query.fetch();
+    }
+
+    @Override
     public List<Report> gets() {
         return reportRepository.findAll();
+    }
+
+    @Override
+    public Integer getsOverlabCount(String carNum) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.receipt.carNum.eq(carNum));
+        return query.fetch().size();
     }
 
     @Override
@@ -136,6 +150,7 @@ public class ReportServiceImpl implements ReportService {
         }
 
         query.where(QReport.report.isDel.isFalse());
+        query.orderBy(QReport.report.reportSeq.desc());
 
         if (reportStateType != null) {
             query.where(QReport.report.reportStateType.eq(reportStateType));
@@ -234,8 +249,18 @@ public class ReportServiceImpl implements ReportService {
 
                     // 포인트 제한 없음
                     if (point.getIsPointLimit()) {
-                        pointValue = point.getValue();
-                        break;
+                        // 날짜 제한 없음
+                        if (point.getIsTimeLimit()) {
+                            break;
+                        } else {
+                            // 기간 내부에 존해 여부 확인
+                            if ( point.getStartDate().isBefore(LocalDate.now()) && point.getStopDate().isAfter(LocalDate.now()) ) {
+                                updatePoint.setNote("");
+                                break;
+                            } else {
+                                continue;
+                            }
+                        }
                     }
 
                     // 시간 제한 없음
@@ -254,8 +279,8 @@ public class ReportServiceImpl implements ReportService {
                                 continue;
                             } else {
                                 pointValue = point.getValue();
-                                point.setResidualValue(point.getResidualValue() - pointValue);      // 남은 포인트
-                                point.setUseValue( (point.getUseValue() == null ? 0L : point.getUseValue() ) + pointValue);                // 누적 포인트
+                                point.setResidualValue(point.getResidualValue() - pointValue);                                  // 남은 포인트
+                                point.setUseValue( (point.getUseValue() == null ? 0L : point.getUseValue() ) + pointValue);     // 누적 포인트
                             }
                         }
                     }
@@ -294,9 +319,9 @@ public class ReportServiceImpl implements ReportService {
                         calculate = new Calculate();
                         calculate.setCurrentPointValue(updatePoint.getValue());
                     } else {
-                        calculate.setCurrentPointValue(calculate.getCurrentPointValue() + updatePoint.getValue());
+                        calculate.setCurrentPointValue( ( calculate.getCurrentPointValue() == null ? 0 : calculate.getCurrentPointValue() ) + updatePoint.getValue());
                     }
-                    calculate.setUserSeq(userSeq);
+                    calculate.setUserSeq(receipt.getUser().getUserSeq());
                     calculate.setPointType(updatePoint.getPointType());
                     calculate.setEventPointValue(updatePoint.getValue());
                     calculate.setLocationType(user.getGovernMentOffice().getLocationType());

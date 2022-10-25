@@ -127,7 +127,11 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         receiptDetailDto.setFirstFileName(receipt.getFileName());
         receiptDetailDto.setFirstRegDt(receipt.getRegDt());
         receiptDetailDto.setFirstAddr(receipt.getAddr());
-        receiptDetailDto.setFirstIllegalType(receipt.getIllegalZone().getIllegalEvent().getIllegalType());
+
+        // 불법 주정차 구역이 아닌 지역에서 신고한 경우 illegalzone 이 없음.
+        if ( receipt.getIllegalZone() != null) {
+            receiptDetailDto.setFirstIllegalType(receipt.getIllegalZone().getIllegalEvent().getIllegalType());
+        }
 
         if ( receipt.getSecondRegDt() != null ) {
             receiptDetailDto.setSecondFileName(receipt.getSecondFileName());
@@ -161,6 +165,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             reportDto.setRegDt(report.getRegDt());
             reportDto.setReportStateType(report.getReportStateType());
 
+            reportDto.setOverlapCount(reportService.getsOverlabCount(report.getReceipt().getCarNum()));
             if (report.getReportUserSeq() != null) {
                 User user = userService.get(report.getReportUserSeq());
                 reportDto.setGovernmentName(user.getGovernMentOffice().getName());
@@ -237,10 +242,12 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         reportDetailDto.setFirstFileName(receipt.getFileName());    // 첫번째 파일 이름
         reportDetailDto.setFirstRegDt(receipt.getRegDt());          // 첫번째 등록 일자
         reportDetailDto.setFirstAddr(receipt.getAddr());            // 첫번째 등록 주소
+        reportDetailDto.setFirstIllegalType(receipt.getIllegalZone().getIllegalEvent().getIllegalType());            // 첫번째 등록 주소
 
         reportDetailDto.setSecondFileName(receipt.getSecondFileName());     // 두번째 파일 이름
         reportDetailDto.setSecondRegDt(receipt.getSecondRegDt());           // 두번째 등록 일자
         reportDetailDto.setSecondAddr(receipt.getAddr());                   // 두번째 등록 주소
+        reportDetailDto.setSecondIllegalType(receipt.getIllegalZone().getIllegalEvent().getIllegalType());
 
         receiptSeqs.add(receipt.getReceiptSeq());
 

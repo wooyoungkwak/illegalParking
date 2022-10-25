@@ -263,10 +263,12 @@ public class MobileAPI {
                 resultMap.put("carNum", myCars.get(0).getCarNum());
                 resultMap.put("carLevel", myCars.get(0).getCarGrade());
                 resultMap.put("carName", myCars.get(0).getCarName());
+                resultMap.put("isAlarm", myCars.get(0).isAlarm());
             } else {
                 resultMap.put("carNum", "");
                 resultMap.put("carLevel", "");
                 resultMap.put("carName", "");
+                resultMap.put("isAlarm", false);
             }
 
             List<Receipt> receipts = receiptService.gets(userSeq);
@@ -442,10 +444,9 @@ public class MobileAPI {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer userSeq = jsonNode.get("userSeq").asInt();
             String carNum = jsonNode.get("carNum").asText();
-
-            List<Receipt> receipts = receiptService.gets(userSeq, carNum);
-
+            List<Receipt> receipts = receiptService.gets(carNum);
             List<HashMap<String, Object>> resultMap = Lists.newArrayList();
+
             for (Receipt receipt : receipts) {
                 HashMap<String, Object> map = Maps.newHashMap();
                 map.put("addr", receipt.getAddr());
@@ -459,6 +460,7 @@ public class MobileAPI {
                 map.put("fileName", receipt.getFileName());
                 resultMap.add(map);
             }
+
             return resultMap;
         } catch (Exception e) {
             e.printStackTrace();
@@ -513,11 +515,10 @@ public class MobileAPI {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             Integer userSeq = jsonNode.get("userSeq").asInt();
             String carNum = jsonNode.get("carNum").asText();
-            boolean isAlarm = jsonNode.get("isAlarm").isBoolean();
+            boolean isAlarm = jsonNode.get("isAlarm").booleanValue();
 
             MyCar myCar = myCarService.get(userSeq, carNum);
-            myCar.setAlarm(isAlarm);
-
+            myCar.setIsAlarm(isAlarm);
             myCarService.set(myCar);
             return "complete ... ";
         } catch (Exception e) {
@@ -768,4 +769,48 @@ public class MobileAPI {
     }
 
 
+    /**
+     * 공공 기관의 신고 정보 요청 데이터 ~~~~
+     * 언제 부터 (startDate) ~ 언제 까지 (stopDate)
+     *
+     */
+    @PostMapping("/api/report/gets")
+    @ResponseBody
+    public Object getReports(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        String userName = jsonNode.get("id").asText();
+        String password = jsonNode.get("password").asText();
+
+        LocalDateTime startDateTime = StringUtil.convertStringToDateTime(jsonNode.get("sTime").asText(), "yyyy-MM-dd HH:mm");
+        LocalDateTime endDateTime = StringUtil.convertStringToDateTime(jsonNode.get("eTime").asText(), "yyyy-MM-dd HH:mm");
+
+        User user = userService.getByGovernmentOffice(userName, password);
+
+        List<Map<String, Object>> resultMap = Lists.newArrayList();
+
+        if ( user == null) {
+            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
+        }
+
+        List<Report> reports = reportService.getByGovernmentOffice(user.getUserSeq(), startDateTime, endDateTime);
+
+        for(Report report : reports ) {
+            Map<String, Object> map = Maps.newHashMap();
+            Receipt receipt = report.getReceipt();
+            map.put("userName", receipt.getUser().getName());
+            map.put("carNum", receipt.getCarNum());
+            map.put("firstFileName", receipt.getFileName());
+            map.put("secondFileName", receipt.getSecondFileName());
+            map.put("regDt",report.getRegDt());
+            map.put("secondRegDt",receipt.getSecondRegDt());
+            map.put("firstRegDt",receipt.getRegDt());
+            map.put("addr",receipt.getAddr());
+            map.put("illegalType",receipt.getIllegalZone().getIllegalEvent().getIllegalType().getValue());
+            map.put("reportState",report.getReportStateType());
+
+            resultMap.add(map);
+        }
+
+        return resultMap;
+    }
 }

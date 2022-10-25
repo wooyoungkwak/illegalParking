@@ -32,7 +32,7 @@ public interface ReceiptService {
 
     List<Receipt> gets(Integer userSeq);
 
-    List<Receipt> gets(Integer userSeq, String carNum);
+    List<Receipt> gets(String carNum);
 
     int getsOverlabCount(Integer user, String carNum);
 

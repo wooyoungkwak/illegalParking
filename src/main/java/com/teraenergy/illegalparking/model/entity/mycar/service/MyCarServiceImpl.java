@@ -2,12 +2,14 @@ package com.teraenergy.illegalparking.model.entity.mycar.service;
 
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.mycar.domain.MyCar;
 import com.teraenergy.illegalparking.model.entity.mycar.domain.QMyCar;
 import com.teraenergy.illegalparking.model.entity.mycar.repository.MyCarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -32,8 +34,8 @@ public class MyCarServiceImpl implements MyCarService{
         JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
         query.where(QMyCar.myCar.carNum.eq(carNum));
         query.where(QMyCar.myCar.isAlarm.isTrue());
-        if ( query.fetchFirst() != null) {
-            return (MyCar) query.fetchFirst();
+        if ( query.fetchOne() != null) {
+            return (MyCar) query.fetchOne();
         } else {
             return null;
         }
@@ -44,8 +46,8 @@ public class MyCarServiceImpl implements MyCarService{
         JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
         query.where(QMyCar.myCar.userSeq.eq(userSeq));
         query.where(QMyCar.myCar.carNum.eq(carNum));
-        if ( query.fetchFirst() != null) {
-            return (MyCar) query.fetchFirst();
+        if ( query.fetchOne() != null) {
+            return (MyCar) query.fetchOne();
         } else {
             return null;
         }
@@ -60,16 +62,21 @@ public class MyCarServiceImpl implements MyCarService{
 
     @Override
     public boolean isExist(String carNum) {
-        JPAQuery jpaQuery = jpaQueryFactory.selectFrom(QMyCar.myCar);
-        jpaQuery.where(QMyCar.myCar.carNum.eq(carNum));
-        if ( jpaQuery.fetch().size() > 0) {
+        JPAQuery query = jpaQueryFactory.selectFrom(QMyCar.myCar);
+        query.where(QMyCar.myCar.carNum.eq(carNum));
+        if ( query.fetch().size() > 0) {
             return true;
         }
         return false;
     }
 
+    @Transactional
     @Override
     public MyCar set(MyCar myCar) {
+//        JPAUpdateClause query = jpaQueryFactory.update(QMyCar.myCar);
+//        query.where(QMyCar.myCar.carSeq.eq(myCar.getCarSeq()));
+//        query.set(QMyCar.myCar.isAlarm, myCar.isAlarm());
+//        query.execute();
         return myCarRepository.save(myCar);
     }
 

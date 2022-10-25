@@ -27,4 +27,5 @@ public class ReportDto {
     String governmentName;                  // 담당기관
     ReplyType replyType;                    // 처리
     String event;                           // 이벤트
+    Integer overlapCount;                   // 중복 횟수
 }

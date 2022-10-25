@@ -85,7 +85,7 @@
 										<fmt:parseDate value="${report.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both"/>
 										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
 									</td>
-									<td class="text-center"></td>
+									<td class="text-center">${report.overlapCount}</td>
 									<td class="text-center">
 										<c:choose>
 											<c:when test="${report.reportStateType == 'PENALTY'}"><span class="text-danger fw-bold">${report.reportStateType.value}</span></c:when>
@@ -174,7 +174,7 @@
                     let className = '';
                     switch (value) {
                         case 'COMPLETE':
-                            text = "신고대기";
+                            text = "신고접수";
                             className = "text-success";
                             break;
                         case 'PENALTY':
@@ -203,11 +203,11 @@
                         } else if (key.indexOf("secondFileName") > -1) {
                             $('#' + key).attr('src', encodeURI(_contextPath + "/../fileUpload/" + value));
                         } else if (key === 'firstIllegalType') {
-                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
-                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차 구역");
+                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차 구역");
                         } else if (key === 'secondIllegalType') {
-                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차");
-                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차");
+                            if (value === 'ILLEGAL') $('#' + key).text("불법주정차 구역");
+                            else if (value === 'FIVE_MINUTE') $('#' + key).text("5분주정차 구역");
                         } else if (key === 'note') {
                             if (report.governmentOfficeName === null) {
                                 $('#' + key).val("");

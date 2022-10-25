@@ -19,6 +19,8 @@ public interface UserService {
 
     User get(String userName) throws TeraException;
 
+    User getByGovernmentOffice(String userName, String password) throws TeraException;
+
     List<User> gets() throws TeraException;
 
     Page<User> getsByGovernmentRole(int pageNumber, int pageSize, UserGovernmentFilterColumn userGovernmentFilterColumn, String search) throws TeraException;
