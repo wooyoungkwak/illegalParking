@@ -14,11 +14,18 @@
 	<!-- content -->
 	<stripes:layout-component name="contents">
 		<main>
-			<div class="row">
+			<div class="col">
 				<div class="map_wrap">
 					<div id="map"></div>
 
-					<div class="map-control bg-white shadow-sm btn-group rounded-pill" role="group">
+					<div class="map-control alarm-control" role="group">
+                        <label class="alarm-mode-button">
+                            <input type="checkbox"/>
+                            <span class="onOff-switch"></span>
+                        </label>
+					</div>
+
+					<div class="map-control border border-2 bg-white shadow-sm btn-group rounded-pill" role="group">
 
 						<label for="zone" class="mapType btn btn-dark rounded-pill fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
 
@@ -34,6 +41,10 @@
 						<span id="btnFindMe"><img src="<%=contextPath%>/resources/assets/img/ping.png" alt="내위치"></span>
 						<span id="zoomIn"><img src="<%=contextPath%>/resources/assets/img/plus.png" alt="확대"></span>
 						<span id="zoomOut"><img src="<%=contextPath%>/resources/assets/img/minus.png" alt="축소"></span>
+					</div>
+
+					<div class="map-control msg-bar rounded-pill" id="msgBar">
+						<p class="fw-semibold">현재 지역은 주정차 금지 지역입니다.</p>
 					</div>
 
 				</div>

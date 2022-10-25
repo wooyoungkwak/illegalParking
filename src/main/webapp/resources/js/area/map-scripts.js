@@ -283,34 +283,43 @@ $(function () {
 
         log(map.getCenter());
         // 폴리곤 내부 포함여부 확인
-        // setKakaoEvent({
-        //     target: map,
-        //     event: 'click',
-        //     func: function (mouseEvent) {
-        //         let latlng = mouseEvent.latLng;
-        //         log('click! ' + latlng.toString());
-        //         log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
-        //         let p = new Point(latlng.getLng(), latlng.getLat());
-        //         let len = overlays.length;
-        //         for (let i = 0; i < len; i++) {
-        //             let points = [];
-        //             overlays[i].getPath().forEach(function (overlay) {
-        //                 let x = overlay.getLng(), y = overlay.getLat();
-        //                 points.push(new Point(x, y));
-        //             })
-        //             let onePolygon = points;
-        //             let n = onePolygon.length;
-        //             if (isInside(onePolygon, n, p)) {
-        //                 log(i + " : Yes");
-        //                 log(zoneSeqs[i]);
-        //                 // alert('hello')
-        //                 break;
-        //             } else {
-        //                 log(i + " : No");
-        //             }
-        //         }
-        //     }
-        // });
+        setKakaoEvent({
+            target: map,
+            event: 'click',
+            func: function (mouseEvent) {
+                // let latlng = mouseEvent.latLng;
+                // log('click! ' + latlng.toString());
+                // log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
+                // let p = new Point(latlng.getLng(), latlng.getLat());
+                // let len = overlays.length;
+                // for (let i = 0; i < len; i++) {
+                //     let points = [];
+                //     overlays[i].getPath().forEach(function (overlay) {
+                //         let x = overlay.getLng(), y = overlay.getLat();
+                //         points.push(new Point(x, y));
+                //     })
+                //     let onePolygon = points;
+                //     let n = onePolygon.length;
+                //     if (isInside(onePolygon, n, p)) {
+                //         log(i + " : Yes");
+                //         log(zoneSeqs[i]);
+                //         // alert('hello')
+                //         break;
+                //     } else {
+                //         log(i + " : No");
+                //     }
+                // }
+
+                let imgOrigin = setImgOrigin();
+
+                let normalImage = createMarkerImage(new kakao.maps.Size(70, 77), imgOrigin.imgSrc.normalOrigin);
+
+                if (!!selectedMarker) {
+                    selectedMarker.setImage(normalImage);
+                    selectedMarker = null
+                }
+            }
+        });
 
         // 중심 좌표나 확대 수준이 변경되면 발생한다.
         setKakaoEvent({
@@ -395,19 +404,9 @@ $(function () {
         };
     }
 
-    function createMarkerImage(markerSize, imageOrigin){
-        return new kakao.maps.MarkerImage(
-            imageOrigin, // 마커 이미지 URL
-            markerSize, // 마커의 크기
-        );
-    }
-
-    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
-    function addMarker(data) {
+    function setImgOrigin() {
         let imgSrc;
-        let imageSize = new kakao.maps.Size(70, 77);
-        let normalImage;
-        let clickImage;
+
         let type = 'parking';
 
         if(mapSelected === 'pm') {
@@ -424,8 +423,27 @@ $(function () {
                 clickOrigin : '/resources/assets/img/alarm_on.png'
             }
         }
-        normalImage = createMarkerImage(imageSize, imgSrc.normalOrigin);
-        clickImage = createMarkerImage(imageSize, imgSrc.clickOrigin);
+
+        return {type: type, imgSrc: imgSrc}
+    }
+
+    function createMarkerImage(markerSize, imageOrigin){
+        return new kakao.maps.MarkerImage(
+            imageOrigin, // 마커 이미지 URL
+            markerSize, // 마커의 크기
+        );
+    }
+
+    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+    function addMarker(data) {
+        let imageSize = new kakao.maps.Size(70, 77);
+        let normalImage;
+        let clickImage;
+
+        let imgOrigin = setImgOrigin();
+
+        normalImage = createMarkerImage(imageSize, imgOrigin.imgSrc.normalOrigin);
+        clickImage = createMarkerImage(imageSize, imgOrigin.imgSrc.clickOrigin);
         let marker = new kakao.maps.Marker({
             position: new kakao.maps.LatLng(data.latitude, data.longitude), // 마커의 위치
             image: normalImage
@@ -449,18 +467,25 @@ $(function () {
 
                 // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경합니다
                 marker.setImage(clickImage);
+                if(isMobile) {
+                    // 커스텀 오버레이 컨텐츠를 설정합니다
+                    let obj = markerInfo(imgOrigin.type, data);
+                    log(obj);
+                    // webToApp.postMessage(JSON.stringify(obj));
+                }
             }
 
-            // 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
-            selectedMarker = marker;
+            if (selectedMarker === marker) {
+                selectedMarker.setImage(clickImage);
+                marker.setImage(normalImage);
+                selectedMarker = null;
+            } else {
+                // 클릭된 마커를 현재 클릭된 마커 객체로 설정합니다
+                selectedMarker = marker;
+            }
 
             map.panTo(marker.getPosition());
-            if(isMobile) {
-                // 커스텀 오버레이 컨텐츠를 설정합니다
-                let obj = markerInfo(type, data);
-                log(obj);
-                webToApp.postMessage(JSON.stringify(obj));
-            }
+
         });
 
         marker.setMap(map); // 지도 위에 마커를 표출합니다
@@ -504,7 +529,9 @@ $(function () {
         initializeKakao();
         $('#debug').val(gpsLatitude + "," + gpsLongitude + " :: " + (typeof gpsLatitude));
 
-        if(isMobile) getMobileCurrentPosition(map);
+        if(isMobile) {
+            getMobileCurrentPosition(map);
+        }
         else getCurrentPosition(map);
     }
 

@@ -200,8 +200,11 @@ let myMarker = {
 };
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
 
+let myLocMarker = null;
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 function getCurrentPosition(map) {
+    if(!!myLocMarker) myLocMarker.setMap(null);
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -217,6 +220,7 @@ function getCurrentPosition(map) {
                 });
 
                 marker.setMap(map); // 지도 위에 마커를 표출합니다
+                myLocMarker = marker;
                 map.panTo(currentPosition);
             },
             (error) => {
@@ -237,8 +241,10 @@ function getCurrentPosition(map) {
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 function getMobileCurrentPosition(map) {
+    if(!!myLocMarker) myLocMarker.setMap(null);
     log(gpsLatitude, ':::::::::::', gpsLongitude);
 
+    map.relayout();
     gpsLatitude = gpsLatitude === 0 ? '35.01868444' : gpsLatitude.toString();
     gpsLongitude = gpsLongitude === 0 ? '126.78284599' : gpsLongitude.toString();
 
@@ -252,6 +258,7 @@ function getMobileCurrentPosition(map) {
     });
 
     marker.setMap(map); // 지도 위에 마커를 표출합니다
+    myLocMarker = marker;
     map.panTo(gpsPosition);
 }
 
