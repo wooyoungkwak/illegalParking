@@ -18,26 +18,26 @@
 				<div class="map_wrap">
 					<div id="map"></div>
 
-					<div class="map-control bg-white border border-2 shadow-sm btn-group rounded-pill" role="group">
+					<div class="map-control bg-white shadow-sm btn-group rounded-pill" role="group">
 
-						<label for="zone" class="mapType btn btn-dark rounded-pill"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
+						<label for="zone" class="mapType btn btn-dark rounded-pill fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
 
-						<label for="parking" class="mapType btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">주차장</label>
+						<label for="parking" class="mapType btn btn-white fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">주차장</label>
 
-						<label for="pm" class="mapType btn btn-white"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
+						<label for="pm" class="mapType btn btn-white fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
 					</div>
+
+					<%--<div class="custom-btn-control">
+					</div>--%>
 					<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
-					<div class="custom_zoomcontrol radius_border">
-						<span id="zoomIn"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_plus.png" alt="확대"></span>
-						<span id="zoomOut"><img src="https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/ico_minus.png" alt="축소"></span>
-					</div>
-
-					<div class="custom_btncontrol radius_border">
-						<span id="btnFindMe" class="btn"><img src="<%=contextPath%>/resources/assets/img/re_ping.png" alt="내위치"></span>
+					<div class="custom-control">
+						<span id="btnFindMe"><img src="<%=contextPath%>/resources/assets/img/ping.png" alt="내위치"></span>
+						<span id="zoomIn"><img src="<%=contextPath%>/resources/assets/img/plus.png" alt="확대"></span>
+						<span id="zoomOut"><img src="<%=contextPath%>/resources/assets/img/minus.png" alt="축소"></span>
 					</div>
 
 				</div>
-				<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>
+				<%--<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>--%>
 
 			</div>
 		</main>

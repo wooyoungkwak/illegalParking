@@ -270,6 +270,7 @@ public class AreaAPI {
         List<Integer> zoneSeqs = Lists.newArrayList();
         List<String> zoneTypes = Lists.newArrayList();
         List<String> polygons = Lists.newArrayList();
+        List<Integer> receiptCnts = Lists.newArrayList();
 
         for (IllegalZone illegalZone : illegalZones) {
             Polygon polygon = (Polygon) new WKTReader().read(illegalZone.getPolygon());
@@ -295,11 +296,17 @@ public class AreaAPI {
             zoneSeqs.add(illegalZone.getZoneSeq());
         }
 
+        for (ReportStatics reportStatics: reportStaticsList) {
+            int zoneSeq = reportStatics.getZoneSeq();
+            if(zoneSeqs.contains(zoneSeq))
+                receiptCnts.add(reportStatics.getReceiptCount());
+        }
+
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("zonePolygons", polygons);
         resultMap.put("zoneSeqs", zoneSeqs);
         resultMap.put("zoneTypes", zoneTypes);
-        resultMap.put("reportStaticsList", reportStaticsList);
+        resultMap.put("receiptCnts", receiptCnts);
 
         return resultMap;
     }

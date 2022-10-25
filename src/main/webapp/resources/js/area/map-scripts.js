@@ -3,7 +3,9 @@ $(function () {
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
-    let reportStaticsList = [];
+    let receiptCnts = [];
+
+    let isMobile = window.location.pathname.includes('api');
 
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
@@ -46,18 +48,14 @@ $(function () {
     $('input:radio[name=mapSelect]').change(function (event){
         log('1 ::::::::::::::::', CENTER_LONGITUDE);
         log('1 ::::::::::::::::', CENTER_LATITUDE);
-        if(window.location.pathname.includes('api')){
+        if(isMobile){
             log(gpsLatitude, ':::::::::::', gpsLongitude);
             CENTER_LATITUDE = gpsLatitude;
             CENTER_LONGITUDE = gpsLongitude;
-
-
             // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
         }
         log('2 2222::::::::::::::::', CENTER_LONGITUDE);
         log('2 222::::::::::::::::', CENTER_LATITUDE);
-
-        log(window.location.pathname);
 
         let mapType = $('.mapType');
 
@@ -139,6 +137,7 @@ $(function () {
     // 폴리곤 그리기
     function drawingPolygon(polygons) {
         removeOverlays();
+        log(polygons)
         // 지도에 영역데이터를 폴리곤으로 표시합니다
         for (const element of polygons) {
             displayArea(element);
@@ -195,13 +194,13 @@ $(function () {
 
     // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
     function getPolygonData() {
-        log(reportStaticsList);
         let areas = [];
         for (let j = 0; j < zonePolygons.length; j++) {
             let pointsPoly = [], obj = {};
             let zonePolygonArr = zonePolygons[j].split(",");
             obj.type = zoneTypes[j];
             obj.seq = zoneSeqs[j];
+            obj.receiptCnt = receiptCnts[j];
             for (let i = 0; i < zonePolygonArr.length - 1; i++) {
                 let pathPoints = zonePolygonArr[i].split(" ");
                 pointsPoly[i] = new Point(pathPoints[0], pathPoints[1]);
@@ -254,9 +253,13 @@ $(function () {
             }
         });
 
+        let cnt = area.receiptCnt;
+        let balloonImg = 'balloon_orange.png';
+        if(area.type === 'ILLEGAL') balloonImg = 'balloon_red.png'
+
         let customOverlay = new kakao.maps.CustomOverlay({
             position: path[0],
-            content: `<div><img src="/resources/assets/img/balloon_red.png" alt="불법주정차"/></div>`,
+            content: `<div class="balloon-image"><img src="/resources/assets/img/${balloonImg}" alt="불법주정차"/><span class="balloon-text">${cnt}</span></div>`,
             map: map
         });
 
@@ -390,12 +393,11 @@ $(function () {
             type: type,
             data: dataObj
         };
-        // webToApp.postMessage(JSON.stringify(obj));
     }
 
     function createMarkerImage(markerSize, imageOrigin){
         return new kakao.maps.MarkerImage(
-            imageOrigin, // 스프라이트 마커 이미지 URL
+            imageOrigin, // 마커 이미지 URL
             markerSize, // 마커의 크기
         );
     }
@@ -453,10 +455,12 @@ $(function () {
             selectedMarker = marker;
 
             map.panTo(marker.getPosition());
-            // 커스텀 오버레이 컨텐츠를 설정합니다
-            let obj = markerInfo(type, data);
-            log(obj);
-            // webToApp.postMessage(JSON.stringify(obj));
+            if(isMobile) {
+                // 커스텀 오버레이 컨텐츠를 설정합니다
+                let obj = markerInfo(type, data);
+                log(obj);
+                webToApp.postMessage(JSON.stringify(obj));
+            }
         });
 
         marker.setMap(map); // 지도 위에 마커를 표출합니다
@@ -491,7 +495,7 @@ $(function () {
             zonePolygons = result.data.zonePolygons;
             zoneSeqs = result.data.zoneSeqs;
             zoneTypes = result.data.zoneTypes;
-            reportStaticsList = result.data.reportStaticsList;
+            receiptCnts = result.data.receiptCnts;
         }
     }
 

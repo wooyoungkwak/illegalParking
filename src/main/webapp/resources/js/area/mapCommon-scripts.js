@@ -194,6 +194,11 @@ async function coordinatesToDongCodeKakaoApi(x, y, stat){
 /* 좌표로 동코드 받기 카카오 REST API end */
 
 
+let myMarker = {
+    imgSrc: '/resources/assets/img/marker_shadow.png',
+    imgSize: new kakao.maps.Size(50,50)
+};
+let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 function getCurrentPosition(map) {
@@ -208,7 +213,7 @@ function getCurrentPosition(map) {
 
                 let marker = new kakao.maps.Marker({
                     position: currentPosition, // 마커의 위치
-                    // image: markerImage
+                    image: markerImg
                 });
 
                 marker.setMap(map); // 지도 위에 마커를 표출합니다
@@ -243,8 +248,9 @@ function getMobileCurrentPosition(map) {
     //map.setCenter(currentPosition);
     let marker = new kakao.maps.Marker({
         position: gpsPosition, // 마커의 위치
-        // image: markerImage
+        image: markerImg
     });
+
     marker.setMap(map); // 지도 위에 마커를 표출합니다
     map.panTo(gpsPosition);
 }
@@ -296,5 +302,3 @@ $.gpsPoint = function(x, y) {
 
     log('webview', gpsLatitude, gpsLongitude);
 }
-
-let isMobile = window.location.pathname.includes('api');
