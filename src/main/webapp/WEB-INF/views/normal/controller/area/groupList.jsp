@@ -58,29 +58,31 @@
 
                         </form>
                         <table class="table table-hover table-bordered" id="userTable">
-                            <thead>
+                            <thead class="table-info">
                                 <tr>
-                                    <th scope="col">그룹위치</th>
-                                    <th scope="col">그룹명</th>
-                                    <th scope="col">포함구역</th>
-                                    <th scope="col">설정내용</th>
+                                    <th scope="col" class="text-center">그룹위치</th>
+                                    <th scope="col" class="text-center">그룹명</th>
+                                    <th scope="col" class="text-center">포함 구역</th>
+                                    <th scope="col" class="text-center">설정 내용</th>
+                                    <th scope="col" class="text-center">보 기</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="${illegalGroupDtos}" var="illegalGroupDto" varStatus="status">
                                     <tr>
-                                        <td>
+                                        <td class="text-center align-middle">
                                             <input type="hidden" value="${illegalGroupDto.groupSeq}">
                                             ${illegalGroupDto.locationType.value}
                                         </td>
-                                        <td>${illegalGroupDto.name}</td>
-                                        <td>${illegalGroupDto.groupSize}</td>
-                                        <td>${illegalGroupDto.note}</td>
+                                        <td class="text-center align-middle">${illegalGroupDto.name}</td>
+                                        <td class="text-end align-middle">${illegalGroupDto.groupSize}</td>
+                                        <td class=" align-middle">${illegalGroupDto.note}</td>
+                                        <td class="text-center align-middle"><a class="btn btn-outline-dark">상세 보기</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="15,30,50" pageSize="${pageSize}"/>
+                        <tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
                     </div>
                 </div>
             </div>
@@ -126,7 +128,52 @@
                     }
                 }
 
-                // groupSetTag 설정
+                // 이벤트 팝업창 설정 함수
+                function initialGroupEventAddTag(point){
+                    // $('#pointType').val(point.pointType);
+                    $('#limitValue').val(point.limitValue.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $('#value').val(point.value.replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $('#startDate').val(point.startDate);
+                    $('#stopDate').val(point.stopDate);
+                    $('#isPointLimit').prop("checked", point.pointLimit);
+                    $('#isTimeLimit').prop("checked", point.timeLimit);
+                    log(point.startDate);
+                    log(point.stopDate);
+                }
+
+                // groupSetTag 의 테이블 이벤트 설정
+                function setGroupSetTagForTableEvent() {
+                    $('#pointTable tbody tr').each(function (){
+                        $(this).on('click', function (){
+
+                            let pointSeq = $(this).find('td:eq(0)').find('input').val();
+
+                            let result = $.JJAjaxAsync({
+                                url: _contextPath + '/group/point/get',
+                                data: {
+                                    pointSeq: pointSeq
+                                }
+                            });
+
+                            if( result.success) {
+                                initialGroupEventAddTag(result.data);
+                            }
+
+                            let now = new Date();
+                            $('#startDate').val($.formatDateYYYYMMDD(now));
+                            $('#stopDate').val($.formatDateYYYYMMDD(now));
+
+                            $('#modalGroupEvent').show();
+                            $('body').css({
+                                'overflow': 'hidden'
+                            });
+
+
+                        });
+                    });
+                }
+
+                // groupSetTag 의 설정
                 function initializeGroupSetTag(opt) {
                     $('#groupSeq').val(opt.groupSeq);
                     $('#locationType').val(opt.locationType);
@@ -134,14 +181,15 @@
 
                     let createTr = function (data) {
                         let html = `<tr>`;
-                        html += `<td>` + data.pointType + `</td>`;
-                        html += `<td>` + data.limitValue + `</td>`;
-                        html += `<td>` + data.value + `</td>`;
-                        html += `<td>` + data.useValue + `</td>`;
-                        html += `<td>` + data.residualValue + `</td>`;
-                        html += `<td>` + data.startDate + `</td>`;
-                        html += `<td>` + data.stopDate + `</td>`;
-                        html += `<td>` + data.finish + `</td>`;
+                        html += `<td class="text-center align-middle"><input type="hidden" value="` + data.pointSeq + `">` + data.pointType + `</td>`;
+                        html += `<td class="text-end align-middle">` + data.limitValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + `</td>`;
+                        html += `<td class="text-end align-middle">` + data.value.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + `</td>`;
+                        html += `<td class="text-end align-middle">` + data.useValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + `</td>`;
+                        html += `<td class="text-end align-middle">` + data.residualValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + `</td>`;
+                        html += `<td class="text-center align-middle">` + data.startDate + `</td>`;
+                        html += `<td class="text-center align-middle">` + data.stopDate + `</td>`;
+                        html += `<td class="align-middle">` + data.finish + `</td>`;
+                        html += `<td class="text-center"><a class="btn btn-outline-dark">상세 보기</a></td>`;
                         html += `</tr>`;
                         return html;
                     }
@@ -156,8 +204,8 @@
                     $('#pointTable tbody').append(trs);
                 }
 
-                // groupEventTag 설정
-                function initializeGroupEventTag(point){
+                // groupSetTag 의 이벤트 테이블 추가
+                function addGroupSetTagForTable(point){
                     let createTr = function (data) {
                         let html = `<tr>`;
                         html += `<td><input type="hidden" value="` + data.pointSeq + `">` + data.pointType + `</td>`;
@@ -166,8 +214,8 @@
                         html += `<td>` + data.useValue + `</td>`;
                         html += `<td>` + data.residualValue + `</td>`;
                         html += `<td>` + data.startDate + `</td>`;
-                        html += `<td>` + data.stopDate + `</td>`;
-                        html += `<td>` + data.finish + `</td>`;
+                        html += `<td class="align-middle">` + data.stopDate + `</td>`;
+                        html += `<td class="text-center">` + data.finish + `</td>`;
                         html += `</tr>`;
                         return html;
                     }
@@ -177,8 +225,6 @@
 
                 // 초기화 설정
                 function initialize() {
-
-
 
                     // 검색 이벤트 1
                     $('#searchStr').next().on('click', function (event) {
@@ -226,16 +272,13 @@
 
                     // 불법 주정차 구역의 그룹 테이블 항목 이벤트
                     $('#userTable tbody tr').on('click', function () {
-
                         let groupSeqStr = $(this).children("td:eq(0)").find('input').val();
-
                         let locationType = $(this).children("td:eq(0)").text().trim();
                         let name = $(this).children("td:eq(1)").text();
-
                         let groupSeq = Number.parseInt(groupSeqStr);
 
                         let result = $.JJAjaxAsync({
-                            url: _contextPath + '/point/get',
+                            url: _contextPath + '/group/point/gets',
                             data: {
                                 groupSeq: groupSeq
                             }
@@ -256,6 +299,8 @@
 
                         $('#groupMain').hide();
                         $('#groupSet').show();
+
+                        setGroupSetTagForTableEvent();
                     });
 
                     // 필터 변경 이벤트
@@ -285,6 +330,7 @@
                         }
                     });
 
+                    // groupSetTag 의 포인트 이벤트 생성 이벤트
                     $('#createGroupEvent').on('click', function () {
                         let data = $.getData("groupEventForm");
 
@@ -311,7 +357,7 @@
 
                             if (result.success) {
                                 let point = result.data;
-                                initializeGroupEventTag(point);
+                                addGroupSetTagForTable(point);
                                 $.closeGroupEvent();
                             } else {
                                 alert("등록 실패 하였습니다. " + result.msg);
@@ -328,7 +374,7 @@
                         });
                     });
 
-                    // 이벤트 추가 팝업창 열기
+                    // 포인트 이벤트 생성 팝업창 열기
                     $('#openEventAdd').on('click', function () {
                         let now = new Date();
                         $('#startDate').val($.formatDateYYYYMMDD(now));

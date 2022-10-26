@@ -5,6 +5,7 @@ import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.illegalGroup.service.IllegalGroupServcie;
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
+import com.teraenergy.illegalparking.model.entity.receipt.service.ReceiptService;
 import com.teraenergy.illegalparking.model.entity.report.service.ReportService;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
@@ -12,6 +13,7 @@ import com.teraenergy.illegalparking.model.entity.userGroup.domain.UserGroup;
 import com.teraenergy.illegalparking.model.entity.userGroup.service.UserGroupService;
 import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.compress.utils.Lists;
 import org.springframework.mobile.device.Device;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,6 +42,8 @@ public class HomeController extends ExtendsController {
     private String subTitle = "불법 주정차";
 
     private final ReportService reportService;
+
+    private final ReceiptService receiptService;
 
     private final IllegalZoneService illegalZoneService;
 
@@ -84,12 +89,24 @@ public class HomeController extends ExtendsController {
                 int exceptionCount = reportService.getSizeForException(illegalZones);
                 int penaltyCount = reportService.getSizeForPenalty(illegalZones);
 
+                List<Integer> reportCounts = Lists.newArrayList();
+                List<Integer> receiptCounts = Lists.newArrayList();
+
+                int year = LocalDateTime.now().getYear();
+                for (int i=1; i<=12; i++) {
+                    reportCounts.add(reportService.getReportCountByMonth(year, i));
+                    receiptCounts.add(receiptService.getReceiptCountByMonth(year, i));
+                }
+
                 model.addAttribute("officeName", user.getGovernMentOffice().getName());
                 model.addAttribute("totalCount", totalCount);// 년 전체 건수
                 model.addAttribute("sendPenaltyCount", (penaltyCount + exceptionCount ));// 기관에 전송한 건수
                 model.addAttribute("completeCount", completeCount); // 대기 건수
                 model.addAttribute("exceptionCount", exceptionCount); // 미처리 건수
                 model.addAttribute("penaltyCount", penaltyCount); // 처리 건수
+
+                model.addAttribute("reportCounts", reportCounts);
+                model.addAttribute("receiptCounts", receiptCounts);
                 return getPath("/home");
         }
     }

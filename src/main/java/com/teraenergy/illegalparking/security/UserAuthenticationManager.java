@@ -46,7 +46,7 @@ public class UserAuthenticationManager implements AuthenticationManager {
         }
 
         try {
-            if ( !userService.isUser(account, password)) {
+            if ( !userService.isUserByUserNameAndPassword(account, password)) {
                 log.error("사용자의 계정과 패스워드가 맞지 않습니다.");
                 throw new BadCredentialsException("사용자의 계정과 패스워드가 맞지 않습니다.");
             }

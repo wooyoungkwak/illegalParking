@@ -21,9 +21,7 @@ import java.util.List;
 public interface ReportService {
 
 
-    boolean isExist(String carNum, IllegalType illegalType);
-
-    boolean isExistByReceipt(String carNum, LocalDateTime regDt, IllegalType illegalType);
+    boolean isExist(String carNum, LocalDateTime regDt, IllegalType illegalType);
 
     Report get(Integer reportSeq);
     List<Report> getByGovernmentOffice(Integer reportSeq, LocalDateTime startDate, LocalDateTime endDate);
@@ -43,6 +41,10 @@ public interface ReportService {
     int getSizeForCOMPLETE(List<IllegalZone> illegalZones);
 
     int getSizeForPenalty(IllegalZone illegalZone);
+
+    int getReportCountByMonth(int year, int month);
+
+
 
     Report set(Report report);
 

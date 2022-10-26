@@ -12,8 +12,7 @@ import java.util.List;
  * Description :
  */
 public interface PointDtoService {
-
     List<PointDto> gets(Integer groupSeq);
-
     PointDto get(Point point);
+    PointDto getByPointSeq(Integer pointSeq);
 }

@@ -40,6 +40,9 @@ public interface ReceiptService {
 
     Page<Receipt> gets(int pageNumber, int pageSize, ReceiptStateType receiptStateType, ReceiptFilterColumn filterColumn, String search);
 
+    int getReceiptCountByMonth(int year, int month);
+
+    Receipt getByLastOccur(Integer userSeq, String carNum, LocalDateTime regDt, IllegalType illegalType);
 
     Receipt set(Receipt receipt);
 

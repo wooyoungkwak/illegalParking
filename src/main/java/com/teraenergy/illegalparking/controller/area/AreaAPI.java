@@ -192,11 +192,18 @@ public class AreaAPI {
         return illegalGroupServcie.set(illegalGroup);
     }
 
-    @PostMapping("/area/point/get")
+    @PostMapping("/area/group/point/gets")
+    @ResponseBody
+    public Object getsPoint(@RequestBody String body) throws TeraException {
+        JsonNode jsonNode = JsonUtil.toJsonNode(body);
+        return pointDtoService.gets(jsonNode.get("groupSeq").asInt());
+    }
+
+    @PostMapping("/area/group/point/get")
     @ResponseBody
     public Object getPoint(@RequestBody String body) throws TeraException {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        return pointDtoService.gets(jsonNode.get("groupSeq").asInt());
+        return pointDtoService.getByPointSeq(jsonNode.get("pointSeq").asInt());
     }
 
     @PostMapping("/area/point/set")
@@ -207,15 +214,12 @@ public class AreaAPI {
         Point point = new Point();
         point.setPointType(PointType.PLUS);
 
-        point.setIsPointLimit(jsonNode.get("isPointLimit").asBoolean());
+        point.setIsPointLimit(jsonNode.get("isPointLimit").booleanValue());
         if (!point.getIsPointLimit()) {
             point.setLimitValue(jsonNode.get("limitValue").asLong());
             point.setUseValue(jsonNode.get("limitValue").asLong());
-        } else {
-            point.setLimitValue(999999L);
-            point.setUseValue(999999L);
         }
-        point.setIsTimeLimit(jsonNode.get("isTimeLimit").asBoolean());
+        point.setIsTimeLimit(jsonNode.get("isTimeLimit").booleanValue());
         if (!point.getIsTimeLimit()) {
             point.setStartDate(StringUtil.convertStringToDate(jsonNode.get("startDate").asText(), "yyyy-MM-dd"));
             point.setStopDate(StringUtil.convertStringToDate(jsonNode.get("stopDate").asText(), "yyyy-MM-dd"));
@@ -223,7 +227,6 @@ public class AreaAPI {
         point.setValue(jsonNode.get("value").asLong());
         point.setGroupSeq(jsonNode.get("groupSeq").asInt());
         point = pointService.set(point);
-
         return pointDtoService.get(point);
     }
 

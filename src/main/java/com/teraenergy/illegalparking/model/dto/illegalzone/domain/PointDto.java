@@ -22,4 +22,6 @@ public class PointDto {
     String startDate;       // 시작 일자
     String stopDate;        // 종료 일자
     String finish;      // 마감기준
+    boolean isPointLimit;
+    boolean isTimeLimit;
 }

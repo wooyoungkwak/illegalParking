@@ -24,6 +24,7 @@ public enum TeraExceptionCode implements TeraErrCode {
 
     REPORT_EXIST("동일 차량번호 불법주정차 신고 접수가 타인에 의해 먼저 접수되었습니다."),
     REPORT_NOT_ADD_FINISH("추가 신고가 없어 종료가 되었습니다."),
+    REPORT_OVER_TIME("불법주정차 추가 신고 시간이 초과했습니다.\n 최초 신고 이후 1분 이후 10분이내 추가 신고가 되어야 합니다. "),
 
     CAR_ALARM_HISTORY_GET_FAIL("내차 신고 이력 정보 가져오기를 실패 하였습니다."),
     CAR_EXIST("이미지 존재하는 차량번호입니다."),

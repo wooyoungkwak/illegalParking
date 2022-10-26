@@ -126,12 +126,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUser(String userName, String password) throws TeraException {
+    public boolean isUserByUserNameAndPassword(String userName, String password) throws TeraException {
         try {
             String _password = YoungEncoder.encrypt(password);
             if (jpaQueryFactory.selectFrom(QUser.user)
                     .where(QUser.user.username.eq(userName))
                     .where(QUser.user.password.eq(_password))
+                    .where(QUser.user.role.ne(Role.ADMIN))
                     .fetchOne() != null) {
                 return true;
             }
@@ -148,6 +149,21 @@ public class UserServiceImpl implements UserService {
                     .where(QUser.user.username.eq(userName))
                     .where(QUser.user.role.ne(Role.USER))
                     .fetchOne() != null) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST, e);
+        }
+    }
+
+    @Override
+    public boolean isUserByPhoneNumber(String phoneNumber) throws TeraException {
+        try {
+            if (jpaQueryFactory.selectFrom(QUser.user)
+                    .where(QUser.user.phoneNumber.eq(phoneNumber))
+                    .where(QUser.user.role.eq(Role.USER))
+                    .fetch().size() > 0) {
                 return true;
             }
             return false;

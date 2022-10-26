@@ -25,6 +25,7 @@ import com.teraenergy.illegalparking.model.entity.report.repository.ReportReposi
 import com.teraenergy.illegalparking.model.entity.illegalzone.enums.LocationType;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import com.teraenergy.illegalparking.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.data.domain.Page;
@@ -35,6 +36,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -61,8 +63,8 @@ public class ReportServiceImpl implements ReportService {
     private final CalculateService calculateService;
 
     @Override
-    public boolean isExist(String carNum, IllegalType illegalType) {
-        LocalDateTime now = LocalDateTime.now();
+    public boolean isExist(String carNum, LocalDateTime regDt, IllegalType illegalType) {
+        LocalDateTime now = regDt;
         LocalDateTime startTime = null;
         switch (illegalType) {
             case FIVE_MINUTE:   // 5분 주정차
@@ -76,35 +78,13 @@ public class ReportServiceImpl implements ReportService {
 
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.receipt.carNum.eq(carNum));
-        query.where(QReport.report.receipt.receiptStateType.eq(ReceiptStateType.OCCUR));
+        query.where(QReport.report.receipt.receiptStateType.eq(ReceiptStateType.REPORT));
         query.where(QReport.report.receipt.regDt.between(startTime, endTime));
         query.where(QReport.report.isDel.isFalse());
         if (query.fetchOne() == null) {
             return false;
         }
         return true;
-    }
-
-    @Override
-    public boolean isExistByReceipt(String carNum, LocalDateTime regDt, IllegalType illegalType) {
-        LocalDateTime startTime = null;
-        switch (illegalType) {
-            case ILLEGAL:
-                startTime = regDt.minusMinutes(11);
-                break;
-            case FIVE_MINUTE:
-                startTime = regDt.minusMinutes(16);
-                break;
-        }
-        LocalDateTime endTime = regDt;
-
-        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
-        query.where(QReport.report.receipt.carNum.eq(carNum));
-        query.where(QReport.report.receipt.secondRegDt.between(startTime, endTime));
-        if (query.fetch().size() > 0) {
-            return true;
-        }
-        return false;
     }
 
     @Override
@@ -210,6 +190,31 @@ public class ReportServiceImpl implements ReportService {
         return query.fetch().size();
     }
 
+    // 월말일자 구하기
+    private int getLastDay(int year, int month) {
+        Calendar c = Calendar.getInstance();
+        c.set(year, month, 1);
+        return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+
+    // 한달간의 신고 건수 가져오기
+    @Override
+    public int getReportCountByMonth(int year, int month) {
+        int lastDay = getLastDay(year, month);
+        String lastDayStr = String.valueOf(lastDay);
+        String yearStr = String.valueOf(year);
+        String monthStr = String.valueOf(month);
+        if ( month < 10) {
+            monthStr = "0" + monthStr;
+        }
+        LocalDateTime startTime = StringUtil.convertStringToDateTime( (yearStr + monthStr + "010000"),  "yyyyMMddHHmm" );
+        LocalDateTime endTime =  StringUtil.convertStringToDateTime( (yearStr + monthStr + lastDayStr +"2359"),  "yyyyMMddHHmm" );
+        JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
+        query.where(QReport.report.receipt.regDt.between(startTime, endTime));
+        return query.fetch().size();
+    }
+
     @Override
     public Report set(Report report) {
         return reportRepository.save(report);
@@ -248,39 +253,33 @@ public class ReportServiceImpl implements ReportService {
                     updatePoint = point;
 
                     // 포인트 제한 없음
-                    if (point.getIsPointLimit()) {
+                    if (updatePoint.getIsPointLimit()) {
                         // 날짜 제한 없음
-                        if (point.getIsTimeLimit()) {
-                            break;
-                        } else {
-                            // 기간 내부에 존해 여부 확인
-                            if ( point.getStartDate().isBefore(LocalDate.now()) && point.getStopDate().isAfter(LocalDate.now()) ) {
-                                updatePoint.setNote("");
+                        if (!updatePoint.getIsTimeLimit()) {
+                            // 기간 내부에 존재 여부 확인
+                            if ( !(updatePoint.getStartDate().isBefore(LocalDate.now()) && updatePoint.getStopDate().isAfter(LocalDate.now())) ) {
                                 break;
-                            } else {
-                                continue;
                             }
                         }
+                        pointValue = updatePoint.getValue();
+                        updatePoint.setUseValue(updatePoint.getUseValue() + pointValue);                // 누적 사용량
+                        break;
                     }
 
-                    // 시간 제한 없음
-                    if ( point.getIsTimeLimit()) {
-                        if (point.getValue() > point.getResidualValue()) {
-                            continue;
-                        } else {
-                            pointValue = point.getValue();
-                            point.setResidualValue(point.getResidualValue() - pointValue);      // 남은 포인트
-                            point.setUseValue(point.getUseValue() + pointValue);                // 누적 포인트
+                    // 날짜 제한 없음
+                    if ( updatePoint.getIsTimeLimit()) {
+                        if (point.getValue() < updatePoint.getResidualValue()) {
+                            pointValue = updatePoint.getValue();
+                            updatePoint.setResidualValue(updatePoint.getResidualValue() - pointValue);      // 남은 포인트
+                            updatePoint.setUseValue(updatePoint.getUseValue() + pointValue);                // 누적 사용량
                         }
                     } else {
                         // 제한 시간에서 포인트 체크
-                        if ( point.getStartDate().isBefore(LocalDate.now()) && point.getStopDate().isAfter(LocalDate.now()) ) {
-                            if (point.getValue() > point.getResidualValue()) {
-                                continue;
-                            } else {
-                                pointValue = point.getValue();
-                                point.setResidualValue(point.getResidualValue() - pointValue);                                  // 남은 포인트
-                                point.setUseValue( (point.getUseValue() == null ? 0L : point.getUseValue() ) + pointValue);     // 누적 포인트
+                        if ( updatePoint.getStartDate().isBefore(LocalDate.now()) && updatePoint.getStopDate().isAfter(LocalDate.now()) ) {
+                            if (updatePoint.getValue() < updatePoint.getResidualValue()) {
+                                pointValue = updatePoint.getValue();
+                                updatePoint.setResidualValue(updatePoint.getResidualValue() - pointValue);                                      // 남은 포인트
+                                updatePoint.setUseValue( (updatePoint.getUseValue() == null ? pointValue : updatePoint.getUseValue()) + pointValue);    // 누적 사용량
                             }
                         }
                     }
@@ -309,26 +308,36 @@ public class ReportServiceImpl implements ReportService {
                 String pointContent = "";
 
                 if (updatePoint != null) {
-                    pointService.set(updatePoint);
-                    pointContent = user.getGovernMentOffice().getLocationType().getValue();
-                    pointContent += ( "(으)로 부터 포상금 " + updatePoint.getValue()  );
-                    pointContent += "포인트가 제공되었습니다.";
-
-                    Calculate calculate = calculateService.getAtLast(userSeq);
-                    if ( calculate == null) {
-                        calculate = new Calculate();
-                        calculate.setCurrentPointValue(updatePoint.getValue());
+                    if ( pointValue == 0L ) {
+                        pointContent = "포인트가 모두 소진되어 제공이 불가합니다.";
                     } else {
-                        calculate.setCurrentPointValue( ( calculate.getCurrentPointValue() == null ? 0 : calculate.getCurrentPointValue() ) + updatePoint.getValue());
+
+                        if (updatePoint.getValue() > updatePoint.getResidualValue()) {
+                            updatePoint.setNote("포인트 소진으로 인한 종료");
+                        }
+
+                        pointService.set(updatePoint);
+                        pointContent = user.getGovernMentOffice().getLocationType().getValue();
+                        pointContent += ("(으)로 부터 포상금 " + pointValue);
+                        pointContent += "포인트가 제공되었습니다.";
+
+                        Calculate calculate = calculateService.getAtLast(userSeq);
+                        if (calculate == null) {
+                            calculate = new Calculate();
+                            calculate.setCurrentPointValue(pointValue);
+                        } else {
+                            calculate.setCurrentPointValue((calculate.getCurrentPointValue() == null ? pointValue : calculate.getCurrentPointValue()) + pointValue);
+                        }
+                        calculate.setUserSeq(receipt.getUser().getUserSeq());
+                        calculate.setPointType(updatePoint.getPointType());
+                        calculate.setEventPointValue(pointValue);
+                        calculate.setLocationType(user.getGovernMentOffice().getLocationType());
+                        calculateService.set(calculate);
                     }
-                    calculate.setUserSeq(receipt.getUser().getUserSeq());
-                    calculate.setPointType(updatePoint.getPointType());
-                    calculate.setEventPointValue(updatePoint.getValue());
-                    calculate.setLocationType(user.getGovernMentOffice().getLocationType());
-                    calculateService.set(calculate);
                 } else {
                     pointContent = "포인트가 모두 소진되어 제공이 불가합니다.";
                 }
+
                 forthComment.setContent(pointContent);
 
                 commentList.add(firstComment);

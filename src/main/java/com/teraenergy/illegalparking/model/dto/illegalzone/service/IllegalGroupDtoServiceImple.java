@@ -47,11 +47,20 @@ public class IllegalGroupDtoServiceImple implements IllegalGroupDtoService {
             Point point = pointService.getInGroup(illegalGroup.getGroupSeq());
             String note = "";
             if ( point != null) {
-                note = ( point.getLimitValue() == null ? "-" : "이벤트 " + point.getLimitValue() )  + " point / ";
-                note += StringUtil.convertDateToString(point.getStartDate(), "yyyy-MM-dd");
-                note += " ~ ";
-                note += StringUtil.convertDateToString(point.getStopDate(), "yyyy-MM-dd");
-                note += " ...";
+                if(point.getIsPointLimit()) {
+                    note = "포인트 제한없음 / ";
+                } else  {
+                    note = point.getLimitValue() == null ? "이벤트 0 point / " : "이벤트 " + point.getLimitValue() + " point / ";
+                }
+
+                if ( point.getIsTimeLimit()) {
+                    note += "날짜 제한 없음";
+                } else {
+                    note += StringUtil.convertDateToString(point.getStartDate(), "yyyy-MM-dd");
+                    note += " ~ ";
+                    note += StringUtil.convertDateToString(point.getStopDate(), "yyyy-MM-dd");
+                    note += " ...";
+                }
             }
             illegalGroupDto.setNote(note);
             illegalGroupDtos.add(illegalGroupDto);
@@ -62,7 +71,6 @@ public class IllegalGroupDtoServiceImple implements IllegalGroupDtoService {
     @Override
     public Page<IllegalGroupDto> gets(Integer pageNumber, Integer pageSize, GroupFilterColumn filterColumn, String search) {
         Page<IllegalGroup> illegalGroupPage = illegalGroupServcie.get(pageNumber, pageSize, filterColumn, search);
-        System.out.println(illegalGroupPage.getContent().size());
         List<IllegalGroupDto> illegalGroupDtos = gets(illegalGroupPage.getContent());
 
         pageNumber = pageNumber - 1;

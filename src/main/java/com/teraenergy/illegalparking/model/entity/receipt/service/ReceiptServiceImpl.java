@@ -9,6 +9,9 @@ import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptFilterColumn;
 import com.teraenergy.illegalparking.model.entity.receipt.enums.ReceiptStateType;
 import com.teraenergy.illegalparking.model.entity.receipt.repository.ReceiptRepository;
+import com.teraenergy.illegalparking.model.entity.report.domain.QReport;
+import com.teraenergy.illegalparking.model.entity.report.enums.ReportStateType;
+import com.teraenergy.illegalparking.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -41,21 +45,24 @@ public class ReceiptServiceImpl implements ReceiptService {
     // 법정동 코드를 이용하여 신고자가 신고 차량번호를 등록했는지 여부 확인
     @Override
     public boolean isExist(Integer userSeq, String carNum, LocalDateTime regDt, String code, IllegalType illegalType) {
-        LocalDateTime beforeRegDt = regDt.minusMinutes(11);
+        LocalDateTime endTime = regDt;
+        LocalDateTime startTime = null;
         switch (illegalType) {
             case ILLEGAL:
-                beforeRegDt = regDt.minusMinutes(11);
+                startTime = endTime.minusMinutes(11);
                 break;
             case FIVE_MINUTE:
-                beforeRegDt = regDt.minusMinutes(16);
+                startTime = endTime.minusMinutes(16);
                 break;
         }
+
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
-        query.where(QReceipt.receipt.regDt.between(beforeRegDt, regDt));
+        query.where(QReceipt.receipt.regDt.between(startTime, endTime));
         query.where(QReceipt.receipt.illegalZone.code.eq(code));
-
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));
+        query.where(QReceipt.receipt.isDel.isFalse());
         if (query.fetch().size() > 0) {
             return true;
         }
@@ -70,6 +77,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
         query.where(QReceipt.receipt.illegalZone.code.eq(code));
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));
 
         LocalDateTime startTime = null;
         LocalDateTime endTime = null;
@@ -156,6 +164,7 @@ public class ReceiptServiceImpl implements ReceiptService {
 
         query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.REPORT));     // 사고접수 (처리완료)
         query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.PENALTY));    // 과태료대상 (처리완료)
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));    // 신고불가
         query.orderBy(QReceipt.receipt.receiptSeq.desc());
         int total = query.fetch().size();
 
@@ -170,6 +179,61 @@ public class ReceiptServiceImpl implements ReceiptService {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
         Page<Receipt> page = new PageImpl<Receipt>(receipts, pageRequest, total);
         return page;
+    }
+
+
+    // 월말일자 구하기
+    private int getLastDay(int year, int month) {
+        Calendar c = Calendar.getInstance();
+        c.set(year, month, 1);
+        return c.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
+    // 한달간의 처리 및 미처리 건수 가져오기
+    @Override
+    public int getReceiptCountByMonth(int year, int month) {
+        int lastDay = getLastDay(year, month);
+        String lastDayStr = String.valueOf(lastDay);
+        String yearStr = String.valueOf(year);
+        String monthStr = String.valueOf(month);
+        if ( month < 10) {
+            monthStr = "0" + monthStr;
+        }
+        LocalDateTime startTime = StringUtil.convertStringToDateTime( (yearStr + monthStr + "010000"),  "yyyyMMddHHmm" );
+        LocalDateTime endTime =  StringUtil.convertStringToDateTime( (yearStr + monthStr + lastDayStr +"2359"),  "yyyyMMddHHmm" );
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.regDt.between(startTime, endTime));
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.FORGET));
+        return query.fetch().size();
+    }
+
+    // 가장 최근에 신고 발생한 신고등록 정보 가져오기
+    @Override
+    public Receipt getByLastOccur(Integer userSeq, String carNum, LocalDateTime regDt, IllegalType illegalType) {
+        LocalDateTime endTime = regDt;
+        LocalDateTime diffTime = null;
+        switch (illegalType) {
+            case ILLEGAL:
+                diffTime = endTime.minusMinutes(11);
+                break;
+            case FIVE_MINUTE:
+                diffTime = endTime.minusMinutes(16);
+                break;
+        }
+
+        JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
+        query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
+        query.where(QReceipt.receipt.carNum.eq(carNum));
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));
+        query.where(QReceipt.receipt.regDt.before(diffTime));
+        query.where(QReceipt.receipt.isDel.isFalse());
+        query.orderBy(QReceipt.receipt.receiptSeq.desc());
+        query.limit(1);
+        if ( query.fetchOne() != null) {
+            return (Receipt) query.fetchOne();
+        }
+        return null;
     }
 
     @Override
@@ -210,6 +274,8 @@ public class ReceiptServiceImpl implements ReceiptService {
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
         query.where(QReceipt.receipt.regDt.between(regDt.minusMinutes(11), regDt));
+        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));
+        query.where(QReceipt.receipt.isDel.isFalse());
         query.limit(1);
         return (Receipt) query.fetchOne();
     }

@@ -44,17 +44,28 @@ public class PointDtoServiceImipl implements PointDtoService{
         pointDto.setLimitValue( point.getLimitValue() == null ? "-" : point.getLimitValue().toString());
         pointDto.setResidualValue(point.getResidualValue() == null ? "-" : point.getResidualValue().toString());
         pointDto.setUseValue(point.getUseValue() == null ? "-" : point.getUseValue().toString());
+        pointDto.setPointLimit(point.getIsPointLimit().booleanValue());
+        pointDto.setTimeLimit(point.getIsTimeLimit().booleanValue());
 
-        if (point.getIsPointLimit() && point.getIsTimeLimit()) {
-            pointDto.setFinish("-");
-        } else if (point.getIsTimeLimit()) {
-            pointDto.setFinish("기간 내 모두 제공");
-        } else if (point.getIsPointLimit()) {
-            pointDto.setFinish("포인트 소진시 종료");
+        if ( point.getNote() != null && point.getNote().trim().length() > 0) {
+            pointDto.setFinish(point.getNote());
         } else {
-            pointDto.setFinish("기간 내 모두 제공 / 포인트 소진시 종료");
+            if (point.getIsPointLimit() && point.getIsTimeLimit()) {
+                pointDto.setFinish("-");
+            } else if (point.getIsTimeLimit()) {
+                pointDto.setFinish("기간 내 모두 제공");
+            } else if (point.getIsPointLimit()) {
+                pointDto.setFinish("포인트 소진시 종료");
+            } else {
+                pointDto.setFinish("기간 내 모두 제공 / 포인트 소진시 종료");
+            }
         }
-
         return pointDto;
+    }
+
+    @Override
+    public PointDto getByPointSeq(Integer pointSeq) {
+        Point point = pointService.get(pointSeq);
+        return get(point);
     }
 }

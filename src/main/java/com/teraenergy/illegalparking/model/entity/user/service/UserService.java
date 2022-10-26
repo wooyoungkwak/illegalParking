@@ -25,9 +25,11 @@ public interface UserService {
 
     Page<User> getsByGovernmentRole(int pageNumber, int pageSize, UserGovernmentFilterColumn userGovernmentFilterColumn, String search) throws TeraException;
 
-    boolean isUser(String userName, String password) throws TeraException;
+    boolean isUserByUserNameAndPassword(String userName, String password) throws TeraException;
 
     boolean isUser(String userName) throws TeraException;
+
+    boolean isUserByPhoneNumber(String phoneNumber) throws TeraException;
 
     boolean isUserByDuplicate(String userName) throws TeraException;
 

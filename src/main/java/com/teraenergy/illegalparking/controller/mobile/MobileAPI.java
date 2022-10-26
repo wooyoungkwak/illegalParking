@@ -99,7 +99,7 @@ public class MobileAPI {
         String username = jsonNode.get("userName").asText();
         String password = jsonNode.get("password").asText();
 
-        result = userService.isUser(username, password);
+        result = userService.isUserByUserNameAndPassword(username, password);
 
         if (result) {
             User user = userService.get(username);
@@ -131,15 +131,21 @@ public class MobileAPI {
         user.setName(name);
         user.setRole(Role.USER);
         user.setUserCode(1L);
-        user.setPhoneNumber(phoneNumber);
+        user.setPhoneNumber(phoneNumber.trim());
         user.setPhotoName(photoName);
 
         try {
-            if (!userService.isUserByDuplicate(user.getUsername())) {
-                userService.set(user);
-            } else {
+            // 핸드폰 번호 체크
+            if (userService.isUserByPhoneNumber(user.getPhoneNumber())) {
                 throw new TeraException(TeraExceptionCode.USER_IS_EXIST);
             }
+
+            // 사용자 아이디 체크
+            if (userService.isUserByDuplicate(user.getUsername())) {
+                throw new TeraException(TeraExceptionCode.USER_IS_EXIST);
+            }
+
+            userService.set(user);
             return "";
         } catch (TeraException e) {
             e.printStackTrace();
@@ -161,7 +167,7 @@ public class MobileAPI {
         JsonNode jsonNode = JsonUtil.toJsonNode(body);
         String userName = jsonNode.get("userName").asText();
 
-              HashMap<String, Object> resultMap = Maps.newHashMap();
+        HashMap<String, Object> resultMap = Maps.newHashMap();
 
         try {
             if (userService.isUserByDuplicate(userName)) {
@@ -494,7 +500,7 @@ public class MobileAPI {
             mycar = myCarService.set(mycar);
 
             return "complete ... ";
-        }catch (TeraException e) {
+        } catch (TeraException e) {
             e.printStackTrace();
             throw new TeraException(TeraExceptionCode.valueOf(e.getCode()));
         } catch (Exception e) {
@@ -543,16 +549,25 @@ public class MobileAPI {
             // 동 코드
             LawDong lawDong = lawDongService.getFromLnmadr(temp[0] + " " + temp[1] + " " + temp[2]);
 
-
-            String carNum = jsonNode.get("carNum").asText();
-            String regDtStr = jsonNode.get("regDt").asText();
-            LocalDateTime regDt = StringUtil.convertStringToDateTime(regDtStr, "yyyy-MM-dd HH:mm");
+            String carNum = jsonNode.get("carNum").asText();    // 차량 번호
+            String regDtStr = jsonNode.get("regDt").asText();   // 신고 시간 (문자)
+            LocalDateTime regDt = StringUtil.convertStringToDateTime(regDtStr, "yyyy-MM-dd HH:mm"); // 신고 시간 (LocalDateTime 변환)
 
             // 불법 주정차 구역 ( mybatis 로 가져오기 때문에 illegal_event 데이터는 따로 요청 해야함)
             IllegalZone illegalZone = illegalZoneMapperService.get(lawDong.getCode(), latitude, longitude);
+            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+            illegalZone.setIllegalEvent(illegalEvent);
 
             // 사용자
             User user = userService.get(jsonNode.get("userSeq").asInt());
+
+            // 1. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우  ( TODO : 확인이 필요 )
+            Receipt oldReceipt = receiptService.getByLastOccur(user.getUserSeq(), carNum, regDt, illegalZone.getIllegalEvent().getIllegalType());
+            if ( oldReceipt != null) {
+                oldReceipt.setReceiptStateType(ReceiptStateType.NOTHING);
+                receiptService.set(oldReceipt);
+                throw new TeraException(TeraExceptionCode.REPORT_OVER_TIME);
+            }
 
             Receipt receipt = receiptService.getByCarNumAndBetweenNow(user.getUserSeq(), carNum, LocalDateTime.now());
 
@@ -570,7 +585,7 @@ public class MobileAPI {
                 receipt.setSecondRegDt(regDt);
             }
 
-            // 1. 불법 주정자 지역 체크
+            // 2. 불법 주정자 지역 체크 ( 불법 주정차 지역 인가? )
             if (illegalZone == null) {
                 receipt = new Receipt();
                 receipt.setAddr(addr);
@@ -586,10 +601,7 @@ public class MobileAPI {
                 throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA);
             }
 
-            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-            illegalZone.setIllegalEvent(illegalEvent);
-
-            // 2. 불법 주정차 시간 체크
+            // 3. 불법 주정차 시간 체크 ( 신고 시간 내 인가 ? )
             String dateStr = regDtStr.split(" ")[0];
             if (!illegalZone.getIllegalEvent().isUsedFirst()) {
                 LocalDateTime fs = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getFirstStartTime(), "yyyy-MM-dd HH:mm");
@@ -630,61 +642,55 @@ public class MobileAPI {
                 }
             }
 
-            // 3. 내가 신고를 최초 했는지 차량 여부 체크
-            if (reportService.isExist(carNum, illegalEvent.getIllegalType())) {
-                if ( receipt == null) {
-                    receipt = new Receipt();
-                    receipt.setAddr(addr);
-                    receipt.setCarNum(carNum);
-                    receipt.setRegDt(regDt);
-                    receipt.setUser(user);
-                    receipt.setCode(lawDong.getCode());
-                    receipt.setFileName(jsonNode.get("fileName").asText());
-                    receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
-                } else {
-                    receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
+            // 4. 1 분 후에 ( 또는 5분 후 ) 두분째 신고인지 확인
+            if (receiptService.isExistByIllegalType(user.getUserSeq(), carNum, regDt, lawDong.getCode(), illegalEvent.getIllegalType())) {
+                switch (illegalEvent.getIllegalType()) {
+                    case ILLEGAL:
+                        _comment(receipt.getReceiptSeq(), TeraExceptionCode.REPORT_OCCUR_ONE.getMessage());
+                        throw new TeraException(TeraExceptionCode.REPORT_OCCUR_ONE);
+                    case FIVE_MINUTE:
+                        _comment(receipt.getReceiptSeq(), TeraExceptionCode.REPORT_OCCUR_FIVE.getMessage());
+                        throw new TeraException(TeraExceptionCode.REPORT_OCCUR_FIVE);
                 }
+            }
+
+            // 5. 내가 신고를 최초 했는지 차량 여부 체크 (중복 신고가 안되었나?)
+            if (reportService.isExist(carNum, regDt, illegalEvent.getIllegalType())) {
+                // 신고 차량이 이미 신고가 완료 되었기 때문에 신고 불가 (NOTHING)
+                receipt = new Receipt();
+                receipt.setAddr(addr);
+                receipt.setCarNum(carNum);
+                receipt.setRegDt(regDt);
+                receipt.setUser(user);
+                receipt.setCode(lawDong.getCode());
+                receipt.setIllegalZone(illegalZone);
+                receipt.setFileName(jsonNode.get("fileName").asText());
+                receipt.setReceiptStateType(ReceiptStateType.NOTHING);
                 receipt = receiptService.set(receipt);
                 _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM.getMessage());
                 throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_EXIST_REPORT_CAR_NUM);
             }
 
-            // 4. 1 분 후에 ( 또는 5분 후 ) 두분째 신고인지 확인
-            if (receiptService.isExistByIllegalType(user.getUserSeq(), carNum, regDt, lawDong.getCode(), illegalEvent.getIllegalType()) ) {
-                switch (illegalEvent.getIllegalType()){
-                    case ILLEGAL:
-                        throw new TeraException(TeraExceptionCode.REPORT_OCCUR_ONE);
-                    case FIVE_MINUTE:
-                        throw new TeraException(TeraExceptionCode.REPORT_OCCUR_FIVE);
-                }
-            }
+            // 6. 기존에 발생 여부 체크 ( 신고가 최종 접수 되었나 ? )
+            // 신고 일 때 기본의 접수 확인 의 방식
+            // * 기존 방식 : 신고 접수 일때 현재 시간 기준으로 11분 전까지 (또는 16분 전까지)
+            // * TODO : 사장님 요청에 의한 변경 .... ( 확인 후 적용 )
+            if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode(), illegalEvent.getIllegalType())) {
+                // 신고시간 기준으로 11분 (16분) 사이에 신고차량 번호로 신고등록이 있었나?
+                receipt.setReceiptStateType(ReceiptStateType.REPORT);
+                receipt = receiptService.set(receipt);
 
-            // 5. 기존에 발생 여부 체크 ( 신고가 최종 접수 되었나 ? )
-            if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode(), illegalEvent.getIllegalType() )) {
-                // 신고 일 때 기본의 접수 확인 의 방식
-                // * 기존 방식 : 신고 접수 일때 현재 시간 기준으로 11분 전까지 (또는 16분 전까지)
-                // * TODO : 사장님 요청에 의한 변경 .... ( 확인 후 적용 )
-                if ( reportService.isExistByReceipt(carNum, regDt, illegalEvent.getIllegalType())) {
-                    receipt.setReceiptStateType(ReceiptStateType.NOTHING);
-                    receipt = receiptService.set(receipt);
-                    _comment(receipt.getReceiptSeq(), TeraExceptionCode.REPORT_EXIST.getMessage());
-                    throw new TeraException(TeraExceptionCode.REPORT_EXIST);
-                } else {
-                    receipt.setReceiptStateType(ReceiptStateType.REPORT);
-                    receipt = receiptService.set(receipt);
-
-                    // 신고 접수
-                    Report report = new Report();
-                    report.setReceipt(receipt);
-                    report.setReportStateType(ReportStateType.COMPLETE);
-                    reportService.set(report);
-                }
+                // 신고 접수
+                Report report = new Report();
+                report.setReceipt(receipt);
+                report.setReportStateType(ReportStateType.COMPLETE);
+                reportService.set(report);
             } else {
                 receipt.setReceiptStateType(ReceiptStateType.OCCUR);
                 receipt = receiptService.set(receipt);
 
                 MyCar car = myCarService.getByAlarm(carNum);
-                if ( car != null) {
+                if (car != null) {
                     User carUser = userService.get(car.getUserSeq());
                     String phoneNumber = carUser.getPhoneNumber();
                     String message = "불법주정차 위반에 신고 되었습니다.\n 1분내로 차를 이동하여 주차하시길 바랍니다. ";
@@ -693,6 +699,7 @@ public class MobileAPI {
                     Sms.sendSMS(phoneNumber, message);
                 }
             }
+
             return receipt.getReceiptStateType().getValue() + "가(이) 등록 되었습니다.";
         } catch (TeraException e) {
             e.printStackTrace();
@@ -725,7 +732,7 @@ public class MobileAPI {
             }
             map.put("reportState", receipt.getReceiptStateType().getValue());
             map.put("firstFileName", receipt.getFileName());
-            if ( receipt.getSecondFileName() != null) {
+            if (receipt.getSecondFileName() != null) {
                 map.put("secondFileName", receipt.getSecondFileName());
             }
             List<Comment> comments = commentService.gets(receipt.getReceiptSeq());
@@ -772,7 +779,6 @@ public class MobileAPI {
     /**
      * 공공 기관의 신고 정보 요청 데이터 ~~~~
      * 언제 부터 (startDate) ~ 언제 까지 (stopDate)
-     *
      */
     @PostMapping("/api/report/gets")
     @ResponseBody
@@ -788,25 +794,25 @@ public class MobileAPI {
 
         List<Map<String, Object>> resultMap = Lists.newArrayList();
 
-        if ( user == null) {
+        if (user == null) {
             throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
         }
 
         List<Report> reports = reportService.getByGovernmentOffice(user.getUserSeq(), startDateTime, endDateTime);
 
-        for(Report report : reports ) {
+        for (Report report : reports) {
             Map<String, Object> map = Maps.newHashMap();
             Receipt receipt = report.getReceipt();
             map.put("userName", receipt.getUser().getName());
             map.put("carNum", receipt.getCarNum());
             map.put("firstFileName", receipt.getFileName());
             map.put("secondFileName", receipt.getSecondFileName());
-            map.put("regDt",report.getRegDt());
-            map.put("secondRegDt",receipt.getSecondRegDt());
-            map.put("firstRegDt",receipt.getRegDt());
-            map.put("addr",receipt.getAddr());
-            map.put("illegalType",receipt.getIllegalZone().getIllegalEvent().getIllegalType().getValue());
-            map.put("reportState",report.getReportStateType());
+            map.put("regDt", report.getRegDt());
+            map.put("secondRegDt", receipt.getSecondRegDt());
+            map.put("firstRegDt", receipt.getRegDt());
+            map.put("addr", receipt.getAddr());
+            map.put("illegalType", receipt.getIllegalZone().getIllegalEvent().getIllegalType().getValue());
+            map.put("reportState", report.getReportStateType());
 
             resultMap.add(map);
         }
