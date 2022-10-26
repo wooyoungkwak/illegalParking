@@ -14,11 +14,15 @@ $.JJAjaxAsync = function (opt) {
         data: JSON.stringify(opt.data),
         dataType: "json",
         beforeSend: function (xhr, options) {
+            $('.wrap-loading').removeClass('display-none');
             xhr.setRequestHeader('AJAX', true);
         },
         xhr: function () {
             let myXhr = $.ajaxSettings.xhr();
             return myXhr;
+        },
+        complete: function() {
+            $('.wrap-loading').addClass('display-none');
         },
         error: function (jqXHR, statusCode, errorThrown) {
             console.log(jqXHR);
@@ -47,11 +51,15 @@ $.JJAjaxSync = function (opt) {
         data: JSON.stringify(opt.data),
         dataType: "json",
         beforeSend: function (xhr, options) {
+            $('.wrap-loading').removeClass('display-none');
             xhr.setRequestHeader('AJAX', true);
         },
         xhr: function () {
             let myXhr = $.ajaxSettings.xhr();
             return myXhr;
+        },
+        complete: function() {
+            $('.wrap-loading').addClass('display-none');
         },
         error: function (jqXHR, statusCode, errorThrown) {
             opt.error(statusCode);

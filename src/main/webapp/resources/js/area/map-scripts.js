@@ -13,13 +13,14 @@ $(function () {
     let mapContainer = document.getElementById('map');
 
     let map;
-    let customOverlays;
+    let customOverlays = [];
     let overlays = [] // 지도에 그려진 도형을 담을 배열
     let kakaoEvent = kakao.maps.event;
 
     //parking
     let markers = [];
-    let selectedMarker = null;
+    let selectedMarker = false;
+    // let markerOverlays  = [];
 
     let _url = _contextPath + '/zone/gets';
 
@@ -88,10 +89,10 @@ $(function () {
     });
 
     // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
-    let mouseoverOption = {
-        fillColor: '#EFFFED', // 채우기 색깔입니다
-        fillOpacity: 0.8 // 채우기 불투명도 입니다
-    };
+    // let mouseoverOption = {
+    //     fillColor: '#EFFFED', // 채우기 색깔입니다
+    //     fillOpacity: 0.8 // 채우기 불투명도 입니다
+    // };
 
     let polygonStyle = {
         "draggable": true,
@@ -107,12 +108,12 @@ $(function () {
 
 
     // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
-    function mouseoutOption(area) {
-        return {
-            fillColor: fillColorSetting(area), // 채우기 색깔입니다
-            fillOpacity: 0.5
-        } // 채우기 불투명도 입니다
-    }
+    // function mouseoutOption(area) {
+    //     return {
+    //         fillColor: fillColorSetting(area), // 채우기 색깔입니다
+    //         fillOpacity: 0.5
+    //     } // 채우기 불투명도 입니다
+    // }
 
     let searchIllegalType = '';
     // 주정차 별 구역 조회
@@ -236,22 +237,22 @@ $(function () {
         });
 
         // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
-        setKakaoEvent({
-            target: polygon,
-            event: 'mouseover',
-            func: function (mouseEvent) {
-                polygon.setOptions(mouseoverOption);
-            }
-        });
+        // setKakaoEvent({
+        //     target: polygon,
+        //     event: 'mouseover',
+        //     func: function (mouseEvent) {
+        //         polygon.setOptions(mouseoverOption);
+        //     }
+        // });
 
         // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-        setKakaoEvent({
-            target: polygon,
-            event: 'mouseout',
-            func: function () {
-                polygon.setOptions(mouseoutOption(area));
-            }
-        });
+        // setKakaoEvent({
+        //     target: polygon,
+        //     event: 'mouseout',
+        //     func: function () {
+        //         polygon.setOptions(mouseoutOption(area));
+        //     }
+        // });
 
         let cnt = area.receiptCnt;
         let balloonImg = 'balloon_orange.png';
@@ -277,16 +278,13 @@ $(function () {
 
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
         map = new kakao.maps.Map(mapContainer, map);
-        
-
         map.setZoomable(false);
 
-        log(map.getCenter());
-        // 폴리곤 내부 포함여부 확인
         setKakaoEvent({
             target: map,
             event: 'click',
             func: function (mouseEvent) {
+                log('click')
                 // let latlng = mouseEvent.latLng;
                 // log('click! ' + latlng.toString());
                 // log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
@@ -310,14 +308,14 @@ $(function () {
                 //     }
                 // }
 
-                let imgOrigin = setImgOrigin();
-
-                let normalImage = createMarkerImage(new kakao.maps.Size(70, 77), imgOrigin.imgSrc.normalOrigin);
-
-                if (!!selectedMarker) {
-                    selectedMarker.setImage(normalImage);
-                    selectedMarker = null
-                }
+                // log(selectedMarker, 'selectedMarker')
+                //
+                // if (!!selectedMarker && selectedMarker.includes('panel_off.png')) {
+                //     selectedMarker = null
+                //     $('#img_wrap').trigger('click');
+                //     //$('.markerImg').src = selectedMarker;
+                //     // selectedMarker.setImage(selectedMarker.normalImage);
+                // }
             }
         });
 
@@ -332,6 +330,7 @@ $(function () {
                 if (level > 3) {
                     removeOverlays();
                 } else {
+                    log(mapSelected);
                     let codes = await getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     log(uniqueCodesCheck);
@@ -347,6 +346,11 @@ $(function () {
                 }
             }
         });
+
+        if(isMobile) {
+            getMobileCurrentPosition(map);
+        }
+        else getCurrentPosition(map);
     }
 
     function getsZone(codes) {
@@ -408,7 +412,11 @@ $(function () {
         let imgSrc;
 
         let type = 'parking';
-
+        let imageSize = {
+            kakao: new kakao.maps.Size(70, 77),
+            width: 70,
+            height: 77
+        };
         if(mapSelected === 'pm') {
             type = 'pm';
             let pmType = 'bike';
@@ -418,13 +426,14 @@ $(function () {
                 clickOrigin : `/resources/assets/img/${pmType}_on_3x.png`
             }
         } else {
+            imageSize.height = 45;
             imgSrc = {
-                normalOrigin : '/resources/assets/img/alarm_off.png',
-                clickOrigin : '/resources/assets/img/alarm_on.png'
+                normalOrigin : '/resources/assets/img/panel_off.png',
+                clickOrigin : '/resources/assets/img/panel_on.png'
             }
         }
 
-        return {type: type, imgSrc: imgSrc}
+        return {type: type, imgSrc: imgSrc, imgSize: imageSize}
     }
 
     function createMarkerImage(markerSize, imageOrigin){
@@ -434,23 +443,28 @@ $(function () {
         );
     }
 
-    // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
+    // 마커를 생성하고 지도 위에 마커를 표시하는 함수
     function addMarker(data) {
-        let imageSize = new kakao.maps.Size(70, 77);
+        log('addMarker', selectedMarker);
+
         let normalImage;
         let clickImage;
 
         let imgOrigin = setImgOrigin();
 
-        normalImage = createMarkerImage(imageSize, imgOrigin.imgSrc.normalOrigin);
-        clickImage = createMarkerImage(imageSize, imgOrigin.imgSrc.clickOrigin);
+        normalImage = createMarkerImage(imgOrigin.imgSize.kakao, imgOrigin.imgSrc.normalOrigin);
+        clickImage = createMarkerImage(imgOrigin.imgSize.kakao, imgOrigin.imgSrc.clickOrigin);
+
         let marker = new kakao.maps.Marker({
             position: new kakao.maps.LatLng(data.latitude, data.longitude), // 마커의 위치
-            image: normalImage
+            image: !!selectedMarker && selectedMarker.seq === data.parkingSeq ? clickImage : normalImage
         });
 
         // 마커 객체에 마커아이디와 마커의 기본 이미지를 추가합니다
         marker.normalImage = normalImage;
+        
+        //클릭한 마커를 기억하기 위해 마커에 seq 추가
+        marker.seq = data.parkingSeq;
 
         // 마커에 click 이벤트를 등록합니다
         kakaoEvent.addListener(marker, 'click', function() {
@@ -492,6 +506,66 @@ $(function () {
         markers.push(marker);  // 배열에 생성된 마커를 추가합니다
     }
 
+    // 마커 커스텀 오버레이
+    function addOverlay(data) {
+        // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
+        kakao.maps.event.preventMap();
+        let imgOrigin = setImgOrigin();
+
+        let markerNode = document.createElement('div'); // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
+        // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
+        markerNode.className = 'marker_wrap';
+
+        let imgNode = document.createElement('div');
+        imgNode.id = 'img_wrap';
+
+        let img = document.createElement('img');
+        img.src = imgOrigin.imgSrc.normalOrigin;
+        img.width = imgOrigin.imgSize.width;
+        img.height = imgOrigin.imgSize.height;
+        img.className = 'markerImg';
+
+        imgNode.onclick = function () {
+
+            log(img.src, '!selectedMarker', !!selectedMarker);
+            let isClick = img.src.includes('panel_on.png');
+            if(isClick && !!selectedMarker) {
+                log(selectedMarker, isClick, !!selectedMarker, 'isClick && !selectedMarker')
+                selectedMarker = imgOrigin.imgSrc.clickOrigin;
+                img.src = imgOrigin.imgSrc.normalOrigin;
+            }
+            else {
+                selectedMarker = imgOrigin.imgSrc.normalOrigin;
+                img.src = imgOrigin.imgSrc.clickOrigin;
+            }
+            map.panTo(new kakao.maps.LatLng(data.latitude, data.longitude));
+        };
+
+        imgNode.appendChild(img);
+
+        if(mapSelected === 'parking') {
+            let span = document.createElement('span')
+            span.className = 'balloon-text';
+            span.appendChild(document.createTextNode('현재무료'));
+            imgNode.appendChild(span);
+        }
+
+        markerNode.appendChild(imgNode);
+
+        let after = document.createElement('div');
+        after.className = 'after';
+        markerNode.appendChild(after);
+
+        let markerOverlay = new kakao.maps.CustomOverlay({
+            zIndex:1,
+            position: new kakao.maps.LatLng(data.latitude, data.longitude),
+            content: markerNode,
+            map: map
+        });
+        markers.push(markerOverlay);
+
+    }
+
     async function getsMarker(codes) {
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
         let result = $.JJAjaxAsync({
@@ -503,9 +577,13 @@ $(function () {
 
         if (result.success) {
             removeMarker();
-            result.data.forEach(function(data){
-                addMarker(data);
-            });
+            for (const data of result.data) {
+                addOverlay(data)
+            }
+            /*.forEach(function(data){
+                // addMarker(data);
+
+            });*/
         }
     }
 
@@ -528,11 +606,6 @@ $(function () {
     function initialize() {
         initializeKakao();
         $('#debug').val(gpsLatitude + "," + gpsLongitude + " :: " + (typeof gpsLatitude));
-
-        if(isMobile) {
-            getMobileCurrentPosition(map);
-        }
-        else getCurrentPosition(map);
     }
 
     initialize();

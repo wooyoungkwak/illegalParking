@@ -43,7 +43,7 @@
 						<span id="zoomOut"><img src="<%=contextPath%>/resources/assets/img/minus.png" alt="축소"></span>
 					</div>
 
-					<div class="map-control msg-bar rounded-pill" id="msgBar">
+					<div class="msg-bar rounded-pill" id="msgBar">
 						<p class="fw-semibold">현재 지역은 주정차 금지 지역입니다.</p>
 					</div>
 

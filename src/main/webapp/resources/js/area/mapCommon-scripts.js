@@ -195,7 +195,7 @@ async function coordinatesToDongCodeKakaoApi(x, y, stat){
 
 
 let myMarker = {
-    imgSrc: '/resources/assets/img/marker_shadow.png',
+    imgSrc: '/resources/assets/img/location_shadow.png',
     imgSize: new kakao.maps.Size(50,50)
 };
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
@@ -214,14 +214,8 @@ function getCurrentPosition(map) {
                 let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
                 log(currentPosition, typeof(currentLat));
 
-                let marker = new kakao.maps.Marker({
-                    position: currentPosition, // 마커의 위치
-                    image: markerImg
-                });
+                myLocationMarker(map, currentPosition);
 
-                marker.setMap(map); // 지도 위에 마커를 표출합니다
-                myLocMarker = marker;
-                map.panTo(currentPosition);
             },
             (error) => {
                 console.error(error);
@@ -251,15 +245,8 @@ function getMobileCurrentPosition(map) {
     log(gpsLatitude, typeof(gpsLatitude));
     log(  'getMobileCurrentPosition::::::::::::::::::',  gpsLatitude, gpsLongitude )
     let gpsPosition = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
-    //map.setCenter(currentPosition);
-    let marker = new kakao.maps.Marker({
-        position: gpsPosition, // 마커의 위치
-        image: markerImg
-    });
 
-    marker.setMap(map); // 지도 위에 마커를 표출합니다
-    myLocMarker = marker;
-    map.panTo(gpsPosition);
+    myLocationMarker(map, gpsPosition);
 }
 
 let uniqueCodesCheck = false;
@@ -300,6 +287,32 @@ async function getDongCodesBounds(map){
 
     return codes;
 }
+
+//현재위치 마커 커스텀 오버레이
+function myLocationMarker(map, position){
+    let locationOverlay = new kakao.maps.CustomOverlay({zIndex:1, yAnchor: 3 });
+
+    let outlineNode = document.createElement('div');
+    outlineNode.className = 'outline';
+
+    let img = document.createElement('img');
+    img.id = 'location';
+    img.src = `/resources/assets/img/location.png`;
+    outlineNode.appendChild(img);
+
+    let waves = document.createElement('div');
+    waves.className = 'waves';
+    outlineNode.appendChild(waves);
+
+    // 커스텀 오버레이를 지도에 표시합니다
+    locationOverlay.setPosition(position);
+    locationOverlay.setContent(outlineNode)
+    locationOverlay.setMap(map);
+    myLocMarker = locationOverlay;
+    map.panTo(position);
+}
+
+
 let gpsLatitude = 0.0;
 let gpsLongitude = 0.0;
 $.gpsPoint = function(x, y) {
@@ -309,3 +322,4 @@ $.gpsPoint = function(x, y) {
 
     log('webview', gpsLatitude, gpsLongitude);
 }
+

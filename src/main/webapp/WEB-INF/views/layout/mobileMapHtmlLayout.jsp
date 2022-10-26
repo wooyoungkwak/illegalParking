@@ -19,6 +19,9 @@
                     <stripes:layout-component name="contents"/>
                 </div>
             </div>
+            <div class="wrap-loading">
+                <div><img src="<%=contextPath%>/resources/assets/img/loading.gif" alt="로딩중" /></div>
+            </div>
             <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=55cc3405408d4cfbef37c3a93a5422c4&libraries=services,clusterer,drawing"></script>
             <stripes:layout-component name="javascript"/>
         </body>
