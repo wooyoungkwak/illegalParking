@@ -132,7 +132,7 @@ public class UserServiceImpl implements UserService {
             if (jpaQueryFactory.selectFrom(QUser.user)
                     .where(QUser.user.username.eq(userName))
                     .where(QUser.user.password.eq(_password))
-                    .where(QUser.user.role.ne(Role.ADMIN))
+                    .where(QUser.user.role.ne(Role.USER))
                     .fetchOne() != null) {
                 return true;
             }
