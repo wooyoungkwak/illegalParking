@@ -1,19 +1,15 @@
 package com.teraenergy.illegalparking.controller.parking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.controller.ExtendsController;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
-import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
-import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.util.CHashMap;
 import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Date : 2022-09-14
@@ -67,14 +60,6 @@ public class ParkingController extends ExtendsController {
             model.addAttribute("pageNumber", pageNumber);
         }
 
-        String orderColumnStr = paramMap.getAsString("orderColumn");
-        ParkingOrderColumn orderColumn;
-        if(orderColumnStr == null) {
-            orderColumn = ParkingOrderColumn.parkingSeq;
-        } else  {
-            orderColumn = ParkingOrderColumn.valueOf(orderColumnStr);
-        }
-
         String filterColumnStr = paramMap.getAsString("filterColumn");
         ParkingFilterColumn filterColumn;
         if(filterColumnStr == null) {
@@ -88,34 +73,33 @@ public class ParkingController extends ExtendsController {
             searchStr = "";
         }
 
-        String orderDirectionStr = paramMap.getAsString("orderDirection");
-        Sort.Direction direction;
-        if ( orderDirectionStr == null) {
-            direction = Sort.Direction.ASC;
-        } else {
-            direction = Sort.Direction.valueOf(orderDirectionStr);
-        }
-
         Integer pageSize = paramMap.getAsInt("pageSize");
         if ( pageSize == null) {
             pageSize = 10;
         }
 
-        Page<Parking> pages = parkingService.gets(pageNumber, pageSize, filterColumn, searchStr, orderColumn, direction);
+        Page<Parking> pages = parkingService.gets(pageNumber, pageSize, filterColumn, searchStr);
 
         boolean isBeginOver = false;
         boolean isEndOver = false;
 
         int totalPages = pages.getTotalPages();
 
-        if (totalPages > 3 && ( totalPages - pageNumber ) > 2 ) {
-            isEndOver = true;
+        int offsetPage = pageNumber - 1;
+
+        if (offsetPage >= (totalPages-2)) {
+            offsetPage = totalPages-2;
+        } else {
+            if (totalPages > 3) isEndOver = true;
         }
 
-        if (totalPages > 3 && pageNumber > 1) {
-            isBeginOver = true;
+        if ( offsetPage < 1) {
+            offsetPage = 1;
+        } else {
+            if (totalPages > 3) isBeginOver = true;
         }
 
+        model.addAttribute("offsetPage", offsetPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);

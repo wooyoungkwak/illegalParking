@@ -46,7 +46,7 @@
 							<input type="hidden" id="pageSize" name="pageSize" value="${pageSize}"/>
 							<div class="col-7 d-flex justify-content-lg-start">
 								<a class="btn btn-primary" id="write">
-									<i class="fas fa-pen me-1"></i> 글작성
+									<i class="fas fa-edit me-1"></i> 글작성
 								</a>
 							</div>
 							<div class="col-1">
@@ -59,18 +59,19 @@
 						</form>
 						<table class="table table-hover table-bordered" id="noticeTable">
 							<thead>
-							<tr>
+							<tr class="table-light">
 								<th scope="col" class="text-center" style="width: 5%;">분류</th>
-								<th scope="col" class="text-center" style="width: 25%;">제목</th>
+								<th scope="col" class="text-center" style="width: 20%;">제목</th>
 								<th scope="col" class="text-center" style="width: 50%;">내 용</th>
 								<th scope="col" class="text-center" style="width: 10%;">등록일</th>
-								<th scope="col" class="text-center" style="width: 10%;">등록자</th>
+								<th scope="col" class="text-center" style="width: 7%;">등록자</th>
+								<th scope="col" class="text-center" style="width: 8%;">상세보기</th>
 							</tr>
 							</thead>
 							<tbody>
 							<c:forEach items="${notices}" var="notice" varStatus="status">
 								<tr seq="${notice.noticeSeq}">
-									<td class="text-center">
+									<td class="text-center align-middle">
 										<input type="hidden" value="${notice.noticeType}">
 										<c:choose>
 											<c:when test="${notice.noticeType == 'DISTRIBUTION'}"><span class="fw-bold text-primary">${notice.noticeType.value}</span></c:when>
@@ -78,7 +79,7 @@
 										</c:choose>
 
 									</td>
-									<td class="text-center">
+									<td class="text-center align-middle">
 										<input type="hidden" value="${notice.subject}">
 										<c:choose>
 											<c:when test="${fn:length(notice.subject) gt 25}">
@@ -89,7 +90,7 @@
 											</c:otherwise>
 										</c:choose>
 									</td>
-									<td>
+									<td colspan=" align-middle">
 										<input type="hidden" value="${notice.html}">
 										<c:choose>
 											<c:when test="${fn:length(notice.content) gt 55}">
@@ -100,16 +101,17 @@
 											</c:otherwise>
 										</c:choose>
 									</td>
-									<td class="text-center">
+									<td class="text-center align-middle">
 										<fmt:parseDate value="${notice.regDt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
 										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm"/>
 									</td>
-									<td class="text-center">${notice.user.name}</td>
+									<td class="text-center align-middle">${notice.user.name}</td>
+									<td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>
 								</tr>
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" offsetPage="${offsetPage}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>

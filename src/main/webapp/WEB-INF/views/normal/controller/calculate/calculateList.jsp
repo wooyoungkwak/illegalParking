@@ -8,9 +8,9 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateFilterColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.calculate.enums.CalculateOrderColumn" %>
 <% String contextPath = request.getContextPath(); %>
 
 <stripes:layout-render name="/WEB-INF/views/layout/navHtmlLayout.jsp">
@@ -52,44 +52,54 @@
 						</form>
 						<table class="table table-hover table-bordered">
 							<thead>
-							<tr>
-								<th scope="col">#</th>
-								<th scope="col">사용자</th>
-								<th scope="col">추가포인트</th>
-								<th scope="col">신고</th>
-								<th scope="col">사용포인트</th>
-								<th scope="col">상품</th>
-								<th scope="col">현재포인트</th>
-								<th scope="col">일자</th>
+							<tr class="table-light">
+								<th scope="col" class="text-center" style="width: 5%">#</th>
+								<th scope="col" class="text-center" style="width: 10%">사용자</th>
+								<th scope="col" class="text-center" style="width: 10%">추가포인트</th>
+								<th scope="col" class="text-center" style="width: 20%">신고</th>
+								<th scope="col" class="text-center" style="width: 10%">사용포인트</th>
+								<th scope="col" class="text-center" style="width: 20%">상품</th>
+								<th scope="col" class="text-center" style="width: 10%">현재포인트</th>
+								<th scope="col" class="text-center" style="width: 15%">일자</th>
 							</tr>
 							</thead>
 							<tbody>
 							<c:forEach var="calculate" items="${calculates}" varStatus="status">
 								<tr>
-									<td>${calculate.calculateSeq}</td>
-									<td>${calculate.userName}</td>
+									<td class="text-center">${calculate.calculateSeq}</td>
+									<td class="text-center">${calculate.userName}</td>
 									<c:choose>
 										<c:when test="${calculate.pointType == 'PLUS'}">
-											<td class="text-primary">${calculate.eventPointValue}</td>
-											<td></td>
+											<td class="text-end text-primary">
+												<fmt:formatNumber value="${calculate.eventPointValue}" pattern="#,###" />
+<%--													${calculate.eventPointValue}--%>
+											</td>
+											<td class="text-center"></td>
 											<td></td>
 											<td></td>
 										</c:when>
 										<c:otherwise>
 											<td></td>
-											<td>-</td>
-											<td class="text-danger">${calculate.eventPointValue}</td>
-											<td>${calculate.productName}</td>
+											<td class="text-center">-</td>
+											<td class="text-end text-danger">
+												<fmt:formatNumber value="${calculate.eventPointValue}" pattern="#,###" />
+											</td>
+											<td class="text-center">${calculate.productName}</td>
 										</c:otherwise>
 									</c:choose>
 
-									<td>${calculate.currentPointValue}</td>
-									<td>${calculate.regDt}</td>
+									<td class="text-end">
+										<fmt:formatNumber value="${calculate.currentPointValue}" pattern="#,###" />
+									</td>
+									<td>
+										<fmt:parseDate value="${calculate.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both"/>
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									</td>
 								</tr>
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" offsetPage="${offsetPage}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>

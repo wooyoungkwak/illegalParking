@@ -31,13 +31,13 @@
 								<tags:inputTag id="prkplceNm" title="* 주차장명" placeholder=""/>
 							</div>
 							<div class="col-md-1">
-								<tags:selectTag id="prkplceSe" current="공영" items="공영,민영" title="* 주차장구분" />
+								<tags:selectTag id="prkplceSe" current="공영" items="공영,민영" title="* 주차장구분"/>
 							</div>
 							<div class="col-md-1">
 								<tags:inputTag id="prkplceType" title="* 주차장유형" placeholder="예> 노외"/>
 							</div>
 							<div class="col-md-2">
-								<tags:selectTag id="prkplceSe" current="미시행" items="시행,미시행" title="* 부제시행구분" />
+								<tags:selectTag id="prkplceSe" current="미시행" items="시행,미시행" title="* 부제시행구분"/>
 							</div>
 							<div class="col-md-2">
 								<tags:inputTag id="inputManager" title="* 관리기관명" placeholder="예>전라남도 광양시청"/>
@@ -110,22 +110,24 @@
 							</div>
 						</div>
 						<div class="row g-3"></div>
-						<div class="col-1">
-							<div class="btn-group">
-								<c:choose>
-									<c:when test="${path.equals('parkingAdd')}">
+						<c:choose>
+							<c:when test="${path.equals('parkingAdd')}">
+								<div class="col-1">
+									<div class="btn-group">
 										<a type="submit" class="btn btn-primary" id="register">등록</a>
-									</c:when>
-									<c:otherwise>
+									</div>
+								</div>
+							</c:when>
+							<c:otherwise>
+								<div class="col-2">
+									<div class="btn-group">
 										<a type="submit" class="btn btn-primary" id="modify">수정</a>
 										<a class="btn btn-outline-success" id="close">닫기</a>
-									</c:otherwise>
-								</c:choose>
-
-							</div>
-						</div>
+									</div>
+								</div>
+							</c:otherwise>
+						</c:choose>
 					</form>
-
 				</div>
 			</div>
 		</div>

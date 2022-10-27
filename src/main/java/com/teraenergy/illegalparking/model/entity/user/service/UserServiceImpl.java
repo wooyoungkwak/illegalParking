@@ -143,6 +143,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isUserByUserNameAndPasswordMobile(String userName, String password) throws TeraException {
+        try {
+            String _password = YoungEncoder.encrypt(password);
+            if (jpaQueryFactory.selectFrom(QUser.user)
+                    .where(QUser.user.username.eq(userName))
+                    .where(QUser.user.password.eq(_password))
+                    .where(QUser.user.role.eq(Role.USER))
+                    .fetchOne() != null) {
+                return true;
+            }
+        } catch (EncryptedException e) {
+            throw new TeraException(EncryptedExceptionCode.ENCRYPT_FAILURE.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
     public boolean isUser(String userName) throws TeraException {
         try {
             if (jpaQueryFactory.selectFrom(QUser.user)

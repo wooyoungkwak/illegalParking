@@ -132,12 +132,12 @@ public class ReceiptServiceImpl implements ReceiptService {
     }
 
     @Override
-    public List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType, IllegalType illegalType) {
+    public List<Receipt> gets(LocalDateTime startTime, LocalDateTime endTime, ReceiptStateType receiptStateType, IllegalType illegalType) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
-        query.where(QReceipt.receipt.regDt.between(now, old));
-        query.where(QReceipt.receipt.isDel.isFalse());
+        query.where(QReceipt.receipt.regDt.between(startTime, endTime));
         query.where(QReceipt.receipt.receiptStateType.eq(receiptStateType));
         query.where(QReceipt.receipt.illegalZone.illegalEvent.illegalType.eq(illegalType));
+        query.where(QReceipt.receipt.isDel.isFalse());
 
         return query.fetch();
     }

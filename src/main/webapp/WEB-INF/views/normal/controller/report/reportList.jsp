@@ -61,13 +61,14 @@
 						</form>
 						<table class="table table-hover table-bordered" id="reportTable">
 							<thead>
-							<tr>
+							<tr class="table-light">
 								<th scope="col" class="text-center" style="width: 10%">신고자</th>
 								<th scope="col" class="text-center" style="width: 10%">차량번호</th>
-								<th scope="col" class="text-center" style="width: 40%">위치</th>
-								<th scope="col" class="text-center" style="width: 20%">신고일시</th>
-								<th scope="col" class="text-center" style="width: 10%">중복회수</th>
-								<th scope="col" class="text-center" style="width: 10%">상태</th>
+								<th scope="col" class="text-center" style="width: 42%">위치</th>
+								<th scope="col" class="text-center" style="width: 15%">신고일시</th>
+								<th scope="col" class="text-center" style="width: 7%">중복회수</th>
+								<th scope="col" class="text-center" style="width: 8%">상태</th>
+								<th scope="col" class="text-center" style="width: 8%">상세보기</th>
 							</tr>
 							</thead>
 							<tbody>
@@ -78,14 +79,12 @@
 											${report.name}
 									</td class="text-center">
 									<td class="text-center">${report.carNum}</td>
-									<td>
-											${report.addr}
-									</td>
+									<td>${report.addr}</td>
 									<td class="text-center">
-										<fmt:parseDate value="${report.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both"/>
-										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+										<fmt:parseDate value="${report.regDt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm"/>
 									</td>
-									<td class="text-center">${report.overlapCount}</td>
+									<td class="text-end">${report.overlapCount}</td>
 									<td class="text-center">
 										<c:choose>
 											<c:when test="${report.reportStateType == 'PENALTY'}"><span class="text-danger fw-bold">${report.reportStateType.value}</span></c:when>
@@ -93,11 +92,12 @@
 											<c:otherwise><span class="text-success fw-bold">${report.reportStateType.value}</span></c:otherwise>
 										</c:choose>
 									</td>
+									<td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>
 								</tr>
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" offsetPage="${offsetPage}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>

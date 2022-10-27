@@ -8,10 +8,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://stripes.sourceforge.net/stripes.tld" prefix="stripes" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 <%@ taglib tagdir="/WEB-INF/tags/layout" prefix="layoutTags" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.product.enums.ProductFilterColumn" %>
-<%@ page import="com.teraenergy.illegalparking.model.entity.product.enums.ProductOrderColumn" %>
 <%@ page import="com.teraenergy.illegalparking.model.entity.product.enums.Brand" %>
 <% String contextPath = request.getContextPath(); %>
 
@@ -55,27 +55,34 @@
 						</form>
 						<table class="table table-hover table-bordered" id="productTable">
 							<thead>
-							<tr>
-								<th scope="col">#</th>
-								<th scope="col">브랜드</th>
-								<th scope="col">상품명</th>
-								<th scope="col">구매포인트</th>
-								<th scope="col">등록자</th>
+							<tr class="table-light">
+								<th scope="col" class="text-center" style="width: 5%">#</th>
+								<th scope="col" class="text-center" style="width: 25%">브랜드</th>
+								<th scope="col" class="text-center" style="width: 37%">상품명</th>
+								<th scope="col" class="text-center" style="width: 10%">구매포인트</th>
+								<th scope="col" class="text-center" style="width: 15%">등록일자</th>
+								<th scope="col" class="text-center" style="width: 8%">상세보기</th>
 							</tr>
 							</thead>
 							<tbody>
 							<c:forEach var="product" items="${products}" varStatus="status">
 								<tr>
-									<td>${product.productSeq}</td>
-									<td>${product.brand.value}</td>
-									<td>${product.name}</td>
-									<td>${product.pointValue}</td>
-									<td>${product.userSeq}</td>
+									<td class="text-center">${product.productSeq}</td>
+									<td class="text-center">${product.brand.value}</td>
+									<td class="text-center">${product.name}</td>
+									<td class="text-end">
+										<fmt:formatNumber value="${product.pointValue}" pattern="#,###"/>
+									</td>
+									<td class="text-center">
+										<fmt:parseDate value="${product.regDt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm"/>
+									</td>
+									<td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>
 								</tr>
 							</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" offsetPage="${offsetPage}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>

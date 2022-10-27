@@ -79,14 +79,21 @@ public class UserController extends ExtendsController {
         boolean isBeginOver = false;
         boolean isEndOver = false;
 
-        if (totalPages > 3 && (totalPages - pageNumber) > 2) {
-            isEndOver = true;
+        int offsetPage = pageNumber - 1;
+
+        if (offsetPage >= (totalPages-2)) {
+            offsetPage = totalPages-2;
+        } else {
+            if (totalPages > 3) isEndOver = true;
         }
 
-        if (totalPages > 3 && pageNumber > 1) {
-            isBeginOver = true;
+        if ( offsetPage < 1) {
+            offsetPage = 1;
+        } else {
+            if (totalPages > 3) isBeginOver = true;
         }
 
+        model.addAttribute("offsetPage", offsetPage);
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);

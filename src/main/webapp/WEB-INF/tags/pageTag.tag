@@ -5,9 +5,11 @@
 <%@ attribute name="end" type="java.lang.Integer" required="false" %>
 <%@ attribute name="isBeginOver" type="java.lang.Boolean" required="true" %>
 <%@ attribute name="isEndOver" type="java.lang.Boolean" required="true" %>
+<%@ attribute name="offsetPage" type="java.lang.Integer" required="true" %>
 <%@ attribute name="totalPages" type="java.lang.Integer" required="true" %>
 <%@ attribute name="pageSize" type="java.lang.Integer" required="true" %>
 <%@ attribute name="items" type="java.lang.Object" required="true" %>
+
 <%@ taglib tagdir="/WEB-INF/tags" prefix="tags" %>
 
 <!-- Pagination-->
@@ -27,23 +29,22 @@
 				</c:if>
 				<c:choose>
 					<c:when test="${ totalPages != null && totalPages <= 3}">
-						<c:forEach var="item" begin="1" end="${totalPages}" varStatus="status">
+						<c:forEach var="item" begin="${offsetPage}" end="${totalPages}" varStatus="status">
 							<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
 						</c:forEach>
 					</c:when>
 					<c:when test="${ totalPages > 3 && (totalPages - pageNumber) < 3 }">
-						<c:forEach var="item" begin="${totalPages-2}" end="${totalPages}" varStatus="status">
+						<c:forEach var="item" begin="${offsetPage}" end="${offsetPage+2}" varStatus="status">
 							<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
 						</c:forEach>
 					</c:when>
 					<c:when test="${ totalPages > 3 && (totalPages - pageNumber) >= 3 }">
-						<c:forEach var="item" begin="${pageNumber}" end="${pageNumber+2}" varStatus="status">
+						<c:forEach var="item" begin="${offsetPage}" end="${offsetPage+2}" varStatus="status">
 							<li class="page-item <c:if test="${pageNumber == item}">active</c:if>" aria-current="page"><a class="page-link">${item}</a></li>
 						</c:forEach>
 					</c:when>
 					<c:otherwise>${totalPages}</c:otherwise>
 				</c:choose>
-
 				<c:if test="${isEndOver}">
 					<li class="page-item ms-2 me-2">...</li>
 				</c:if>

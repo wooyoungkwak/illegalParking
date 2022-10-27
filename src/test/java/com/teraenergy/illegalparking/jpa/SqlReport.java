@@ -276,7 +276,6 @@ public class SqlReport {
         }
     }
 
-
     @Test
     public void insertByReportstatics(){
 
@@ -317,11 +316,28 @@ public class SqlReport {
 
     }
 
-
     @Test
     public void test(){
-        IllegalZone illegalZone = illegalZoneService.get(4);
-        int count = reportService.getSizeForPenalty(illegalZone);
-        System.out.println(count);
+        LocalDateTime now = LocalDateTime.now();        // 현재 시간
+        LocalDateTime startTaskTime = now;
+
+        LocalDateTime startTimeByIllegal = now.minusMinutes(60);   // 11분 전의 60분전 시간
+        LocalDateTime endTimeByIllegal = now.minusMinutes(11);   // 11분 전 시간
+        List<Receipt> receiptsByIllegal = receiptService.gets(startTimeByIllegal, endTimeByIllegal, ReceiptStateType.OCCUR, IllegalType.ILLEGAL);
+
+        LocalDateTime startTimeByFiveMinute = now.minusMinutes(60);   // 16분 전 시간
+        LocalDateTime endTimeByFiveMinute = now.minusMinutes(16);   // 11분 전의 60분전 시간
+        List<Receipt> receiptsByFiveMinute = receiptService.gets(startTimeByIllegal, endTimeByIllegal, ReceiptStateType.OCCUR, IllegalType.FIVE_MINUTE);
+
+        List<Receipt> receipts = Lists.newArrayList();
+        for(Receipt receipt : receiptsByIllegal) {
+            receipts.add(receipt);
+        }
+
+        for (Receipt receipt : receiptsByFiveMinute) {
+            receipts.add(receipt);
+        }
+
+        System.out.println("receipt size = " + receipts.size());
     }
 }

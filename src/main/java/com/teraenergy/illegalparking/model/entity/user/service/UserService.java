@@ -27,6 +27,8 @@ public interface UserService {
 
     boolean isUserByUserNameAndPassword(String userName, String password) throws TeraException;
 
+    boolean isUserByUserNameAndPasswordMobile(String userName, String password) throws TeraException;
+
     boolean isUser(String userName) throws TeraException;
 
     boolean isUserByPhoneNumber(String phoneNumber) throws TeraException;

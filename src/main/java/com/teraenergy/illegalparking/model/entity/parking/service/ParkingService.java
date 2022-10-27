@@ -2,9 +2,7 @@ package com.teraenergy.illegalparking.model.entity.parking.service;
 
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
-import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +22,7 @@ public interface ParkingService {
 
     public List<Parking> gets(List<String> codes);
 
-    public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy);
+    public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search);
 
     public Parking get(Integer prkingSeq);
 

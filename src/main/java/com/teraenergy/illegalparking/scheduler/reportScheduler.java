@@ -92,11 +92,11 @@ public class reportScheduler {
         LocalDateTime startTaskTime = now;
 
         LocalDateTime startTimeByIllegal = now.minusMinutes(60);   // 11분 전의 60분전 시간
-        LocalDateTime endTimeByIllegal = startTimeByIllegal.minusMinutes(11);   // 11분 전 시간
+        LocalDateTime endTimeByIllegal = now.minusMinutes(11);   // 11분 전 시간
         List<Receipt> receiptsByIllegal = receiptService.gets(startTimeByIllegal, endTimeByIllegal, ReceiptStateType.OCCUR, IllegalType.ILLEGAL);
 
         LocalDateTime startTimeByFiveMinute = now.minusMinutes(60);   // 16분 전 시간
-        LocalDateTime endTimeByFiveMinute = startTimeByIllegal.minusMinutes(16);   // 11분 전의 60분전 시간
+        LocalDateTime endTimeByFiveMinute = now.minusMinutes(16);   // 11분 전의 60분전 시간
         List<Receipt> receiptsByFiveMinute = receiptService.gets(startTimeByIllegal, endTimeByIllegal, ReceiptStateType.OCCUR, IllegalType.FIVE_MINUTE);
 
         List<Receipt> receipts = Lists.newArrayList();

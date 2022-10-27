@@ -1,11 +1,15 @@
 package com.teraenergy.illegalparking.controller.login;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Strings;
 import com.teraenergy.illegalparking.controller.ExtendsController;
 import com.teraenergy.illegalparking.encrypt.YoungEncoder;
 import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.entity.user.domain.User;
+import com.teraenergy.illegalparking.model.entity.user.enums.Role;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
+import com.teraenergy.illegalparking.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.RequestUtil;
@@ -62,16 +66,23 @@ public class LoginController extends ExtendsController {
 
     @PostMapping(value = "/register")
     @ResponseBody
-    public String register_(HttpServletRequest request, @RequestBody String body){
-//        try {
-            User user = new User();
-            // TODO : body parsing 후 user 값으로 적용 후
-//            userService.add(user);
+    public String register_(HttpServletRequest request, @RequestBody String body) throws TeraException {
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
 
-//        } catch (TeraException e) {
-//            return "/register";
-//        }
-        return "/login";
+            // TODO : 사용자의 역활 ...
+            User user = new User();
+            user.setRole(Role.USER);
+            user.setName(jsonNode.get("name").asText());
+            user.setUsername(jsonNode.get("userName").asText());
+            user.setPassword(jsonNode.get("password").asText());
+            user.setUserCode(1L);
+
+            userService.set(user);
+        } catch (TeraException e) {
+            throw new TeraException(TeraExceptionCode.valueOf(e.getCode()));
+        }
+        return "complete ..";
     }
 
 }

@@ -1,25 +1,19 @@
 package com.teraenergy.illegalparking.model.entity.parking.service;
 
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.jpa.impl.JPAUpdateClause;
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.domain.QParking;
 import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingFilterColumn;
-import com.teraenergy.illegalparking.model.entity.parking.enums.ParkingOrderColumn;
 import com.teraenergy.illegalparking.model.entity.parking.repository.ParkingRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.ibatis.javassist.runtime.Desc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Date : 2022-09-14
@@ -56,7 +50,7 @@ public class ParkingServiceImpl implements ParkingService{
     }
 
     @Override
-    public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search, ParkingOrderColumn orderColumn, Sort.Direction orderBy ) {
+    public Page<Parking> gets(int pageNumber, int pageSize, ParkingFilterColumn filterColumn, String search ) {
         JPAQuery query = jpaQueryFactory.selectFrom(QParking.parking);
 
         if ( search != null && search.length() > 0) {
@@ -71,32 +65,9 @@ public class ParkingServiceImpl implements ParkingService{
         }
 
         query.where(QParking.parking.isDel.isFalse());
+        query.orderBy(QParking.parking.parkingSeq.desc());
 
         int total = query.fetch().size();
-
-        switch (orderColumn) {
-            case parkingSeq:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QParking.parking.parkingSeq.desc());
-                } else {
-                    query.orderBy(QParking.parking.parkingSeq.asc());
-                }
-                break;
-            case parkingchrgeInfo:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QParking.parking.parkingchrgeInfo.desc());
-                } else {
-                    query.orderBy(QParking.parking.parkingchrgeInfo.asc());
-                }
-                break;
-            case prkplceNm:
-                if ( orderBy.equals(Sort.Direction.DESC)) {
-                    query.orderBy(QParking.parking.prkplceNm.desc());
-                } else {
-                    query.orderBy(QParking.parking.prkplceNm.asc());
-                }
-                break;
-        }
 
         pageNumber = pageNumber -1; // 이유 : offset 시작 값이 0부터 이므로
         query.limit(pageSize).offset(pageNumber * pageSize);

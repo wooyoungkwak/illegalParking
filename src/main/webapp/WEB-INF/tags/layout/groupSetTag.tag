@@ -62,18 +62,18 @@
 						<a class="btn btn-primary" id="openEventAdd"><i class="fas fa-plus"></i> 이벤트추가</a>
 					</div>
 				</div>
-				<table class="table table-bordered" id="pointTable">
-					<thead class="table-info">
-					<tr>
-						<th scope="col" class="text-center">분류</th>
-						<th scope="col" class="text-center">제한포인트</th>
-						<th scope="col" class="text-center">제공포인트</th>
-						<th scope="col" class="text-center">누적사용량</th>
-						<th scope="col" class="text-center">남은포인트</th>
-						<th scope="col" class="text-center">시작일자</th>
-						<th scope="col" class="text-center">종료일자</th>
-						<th scope="col" class="text-center">마감기준</th>
-						<th scope="col" class="text-center">상세보기</th>
+				<table class="table table-bordered table-hover" id="pointTable">
+					<thead>
+					<tr class="table-light">
+						<th scope="col" class="text-center" style="width: 10%">분류</th>
+						<th scope="col" class="text-center" style="width: 10%">제한포인트</th>
+						<th scope="col" class="text-center" style="width: 10%">제공포인트</th>
+						<th scope="col" class="text-center" style="width: 10%">누적사용량</th>
+						<th scope="col" class="text-center" style="width: 10%">남은포인트</th>
+						<th scope="col" class="text-center" style="width: 10%">시작일자</th>
+						<th scope="col" class="text-center" style="width: 10%">종료일자</th>
+						<th scope="col" class="text-center" style="width: 22%">마감기준</th>
+						<th scope="col" class="text-center" style="width: 8%">상세보기</th>
 					</tr>
 					</thead>
 					<tbody></tbody>

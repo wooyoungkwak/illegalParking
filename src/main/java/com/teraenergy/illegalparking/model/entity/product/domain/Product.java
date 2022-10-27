@@ -43,6 +43,9 @@ public class Product {
     String thumbnail;
 
     @Column (nullable = false)
+    LocalDateTime RegDt = LocalDateTime.now();
+
+    @Column (nullable = false)
     Boolean isDel = false;
 
 }

@@ -99,7 +99,7 @@ public class MobileAPI {
         String username = jsonNode.get("userName").asText();
         String password = jsonNode.get("password").asText();
 
-        result = userService.isUserByUserNameAndPassword(username, password);
+        result = userService.isUserByUserNameAndPasswordMobile(username, password);
 
         if (result) {
             User user = userService.get(username);

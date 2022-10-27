@@ -58,41 +58,43 @@
 						</form>
 						<table class="table table-hover table-bordered" id="userTable">
 							<thead>
-							<tr>
-								<th scope="col">지역</th>
-								<th scope="col">관공서명</th>
-								<th scope="col">아이디</th>
-								<th scope="col">패스워드</th>
-								<th scope="col">관리그룹</th>
-								<th scope="col">신고접수건</th>
-								<th scope="col">대기</th>
-								<th scope="col">미처리</th>
-								<th scope="col">처리</th>
+							<tr class="table-light">
+								<th scope="col" class="text-center" style="width: 10%">지역</th>
+								<th scope="col" class="text-center" style="width: 17%">관공서명</th>
+								<th scope="col" class="text-center" style="width: 15%">아이디</th>
+								<th scope="col" class="text-center" style="width: 15%">패스워드</th>
+								<th scope="col" class="text-center" style="width: 7%">관리그룹</th>
+								<th scope="col" class="text-center" style="width: 7%">신고접수건</th>
+								<th scope="col" class="text-center" style="width: 7%">대기</th>
+								<th scope="col" class="text-center" style="width: 7%">미처리</th>
+								<th scope="col" class="text-center" style="width: 7%">처리</th>
+								<th scope="col" class="text-center" style="width: 8%">상세보기</th>
 							</tr>
 							</thead>
 							<tbody>
 								<c:forEach items="${userGovernmentDtos}" var="userGovernmentDto" varStatus="status">
 									<tr seq="${userGovernmentDto.userSeq}">
-										<td>
+										<td class="text-center align-middle">
 											<input type="hidden" value="${userGovernmentDto.locationType}">
 												${userGovernmentDto.locationType.value}
 										</td>
 										<td>${userGovernmentDto.officeName}</td>
-										<td>${userGovernmentDto.userName}</td>
-										<td>
+										<td class="text-center align-middle">${userGovernmentDto.userName}</td>
+										<td class="text-center align-middle">
 											<input type="hidden" value="${userGovernmentDto.password}">
 											**************
 										</td>
-										<td>${userGovernmentDto.groupCount}</td>
-										<td>${userGovernmentDto.totalCount}</td>
-										<td>${userGovernmentDto.completeCount}</td>
-										<td>${userGovernmentDto.exceptionCount}</td>
-										<td>${userGovernmentDto.penaltyCount}</td>
+										<td class="text-end align-middle">${userGovernmentDto.groupCount}</td>
+										<td class="text-end align-middle">${userGovernmentDto.totalCount}</td>
+										<td class="text-end align-middle">${userGovernmentDto.completeCount}</td>
+										<td class="text-end align-middle">${userGovernmentDto.exceptionCount}</td>
+										<td class="text-end align-middle">${userGovernmentDto.penaltyCount}</td>
+										<td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>
 									</tr>
 								</c:forEach>
 							</tbody>
 						</table>
-						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="15,25,50" pageSize="${pageSize}"/>
+						<tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" offsetPage="${offsetPage}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
 					</div>
 				</div>
 			</div>

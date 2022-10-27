@@ -58,31 +58,31 @@
 
                         </form>
                         <table class="table table-hover table-bordered" id="userTable">
-                            <thead class="table-info">
-                                <tr>
-                                    <th scope="col" class="text-center">그룹위치</th>
-                                    <th scope="col" class="text-center">그룹명</th>
-                                    <th scope="col" class="text-center">포함 구역</th>
-                                    <th scope="col" class="text-center">설정 내용</th>
-                                    <th scope="col" class="text-center">보 기</th>
+                            <thead>
+                                <tr class="table-light">
+                                    <th scope="col" class="text-center" style="width: 10%">그룹위치</th>
+                                    <th scope="col" class="text-center" style="width: 10%">그룹명</th>
+                                    <th scope="col" class="text-center" style="width: 7%">포함 구역</th>
+                                    <th scope="col" class="text-center" style="width: 65%">설정 내용</th>
+                                    <th scope="col" class="text-center" style="width: 8%">상세보기</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <c:forEach items="${illegalGroupDtos}" var="illegalGroupDto" varStatus="status">
                                     <tr>
-                                        <td class="text-center align-middle">
+                                        <td class="text-center">
                                             <input type="hidden" value="${illegalGroupDto.groupSeq}">
                                             ${illegalGroupDto.locationType.value}
                                         </td>
-                                        <td class="text-center align-middle">${illegalGroupDto.name}</td>
-                                        <td class="text-end align-middle">${illegalGroupDto.groupSize}</td>
-                                        <td class=" align-middle">${illegalGroupDto.note}</td>
-                                        <td class="text-center align-middle"><a class="btn btn-outline-dark">상세 보기</a></td>
+                                        <td class="text-center">${illegalGroupDto.name}</td>
+                                        <td class="text-end">${illegalGroupDto.groupSize}</td>
+                                        <td>${illegalGroupDto.note}</td>
+                                        <td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
-                        <tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
+                        <tags:pageTag pageNumber="${pageNumber}" isBeginOver="${isBeginOver}" isEndOver="${isEndOver}" offsetPage="${offsetPage}" totalPages="${totalPages}" items="10,25,50" pageSize="${pageSize}"/>
                     </div>
                 </div>
             </div>
@@ -145,30 +145,23 @@
                 function setGroupSetTagForTableEvent() {
                     $('#pointTable tbody tr').each(function (){
                         $(this).on('click', function (){
-
                             let pointSeq = $(this).find('td:eq(0)').find('input').val();
-
                             let result = $.JJAjaxAsync({
                                 url: _contextPath + '/group/point/get',
                                 data: {
                                     pointSeq: pointSeq
                                 }
                             });
-
                             if( result.success) {
                                 initialGroupEventAddTag(result.data);
                             }
-
                             let now = new Date();
                             $('#startDate').val($.formatDateYYYYMMDD(now));
                             $('#stopDate').val($.formatDateYYYYMMDD(now));
-
                             $('#modalGroupEvent').show();
                             $('body').css({
                                 'overflow': 'hidden'
                             });
-
-
                         });
                     });
                 }
@@ -189,7 +182,7 @@
                         html += `<td class="text-center align-middle">` + data.startDate + `</td>`;
                         html += `<td class="text-center align-middle">` + data.stopDate + `</td>`;
                         html += `<td class="align-middle">` + data.finish + `</td>`;
-                        html += `<td class="text-center"><a class="btn btn-outline-dark">상세 보기</a></td>`;
+                        html += `<td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>`;
                         html += `</tr>`;
                         return html;
                     }
@@ -216,6 +209,7 @@
                         html += `<td>` + data.startDate + `</td>`;
                         html += `<td class="align-middle">` + data.stopDate + `</td>`;
                         html += `<td class="text-center">` + data.finish + `</td>`;
+                        html += `<td class="text-center p-0 align-middle"><a class="btn btn-sm btn-outline-dark m-0">상세보기</a></td>`;
                         html += `</tr>`;
                         return html;
                     }
@@ -390,6 +384,7 @@
                     $('#closeGroupSet').on('click', function () {
                         $('#groupMain').show();
                         $('#groupSet').hide();
+                        search();
                     });
 
                     // 필터에 의한 검색 입력 방식 선택
