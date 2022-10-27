@@ -81,9 +81,9 @@ $(function () {
             $('#btnSet').hide();
         }
 
-        let codes = await getDongCodesBounds(drawingMap);
+        let codes = (await getDongCodesBounds(drawingMap)).codes;
 
-        getsZone(codes);
+        drawingZone(codes);
     });
 
     // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
@@ -112,8 +112,8 @@ $(function () {
             // 데이터 저장
             initializeZone(opt);
             // 지도에 가져온 데이터로 도형들을 그립니다
-            let codes = await getDongCodesBounds(drawingMap);
-            await getsZone(codes);
+            let codes = (await getDongCodesBounds(drawingMap)).codes;
+            await drawingZone(codes);
             // 생성한 폴리곤 삭제
             removeDrawingOverlays();
         }
@@ -522,16 +522,16 @@ $(function () {
                 if (level > 3) {
                     removeOverlays();
                 } else {
-                    let codes = await getDongCodesBounds(drawingMap);
+                    let obj = await getDongCodesBounds(drawingMap);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
-                    if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
-                    else getsZone(codes);
+                    if(obj.uniqueCodesCheck) await drawingPolygon(getPolygonData());
+                    else drawingZone(obj.codes);
                 }
             }
         });
     }
 
-    function getsZone(codes) {
+    function drawingZone(codes) {
         let select = SELECT_TYPE_AND_DONG;
         if (searchIllegalType === '') select = SELECT_DONG;
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회

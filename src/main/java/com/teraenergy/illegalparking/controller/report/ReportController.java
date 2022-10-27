@@ -97,7 +97,7 @@ public class ReportController extends ExtendsController {
         if ( offsetPage < 1) {
             offsetPage = 1;
         } else {
-            if (totalPages > 3) isBeginOver = true;
+            if (offsetPage > 1 && totalPages > 3) isBeginOver = true;
         }
 
         model.addAttribute("offsetPage", offsetPage);
@@ -132,7 +132,7 @@ public class ReportController extends ExtendsController {
         String search = "";
         String searchStr = paramMap.getAsString("searchStr");
         if (searchStr == null) {
-            searchStr = "";
+            search = "";
         }
 
         Integer pageNumber = paramMap.getAsInt("pageNumber");
@@ -165,7 +165,7 @@ public class ReportController extends ExtendsController {
         if ( offsetPage < 1) {
             offsetPage = 1;
         } else {
-            if (totalPages > 3) isBeginOver = true;
+            if (offsetPage > 1 && totalPages > 3) isBeginOver = true;
         }
 
         model.addAttribute("offsetPage", offsetPage);

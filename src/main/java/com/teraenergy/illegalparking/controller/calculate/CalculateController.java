@@ -121,7 +121,7 @@ public class CalculateController extends ExtendsController {
         if ( offsetPage < 1) {
             offsetPage = 1;
         } else {
-            if (totalPages > 3) isBeginOver = true;
+            if (offsetPage > 1 && totalPages > 3) isBeginOver = true;
         }
 
         model.addAttribute("offsetPage", offsetPage);
@@ -190,7 +190,7 @@ public class CalculateController extends ExtendsController {
         if ( offsetPage < 1) {
             offsetPage = 1;
         } else {
-            if (totalPages > 3) isBeginOver = true;
+            if (offsetPage > 1 && totalPages > 3) isBeginOver = true;
         }
 
         model.addAttribute("offsetPage", offsetPage);

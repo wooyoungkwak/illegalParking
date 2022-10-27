@@ -30,11 +30,12 @@ $(function (callback) {
   }
 
   async function getsParking() {
-    let codes = await getDongCodesBounds(map);
+    let obj = await getDongCodesBounds(map);
+    let codes = obj.codes;
 
     //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
     let result;
-    if (!uniqueCodesCheck) {
+    if (!obj.uniqueCodesCheck) {
       result = $.JJAjaxAsync({
         url: _contextPath + '/gets',
         data: {
@@ -182,22 +183,18 @@ $(function (callback) {
       // 지도의  레벨을 얻어옵니다
       let level = map.getLevel();
       log("level = ", level);
-      let codes = await getDongCodesBounds(map);
-
-      let sameArrChk = _.isEmpty(_.xor(beforeCodes, codes));
-      log('1 : ',beforeCodes);
-
-      log(sameArrChk);
+      let obj = (await getDongCodesBounds(map)).codes;
 
       //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
-      if (!sameArrChk) {
+      if (!obj.uniqueCodesCheck) {
         await getsParking();
-        beforeCodes = codes;
+        beforeCodes = obj.codes;
       }
     })
   }
 
   initialize();
+
   (async () => {
     await getsParking();
   })();

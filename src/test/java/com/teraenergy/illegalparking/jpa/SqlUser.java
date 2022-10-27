@@ -26,10 +26,10 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "debug")
+@ActiveProfiles(value = "rdata")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlUser {
 
     @Autowired
@@ -38,26 +38,26 @@ public class SqlUser {
     @Autowired
     GovernmentOfficeService governmentOfficeService;
 
-
     @Test
     public void insert(){
         try {
+            insertByAdminUser();
             insertByGovernmentOffice();
-            insertByUser();
+            insertByGeneralUser();
         } catch (TeraException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Test
-    public void insertByUser() throws TeraException {
+    public void insertByAdminUser() throws TeraException {
         List<User> users = Lists.newArrayList();
 
         User user = new User();
         user.setIsDel(false);
         user.setUsername("admin");
 
-        user.setPassword("qwer1234");
+        user.setPassword("tera1234");
         user.setRole(Role.ADMIN);
         user.setUserCode(1234l);
         user.setName("관리자");
@@ -65,16 +65,12 @@ public class SqlUser {
         user.setPhoneNumber("");
         users.add(user);
 
-        User user2 = new User();
-        user2.setUsername("hong@gmail.com");
-        user2.setPassword("qwer1234");
-        user2.setRole(Role.USER);
-        user2.setUserCode(1234l);
-        user2.setIsDel(false);
-        user2.setName("홍길동");
-        user2.setPhotoName("sample2");
-        user2.setPhoneNumber("010-1234-8901");
-        users.add(user2);
+        userService.sets(users);
+    }
+
+    @Test
+    public void insertByGovernmentUser() throws TeraException {
+        List<User> users = Lists.newArrayList();
 
         GovernmentOffice governMentOffice = governmentOfficeService.get(1);
 
@@ -87,6 +83,24 @@ public class SqlUser {
         user3.setName("양만춘");
         user3.setGovernMentOffice(governMentOffice);
         users.add(user3);
+
+        userService.sets(users);
+    }
+
+    @Test
+    public void insertByGeneralUser() throws TeraException {
+        List<User> users = Lists.newArrayList();
+
+        User user2 = new User();
+        user2.setUsername("hong@gmail.com");
+        user2.setPassword("qwer1234");
+        user2.setRole(Role.USER);
+        user2.setUserCode(1234l);
+        user2.setIsDel(false);
+        user2.setName("홍길동");
+        user2.setPhotoName("sample2");
+        user2.setPhoneNumber("010-1234-8901");
+        users.add(user2);
 
         userService.sets(users);
     }

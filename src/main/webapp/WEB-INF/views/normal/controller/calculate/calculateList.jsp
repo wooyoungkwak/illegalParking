@@ -54,10 +54,10 @@
 							<thead>
 							<tr class="table-light">
 								<th scope="col" class="text-center" style="width: 5%">#</th>
-								<th scope="col" class="text-center" style="width: 10%">사용자</th>
-								<th scope="col" class="text-center" style="width: 10%">추가포인트</th>
-								<th scope="col" class="text-center" style="width: 20%">신고</th>
-								<th scope="col" class="text-center" style="width: 10%">사용포인트</th>
+								<th scope="col" class="text-center" style="width: 7%">사용자</th>
+								<th scope="col" class="text-center" style="width: 8%">추가포인트</th>
+								<th scope="col" class="text-center" style="width: 27%">신고</th>
+								<th scope="col" class="text-center" style="width: 8%">사용포인트</th>
 								<th scope="col" class="text-center" style="width: 20%">상품</th>
 								<th scope="col" class="text-center" style="width: 10%">현재포인트</th>
 								<th scope="col" class="text-center" style="width: 15%">일자</th>
@@ -72,9 +72,8 @@
 										<c:when test="${calculate.pointType == 'PLUS'}">
 											<td class="text-end text-primary">
 												<fmt:formatNumber value="${calculate.eventPointValue}" pattern="#,###" />
-<%--													${calculate.eventPointValue}--%>
 											</td>
-											<td class="text-center"></td>
+											<td class="text-center">${calculate.locationType.value} (으)로부터 포상금이 제공 되었습니다. </td>
 											<td></td>
 											<td></td>
 										</c:when>
@@ -87,13 +86,12 @@
 											<td class="text-center">${calculate.productName}</td>
 										</c:otherwise>
 									</c:choose>
-
 									<td class="text-end">
 										<fmt:formatNumber value="${calculate.currentPointValue}" pattern="#,###" />
 									</td>
-									<td>
-										<fmt:parseDate value="${calculate.regDt}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDateTime" type="both"/>
-										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm:ss"/>
+									<td class="text-center">
+										<fmt:parseDate value="${calculate.regDt}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both"/>
+										<fmt:formatDate value="${parsedDateTime}" pattern="yyyy-MM-dd HH:mm"/>
 									</td>
 								</tr>
 							</c:forEach>

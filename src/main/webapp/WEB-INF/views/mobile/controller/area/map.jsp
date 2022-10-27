@@ -19,10 +19,10 @@
 					<div id="map"></div>
 
 					<div class="map-control alarm-control" role="group">
-                        <label class="alarm-mode-button">
-                            <input type="checkbox"/>
-                            <span class="onOff-switch"></span>
-                        </label>
+						<label class="alarm-mode-button">
+							<input type="checkbox"/>
+							<span class="onOff-switch"></span>
+						</label>
 					</div>
 
 					<div class="map-control border border-2 bg-white shadow-sm btn-group rounded-pill" role="group">
@@ -34,8 +34,8 @@
 						<label for="pm" class="mapType btn btn-white fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
 					</div>
 
-					<%--<div class="custom-btn-control">
-					</div>--%>
+						<%--<div class="custom-btn-control">
+						</div>--%>
 					<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
 					<div class="custom-control">
 						<span id="btnFindMe"><img src="<%=contextPath%>/resources/assets/img/ping.png" alt="내위치"></span>
@@ -48,7 +48,7 @@
 					</div>
 
 				</div>
-				<%--<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>--%>
+					<%--<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>--%>
 
 			</div>
 		</main>
@@ -64,38 +64,10 @@
 		<script src="<%=contextPath%>/resources/js/area/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 		<script type="application/javascript">
-
-
             // INTERFACE : APP TO WEB
             function appToGps(x, y) {
-            	$.gpsPoint(x, y);
-                // $('#debug').val(x + "," + y + " :: " + (typeof x));
-                log(x + "," + y + " :: " + (typeof x));
+                $.gpsPoint(x, y);
             }
-
-
-            $(function () {
-
-                // INTERFACE : WEB TO APP
-                // TYPE : parking / pm
-                // DATA (parking) : pkName ( 주차장이름 ) / pkAddr(주소) / pkPrice(요금) / pkOper(운영 - 유료/무료) / pkCount(주차장면수) / pkPhone(주차장 전화번호)
-                // DATA (pm) : pmName ( 킥보드 이름 ) / pmPrice(요금) / pmOper(운영 - 유료/무료)
-                // $('#webToApp').on('click', function (event) {
-                //     let obj = {
-                //         type: 'parking',
-                //         data: {
-                //             pkName: '1',
-                //             pkAddr: '2',
-                //             pkPrice: '3',
-                //             pkOper: '4',
-                //             pkCount: '5',
-                //             pkPhone: '6'
-                //         }
-                //     };
-				//
-                //     webToApp.postMessage(JSON.stringify(obj));
-                // });
-            });
 		</script>
 	</stripes:layout-component>
 

@@ -393,7 +393,7 @@
                         $('#btnPenalty').hide();
                         $('#noteViewContain').css({
                             "height": "auto"
-                        })
+                        });
                     }
                 }
 

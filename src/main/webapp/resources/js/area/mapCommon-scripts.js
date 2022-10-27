@@ -249,45 +249,6 @@ function getMobileCurrentPosition(map) {
     myLocationMarker(map, gpsPosition);
 }
 
-let uniqueCodesCheck = false;
-let beforeCodes = [];
-// 꼭지점, 중심좌표의 법정동 코드 가져오기
-async function getDongCodesBounds(map){
-    // 맵 구역
-    let bounds = map.getBounds();
-    // 영역정보의 남서쪽 정보를 얻어옵니다
-    let swLatLng = bounds.getSouthWest();
-    let south = swLatLng.getLat();
-    let west = swLatLng.getLng();
-
-    // 영역정보의 북동쪽 정보를 얻어옵니다
-    let neLatLng = bounds.getNorthEast();
-    let north = neLatLng.getLat();
-    let east = neLatLng.getLng();
-
-    // 동, 서, 남, 북 좌표
-    // log(east, west, south, north);
-    let center = map.getCenter();
-
-    let latLngs = [{x: east, y: north}, {x: west, y: north}, {x: east, y: south}, {x: west, y: south}, {x: center.getLng(), y: center.getLat()}]
-    let codes = [];
-
-    for (const latLng of latLngs) {
-        let code = await coordinatesToDongCodeKakaoApi(latLng.x, latLng.y);
-        codes.push(code);
-    }
-    codes = [...new Set(codes)]
-
-    // log('codes : ', codes);
-    // log('beforeCodes : ', beforeCodes);
-    // log('uniqueCodesCheck : ', uniqueCodesCheck);
-
-
-    uniqueCodesCheck = _.isEmpty(_.xor(beforeCodes, codes));
-
-    return codes;
-}
-
 //현재위치 마커 커스텀 오버레이
 function myLocationMarker(map, position){
     let locationOverlay = new kakao.maps.CustomOverlay({zIndex:1, yAnchor: 3 });
@@ -323,3 +284,45 @@ $.gpsPoint = function(x, y) {
     log('webview', gpsLatitude, gpsLongitude);
 }
 
+let beforeCodes = [];
+
+// 꼭지점, 중심좌표의 법정동 코드 가져오기
+async function getDongCodesBounds(map){
+    let uniqueCodesCheck = false;
+
+    // 맵 구역
+    let bounds = map.getBounds();
+    // 영역정보의 남서쪽 정보를 얻어옵니다
+    let swLatLng = bounds.getSouthWest();
+    let south = swLatLng.getLat();
+    let west = swLatLng.getLng();
+
+    // 영역정보의 북동쪽 정보를 얻어옵니다
+    let neLatLng = bounds.getNorthEast();
+    let north = neLatLng.getLat();
+    let east = neLatLng.getLng();
+
+    // 동, 서, 남, 북 좌표
+    // log(east, west, south, north);
+    let center = map.getCenter();
+
+    let latLngs = [{x: east, y: north}, {x: west, y: north}, {x: east, y: south}, {x: west, y: south}, {x: center.getLng(), y: center.getLat()}]
+    let codes = [];
+
+    for (const latLng of latLngs) {
+        let code = await coordinatesToDongCodeKakaoApi(latLng.x, latLng.y);
+        codes.push(code);
+    }
+    codes = [...new Set(codes)]
+
+    // log('codes : ', codes);
+    // log('beforeCodes : ', beforeCodes);
+    // log('uniqueCodesCheck : ', uniqueCodesCheck);
+
+    uniqueCodesCheck = _.isEmpty(_.xor(beforeCodes, codes));
+
+    return {
+        codes: codes,
+        uniqueCodesCheck: uniqueCodesCheck
+    };
+}

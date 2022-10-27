@@ -22,11 +22,11 @@
 
                             <form method="post" id="FormLogin" action="/loginProcess">
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" name="email" id="email" placeholder="user" value="admin"/>
+                                    <input class="form-control" name="email" id="email" placeholder="user" value=""/>
                                     <label for="email">아이디</label>
                                 </div>
                                 <div class="form-floating mb-3">
-                                    <input class="form-control" name="password" id="password" type="password" value="qwer1234"/>
+                                    <input class="form-control" name="password" id="password" type="password" value=""/>
                                     <label for="password">패스워드</label>
                                 </div>
                                 <div class="form-check mb-3">

@@ -1,5 +1,7 @@
 $(function () {
 
+    let isDebug = false;
+
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
@@ -18,10 +20,10 @@ $(function () {
     let kakaoEvent = kakao.maps.event;
 
     //parking
-    let markers = [];
-    let selectedMarker = false;
+    // let markers = [];
+    // let selectedMarker = false;
+    // let selectedContent = null;
     let textOverlays = [];
-    let selectedContent = null;
 
     let _url = _contextPath + '/zone/gets';
 
@@ -29,7 +31,9 @@ $(function () {
 
     function handleRadioButton(event) {
         let mapType = $('.mapType');
-        webToApp.postMessage(JSON.stringify('click'));
+
+        // TODO : 차후 처리 요망 ...
+        // if(isMobile) webToApp.postMessage(JSON.stringify('click'));
 
         for (const type of mapType) {
             type.classList.remove("btn-dark");
@@ -42,17 +46,17 @@ $(function () {
         event.currentTarget.classList.add("rounded-pill");
     }
 
-    $('input:radio[name=mapSelect]').change(function (event){
-        log('1 ::::::::::::::::', CENTER_LONGITUDE);
-        log('1 ::::::::::::::::', CENTER_LATITUDE);
-        if(isMobile){
-            log(gpsLatitude, ':::::::::::', gpsLongitude);
+    $('input:radio[name=mapSelect]').change(function (event) {
+        if (isDebug) log('1 ::::::::::::::::', CENTER_LONGITUDE);
+        if (isDebug) log('1 ::::::::::::::::', CENTER_LATITUDE);
+        if (isMobile) {
+            if (isDebug) log(gpsLatitude, ':::::::::::', gpsLongitude);
             CENTER_LATITUDE = gpsLatitude;
             CENTER_LONGITUDE = gpsLongitude;
             // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
         }
-        log('2 2222::::::::::::::::', CENTER_LONGITUDE);
-        log('2 222::::::::::::::::', CENTER_LATITUDE);
+        if (isDebug) log('2 2222::::::::::::::::', CENTER_LONGITUDE);
+        if (isDebug) log('2 222::::::::::::::::', CENTER_LATITUDE);
 
         let mapType = $('.mapType');
 
@@ -61,42 +65,43 @@ $(function () {
         }
         mapSelected = event.target.id
 
-        if(event.target.id === 'zone'){
+        if (event.target.id === 'zone') {
             $('#msgBar').removeClass('display-none');
-            removeMarker();
+            removeTextOverlays();
             removeTextOverlays();
             (async () => {
-                getsZone(await getDongCodesBounds(map));
+                log(111111111111111111111);
+                drawingZone((await getDongCodesBounds(map)).codes);
             })();
         }
-        if(event.target.id === 'parking'){
+        if (event.target.id === 'parking') {
             $('#msgBar').addClass('display-none');
             removeOverlays();
-            removeMarker();
+            removeTextOverlays();
             removeTextOverlays();
             _url = _contextPath + '/parking/gets';
 
             (async () => {
-                await getsMarker(await getDongCodesBounds(map));
+                await getsMarker((await getDongCodesBounds(map)).codes);
             })();
         }
-        if(event.target.id === 'pm'){
+        if (event.target.id === 'pm') {
             $('#msgBar').addClass('display-none');
             removeOverlays();
-            removeMarker();
+            removeTextOverlays();
             removeTextOverlays();
             _url = _contextPath + '/parking/gets';
             (async () => {
-                await getsMarker(await getDongCodesBounds(map));
+                await getsMarker((await getDongCodesBounds(map)).codes);
             })();
         }
     });
 
     // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
-    // let mouseoverOption = {
-    //     fillColor: '#EFFFED', // 채우기 색깔입니다
-    //     fillOpacity: 0.8 // 채우기 불투명도 입니다
-    // };
+    let mouseoverOption = {
+        fillColor: '#EFFFED', // 채우기 색깔입니다
+        fillOpacity: 0.8 // 채우기 불투명도 입니다
+    };
 
     let polygonStyle = {
         "draggable": true,
@@ -112,19 +117,19 @@ $(function () {
 
 
     // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
-    // function mouseoutOption(area) {
-    //     return {
-    //         fillColor: fillColorSetting(area), // 채우기 색깔입니다
-    //         fillOpacity: 0.5
-    //     } // 채우기 불투명도 입니다
-    // }
+    function mouseoutOption(area) {
+        return {
+            fillColor: fillColorSetting(area), // 채우기 색깔입니다
+            fillOpacity: 0.5
+        } // 채우기 불투명도 입니다
+    }
 
     let searchIllegalType = '';
     // 주정차 별 구역 조회
     $('input:radio[name=searchIllegalType]').change(async function () {
         searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
-        let codes = await getDongCodesBounds(map);
-        getsZone(codes);
+        log(22222222222222222);
+        drawingZone((await getDongCodesBounds(map)).codes);
     });
 
 
@@ -142,7 +147,6 @@ $(function () {
     // 폴리곤 그리기
     function drawingPolygon(polygons) {
         removeOverlays();
-        log(polygons)
         // 지도에 영역데이터를 폴리곤으로 표시합니다
         for (const element of polygons) {
             displayArea(element);
@@ -179,7 +183,7 @@ $(function () {
     //         }
     //
     //     });
-    //     log('zonesInBounds : ', zonesInBounds);
+    //     if(isDebug) log('zonesInBounds : ', zonesInBounds);
     //     return zonesInBounds;
     // }
 
@@ -225,6 +229,7 @@ $(function () {
 
     // 다각형을 생상하고 이벤트를 등록하는 함수입니다
     function displayArea(area) {
+        log(111);
         let path = pointsToPath(area.points);
         let style = area.options;
 
@@ -240,27 +245,29 @@ $(function () {
             fillOpacity: style.fillOpacity
         });
 
-        // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
-        // setKakaoEvent({
-        //     target: polygon,
-        //     event: 'mouseover',
-        //     func: function (mouseEvent) {
-        //         polygon.setOptions(mouseoverOption);
-        //     }
-        // });
+        if (!isMobile) {
+            // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
+            setKakaoEvent({
+                target: polygon,
+                event: 'mouseover',
+                func: function (mouseEvent) {
+                    polygon.setOptions(mouseoverOption);
+                }
+            });
 
-        // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
-        // setKakaoEvent({
-        //     target: polygon,
-        //     event: 'mouseout',
-        //     func: function () {
-        //         polygon.setOptions(mouseoutOption(area));
-        //     }
-        // });
+            // 다각형에 mouseout 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 원래색으로 변경합니다
+            setKakaoEvent({
+                target: polygon,
+                event: 'mouseout',
+                func: function () {
+                    polygon.setOptions(mouseoutOption(area));
+                }
+            });
+        }
 
         let cnt = area.receiptCnt;
         let balloonImg = 'balloon_orange.png';
-        if(area.type === 'ILLEGAL') balloonImg = 'balloon_red.png'
+        if (area.type === 'ILLEGAL') balloonImg = 'balloon_red.png'
 
         let customOverlay = new kakao.maps.CustomOverlay({
             position: path[0],
@@ -288,11 +295,12 @@ $(function () {
             target: map,
             event: 'click',
             func: function (mouseEvent) {
-                log('click')
-                webToApp.postMessage(JSON.stringify('click'));
+                // TODO : 차후 처리 요망 ...
+                // if(isMobile) webToApp.postMessage(JSON.stringify('click'));
+
                 // let latlng = mouseEvent.latLng;
-                // log('click! ' + latlng.toString());
-                // log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
+                // if(isDebug) log('click! ' + latlng.toString());
+                // if(isDebug) log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
                 // let p = new Point(latlng.getLng(), latlng.getLat());
                 // let len = overlays.length;
                 // for (let i = 0; i < len; i++) {
@@ -304,16 +312,16 @@ $(function () {
                 //     let onePolygon = points;
                 //     let n = onePolygon.length;
                 //     if (isInside(onePolygon, n, p)) {
-                //         log(i + " : Yes");
-                //         log(zoneSeqs[i]);
+                //         if(isDebug) log(i + " : Yes");
+                //         if(isDebug) log(zoneSeqs[i]);
                 //         // alert('hello')
                 //         break;
                 //     } else {
-                //         log(i + " : No");
+                //         if(isDebug) log(i + " : No");
                 //     }
                 // }
 
-                // log(selectedMarker, 'selectedMarker')
+                // if(isDebug) log(selectedMarker, 'selectedMarker')
                 //
                 // if (!!selectedMarker && selectedMarker.includes('panel_off.png')) {
                 //     selectedMarker = null
@@ -325,14 +333,15 @@ $(function () {
                 //     selectedMarker.setImage(selectedMarker.normalImage);
                 //     selectedMarker = null
                 // }
-                if(mapSelected !== 'zone') {
+
+                if (mapSelected !== 'zone') {
                     let imgOrigin = setImgOrigin();
                     let markerImg = $('.markerImg');
                     let priceText = $('.price-text');
                     for (const img of markerImg) {
                         img.src = imgOrigin.imgSrc.normalOrigin;
                     }
-                    if(mapSelected === 'parking') {
+                    if (mapSelected === 'parking') {
                         for (const text of priceText) {
                             text.style.color = 'black';
                         }
@@ -350,33 +359,29 @@ $(function () {
                 let level = map.getLevel();
 
                 if (level > 3) {
-                    if(mapSelected === 'zone') removeOverlays();
-                    // else removeMarker();
+                    if (mapSelected === 'zone') removeOverlays();
                 } else {
-                    log(mapSelected);
-                    let codes = await getDongCodesBounds(map);
-                    // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
-                    log(uniqueCodesCheck);
-                    if(mapSelected === 'zone') {
-                        if(uniqueCodesCheck) await drawingPolygon(getPolygonData());
-                        else getsZone(codes);
-                    } else if (mapSelected === 'parking') {
-                        if(!uniqueCodesCheck) await getsMarker(codes);
-                    } else {
-                        if(!uniqueCodesCheck) await getsMarker(codes);
-                    }
+                    let obj = await getDongCodesBounds(map);
 
+                    // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
+                    if (!obj.uniqueCodesCheck) {
+                        if (mapSelected === 'zone') {
+                            drawingZone(obj.codes);
+                        } else {
+                            await getsMarker(obj.codes);
+                        }
+                    }
                 }
             }
         });
 
-        if(isMobile) {
+        if (isMobile) {
             getMobileCurrentPosition(map);
-        }
-        else getCurrentPosition(map);
+        } else getCurrentPosition(map);
     }
 
-    function getsZone(codes) {
+    // 동코드를 이용해서 zone 그리기 함수
+    function drawingZone(codes) {
         let select = SELECT_TYPE_AND_DONG;
         if (searchIllegalType === '') select = SELECT_DONG;
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
@@ -388,21 +393,21 @@ $(function () {
                 codes: codes,
                 isSetting: false,
             }
-        })
-        log('ok');
+        });
         beforeCodes = codes;
         drawingPolygon(getPolygonData());
     }
 
     // parking
     // 지도 위에 표시되고 있는 마커를 모두 제거합니다
-    function removeMarker() {
-        for (const marker of markers) {
-            marker.setMap(null);
-        }
-        markers = [];
-    }
+    // function removeMarker() {
+    //     for (const marker of markers) {
+    //         marker.setMap(null);
+    //     }
+    //     markers = [];
+    // }
 
+    // TextOverlay 삭제 함수
     function removeTextOverlays() {
         for (const overlay of textOverlays) {
             overlay.setMap(null);
@@ -411,9 +416,9 @@ $(function () {
     }
 
     // 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다
-    function markerInfo (type, data) {
+    function markerInfo(type, data) {
         let dataObj = null;
-        if(type === 'parking') {
+        if (type === 'parking') {
             dataObj = {
                 pkName: data.prkplceNm,
                 pkAddr: data.rdnmadr,
@@ -438,24 +443,25 @@ $(function () {
         };
     }
 
+    // 마커 이미지 설정 함수
     function setImgOrigin() {
         let imgSrc;
 
         let type = 'parking';
         let imageSize = new kakao.maps.Size(70, 77);
-        if(mapSelected === 'pm') {
+        if (mapSelected === 'pm') {
             type = 'pm';
             let pmType = 'bike';
             pmType = pmType === 'bike' ? 'bike' : 'kick';
             imgSrc = {
-                normalOrigin : `/resources/assets/img/${pmType}_off_3x.png`,
-                clickOrigin : `/resources/assets/img/${pmType}_on_3x.png`
+                normalOrigin: `/resources/assets/img/${pmType}_off_3x.png`,
+                clickOrigin: `/resources/assets/img/${pmType}_on_3x.png`
             }
         } else {
             imageSize = new kakao.maps.Size(70, 45);
             imgSrc = {
-                normalOrigin : '/resources/assets/img/panel_off.png',
-                clickOrigin : '/resources/assets/img/panel_on.png'
+                normalOrigin: '/resources/assets/img/panel_off.png',
+                clickOrigin: '/resources/assets/img/panel_on.png'
             }
         }
 
@@ -471,7 +477,7 @@ $(function () {
 
     // 마커를 생성하고 지도 위에 마커를 표시하는 함수
     // function addMarker(data) {
-    //     log('addMarker', selectedMarker);
+    //     if(isDebug) log('addMarker', selectedMarker);
     //
     //     let normalImage;
     //     let clickImage;
@@ -510,7 +516,7 @@ $(function () {
     //             if(isMobile) {
     //                 // 커스텀 오버레이 컨텐츠를 설정합니다
     //                 let obj = markerInfo(imgOrigin.type, data);
-    //                 log(obj);
+    //                 if(isDebug) log(obj);
     //                 // webToApp.postMessage(JSON.stringify(obj));
     //             }
     //         }
@@ -532,7 +538,7 @@ $(function () {
     //     markers.push(marker);  // 배열에 생성된 마커를 추가합니다
     // }
 
-    // 마커 커스텀 오버레이
+    // 마커 커스텀 오버레이 추가 함수
     function addOverlay(data) {
         let imgOrigin = setImgOrigin();
 
@@ -551,20 +557,21 @@ $(function () {
 
         imgNode.appendChild(img);
 
-        if(mapSelected === 'parking') {
+        if (mapSelected === 'parking') {
             let text = '현재무료'
-            if(data.parkingchrgeInfo === '유료') text = '유료'
+            if (data.parkingchrgeInfo === '유료') text = '유료'
             let span = document.createElement('span')
             span.className = 'price-text';
             span.appendChild(document.createTextNode(text));
-            span.onclick = function() {
-                if(isMobile) {
-                    // 커스텀 오버레이 컨텐츠를 설정합니다
-                    webToApp.postMessage(JSON.stringify('click'));
-                    let obj = markerInfo(imgOrigin.type, data);
-                    log(obj);
-                    webToApp.postMessage(JSON.stringify(obj));
-                }
+            span.onclick = function () {
+                // TODO : 차후 처리 요망 ...
+                // if(isMobile) {
+                //     // 커스텀 오버레이 컨텐츠를 설정합니다
+                //     webToApp.postMessage(JSON.stringify('click'));
+                //     let obj = markerInfo(imgOrigin.type, data);
+                //     if(isDebug) log(obj);
+                //     webToApp.postMessage(JSON.stringify(obj));
+                // }
             }
             imgNode.appendChild(span);
         }
@@ -578,13 +585,14 @@ $(function () {
         // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
         contentNode.className = 'content_wrap';
 
-        let after = document.createElement('div');
-        after.className = 'after';
-        contentNode.appendChild(after);
+        // TODO : 확인 요망 ... ( 필요없으면 삭제 )
+        // let after = document.createElement('div');
+        // after.className = 'after';
+        // contentNode.appendChild(after);
 
         let markerOverlay = new kakao.maps.CustomOverlay({
             clickable: true,
-            zIndex:0,
+            zIndex: 0,
             position: new kakao.maps.LatLng(data.latitude, data.longitude),
             content: contentNode,
             map: map
@@ -593,7 +601,9 @@ $(function () {
         textOverlays.push(markerOverlay);
 
     }
-    function selectedOverlay(event){
+
+    // Overlay 이벤트 설정 함수
+    function selectedOverlay(event) {
         let imgOrigin = setImgOrigin()
 
         let markerImg = $('.markerImg');
@@ -601,18 +611,19 @@ $(function () {
         for (const img of markerImg) {
             img.src = imgOrigin.imgSrc.normalOrigin;
         }
-        if(mapSelected === 'parking') {
+        if (mapSelected === 'parking') {
             for (const text of priceText) {
                 text.style.color = 'black';
             }
         }
 
-        if(event !== undefined) {
+        if (event !== undefined) {
             event.currentTarget.children[0].src = imgOrigin.imgSrc.clickOrigin
-            if(mapSelected === 'parking') event.currentTarget.children[1].style.color = 'white';
+            if (mapSelected === 'parking') event.currentTarget.children[1].style.color = 'white';
         }
     }
 
+    // Marker 정보 가져오기 함수
     async function getsMarker(codes) {
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
         let result = $.JJAjaxAsync({
@@ -623,22 +634,19 @@ $(function () {
         });
 
         if (result.success) {
-            removeMarker();
-            result.data.forEach(function(data){
+            removeTextOverlays();
+            result.data.forEach(function (data) {
                 // addMarker(data);
                 addOverlay(data);
             });
         }
     }
 
-    // zone 초기화
+    // zone 초기화 함수
     function initializeZone(opt) {
         let result = $.JJAjaxAsync(opt);
 
-        if ( result.success) {
-            if (opt.data.select === undefined) {
-                return result;
-            }
+        if (result.success) {
             zonePolygons = result.data.zonePolygons;
             zoneSeqs = result.data.zoneSeqs;
             zoneTypes = result.data.zoneTypes;
@@ -646,23 +654,47 @@ $(function () {
         }
     }
 
-    // 초기화
+    // 초기화 함수
     function initialize() {
         initializeKakao();
-        $('#debug').val(gpsLatitude + "," + gpsLongitude + " :: " + (typeof gpsLatitude));
+
+        //
+        $('#btnFindMe').on('click', function () {
+            if (isMobile) getMobileCurrentPosition(map);
+            else getCurrentPosition(map);
+        });
+
+        //
+        $('#zoomIn').on('click', function () {
+            map.setLevel(map.getLevel() - 1);
+
+            let level = map.getLevel();
+            if (level < 4) {
+                if (isDebug) log(mapSelected);
+                getDongCodesBounds(map).then(obj => {
+                    if (mapSelected === 'zone') {
+                        log(444444444444444444444444444444);
+                        drawingZone(obj.codes);
+                    } else {
+                        getsMarker(obj.codes);
+                    }
+                });
+            }
+        });
+
+        //
+        $('#zoomOut').on('click', function () {
+            map.setLevel(map.getLevel() + 1);
+            let level = map.getLevel();
+            if (level > 3) {
+                if (mapSelected === 'zone') removeOverlays();
+            }
+        });
+
     }
 
+    // 초기화 실행
     initialize();
 
-    $('#btnFindMe').on('click', function() {
-        if(isMobile) getMobileCurrentPosition(map);
-        else getCurrentPosition(map);
-    });
-    $('#zoomIn').on('click', function() {
-        map.setLevel(map.getLevel() - 1);
-    });
-    $('#zoomOut').on('click', function() {
-        map.setLevel(map.getLevel() + 1);
-    });
 
 });
