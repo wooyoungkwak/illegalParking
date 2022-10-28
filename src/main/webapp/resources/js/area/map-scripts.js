@@ -6,8 +6,8 @@ $(function () {
 
     $.isMobile = window.location.pathname.includes('api');
     // $.isMobile = false;
-    $.CENTER_LATITUDE = 35.02035492064902;
-    $.CENTER_LONGITUDE = 126.79383256393594;
+    $.CENTER_LATITUDE = 35.02035492064903;
+    $.CENTER_LONGITUDE = 126.79383256393595;
     $.overlays = [] // 지도에 그려진 도형을 담을 배열
     $.mapSelected = 'zone';
 
@@ -192,7 +192,7 @@ $(function () {
 
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
         map = new kakao.maps.Map(mapContainer, map);
-        map.setZoomable(false);
+        if($.isMobile) map.setZoomable(false);
 
         setKakaoEvent({
             target: map,
@@ -245,10 +245,10 @@ $(function () {
             }
         });
 
-        // 중심 좌표나 확대 수준이 변경되면 발생한다.
+        // 확대수준이 변경되거나 지도가 이동했을때 타일 이미지 로드가 모두 완료되면 발생
         setKakaoEvent({
             target: map,
-            event: 'idle',
+            event: 'tilesloaded',
             func: async function () {
                 // 지도의  레벨을 얻어옵니다
                 let level = map.getLevel();
@@ -257,7 +257,6 @@ $(function () {
                     if ($.mapSelected === 'zone') $.removeOverlays();
                 } else {
                     let obj = await $.getDongCodesBounds(map);
-
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if (!obj.uniqueCodesCheck) {
                         if ($.mapSelected === 'zone') {
@@ -266,6 +265,23 @@ $(function () {
                             await $.getsMarker(obj.codes);
                         }
                     }
+                }
+
+            }
+        });
+
+        // 중심 좌표나 확대 수준이 변경되면 발생한다.
+        setKakaoEvent({
+            target: map,
+            event: 'zoom_changed',
+            func: async function () {
+                // 지도의  레벨을 얻어옵니다
+                let level = map.getLevel();
+
+                if (level > 3) {
+                    if ($.mapSelected === 'zone') $.removeOverlays();
+                } else {
+                    await $.processDongCodesBounds();
                 }
             }
         });

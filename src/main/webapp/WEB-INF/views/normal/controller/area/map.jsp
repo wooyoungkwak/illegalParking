@@ -74,6 +74,7 @@
                     $('input:radio[name=searchIllegalType]').change(function () {
                         $.changeIllegalType();
                     });
+					$.findMe();
                 }
 
                 // 초기화 실행
