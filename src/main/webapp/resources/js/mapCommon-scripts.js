@@ -1,8 +1,3 @@
-function appendObjTo(thatArray, newObj) {
-    const frozenObj = Object.freeze(newObj);
-    return Object.freeze(thatArray.concat(frozenObj));
-}
-
 // serialize 맵형태로 변경
 $.fn.serializeObject = function(){
     const o = {};
@@ -26,7 +21,6 @@ $.fn.serializeObject = function(){
 /******************************
  * 폴리곤 내 포함 여부 체크 start
  * ****************************/
-let INF = 10000;
 
 class Point {
     constructor(x, y) {
@@ -93,7 +87,6 @@ function doIntersect(p1, q1, p2, q2) {
     return false;
 }
 
-
 function isInside(polygon, n, p) {
 
     polygon.push(polygon[0]);
@@ -102,6 +95,8 @@ function isInside(polygon, n, p) {
     if (n < 3) {
         return false;
     }
+
+    let INF = 10000;
 
     // Create a point for line segment from p to infinite
     let extreme = new Point(INF, p.y);
@@ -193,7 +188,6 @@ async function coordinatesToDongCodeKakaoApi(x, y, stat){
 // }
 /* 좌표로 동코드 받기 카카오 REST API end */
 
-
 let myMarker = {
     imgSrc: '/resources/assets/img/location_shadow.png',
     imgSize: new kakao.maps.Size(50,50)
@@ -201,8 +195,9 @@ let myMarker = {
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
 
 let myLocMarker = null;
+
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-function getCurrentPosition(map) {
+$.getCurrentPosition = function(map) {
     if(!!myLocMarker) myLocMarker.setMap(null);
 
     if (navigator.geolocation) {
@@ -234,18 +229,11 @@ function getCurrentPosition(map) {
 }
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-function getMobileCurrentPosition(map) {
+$.getMobileCurrentPosition = function(map) {
     if(!!myLocMarker) myLocMarker.setMap(null);
-    log(gpsLatitude, ':::::::::::', gpsLongitude);
-
-    map.relayout();
     gpsLatitude = gpsLatitude === 0 ? '35.01868444' : gpsLatitude.toString();
     gpsLongitude = gpsLongitude === 0 ? '126.78284599' : gpsLongitude.toString();
-
-    log(gpsLatitude, typeof(gpsLatitude));
-    log(  'getMobileCurrentPosition::::::::::::::::::',  gpsLatitude, gpsLongitude )
     let gpsPosition = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
-
     myLocationMarker(map, gpsPosition);
 }
 
@@ -273,9 +261,11 @@ function myLocationMarker(map, position){
     map.panTo(position);
 }
 
-
+let beforeCodes = [];
+let isFirst = true; // 최초 인가 확인
 let gpsLatitude = 0.0;
 let gpsLongitude = 0.0;
+
 $.gpsPoint = function(x, y) {
     gpsLatitude = x;
     gpsLongitude = y;
@@ -284,10 +274,8 @@ $.gpsPoint = function(x, y) {
     log('webview', gpsLatitude, gpsLongitude);
 }
 
-let beforeCodes = [];
-
 // 꼭지점, 중심좌표의 법정동 코드 가져오기
-async function getDongCodesBounds(map){
+$.getDongCodesBounds = async function (map){
     let uniqueCodesCheck = false;
 
     // 맵 구역
@@ -325,4 +313,18 @@ async function getDongCodesBounds(map){
         codes: codes,
         uniqueCodesCheck: uniqueCodesCheck
     };
+}
+
+// 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
+$.pointsToPath = function (points) {
+    let len = points.length,
+        path = [],
+        i = 0;
+
+    for (; i < len; i++) {
+        let latlng = new kakao.maps.LatLng(points[i].y, points[i].x);
+        path.push(latlng);
+    }
+
+    return path;
 }

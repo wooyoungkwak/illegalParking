@@ -30,7 +30,7 @@ $(function (callback) {
   }
 
   async function getsParking() {
-    let obj = await getDongCodesBounds(map);
+    let obj = await $.getDongCodesBounds(map);
     let codes = obj.codes;
 
     //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
@@ -182,8 +182,7 @@ $(function (callback) {
     kakaoEvent.addListener(map, 'idle', async function () {
       // 지도의  레벨을 얻어옵니다
       let level = map.getLevel();
-      log("level = ", level);
-      let obj = (await getDongCodesBounds(map)).codes;
+      let obj = (await $.getDongCodesBounds(map));
 
       //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
       if (!obj.uniqueCodesCheck) {

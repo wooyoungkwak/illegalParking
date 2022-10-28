@@ -63,8 +63,24 @@
 
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
-		<script src="<%=contextPath%>/resources/js/area/mapCommon-scripts.js"></script>
+		<script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
+		<script type="application/javascript">
+			$(function () {
+
+                // 초기화 함수
+                function initializeByWeb() {
+                    // 주정차 별 구역 조회
+                    $('input:radio[name=searchIllegalType]').change(function () {
+                        $.changeIllegalType();
+                    });
+                }
+
+                // 초기화 실행
+                initializeByWeb();
+
+            });
+		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

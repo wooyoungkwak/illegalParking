@@ -309,13 +309,16 @@
   background: rgba(0,0,0,0.2); /*not in ie */
   filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000', endColorstr='#20000000');/* ie */
 }
-.wrap-loading div{ /*로딩 이미지*/
+.wrap-loading div img{ /*로딩 이미지*/
   position: fixed;
   top:50%;
   left:50%;
+  width: 52px;
+  height: 52px;
   margin-left: -21px;
   margin-top: -21px;
 }
+
 .display-none{ /*감추기*/
   display:none;
 }

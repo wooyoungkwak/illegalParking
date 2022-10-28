@@ -71,7 +71,7 @@
 
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
-		<script src="<%=contextPath%>/resources/js/area/mapCommon-scripts.js"></script>
+		<script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/mapSet-scripts.js"></script>
 	</stripes:layout-component>
 

@@ -30,8 +30,8 @@
                                     <label for="password">패스워드</label>
                                 </div>
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" id="inputRememberPassword" type="checkbox" value=""/>
-                                    <label class="form-check-label" for="inputRememberPassword">아이디 저장</label>
+                                    <input class="form-check-input" id="saveId" type="checkbox" value=""/>
+                                    <label class="form-check-label" for="saveId">아이디 저장</label>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="small" href="password"></a>
@@ -52,8 +52,36 @@
     <!-- javascript -->
     <stripes:layout-component name="javascript">
         <script type="text/javascript">
-            $(function () {
 
+            //쿠키 저장하는 함수
+            function set_cookie(name, value, unixTime) {
+                var date = new Date();
+                date.setTime(date.getTime() + unixTime);
+                document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) + ';expires=' + date.toUTCString() + ';path=/';
+            }
+
+            //쿠키 값 가져오는 함수
+            function get_cookie(name) {
+                var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+                return value? value[2] : null;
+            }
+
+            $.cookie = function (key, val){
+                if (val == undefined) {
+                    return get_cookie(key);
+                }
+                set_cookie(key, val, "");
+            }
+
+            $(function () {
+                let idName = "email";
+                function saveId(){
+                    if ( $('#saveId').is(":checked") ) {
+                        $.cookie(idName,$('#email').val() );
+                    }
+                }
+
+                // 로그인
                 function login(){
                     if ( $('#email').val() === '' ){
                         alert("아이디를 입력하세요.");
@@ -63,6 +91,8 @@
                         alert("패스워드를 입력하세요.");
                         return;
                     }
+
+                    saveId();
 
                     $form.submit();
                 }
@@ -89,6 +119,10 @@
                         alert('인증 실패 하였습니다.');
                     }
                     location.href = path[0];
+                }
+
+                if ( $.cookie(idName) !== undefined ){
+                    $('#email').val($.cookie(idName));
                 }
 
             });

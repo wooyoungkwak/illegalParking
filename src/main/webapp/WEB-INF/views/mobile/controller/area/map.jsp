@@ -61,13 +61,86 @@
 
 	<!-- javascript -->
 	<stripes:layout-component name="javascript">
-		<script src="<%=contextPath%>/resources/js/area/mapCommon-scripts.js"></script>
+		<script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 		<script type="application/javascript">
             // INTERFACE : APP TO WEB
             function appToGps(x, y) {
                 $.gpsPoint(x, y);
+                let position = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
+                myLocMarker.setPosition(position);
+                if (isFirst) {
+                    $.initializeMove(position);
+                }
+                isFirst = false;
             }
+
+            $(function () {
+                //
+                function handleRadioButton(event) {
+                    let mapType = $('.mapType');
+                    if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
+                    for (const type of mapType) {
+                        type.classList.remove("btn-dark");
+                        type.classList.remove("rounded-pill");
+                        type.classList.add("btn-white");
+                    }
+
+                    event.currentTarget.classList.remove("btn-white");
+                    event.currentTarget.classList.add("btn-dark");
+                    event.currentTarget.classList.add("rounded-pill");
+                }
+
+                //
+                function initializeByMobile() {
+                    // 불법주차 / 주차장 / 모빌리티 변경 이벤트
+                    $('input:radio[name=mapSelect]').change(function (event) {
+                        $.loading(true);
+                        if ($.isMobile) {
+                            $.CENTER_LATITUDE = gpsLatitude;
+                            $.CENTER_LONGITUDE = gpsLongitude;
+                            // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
+                        }
+                        let mapType = $('.mapType');
+                        for (const type of mapType) {
+                            type.addEventListener("change", handleRadioButton);
+                        }
+                        $.mapSelected = event.target.id;
+                        $.changeMapType();
+                        $.loading(false);
+                    });
+
+                    // 내위치 찾기 이벤트
+                    $('#btnFindMe').on('click', function () {
+                        $.findMe();
+                    });
+
+                    // 맵의 줌인 이벤트
+                    $('#zoomIn').on('click', function () {
+                        let level = $.getLevel('in');
+                        if (level < 4) {
+                            $.processDongCodesBounds();
+                        }
+                    });
+
+                    // 맵의 줌아웃 이벤트
+                    $('#zoomOut').on('click', function () {
+                        let level = $.getLevel('out');
+                        if (level <= 3) {
+                            $.processDongCodesBounds();
+                        } else {
+                            if ($.mapSelected === 'zone') $.removeOverlays();
+						}
+                    });
+
+                    $.findMe();
+                    $.loading(false);
+
+                }
+
+                initializeByMobile();
+            });
+
 		</script>
 	</stripes:layout-component>
 

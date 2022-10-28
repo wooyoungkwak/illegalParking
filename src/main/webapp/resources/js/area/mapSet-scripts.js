@@ -81,7 +81,7 @@ $(function () {
             $('#btnSet').hide();
         }
 
-        let codes = (await getDongCodesBounds(drawingMap)).codes;
+        let codes = (await $.getDongCodesBounds(drawingMap)).codes;
 
         drawingZone(codes);
     });
@@ -112,7 +112,7 @@ $(function () {
             // 데이터 저장
             initializeZone(opt);
             // 지도에 가져온 데이터로 도형들을 그립니다
-            let codes = (await getDongCodesBounds(drawingMap)).codes;
+            let codes = (await $.getDongCodesBounds(drawingMap)).codes;
             await drawingZone(codes);
             // 생성한 폴리곤 삭제
             removeDrawingOverlays();
@@ -331,7 +331,7 @@ $(function () {
     //
     //     getPolygonData().filter(function (overlay) {
     //         let obj = {}, points = [];
-    //         let paths = pointsToPath(overlay.points);
+    //         let paths = $.pointsToPath(overlay.points);
     //         paths.forEach(function (element) {
     //             points.push(bounds.contain(element));
     //             obj.inBound = points;
@@ -345,21 +345,6 @@ $(function () {
     //     log('zonesInBounds : ', zonesInBounds);
     //     return zonesInBounds;
     // }
-
-    // Drawing Manager에서 가져온 데이터 중
-    // 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
-    function pointsToPath(points) {
-        let len = points.length,
-            path = [],
-            i = 0;
-
-        for (; i < len; i++) {
-            let latlng = new kakao.maps.LatLng(points[i].y, points[i].x);
-            path.push(latlng);
-        }
-
-        return path;
-    }
 
     // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
     function getPolygonData() {
@@ -389,7 +374,7 @@ $(function () {
 
     // 다각형을 생상하고 이벤트를 등록하는 함수입니다
     function displayArea(area) {
-        let path = pointsToPath(area.points);
+        let path = $.pointsToPath(area.points);
         let style = area.options;
 
         // 다각형을 생성합니다
@@ -522,7 +507,7 @@ $(function () {
                 if (level > 3) {
                     removeOverlays();
                 } else {
-                    let obj = await getDongCodesBounds(drawingMap);
+                    let obj = await $.getDongCodesBounds(drawingMap);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if(obj.uniqueCodesCheck) await drawingPolygon(getPolygonData());
                     else drawingZone(obj.codes);
@@ -566,7 +551,7 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-        getCurrentPosition(drawingMap);
+        $.getCurrentPosition(drawingMap);
     }
 
     initialize();

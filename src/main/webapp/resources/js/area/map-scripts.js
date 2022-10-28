@@ -1,22 +1,19 @@
 $(function () {
-
-    let isDebug = false;
-
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
     let receiptCnts = [];
 
-    let isMobile = window.location.pathname.includes('api');
-
-    let CENTER_LATITUDE = 35.02035492064902;
-    let CENTER_LONGITUDE = 126.79383256393594;
+    $.isMobile = window.location.pathname.includes('api');
+    // $.isMobile = false;
+    $.CENTER_LATITUDE = 35.02035492064902;
+    $.CENTER_LONGITUDE = 126.79383256393594;
+    $.overlays = [] // 지도에 그려진 도형을 담을 배열
+    $.mapSelected = 'zone';
 
     let mapContainer = document.getElementById('map');
-
     let map;
     let customOverlays = [];
-    let overlays = [] // 지도에 그려진 도형을 담을 배열
     let kakaoEvent = kakao.maps.event;
 
     //parking
@@ -24,78 +21,8 @@ $(function () {
     // let selectedMarker = false;
     // let selectedContent = null;
     let textOverlays = [];
-
     let _url = _contextPath + '/zone/gets';
 
-    let mapSelected = 'zone';
-
-    function handleRadioButton(event) {
-        let mapType = $('.mapType');
-
-        // TODO : 차후 처리 요망 ...
-        // if(isMobile) webToApp.postMessage(JSON.stringify('click'));
-
-        for (const type of mapType) {
-            type.classList.remove("btn-dark");
-            type.classList.remove("rounded-pill");
-            type.classList.add("btn-white");
-        }
-
-        event.currentTarget.classList.remove("btn-white");
-        event.currentTarget.classList.add("btn-dark");
-        event.currentTarget.classList.add("rounded-pill");
-    }
-
-    $('input:radio[name=mapSelect]').change(function (event) {
-        if (isDebug) log('1 ::::::::::::::::', CENTER_LONGITUDE);
-        if (isDebug) log('1 ::::::::::::::::', CENTER_LATITUDE);
-        if (isMobile) {
-            if (isDebug) log(gpsLatitude, ':::::::::::', gpsLongitude);
-            CENTER_LATITUDE = gpsLatitude;
-            CENTER_LONGITUDE = gpsLongitude;
-            // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
-        }
-        if (isDebug) log('2 2222::::::::::::::::', CENTER_LONGITUDE);
-        if (isDebug) log('2 222::::::::::::::::', CENTER_LATITUDE);
-
-        let mapType = $('.mapType');
-
-        for (const type of mapType) {
-            type.addEventListener("change", handleRadioButton);
-        }
-        mapSelected = event.target.id
-
-        if (event.target.id === 'zone') {
-            $('#msgBar').removeClass('display-none');
-            removeTextOverlays();
-            removeTextOverlays();
-            (async () => {
-                log(111111111111111111111);
-                drawingZone((await getDongCodesBounds(map)).codes);
-            })();
-        }
-        if (event.target.id === 'parking') {
-            $('#msgBar').addClass('display-none');
-            removeOverlays();
-            removeTextOverlays();
-            removeTextOverlays();
-            _url = _contextPath + '/parking/gets';
-
-            (async () => {
-                await getsMarker((await getDongCodesBounds(map)).codes);
-            })();
-        }
-        if (event.target.id === 'pm') {
-            $('#msgBar').addClass('display-none');
-            removeOverlays();
-            removeTextOverlays();
-            removeTextOverlays();
-            _url = _contextPath + '/parking/gets';
-            (async () => {
-                await getsMarker((await getDongCodesBounds(map)).codes);
-            })();
-        }
-    });
 
     // 다각형에 마우스오버 이벤트가 발생했을 때 변경할 채우기 옵션입니다
     let mouseoverOption = {
@@ -115,7 +42,6 @@ $(function () {
         "fillOpacity": 0.5
     };
 
-
     // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
     function mouseoutOption(area) {
         return {
@@ -124,32 +50,25 @@ $(function () {
         } // 채우기 불투명도 입니다
     }
 
-    let searchIllegalType = '';
-    // 주정차 별 구역 조회
-    $('input:radio[name=searchIllegalType]').change(async function () {
-        searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
-        log(22222222222222222);
-        drawingZone((await getDongCodesBounds(map)).codes);
-    });
-
+    $.searchIllegalType = '';
 
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
-    function removeOverlays() {
-        let len = overlays.length, i = 0;
+    $.removeOverlays = function () {
+        let len = $.overlays.length, i = 0;
         for (; i < len; i++) {
-            overlays[i].setMap(null);
+            $.overlays[i].setMap(null);
             customOverlays[i].setMap(null);
         }
         customOverlays = [];
-        overlays = [];
+        $.overlays = [];
     }
 
     // 폴리곤 그리기
     function drawingPolygon(polygons) {
-        removeOverlays();
+        $.removeOverlays();
         // 지도에 영역데이터를 폴리곤으로 표시합니다
         for (const element of polygons) {
-            displayArea(element);
+            $.displayArea(element);
         }
     }
 
@@ -171,7 +90,7 @@ $(function () {
     //
     //     getPolygonData().filter(function (overlay) {
     //         let obj = {}, points = [];
-    //         let paths = pointsToPath(overlay.points);
+    //         let paths = $.pointsToPath(overlay.points);
     //         paths.forEach(function (element) {
     //             points.push(bounds.contain(element));
     //             obj.inBound = points;
@@ -183,23 +102,8 @@ $(function () {
     //         }
     //
     //     });
-    //     if(isDebug) log('zonesInBounds : ', zonesInBounds);
     //     return zonesInBounds;
     // }
-
-    // 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
-    function pointsToPath(points) {
-        let len = points.length,
-            path = [],
-            i = 0;
-
-        for (; i < len; i++) {
-            let latlng = new kakao.maps.LatLng(points[i].y, points[i].x);
-            path.push(latlng);
-        }
-
-        return path;
-    }
 
     // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
     function getPolygonData() {
@@ -228,9 +132,8 @@ $(function () {
     }
 
     // 다각형을 생상하고 이벤트를 등록하는 함수입니다
-    function displayArea(area) {
-        log(111);
-        let path = pointsToPath(area.points);
+    $.displayArea = function (area) {
+        let path = $.pointsToPath(area.points);
         let style = area.options;
 
         // 다각형을 생성합니다
@@ -245,7 +148,7 @@ $(function () {
             fillOpacity: style.fillOpacity
         });
 
-        if (!isMobile) {
+        if (!$.isMobile) {
             // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
             setKakaoEvent({
                 target: polygon,
@@ -275,14 +178,14 @@ $(function () {
             map: map
         });
 
-        overlays.push(polygon);
+        $.overlays.push(polygon);
         customOverlays.push(customOverlay);
     }
 
     // 카카오 초기화
     function initializeKakao() {
         map = {
-            center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
+            center: new kakao.maps.LatLng($.CENTER_LATITUDE, $.CENTER_LONGITUDE), // 지도의 중심좌표
             level: 3, // 지도의 확대 레벨
             disableDoubleClickZoom: true
         };
@@ -295,12 +198,9 @@ $(function () {
             target: map,
             event: 'click',
             func: function (mouseEvent) {
-                // TODO : 차후 처리 요망 ...
-                // if(isMobile) webToApp.postMessage(JSON.stringify('click'));
+                if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
 
                 // let latlng = mouseEvent.latLng;
-                // if(isDebug) log('click! ' + latlng.toString());
-                // if(isDebug) log("x : " + latlng.getLat() + ", y : " + latlng.getLng());
                 // let p = new Point(latlng.getLng(), latlng.getLat());
                 // let len = overlays.length;
                 // for (let i = 0; i < len; i++) {
@@ -312,17 +212,12 @@ $(function () {
                 //     let onePolygon = points;
                 //     let n = onePolygon.length;
                 //     if (isInside(onePolygon, n, p)) {
-                //         if(isDebug) log(i + " : Yes");
-                //         if(isDebug) log(zoneSeqs[i]);
                 //         // alert('hello')
                 //         break;
                 //     } else {
-                //         if(isDebug) log(i + " : No");
                 //     }
                 // }
 
-                // if(isDebug) log(selectedMarker, 'selectedMarker')
-                //
                 // if (!!selectedMarker && selectedMarker.includes('panel_off.png')) {
                 //     selectedMarker = null
                 //     $('#img_wrap').trigger('click');
@@ -334,14 +229,14 @@ $(function () {
                 //     selectedMarker = null
                 // }
 
-                if (mapSelected !== 'zone') {
+                if ($.mapSelected !== 'zone') {
                     let imgOrigin = setImgOrigin();
                     let markerImg = $('.markerImg');
                     let priceText = $('.price-text');
                     for (const img of markerImg) {
                         img.src = imgOrigin.imgSrc.normalOrigin;
                     }
-                    if (mapSelected === 'parking') {
+                    if ($.mapSelected === 'parking') {
                         for (const text of priceText) {
                             text.style.color = 'black';
                         }
@@ -359,37 +254,35 @@ $(function () {
                 let level = map.getLevel();
 
                 if (level > 3) {
-                    if (mapSelected === 'zone') removeOverlays();
+                    if ($.mapSelected === 'zone') $.removeOverlays();
                 } else {
-                    let obj = await getDongCodesBounds(map);
+                    let obj = await $.getDongCodesBounds(map);
 
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if (!obj.uniqueCodesCheck) {
-                        if (mapSelected === 'zone') {
-                            drawingZone(obj.codes);
+                        if ($.mapSelected === 'zone') {
+                            $.drawingZone(obj.codes);
                         } else {
-                            await getsMarker(obj.codes);
+                            await $.getsMarker(obj.codes);
                         }
                     }
                 }
             }
         });
 
-        if (isMobile) {
-            getMobileCurrentPosition(map);
-        } else getCurrentPosition(map);
     }
 
     // 동코드를 이용해서 zone 그리기 함수
-    function drawingZone(codes) {
+    $.drawingZone = function (codes) {
         let select = SELECT_TYPE_AND_DONG;
-        if (searchIllegalType === '') select = SELECT_DONG;
+        if ($.searchIllegalType === '') select = SELECT_DONG;
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
+
         initializeZone({
             url: _contextPath + '/zone/gets',
             data: {
                 select: select,
-                illegalType: searchIllegalType,
+                illegalType: $.searchIllegalType,
                 codes: codes,
                 isSetting: false,
             }
@@ -408,7 +301,7 @@ $(function () {
     // }
 
     // TextOverlay 삭제 함수
-    function removeTextOverlays() {
+    $.removeTextOverlays = function () {
         for (const overlay of textOverlays) {
             overlay.setMap(null);
         }
@@ -449,7 +342,7 @@ $(function () {
 
         let type = 'parking';
         let imageSize = new kakao.maps.Size(70, 77);
-        if (mapSelected === 'pm') {
+        if ($.mapSelected === 'pm') {
             type = 'pm';
             let pmType = 'bike';
             pmType = pmType === 'bike' ? 'bike' : 'kick';
@@ -477,8 +370,6 @@ $(function () {
 
     // 마커를 생성하고 지도 위에 마커를 표시하는 함수
     // function addMarker(data) {
-    //     if(isDebug) log('addMarker', selectedMarker);
-    //
     //     let normalImage;
     //     let clickImage;
     //
@@ -513,10 +404,9 @@ $(function () {
     //
     //             // 현재 클릭된 마커의 이미지는 클릭 이미지로 변경합니다
     //             marker.setImage(clickImage);
-    //             if(isMobile) {
+    //             if($.isMobile) {
     //                 // 커스텀 오버레이 컨텐츠를 설정합니다
     //                 let obj = markerInfo(imgOrigin.type, data);
-    //                 if(isDebug) log(obj);
     //                 // webToApp.postMessage(JSON.stringify(obj));
     //             }
     //         }
@@ -557,21 +447,19 @@ $(function () {
 
         imgNode.appendChild(img);
 
-        if (mapSelected === 'parking') {
+        if ($.mapSelected === 'parking') {
             let text = '현재무료'
             if (data.parkingchrgeInfo === '유료') text = '유료'
             let span = document.createElement('span')
             span.className = 'price-text';
             span.appendChild(document.createTextNode(text));
             span.onclick = function () {
-                // TODO : 차후 처리 요망 ...
-                // if(isMobile) {
-                //     // 커스텀 오버레이 컨텐츠를 설정합니다
-                //     webToApp.postMessage(JSON.stringify('click'));
-                //     let obj = markerInfo(imgOrigin.type, data);
-                //     if(isDebug) log(obj);
-                //     webToApp.postMessage(JSON.stringify(obj));
-                // }
+                if ($.isMobile) {
+                    // 커스텀 오버레이 컨텐츠를 설정합니다
+                    webToApp.postMessage(JSON.stringify('click'));
+                    let obj = markerInfo(imgOrigin.type, data);
+                    webToApp.postMessage(JSON.stringify(obj));
+                }
             }
             imgNode.appendChild(span);
         }
@@ -611,7 +499,7 @@ $(function () {
         for (const img of markerImg) {
             img.src = imgOrigin.imgSrc.normalOrigin;
         }
-        if (mapSelected === 'parking') {
+        if ($.mapSelected === 'parking') {
             for (const text of priceText) {
                 text.style.color = 'black';
             }
@@ -619,12 +507,23 @@ $(function () {
 
         if (event !== undefined) {
             event.currentTarget.children[0].src = imgOrigin.imgSrc.clickOrigin
-            if (mapSelected === 'parking') event.currentTarget.children[1].style.color = 'white';
+            if ($.mapSelected === 'parking') event.currentTarget.children[1].style.color = 'white';
+        }
+    }
+
+    // 로딩 이미지 화면 설정 함수
+    $.loading = function (isState) {
+        if (isState) {
+            $('.wrap-loading').removeClass('display-none');
+        } else {
+            setTimeout(function () {
+                $('.wrap-loading').addClass('display-none');
+            }, 500);
         }
     }
 
     // Marker 정보 가져오기 함수
-    async function getsMarker(codes) {
+    $.getsMarker = async function (codes) {
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
         let result = $.JJAjaxAsync({
             url: _url,
@@ -634,7 +533,7 @@ $(function () {
         });
 
         if (result.success) {
-            removeTextOverlays();
+            $.removeTextOverlays();
             result.data.forEach(function (data) {
                 // addMarker(data);
                 addOverlay(data);
@@ -654,47 +553,71 @@ $(function () {
         }
     }
 
-    // 초기화 함수
-    function initialize() {
-        initializeKakao();
+    // 불법주차 / 주차장 / 모빌리티 타입 변경 함수
+    $.changeMapType = function () {
+        if ($.mapSelected === 'zone') {
+            $('#msgBar').removeClass('display-none');
+            $.removeTextOverlays();
+            (async () => {
+                $.drawingZone((await $.getDongCodesBounds(map)).codes);
+            })();
+        } else if ($.mapSelected === 'parking') {
+            $('#msgBar').addClass('display-none');
+            $.removeOverlays();
+            $.removeTextOverlays();
+            _url = _contextPath + '/parking/gets';
 
-        //
-        $('#btnFindMe').on('click', function () {
-            if (isMobile) getMobileCurrentPosition(map);
-            else getCurrentPosition(map);
-        });
+            (async () => {
+                await $.getsMarker((await $.getDongCodesBounds(map)).codes);
+            })();
+        } else if ($.mapSelected === 'pm') {
+            $('#msgBar').addClass('display-none');
+            $.removeOverlays();
+            $.removeTextOverlays();
+            _url = _contextPath + '/parking/gets';
+            (async () => {
+                await $.getsMarker((await $.getDongCodesBounds(map)).codes);
+            })();
+        }
+    }
 
-        //
-        $('#zoomIn').on('click', function () {
-            map.setLevel(map.getLevel() - 1);
+    $.findMe = function () {
+        if ($.isMobile) $.getMobileCurrentPosition(map);
+        else $.getCurrentPosition(map);
+    }
 
-            let level = map.getLevel();
-            if (level < 4) {
-                if (isDebug) log(mapSelected);
-                getDongCodesBounds(map).then(obj => {
-                    if (mapSelected === 'zone') {
-                        log(444444444444444444444444444444);
-                        drawingZone(obj.codes);
-                    } else {
-                        getsMarker(obj.codes);
-                    }
-                });
-            }
-        });
+    // 동코드 처리 함수
+    $.processDongCodesBounds = async function () {
+        $.loading(true);
+        if ($.mapSelected === 'zone') {
+            $.drawingZone((await $.getDongCodesBounds(map)).codes);
+        } else {
+            $.getsMarker((await $.getDongCodesBounds(map)).codes);
+        }
+        $.loading(false);
+    };
 
-        //
-        $('#zoomOut').on('click', function () {
+    // level 찾기 함수
+    $.getLevel = function (zoomState) {
+        if (zoomState === 'out') {
             map.setLevel(map.getLevel() + 1);
-            let level = map.getLevel();
-            if (level > 3) {
-                if (mapSelected === 'zone') removeOverlays();
-            }
-        });
+        } else {
+            map.setLevel(map.getLevel() - 1);
+        }
+        return map.getLevel();
+    }
 
+    // 초기 화면 이동 함수
+    $.initializeMove = function (position) {
+        map.panTo(position);
+    }
+
+    $.changeIllegalType = async function () {
+        $.searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
+        $.drawingZone((await $.getDongCodesBounds(map)).codes);
     }
 
     // 초기화 실행
-    initialize();
-
+    initializeKakao();
 
 });
