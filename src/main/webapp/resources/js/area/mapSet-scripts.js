@@ -28,10 +28,10 @@ $(function () {
         "draggable": true,
         "removable": true,
         "editable": true,
-        "strokeColor": "#330000",
-        "strokeWeight": 2,
-        "strokeStyle": "solid",
-        "strokeOpacity": 1,
+        // "strokeColor": "#330000",
+        "strokeWeight": 0,
+        // "strokeStyle": "solid",
+        // "strokeOpacity": 1,
         "fillColor": "#000000",
         "fillOpacity": 0.5
     };

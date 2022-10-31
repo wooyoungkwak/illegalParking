@@ -4,11 +4,13 @@ $(function () {
     let zonePolygons = [];
     let receiptCnts = [];
 
+    $.polygons = [];
+
     $.isMobile = window.location.pathname.includes('api');
     // $.isMobile = false;
     $.CENTER_LATITUDE = 35.02035492064903;
     $.CENTER_LONGITUDE = 126.79383256393595;
-    $.overlays = [] // 지도에 그려진 도형을 담을 배열
+    let overlays = [] // 지도에 그려진 도형을 담을 배열
     $.mapSelected = 'zone';
 
     let mapContainer = document.getElementById('map');
@@ -34,10 +36,10 @@ $(function () {
         "draggable": true,
         "removable": true,
         "editable": true,
-        "strokeColor": "#330000",
-        "strokeWeight": 2,
-        "strokeStyle": "solid",
-        "strokeOpacity": 1,
+        // "strokeColor": "#330000",
+        "strokeWeight": 0,
+        // "strokeStyle": "solid",
+        // "strokeOpacity": 1,
         "fillColor": "#000000",
         "fillOpacity": 0.5
     };
@@ -54,13 +56,13 @@ $(function () {
 
     // 아래 지도에 그려진 도형이 있다면 모두 지웁니다
     $.removeOverlays = function () {
-        let len = $.overlays.length, i = 0;
-        for (; i < len; i++) {
-            $.overlays[i].setMap(null);
+        let len = overlays.length;
+        for (let i = 0; i < len; i++) {
             customOverlays[i].setMap(null);
+            overlays[i].setMap(null);
         }
         customOverlays = [];
-        $.overlays = [];
+        overlays = [];
     }
 
     // 폴리곤 그리기
@@ -68,6 +70,7 @@ $(function () {
         $.removeOverlays();
         // 지도에 영역데이터를 폴리곤으로 표시합니다
         for (const element of polygons) {
+            $.polygons.push(element);
             $.displayArea(element);
         }
     }
@@ -168,7 +171,7 @@ $(function () {
             });
         }
 
-        let cnt = area.receiptCnt;
+        let cnt = area.receiptCnt === undefined ? 0 : area.receiptCnt;
         let balloonImg = 'balloon_orange.png';
         if (area.type === 'ILLEGAL') balloonImg = 'balloon_red.png'
 
@@ -178,7 +181,7 @@ $(function () {
             map: map
         });
 
-        $.overlays.push(polygon);
+        overlays.push(polygon);
         customOverlays.push(customOverlay);
     }
 
@@ -200,6 +203,7 @@ $(function () {
             func: function (mouseEvent) {
                 if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
 
+                log($.polygons);
                 // let latlng = mouseEvent.latLng;
                 // let p = new Point(latlng.getLng(), latlng.getLat());
                 // let len = overlays.length;
