@@ -13,40 +13,42 @@
 
     <!-- content -->
     <stripes:layout-component name="contents">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-5">
-                    <div class="card shadow-lg border-0 rounded-lg mt-5">
-                        <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
-                        <div class="card-body">
-
+        <body id="login_body">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-5">
+                        <div class="row login_logo">
+                            <img class="logo" src="/resources/assets/img/logo_login.png">
+                        </div>
+                        <div class="row">
                             <form method="post" id="FormLogin" action="/loginProcess">
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" name="email" id="email" placeholder="user" value=""/>
-                                    <label for="email">아이디</label>
+                                <div class="form-floating mb-2">
+                                    <h5 class="input_labels">아이디</h5>
+                                    <input class="input_box" name="email" id="email" value="" placeholder="아이디를 입력하세요" onfocus="this.placeholder=''" onblur="this.placeholder='아이디를 입력하세요'"/>
                                 </div>
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" name="password" id="password" type="password" value=""/>
-                                    <label for="password">패스워드</label>
+                                <hr class="devider">
+                                <div class="form-floating mb-2">
+                                    <h5 class="input_labels">비밀번호</h5>
+                                    <input class="input_box" name="password" id="password" type="password" value="" placeholder="비밀번호를 입력하세요" onfocus="this.placeholder=''" onblur="this.placeholder='비밀번호를 입력하세요'"/>
                                 </div>
+                                <hr class="devider">
                                 <div class="form-check mb-3">
                                     <input class="form-check-input" id="saveId" type="checkbox" value=""/>
-                                    <label class="form-check-label" for="saveId">아이디 저장</label>
+                                    <label class="form-check-label check_id" for="saveId">아이디 저장</label>
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="small" href="password"></a>
-                                    <a class="btn btn-primary" id="BtnLogin">로그인</a>
+                                    <a class="btn btn-dark" id="BtnLogin">로그인</a>
                                 </div>
                             </form>
-
                         </div>
                         <div class="card-footer text-center py-3">
-                            <div class="small">문의 : 061-930-7071</div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="phone_num" style="color:white">문의 : 061-930-7071</div>
+        </body>
     </stripes:layout-component>
 
     <!-- javascript -->
