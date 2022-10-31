@@ -53,31 +53,40 @@
     <stripes:layout-component name="javascript">
         <script type="text/javascript">
 
+            let idName = "email";
+
             //쿠키 저장하는 함수
-            function set_cookie(name, value, unixTime) {
-                var date = new Date();
-                date.setTime(date.getTime() + unixTime);
-                document.cookie = encodeURIComponent(name) + '=' + encodeURIComponent(value) + ';expires=' + date.toUTCString() + ';path=/';
+            function set_cookie(name, value, exp) {
+                let date = new Date();
+                date.setTime(date.getTime() + exp*24*60*60*1000);
+                document.cookie = name + '=' + value + ';expires=' + date.toUTCString() + ';path=/';
             }
 
             //쿠키 값 가져오는 함수
             function get_cookie(name) {
-                var value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+                let value = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
                 return value? value[2] : null;
+            }
+
+            function del_cookie(name) {
+                document.cookie = name + '=; expires=Thu, 01 Jan 1999 00:00:10 GMT;';
             }
 
             $.cookie = function (key, val){
                 if (val == undefined) {
                     return get_cookie(key);
                 }
-                set_cookie(key, val, "");
+                set_cookie(key, val, new Date());
             }
 
+            $.cookie.del = del_cookie;
+
             $(function () {
-                let idName = "email";
                 function saveId(){
                     if ( $('#saveId').is(":checked") ) {
-                        $.cookie(idName,$('#email').val() );
+                        $.cookie(idName, $('#email').val() );
+                    } else {
+                        $.cookie.del(idName);
                     }
                 }
 
@@ -87,13 +96,13 @@
                         alert("아이디를 입력하세요.");
                         return;
                     }
+
                     if ($('#password').val() === '') {
                         alert("패스워드를 입력하세요.");
                         return;
                     }
 
                     saveId();
-
                     $form.submit();
                 }
 
@@ -121,8 +130,9 @@
                     location.href = path[0];
                 }
 
-                if ( $.cookie(idName) !== undefined ){
+                if ( $.cookie(idName) !== undefined && $.cookie(idName) !== null){
                     $('#email').val($.cookie(idName));
+                    $('#saveId').attr("checked", true);
                 }
 
             });

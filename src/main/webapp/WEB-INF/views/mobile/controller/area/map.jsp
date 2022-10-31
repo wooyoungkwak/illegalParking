@@ -44,7 +44,7 @@
 					</div>
 
 					<div class="msg-bar rounded-pill" id="msgBar">
-						<p class="fw-semibold">현재 지역은 주정차 금지 지역입니다.</p>
+						<p class="fw-semibold">GPS 설정중...</p>
 					</div>
 
 				</div>
@@ -69,14 +69,54 @@
                 $.gpsPoint(x, y);
                 let position = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
                 myLocMarker.setPosition(position);
+				areaOfCurrentLocation();
                 if (isFirst) {
                     $.initializeMove(position);
                 }
                 isFirst = false;
             }
 
+			function areaOfCurrentLocation (){
+				let p = new Point(gpsLongitude,gpsLatitude);
+				let len = $.polygons.length;
+				let illegalType;
+				for (let i = 0; i < len; i++) {
+					let points = [];
+					$.polygons[i].points.forEach(function (overlay) {
+						let x = overlay.x, y = overlay.y;
+						points.push(new Point(x, y));
+					})
+					illegalType = $.polygons[i].type;
+					let onePolygon = points;
+					let n = onePolygon.length;
+					let divMsgBar = $('.msg-bar');
+					let msg;
+					let color;
+					if (isInside(onePolygon, n, p)) {
+						if(illegalType === 'ILLEGAL') {
+							msg = '현재 구역은 불법주정차 구역입니다.';
+							color = '#E63636B5'
+						} else if (illegalType === 'FIVE_MINUTE') {
+							msg = '현재 구역은 5분 주차 가능한 구역입니다.';
+							color = '#FF9443B5'
+						}
+
+						divMsgBar.find('p').text(msg);
+						divMsgBar.css('background-color', color);
+						break;
+					} else {
+						msg = '현재 구역은 주차 가능한 구역입니다.';
+						color = '#FFC527B5'
+						divMsgBar.find('p').text(msg);
+						divMsgBar.css('background-color', color);
+					}
+				}
+			}
+
             $(function () {
-                //
+
+
+                // 라디오버튼 change 이벤트 설정
                 function handleRadioButton(event) {
                     let mapType = $('.mapType');
                     if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
@@ -91,7 +131,7 @@
                     event.currentTarget.classList.add("rounded-pill");
                 }
 
-                //
+                // app 초기화
                 function initializeByMobile() {
                     // 불법주차 / 주차장 / 모빌리티 변경 이벤트
                     $('input:radio[name=mapSelect]').change(function (event) {

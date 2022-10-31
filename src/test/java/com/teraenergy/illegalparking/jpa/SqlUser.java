@@ -26,10 +26,10 @@ import java.util.List;
  * Description :
  */
 
-@ActiveProfiles(value = "rdata")
+@ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-//@Transactional
+@Transactional
 public class SqlUser {
 
     @Autowired
@@ -125,7 +125,7 @@ public class SqlUser {
 
     @Test
     public void select() throws TeraException {
-        User user = userService.get(5);
+        User user = userService.get(1);
         user.setDecryptPassword();
         System.out.println(user.getPassword());
     }

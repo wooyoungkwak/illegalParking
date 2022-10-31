@@ -58,6 +58,7 @@
 
             if (location.pathname === '/home') {
                 $('#sidebarToggle').hide();
+                $('#navhome').addClass("active");
             } else if (location.pathname === '/login') {
 
             } else if (location.pathname === '/register') {
@@ -84,16 +85,14 @@
                 window.history.back();
             });
 
-            if (_role !== 'ADMIN') {
-                $('#side_mapSet').hide();
-                $('#side_productAdd').hide();
-            }
-
             $('#myInfo').on('click', function (){
                location.href = '${pageContext.request.contextPath}/myInfo';
             });
 
             if (_role === 'GOVERNMENT') {
+                $('#side_mapSet').hide();
+                $('#side_productAdd').hide();
+
                 $('#navMenu').find('li').each(function (){
                    if ( $(this).children('a').prop('id') !== 'navreport') {
                        if ($(this).children('a').prop('id') !== 'navhome') {
@@ -103,6 +102,8 @@
                 });
 
                 $('#side_receiptList').hide();
+            } else {
+                $('#navhome').parent().hide();
             }
 
         });
