@@ -25,70 +25,69 @@
 	<!-- content -->
 	<stripes:layout-component name="contents">
 		<main>
-			<div class="m-0 p-0" style="
-				height: 300px;
-				background-image: url('/resources/assets/img/main_image.png');
-				background-size: 100% 100%;
-				opacity: 1.0;
-				filter: alpha(opacity=100);
-
-			">
-				<div  style="padding-top: 120px; padding-left: 100px;">
-						<p class="col-4 fs-1 text-white d-flex justify-content-end">안녕하세요.</p>
-						<p class="col-4 fs-2 text-white d-flex justify-content-end">'${officeName}' 입니다.</p>
-				</div>
-			</div>
-			<div class="container-fluid px-4">
-				<table style="width: 100%; height: 100%;">
-					<colgroup>
-						<col width="50%"/>
-						<col width="50%"/>
-					</colgroup>
-					<tbody>
-					<tr>
-						<td><p class="fs-3 ms-2">신고건수</p></td>
-						<td><p class="fs-3 ms-2">신고발생/신고접수</p></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td>
-							<p class="fs-6">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류 신고 등 제외를 통하여 ${totalCount}의 신고 중 ${sendPenaltyCount}건의 신고를 담당 부서에 전달드렸습니다.</p>
-						</td>
-					</tr>
-					<tr>
-						<td class="px-3 align-middle">
-							<div class="row">
-								<div class="col-7 d-flex justify-content-lg-center">
-									<div id="pieChart"></div>
+			<div class="wrap">
+<%--				<div class="row">--%>
+					<div class="m-0 p-0">
+						<img class="main_image" src="/resources/assets/img/main_image.png">
+						<div class="col main_text">
+								<p class="col fs-1 text-white">안녕하세요,</p>
+								<p class="col fs-2 text-white">'${officeName}' 입니다.</p>
+						</div>
+					</div>
+<%--				</div>--%>
+				<div class="row">
+					<div class="container-fluid info_area">
+						<div class="row">
+							<div class="col">
+								<div class="row">
+									<h4 class="chart_title">신고건수</h4>
 								</div>
-								<div class="col-4">
-									<table class="table border">
-										<tr>
-											<td class="d-flex justify-content-lg-end">총신고건수</td>
-											<td>${totalCount}</td>
-										</tr>
-										<tr>
-											<td class="d-flex justify-content-lg-end">대기</td>
-											<td>${completeCount}</td>
-										</tr>
-										<tr>
-											<td class="d-flex justify-content-lg-end">미처리</td>
-											<td>${exceptionCount}</td>
-										</tr>
-										<tr>
-											<td class="d-flex justify-content-lg-end">처리</td>
-											<td>${penaltyCount}</td>
-										</tr>
-									</table>
+								<div class="row">
+		<%--							<div class="col d-flex justify-content-lg-center" style="position:relative">--%>
+									<div id="pieChart"></div>
+		<%--							</div>--%>
+									<div class="container data_info">
+										<div class="row">
+											<h5>총 신고건수</h5>
+											<p>${totalCount}</p>
+										</div>
+										<div class="row">
+											<div class="col">
+												<h5>대기</h5>
+												<div class="row">
+													<span>${completeCount}</span>
+												</div>
+											</div>
+
+											<div class="col">
+												<h5>미처리</h5>
+												<div class="row">
+													<span>${exceptionCount}</span>
+												</div>
+											</div>
+
+											<div class="col">
+												<h5>처리</h5>
+												<div class="row">
+													<span>${penaltyCount}</span>
+												</div>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
-						</td>
-						<td class="px-3 align-middle">
-							<div id="barChart" style="height: 350px; width: 100%;"></div>
-						</td>
-					</tr>
-					</tbody>
-				</table>
+							<div class="col">
+								<div class="col">
+									<h4 class="chart_title">신고발생 / 신고접수</h4>
+									<p class="explain">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류 신고 등 제외를 통하여 ${totalCount}의 신고 중 ${sendPenaltyCount}건의 신고를 담당 부서에 전달드렸습니다.</p>
+								</div>
+								<div class="col">
+									<div id="barChart" style="height: 350px; width: 100%;"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</main>
 
@@ -96,7 +95,19 @@
 
 	<!-- footer -->
 	<stripes:layout-component name="footer">
-		<stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>
+		<footer class="py-4 bg-light">
+			<div class="container-fluid px-4">
+				<div class="d-flex align-items-center justify-content-between small">
+					<div class="text-muted">
+						COPYRIGHT &copy; TERAENERGY INC. ALL RIGHTS RESERVED. ( <a href="http://teraenergy.co.kr/">teraenergy.co.kr</a> )
+					</div>
+					<div>
+						<img src="http://teraenergy.co.kr/teraenergy/images/logo_bottom.png" alt="테라이너지 로고" style="width: 100px; height: 25px;">
+					</div>
+				</div>
+			</div>
+		</footer>
+<%--		<stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>--%>
 	</stripes:layout-component>
 
 	<!-- javascript -->
@@ -119,9 +130,13 @@
                         // title: {
                         //     text: "신고 건수"
                         // },
+						legend:{
+							horizontalAlign: "right",
+							verticalAlign: "bottom"
+						},
                         data: [{
                             type: "doughnut",
-                            innerRadius: "60%",
+                            innerRadius: "70%",
                             showInLegend: true,
                             legendText: "{label}",
                             indexLabel: "{label}",
@@ -134,7 +149,7 @@
                     };
 
                     function draw() {
-                        $("#pieChart").css("height", "350px").css("width", "100%");
+                        $("#pieChart").css("height", "50vh").css("width", "30vw");
                         $("#pieChart").CanvasJSChart(options);
                         $('.canvasjs-chart-credit').hide();
                     };
@@ -160,6 +175,10 @@
                         // title: {
                         //     text: "신고 발생 / 신고 접수 "
                         // },
+						axisY:{
+							lineThickness: 0,
+							gridColor: "#D8D8D8"
+						},
                         data: [
                             {
                                 // 신고 발생 건수
