@@ -38,9 +38,9 @@
 					<li class="breadcrumb-item active">${subTitle} > 접수목록</li>
 				</ol>
 				<div class="card mb-4 shadow-sm rounded">
-					<div class="card-header">
-						<i class="fas fa-table me-1"></i>
-						불법 주정차 신고 정보
+					<div class="card-header bg-dark">
+						<i class="text-white fas fa-table me-1"></i>
+						<span class="text-white">불법 주정차 신고 정보</span>
 					</div>
 					<div class="card-body">
 						<form class="row mb-3 g-3">

@@ -6,19 +6,12 @@
     src: url('../webapp/resources/font/KoPubWorld Batang Light.ttf');
 }
 
-.wrap{
-    height:auto;
-    width: 100vw !important;
-    min-height: 100vh;
-}
-
 .main_image{
-    width:100vw !important;
-    height: 90%;
-    /*background-image: url('/resources/assets/img/main_image.png');*/
-    /*background-color: black;*/
-    /*background-size: 100% 100%;*/
-    position: relative;
+    width: 100% !important;
+    height: 550px;
+    background-image: url('/resources/assets/img/main_image.png');
+    background-color: black;
+    background-size: 100% 100%;
 }
 
 .main_text{
@@ -46,7 +39,7 @@
     left: 22.5%;
 }
 
-.explain{
-    font-size:0.8rem;
-    color: gray;
-}
+/*.explain{*/
+/*    font-size:0.8rem;*/
+/*    color: gray;*/
+/*}*/

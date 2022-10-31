@@ -25,27 +25,23 @@
 	<!-- content -->
 	<stripes:layout-component name="contents">
 		<main>
-			<div class="wrap">
-<%--				<div class="row">--%>
-					<div class="m-0 p-0">
-						<img class="main_image" src="/resources/assets/img/main_image.png">
-						<div class="col main_text">
-								<p class="col fs-1 text-white">안녕하세요,</p>
-								<p class="col fs-2 text-white">'${officeName}' 입니다.</p>
-						</div>
+			<div>
+				<div class="m-0 p-0 main_image">
+					<div class="col main_text">
+						<p class="col fs-1 text-white">안녕하세요,</p>
+						<p class="col fs-2 text-white">'${officeName}' 입니다.</p>
 					</div>
-<%--				</div>--%>
-				<div class="row">
+				</div>
+
+				<div>
 					<div class="container-fluid info_area">
 						<div class="row">
-							<div class="col">
+							<div class="col-6">
 								<div class="row">
 									<h4 class="chart_title">신고건수</h4>
 								</div>
 								<div class="row">
-		<%--							<div class="col d-flex justify-content-lg-center" style="position:relative">--%>
 									<div id="pieChart"></div>
-		<%--							</div>--%>
 									<div class="container data_info">
 										<div class="row">
 											<h5>총 신고건수</h5>
@@ -76,7 +72,7 @@
 									</div>
 								</div>
 							</div>
-							<div class="col">
+							<div class="col-6">
 								<div class="col">
 									<h4 class="chart_title">신고발생 / 신고접수</h4>
 									<p class="explain">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류 신고 등 제외를 통하여 ${totalCount}의 신고 중 ${sendPenaltyCount}건의 신고를 담당 부서에 전달드렸습니다.</p>
@@ -88,6 +84,7 @@
 						</div>
 					</div>
 				</div>
+
 			</div>
 		</main>
 
@@ -107,7 +104,7 @@
 				</div>
 			</div>
 		</footer>
-<%--		<stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>--%>
+		<%--		<stripes:layout-render name="/WEB-INF/views/layout/component/footerLayout.jsp"/>--%>
 	</stripes:layout-component>
 
 	<!-- javascript -->
@@ -130,10 +127,10 @@
                         // title: {
                         //     text: "신고 건수"
                         // },
-						legend:{
-							horizontalAlign: "right",
-							verticalAlign: "bottom"
-						},
+                        legend: {
+                            horizontalAlign: "right",
+                            verticalAlign: "bottom"
+                        },
                         data: [{
                             type: "doughnut",
                             innerRadius: "70%",
@@ -175,10 +172,10 @@
                         // title: {
                         //     text: "신고 발생 / 신고 접수 "
                         // },
-						axisY:{
-							lineThickness: 0,
-							gridColor: "#D8D8D8"
-						},
+                        axisY: {
+                            lineThickness: 0,
+                            gridColor: "#D8D8D8"
+                        },
                         data: [
                             {
                                 // 신고 발생 건수
