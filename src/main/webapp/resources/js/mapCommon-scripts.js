@@ -193,8 +193,11 @@ let myMarker = {
     imgSize: new kakao.maps.Size(50,50)
 };
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
-
 let myLocMarker = null;
+let beforeCodes = [];
+let isFirst = true; // 최초 인가 확인
+let gpsLatitude = 0.0;
+let gpsLongitude = 0.0;
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 $.getCurrentPosition = function(map) {
@@ -261,11 +264,6 @@ function myLocationMarker(map, position){
     map.panTo(position);
 }
 
-let beforeCodes = [];
-let isFirst = true; // 최초 인가 확인
-let gpsLatitude = 0.0;
-let gpsLongitude = 0.0;
-
 $.gpsPoint = function(x, y) {
     gpsLatitude = x;
     gpsLongitude = y;
@@ -327,4 +325,22 @@ $.pointsToPath = function (points) {
     }
 
     return path;
+}
+
+// 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
+$.changeOptionByMouseOut = function (area) {
+    return {
+        fillColor: $.setFillColor(area), // 채우기 색깔입니다
+        fillOpacity: 0.5 // 채우기 불투명도 입니다
+    };
+}
+
+// 주정차 타입에 따른 폴리곤 색 구별
+$.setFillColor = function(area) {
+    let fillColor;
+    if (area.type === 'FIVE_MINUTE') fillColor = '#ff6f00';
+    else if (area.type === 'ILLEGAL') fillColor = '#FF3333';
+    else fillColor = '#00afff';
+
+    return fillColor;
 }
