@@ -17,6 +17,7 @@
     <link href="<%=contextPath%>/resources/css/styles.css" rel="stylesheet"/>
     <link href="<%=contextPath%>/resources/css/area/group-styles.css" rel="stylesheet"/>
     <link href="<%=contextPath%>/resources/css/user/user-styles.css" rel="stylesheet"/>
+    <link href="<%=contextPath%>/resources/css/home/home-styles.css" rel="stylesheet"/>
 <%--    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet"/>--%>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css" />
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
@@ -94,8 +95,10 @@
 
             if (_role === 'GOVERNMENT') {
                 $('#navMenu').find('li').each(function (){
-                   if ( $(this).children('a').prop('id') !== 'navreport' ) {
-                       $(this).hide();
+                   if ( $(this).children('a').prop('id') !== 'navreport') {
+                       if ($(this).children('a').prop('id') !== 'navhome') {
+                           $(this).hide();
+                       }
                    }
                 });
 

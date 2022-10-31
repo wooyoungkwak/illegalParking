@@ -10,8 +10,9 @@
 
 <stripes:layout-definition>
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+        <img class="ms-2 " src="${contextPath}/resources/assets/img/logo.png" style="width: 30px; height: 30px;">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="${pageContext.request.contextPath}/">${mainTitle}</a>
+        <a class="navbar-brand ps-1" href="${pageContext.request.contextPath}/">${mainTitle}</a>
 
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
@@ -19,6 +20,9 @@
         <ul id="navMenu" class="navbar-nav ms-auto mt-2 mt-lg-0">
             <li class="nav-item me-5">
                 <a class="nav-link" id="navnotice" href="${pageContext.request.contextPath}/notice">공지사항</a>
+            </li>
+            <li class="nav-item me-5">
+                <a class="nav-link" id="navhome" href="${pageContext.request.contextPath}/home">홈</a>
             </li>
             <li class="nav-item me-5">
                 <a class="nav-link" id="navreport" href="${pageContext.request.contextPath}/report">신고</a>

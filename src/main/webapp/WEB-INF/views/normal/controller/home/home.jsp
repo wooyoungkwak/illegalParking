@@ -25,6 +25,19 @@
 	<!-- content -->
 	<stripes:layout-component name="contents">
 		<main>
+			<div class="m-0 p-0" style="
+				height: 300px;
+				background-image: url('/resources/assets/img/main_image.png');
+				background-size: 100% 100%;
+				opacity: 1.0;
+				filter: alpha(opacity=100);
+
+			">
+				<div  style="padding-top: 120px; padding-left: 100px;">
+						<p class="col-4 fs-1 text-white d-flex justify-content-end">안녕하세요.</p>
+						<p class="col-4 fs-2 text-white d-flex justify-content-end">'${officeName}' 입니다.</p>
+				</div>
+			</div>
 			<div class="container-fluid px-4">
 				<table style="width: 100%; height: 100%;">
 					<colgroup>
@@ -32,14 +45,14 @@
 						<col width="50%"/>
 					</colgroup>
 					<tbody>
-					<tr style="height: 200px;">
-						<td><p class="fs-4">안녕하세요.</p></td>
-						<td></td>
+					<tr>
+						<td><p class="fs-3 ms-2">신고건수</p></td>
+						<td><p class="fs-3 ms-2">신고발생/신고접수</p></td>
 					</tr>
 					<tr>
-						<td><p class="fs-1">'${officeName}' 입니다.</p></td>
+						<td></td>
 						<td>
-							<p class="fs-4">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류 신고 등 제외를 통하여 ${totalCount}의 신고 중 ${sendPenaltyCount}건의 신고를 담당 부서에 전달드렸습니다.</p>
+							<p class="fs-6">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류 신고 등 제외를 통하여 ${totalCount}의 신고 중 ${sendPenaltyCount}건의 신고를 담당 부서에 전달드렸습니다.</p>
 						</td>
 					</tr>
 					<tr>
@@ -71,7 +84,7 @@
 							</div>
 						</td>
 						<td class="px-3 align-middle">
-							<div id="barChart" style="height: 300px; width: 100%;"></div>
+							<div id="barChart" style="height: 350px; width: 100%;"></div>
 						</td>
 					</tr>
 					</tbody>
@@ -103,12 +116,12 @@
                 $.drawPieChart = function (opt) {
                     let options = {
                         animationEnabled: true,
-                        title: {
-                            text: "신고 건수"
-                        },
+                        // title: {
+                        //     text: "신고 건수"
+                        // },
                         data: [{
                             type: "doughnut",
-                            innerRadius: "40%",
+                            innerRadius: "60%",
                             showInLegend: true,
                             legendText: "{label}",
                             indexLabel: "{label}",
@@ -121,7 +134,7 @@
                     };
 
                     function draw() {
-                        $("#pieChart").css("height", "400px").css("width", "100%");
+                        $("#pieChart").css("height", "350px").css("width", "100%");
                         $("#pieChart").CanvasJSChart(options);
                         $('.canvasjs-chart-credit').hide();
                     };
@@ -144,9 +157,9 @@
 
                     var chart = new CanvasJS.Chart("barChart", {
                         animationEnabled: true,
-                        title: {
-                            text: "신고 발생 / 신고 접수 "
-                        },
+                        // title: {
+                        //     text: "신고 발생 / 신고 접수 "
+                        // },
                         data: [
                             {
                                 // 신고 발생 건수
