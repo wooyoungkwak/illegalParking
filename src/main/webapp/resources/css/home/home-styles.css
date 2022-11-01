@@ -6,6 +6,15 @@
     src: url('../webapp/resources/font/KoPubWorld Batang Light.ttf');
 }
 
+.box {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+
+.box::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+}
+
 .main_image{
     width: 100% !important;
     height: 550px;

@@ -37,8 +37,13 @@ public class ReportController extends ExtendsController {
     private String subTitle = "신고";
 
     @GetMapping(value = "/report")
-    public RedirectView report() {
+    public RedirectView report(HttpServletRequest request) {
         return new RedirectView("/report/reportList");
+    }
+
+    @GetMapping(value = "/reportByGovernment")
+    public RedirectView reportByGovernment(HttpServletRequest request) {
+        return new RedirectView("/report/reportListByGovernment");
     }
 
     @GetMapping(value = "/report/receiptList")
@@ -177,4 +182,9 @@ public class ReportController extends ExtendsController {
         return getPath("/reportList");
     }
 
+    @GetMapping(value = "/report/reportListByGovernment")
+    public String reportListByGovernment(Model model, HttpServletRequest request) throws TeraException{
+        reportList(model, request);
+        return getPath("/reportListByGovernment");
+    }
 }

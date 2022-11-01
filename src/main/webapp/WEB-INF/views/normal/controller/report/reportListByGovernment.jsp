@@ -35,12 +35,12 @@
 			<div class="container-fluid px-4">
 				<h1 class="mt-4">접수목록</h1>
 				<ol class="breadcrumb mb-4">
-					<li class="breadcrumb-item active">${subTitle} > 접수목록</li>
+					<li class="breadcrumb-item text-black-50">${subTitle} > 접수목록</li>
 				</ol>
 				<div class="card mb-4 shadow-sm rounded">
-					<div class="card-header">
-						<i class="fas fa-table me-1"></i>
-						불법 주정차 신고 정보
+					<div class="card-header bg-dark">
+						<i class="text-white fas fa-table me-1"></i>
+						<span class="text-white">불법 주정차 신고 정보</span>
 					</div>
 					<div class="card-body">
 						<form class="row mb-3 g-3">
@@ -60,7 +60,7 @@
 						</form>
 						<table class="table table-hover table-bordered" id="reportTable">
 							<thead>
-							<tr class="table-light">
+							<tr class="table-light rounded-3">
 								<th scope="col" class="text-center" style="width: 10%">신고자</th>
 								<th scope="col" class="text-center" style="width: 10%">차량번호</th>
 								<th scope="col" class="text-center" style="width: 42%">위치</th>
@@ -117,14 +117,14 @@
 		<script type="application/javascript">
             $(function () {
 
-                // 검색 함수
+                // 검색
                 function search(pageNumber) {
                     if (pageNumber === undefined) {
                         $('#pageNumber').val("1");
                     } else {
                         $('#pageNumber').val(pageNumber);
                     }
-                    location.href = _contextPath + "/reportList?" + $('form').serialize();
+                    location.href = _contextPath + "/reportListByGovernment?" + $('form').serialize();
                 }
 
                 // 신고 접수 버튼 설정 함수
@@ -237,7 +237,7 @@
                     });
                 }
 
-                // 신고 접수 타이틀 설정 함수
+                // 신고 접수 설정 타이틀 설정 함수
                 function initializeReportSetTagTitle(carNum) {
                     $('#reportSetTitle').text(carNum);
                 }
@@ -245,7 +245,7 @@
                 // 초기화 함수
                 function initialize() {
 
-                    // 검색 이벤트
+                    // 검색 이벤트 1
                     $('#searchStr').next().on('click', function (event) {
                         search();
                     });
