@@ -13,6 +13,7 @@
     <html>
         <%@ include file="/WEB-INF/views/reference/head.jsp"%>
         <link href="<%=contextPath%>/resources/css/area/map-styles.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
         <body>
             <div id="layoutSidenav">
                 <div id="layoutSidenav_content">

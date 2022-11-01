@@ -18,24 +18,55 @@
 				<div class="map_wrap">
 					<div id="map"></div>
 
-					<div class="map-control alarm-control" role="group">
-						<label class="alarm-mode-button">
-							<input type="checkbox"/>
-							<span class="onOff-switch"></span>
-						</label>
-					</div>
+                    <div id="onOffBtn" class="on-off-toggle-btn">
+                        <input type="checkbox" id="toggle" hidden>
+
+                        <label for="toggle" class="toggleSwitch active">
+                            <span class="toggleButton"></span>
+                        </label>
+                    </div>
 
 					<div class="map-control border border-2 bg-white shadow-sm btn-group rounded-pill" role="group">
-
 						<label for="zone" class="mapType btn btn-dark rounded-pill fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="zone" autocomplete="off" checked>불법주차</label>
-
 						<label for="parking" class="mapType btn btn-white fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="parking" autocomplete="off">주차장</label>
-
 						<label for="pm" class="mapType btn btn-white fw-bold"><input type="radio" class="btn-check" name="mapSelect" id="pm" autocomplete="off">모빌리티</label>
 					</div>
 
-						<%--<div class="custom-btn-control">
-						</div>--%>
+					<div id="option" class="option-btn">
+                        <img src="<%=contextPath%>/resources/assets/img/option.png" alt="옵션슬라이드">
+                    </div>
+
+					<div class="notice-board border border-2 bg-white shadow-sm btn-group rounded-3" role="group">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-2">
+                                    <span class="fs-10 fw-bolder py-1"><i class="bi bi-circle-fill px-2" style="color: #FFC527"></i></span>
+                                </div>
+                                <div class="col-8">
+                                    <span class="fs-10 fw-bolder py-1">정차가능</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <span class="fs-10 fw-bolder py-1"><i class="bi bi-circle-fill px-2" style="color: #FF9443"></i></span>
+                                </div>
+                                <div class="col-9 test1">
+                                    <p class="fs-10 fw-bolder">주정차금지</p>
+                                    <p class="fs-10 fw-bolder">(탄력허용)</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2">
+                                    <span class="fs-10 fw-bolder py-1"><i class="bi bi-circle-fill px-2" style="color: #E63636"></i></span>
+                                </div>
+                                <div class="col-8">
+                                    <span class="fs-10 fw-bolder py-1">주정차금지</span>
+                                </div>
+
+                            </div>
+                        </div>
+					</div>
+
 					<!-- 지도 확대, 축소 컨트롤 div 입니다 -->
 					<div class="custom-control">
 						<span id="btnFindMe"><img src="<%=contextPath%>/resources/assets/img/ping.png" alt="내위치"></span>
@@ -115,7 +146,6 @@
 
             $(function () {
 
-
                 // 라디오버튼 change 이벤트 설정
                 function handleRadioButton(event) {
                     let mapType = $('.mapType');
@@ -131,8 +161,31 @@
                     event.currentTarget.classList.add("rounded-pill");
                 }
 
+                // 통계 on off 이벤트 함수
+                function handleChecked() {
+					if($('#toggle').is(':checked')) {
+						$.processDongCodesBounds();
+					} else {
+						$.loading(true);
+						$.removeStatisticsOverlays();
+						$.loading(false);
+					}
+				}
+
                 // app 초기화
                 function initializeByMobile() {
+
+					const onOff = document.querySelector(".toggleSwitch");
+
+					onOff.onclick = () => {
+						handleChecked();
+						onOff.classList.toggle('active');
+					}
+
+					$('#option').on('click', function(){
+						alert('준비중입니다.');
+					})
+
                     // 불법주차 / 주차장 / 모빌리티 변경 이벤트
                     $('input:radio[name=mapSelect]').change(function (event) {
                         $.loading(true);
@@ -141,12 +194,21 @@
                             $.CENTER_LONGITUDE = gpsLongitude;
                             // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
                         }
+
                         let mapType = $('.mapType');
                         for (const type of mapType) {
                             type.addEventListener("change", handleRadioButton);
                         }
                         $.mapSelected = event.target.id;
                         $.changeMapType();
+						if(this.id === 'zone') {
+							$('#onOffBtn').removeClass('display-none');
+							$('.notice-board').removeClass('display-none');
+						}
+						else {
+							$('#onOffBtn').addClass('display-none');
+                            $('.notice-board').addClass('display-none');
+						}
                         $.loading(false);
                     });
 
@@ -169,7 +231,11 @@
                         if (level <= 3) {
                             $.processDongCodesBounds();
                         } else {
-                            if ($.mapSelected === 'zone') $.removeOverlays();
+                            if ($.mapSelected === 'zone') {
+                            	$.removeOverlays();
+							} else {
+								$.removeTextOverlays();
+							}
 						}
                     });
 

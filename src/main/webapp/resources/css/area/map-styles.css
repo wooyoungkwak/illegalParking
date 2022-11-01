@@ -40,29 +40,50 @@
   margin-top: 10px;
 }*/
 
-.map-control {
+.notice-board {
   position: absolute;
-  top: 50px;
-  left: 50%;
+  top: 15%;
+  left: 85%;
   transform: translateX(-50%);
-  /* align-self: center; */
   overflow: hidden;
-  width: 250px;
-  /* height: 30px; */
+  width: 90px;
+  height: 90px;
   margin: 0 auto;
   padding: 0;
   z-index: 1;
-  font-size: 12px;
-  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
-  box-shadow: inset 0px 0px 3px 1px #e2e1dd !important;
+  box-shadow: inset 0 0 3px 1px #e2e1dd !important;
+}
+.fs-10 {
+  font-size: 0.5rem;
+}
+
+.test1>p{
+  margin: 0;
+  transform: translateY(40%);
+}
+.test1:nth-child(2){
+  margin-bottom: 0.4rem;
+}
+
+.map-control {
+  position: absolute;
+  top: 8.5%;
+  left: 50%;
+  transform: translateX(-50%);
+  overflow: hidden;
+  width: 220px;
+  height: 45px;
+  margin: 0 auto;
+  padding: 0;
+  z-index: 1;
+  box-shadow: inset 0 0 3px 1px #e2e1dd !important;
 }
 
 .map-control .mapType {
-  font-size: 14px;
-}
-
-.alarm-control {
-  left: 20%;
+  text-align: center;
+  padding: 11px 0;
+  font-size: 12px;
+  font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
 /*
@@ -166,67 +187,6 @@
   color: black;
 }
 
-.dark-mode-button {
-  position: relative;
-  display: block;
-  width: 45px;
-  height: 30px;
-}
-
-.dark-mode-button input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.dark-mode-button .onoff-switch {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 12px;
-  background-color: #fff;
-  box-shadow: 1px 1px 3px #eaeaea, -1px -1px 3px #eaeaea;
-  border-radius: 20px;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.dark-mode-button .onoff-switch:before {
-  position: absolute;
-  content: "";
-  height: 22px;
-  width: 22px;
-  left: 4px;
-  top: -5px;
-  background-image: url("/resources/assets/img/alarm_on.png");
-  background-size: 15px;
-  background-position: center;
-  background-color: #fff;
-  background-repeat: no-repeat;
-  -webkit-transition: .5s;
-  transition: .4s;
-  border-radius: 20px;
-  box-shadow: 1px 1px 3px #eaeaea;
-
-}
-
-.dark-mode-button input:checked + .onoff-switch {
-  background-color: #444;
-  box-shadow: inset 1px 1px 2px #222;
-}
-
-.dark-mode-button input:checked + .onoff-switch:before {
-  background-image: url("/resources/assets/img/alarm_off.png");
-  background-color: #333;
-  box-shadow: none;
-  -webkit-transform: translateX(16px);
-  -ms-transform: translateX(16px);
-  transform: translateX(16px);
-}
-
 .outline {
   position: absolute;
   left: 50%;
@@ -321,4 +281,56 @@
 
 .display-none{ /*감추기*/
   display:none;
+}
+
+.on-off-toggle-btn {
+  top: 9.65%;
+  position: absolute;
+  /*left: 20%;*/
+  transform: translateX(30%);
+  z-index: 1;
+}
+.toggleSwitch {
+  width: 3rem;
+  height: 1.8rem;
+  display: block;
+  position: relative;
+  border-radius: 2rem;
+  background-color: #9598A2;
+  /*box-shadow: 0 0 1rem 3px rgba(161, 161, 161, 25);*/
+  cursor: pointer;
+}
+
+.toggleSwitch .toggleButton {
+  width: 2.6rem;
+  height: 2.6rem;
+  position: absolute;
+  top: 60%;
+  left: -.4rem;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  background-image: url("/resources/assets/img/alarm_off.png");
+  background-size : 100%
+}
+
+/* 체크박스가 체크되면 변경 이벤트 */
+.toggleSwitch.active {
+  background-color: #FF5050;
+}
+
+.toggleSwitch.active .toggleButton {
+  left: calc(100% - 2.1rem);
+  background-image: url("/resources/assets/img/alarm_on.png");
+  background-size : 100%
+}
+
+.toggleSwitch, .toggleButton {
+  transition: all 0.2s ease-in;
+}
+
+.option-btn {
+  top: 8.8%;
+  position: absolute;
+  left: 85%;
+  z-index: 1;
 }
