@@ -43,11 +43,11 @@ public class AreaController extends ExtendsController {
     }
 
     @GetMapping("/area/mapSet")
-    public ModelAndView mapSet() throws ParseException {
-        ModelAndView modelAndView = new ModelAndView();
-        modelAndView.addObject("subTitle", subTitle);
-        modelAndView.setViewName(getPath("/mapSet"));
-        return modelAndView;
+    public String mapSet(Model model, HttpServletRequest request) throws TeraException {
+        RequestUtil requestUtil = new RequestUtil(request);
+        requestUtil.setParameterToModel(model);
+        model.addAttribute("subTitle", subTitle);
+        return getPath("/mapSet");
     }
 
     @GetMapping("/area/groupList")

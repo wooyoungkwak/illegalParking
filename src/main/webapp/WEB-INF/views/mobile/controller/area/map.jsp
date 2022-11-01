@@ -97,7 +97,21 @@
 		<script type="application/javascript">
             // INTERFACE : APP TO WEB
             function appToGps(x, y) {
-                $.gpsPoint(x, y);
+                // let bearing = $.getBearing(gpsLatitude, gpsLongitude, x, y);
+                let bearing = $.getAngle({
+					x: gpsLatitude,
+					y: gpsLongitude
+				}, {
+					x: x,
+					y: y
+				})
+
+				$('#location').css({
+					'transform': 'rotate(' + (bearing) + 'deg)'
+				});
+                $('#msgBar').text(bearing);
+
+                $.gpsPoint(x, y, bearing);
                 let position = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
                 myLocMarker.setPosition(position);
 				areaOfCurrentLocation();

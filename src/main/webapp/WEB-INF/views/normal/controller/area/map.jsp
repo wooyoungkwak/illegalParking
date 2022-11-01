@@ -32,19 +32,20 @@
 				</ol>
 
 				<div class="row">
-
 					<div class="card">
 						<div class="card-title">
-							<p class="modes">
-								<span>
-									<label><input type="radio" name="searchIllegalType" value="" checked>전체</label>
+							<div class="row mt-2 ms-2 p-0">
+								<div class="col-6 mt-2 align-middle">
+									<input class="form-check-input" type="radio" name="searchIllegalType" id="type_all" value="" checked>
+									<label class="form-check-label" for="type_all">전체</label>
 									<c:forEach items="${IllegalType.values()}" var="type">
-										<label><input type="radio" name="searchIllegalType" value="${type}">${type.value}</label>
+										<input class="form-check-input" type="radio" name="searchIllegalType" value="${type}" id="type_${type}">
+										<label class="form-check-label" for="type_${type}">${type.value}</label>
 									</c:forEach>
-								</span>
-							</p>
+								</div>
+							</div>
 						</div>
-						<div class="card-body mt-4">
+						<div class="card-body pt-0">
 								<%--							<div class="map_wrap">--%>
 							<div id="map"></div>
 								<%--							</div>--%>

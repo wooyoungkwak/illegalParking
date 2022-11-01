@@ -6,7 +6,7 @@ $(function () {
 
     $.polygons = [];
     $.isMobile = window.location.pathname.includes('api');
-    $.isMobile = false;
+    // $.isMobile = false;
     $.CENTER_LATITUDE = 35.02035492064903;
     $.CENTER_LONGITUDE = 126.79383256393595;
     $.mapSelected = 'zone';
@@ -142,22 +142,15 @@ $(function () {
             let text = '현재무료'
             if (data.parkingchrgeInfo === '유료') text = '유료'
             let span = document.createElement('span')
+
             span.className = 'price-text';
             span.appendChild(document.createTextNode(text));
-            span.onclick = function () {
-                if ($.isMobile) {
-                    // 커스텀 오버레이 컨텐츠를 설정합니다
-                    webToApp.postMessage(JSON.stringify('click'));
-                    let obj = getMarkerInfo(imgOrigin.type, data);
-                    webToApp.postMessage(JSON.stringify(obj));
-                }
-            }
             imgNode.appendChild(span);
         }
 
-        imgNode.addEventListener('click', function (event){
+        imgNode.addEventListener('click', function (event) {
             let imgOrigin = setImgOrigin();
-
+            let isOn = $(this).children('img:first').attr('src').includes('panel_on');
             let markerImg = $('.markerImg');
             let priceText = $('.price-text');
             for (const img of markerImg) {
@@ -168,13 +161,18 @@ $(function () {
                     text.style.color = 'black';
                 }
             }
-            log($(this).children('img:first').src)
-            log($(this).children('img:first'))
-            // log(this.children[0])
-            if (event !== undefined) {
+            if (!isOn) {
                 this.children[0].src = imgOrigin.imgSrc.clickOrigin;
                 if ($.mapSelected === 'parking') this.children[1].style.color = 'white';
                 map.panTo(position);
+                if ($.isMobile) {
+                    // 커스텀 오버레이 컨텐츠를 설정합니다
+                    webToApp.postMessage(JSON.stringify('click'));
+                    let obj = getMarkerInfo(imgOrigin.type, data);
+                    webToApp.postMessage(JSON.stringify(obj));
+                }
+            } else {
+                webToApp.postMessage(JSON.stringify('click'));
             }
         });
 
@@ -216,7 +214,7 @@ $(function () {
 
         // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
         map = new kakao.maps.Map(mapContainer, map);
-        if($.isMobile) map.setZoomable(false);
+        if ($.isMobile) map.setZoomable(false);
 
         setKakaoEvent({
             target: map,
@@ -316,7 +314,7 @@ $(function () {
     $.removeOverlays = function () {
         let len = overlays.length;
         for (let i = 0; i < len; i++) {
-            if(statisticsOverlays.length > 0) {
+            if (statisticsOverlays.length > 0) {
                 statisticsOverlays[i].setMap(null);
             }
             overlays[i].setMap(null);
@@ -386,7 +384,7 @@ $(function () {
         let balloonImg = 'balloon_orange.png';
         if (area.type === 'ILLEGAL') balloonImg = 'balloon_red.png'
 
-        if(!$('#toggle').is(':checked')) {
+        if (!$('#toggle').is(':checked')) {
             let customOverlay = new kakao.maps.CustomOverlay({
                 position: path[0],
                 content: `<div class="balloon-image"><img src="/resources/assets/img/${balloonImg}" alt="불법주정차"/><span class="balloon-text">${cnt}</span></div>`,
@@ -420,10 +418,10 @@ $(function () {
     // 로딩 이미지 화면 설정 함수
     $.loading = function (isState) {
         if (isState) {
-            $('.wrap-loading').removeClass('display-none');
+            $('.wrap-loading').show();
         } else {
             setTimeout(function () {
-                $('.wrap-loading').addClass('display-none');
+                $('.wrap-loading').hide();
             }, 500);
         }
     }

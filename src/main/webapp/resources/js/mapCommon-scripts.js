@@ -198,6 +198,7 @@ let beforeCodes = [];
 let isFirst = true; // 최초 인가 확인
 let gpsLatitude = 0.0;
 let gpsLongitude = 0.0;
+let bearing = 0;
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 $.getCurrentPosition = function(map) {
@@ -250,6 +251,8 @@ function myLocationMarker(map, position){
     let img = document.createElement('img');
     img.id = 'location';
     img.src = `/resources/assets/img/location.png`;
+    // img.style.transform = 'rotate(' + bearing + 'deg)';
+
     outlineNode.appendChild(img);
 
     let waves = document.createElement('div');
@@ -264,9 +267,24 @@ function myLocationMarker(map, position){
     map.panTo(position);
 }
 
-$.gpsPoint = function(x, y) {
+
+// for (var j in markerArray){
+//     var marker = new daum.maps.Marker({
+//         map: map,
+//         position: markerArray[j].latlng,
+//         title : markerArray[j].title,
+//         image : iconImage
+//     });
+// $(marker.Na).css('transform','');
+// $(marker.Na).css('transform','rotateZ('+markerArray[j].azimuth+'deg)');
+// array.push(marker);
+
+
+
+$.gpsPoint = function(x, y, _bearing) {
     gpsLatitude = x;
     gpsLongitude = y;
+    bearing = _bearing;
     $('#test').val(x + "," + y + " :: " + (typeof x));
 
     log('webview', gpsLatitude, gpsLongitude);
@@ -343,4 +361,35 @@ $.setFillColor = function(area) {
     else fillColor = '#00afff';
 
     return fillColor;
+}
+
+// 방위각 구하기
+$.getBearing = function (src_lat, src_lng, dest_lat, dest_lng) {
+    let src_lat_rad = src_lat * ( Math.PI / 180);
+    let src_lng_rad = src_lng * ( Math.PI / 180);
+    let dest_lat_rad = dest_lat * ( Math.PI / 180);
+    let dest_lng_rad = dest_lng * ( Math.PI / 180);
+
+    // 각도 거리
+    let rad_distance = 0;
+    rad_distance = Math.acos(Math.sin(src_lat_rad) *  Math.sin(dest_lat_rad) + Math.cos(src_lat_rad) *  Math.cos(dest_lat_rad) * Math.cos(src_lng_rad - dest_lng_rad));
+
+    // 목적지 이동 방향
+    let rad_bearing = Math.acos((Math.sin(dest_lat_rad) - Math.sin(src_lat_rad) * Math.cos(rad_distance)) / (Math.cos(src_lat_rad) * Math.sin(rad_distance)));
+
+    let true_bearing = 0;
+    true_bearing = rad_bearing * ( 180 / Math.PI);
+    if ( Math.sin(dest_lng_rad - src_lng_rad) < 0) {
+        true_bearing = 360 - true_bearing;
+    }
+
+    return true_bearing;
+}
+
+$.getAngle = function (center, target) {
+    let dx = target.x - center.x;
+    let dy = center.y - target.y ;
+    let deg = Math.atan2( dy , dx ) * 180 / Math.PI;
+
+    return (-deg + 450) % 360 | 0;
 }
