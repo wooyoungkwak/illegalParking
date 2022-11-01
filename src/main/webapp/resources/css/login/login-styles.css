@@ -2,7 +2,7 @@
     background-color: #212428;
 }
 
-.container{
+.container_login{
     margin-top: 7%;
     width: 70%;
 }
@@ -14,7 +14,7 @@
     right: 3%;
 }
 
-.btn-dark{
+.btn-dark-login{
     border-color: white;
     border-radius: 20px;
     width: 100%;

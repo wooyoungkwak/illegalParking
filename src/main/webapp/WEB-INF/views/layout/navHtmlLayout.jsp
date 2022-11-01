@@ -13,7 +13,7 @@
     <html>
         <%@ include file="/WEB-INF/views/reference/head.jsp"%>
 
-        <body>
+        <body class="box">
 
             <stripes:layout-component name="nav" />
 

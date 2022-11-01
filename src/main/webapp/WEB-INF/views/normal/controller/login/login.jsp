@@ -14,7 +14,7 @@
     <!-- content -->
     <stripes:layout-component name="contents">
         <body id="login_body">
-            <div class="container">
+            <div class="container container_login">
                 <div class="row justify-content-center">
                     <div class="col-lg-5">
                         <div class="row login_logo">
@@ -38,7 +38,7 @@
                                 </div>
                                 <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                                     <a class="small" href="password"></a>
-                                    <a class="btn btn-dark" id="BtnLogin">로그인</a>
+                                    <a class="btn btn-dark btn-dark-login" id="BtnLogin">로그인</a>
                                 </div>
                             </form>
                         </div>

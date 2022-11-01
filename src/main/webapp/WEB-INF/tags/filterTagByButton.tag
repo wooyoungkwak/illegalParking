@@ -9,13 +9,13 @@
     <c:forEach var="enumValue" items="${enumValues}" varStatus="status">
         <c:choose>
             <c:when test="${status.count == 1}">
-                <a class="btn btn-<c:if test="${current != enumValue}">outline-</c:if>success" id="${enumValue}">${enumValue.value}</a>
+                <a class="rounded-start btn btn-<c:if test="${current != enumValue}">outline-</c:if>success" id="${enumValue}">${enumValue.value}</a>
             </c:when>
             <c:when test="${status.count == 2}">
                 <a class="btn btn-<c:if test="${current != enumValue}">outline-</c:if>danger" id="${enumValue}">${enumValue.value}</a>
             </c:when>
             <c:when test="${status.count == 3}">
-                <a class="btn btn-<c:if test="${current != enumValue}">outline-</c:if>dark" id="${enumValue}">${enumValue.value}</a>
+                <a class="rounded-end btn btn-<c:if test="${current != enumValue}">outline-</c:if>dark" id="${enumValue}">${enumValue.value}</a>
             </c:when>
         </c:choose>
     </c:forEach>

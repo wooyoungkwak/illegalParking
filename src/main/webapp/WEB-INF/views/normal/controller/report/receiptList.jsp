@@ -56,7 +56,6 @@
 							</div>
 							<div class="col-4">
 								<tags:searchTag id="searchStr" searchStr="${searchStr}"/>
-								<tags:searchTagWithSelect id="searchStr2" searchStr="${searchStr2}" items="${ResultType.values()}"/>
 							</div>
 						</form>
 						<table class="table table-hover table-bordered" id="reportTable">
@@ -118,7 +117,7 @@
 		<script type="application/javascript">
 			$(function (){
 
-                // 검색
+                // 검색 함수
                 function search(pageNumber) {
                     if (pageNumber === undefined) {
                         $('#pageNumber').val("1");
@@ -128,20 +127,9 @@
                     location.href = _contextPath + "/receiptList?" + $('form').serialize();
                 }
 
-                //
+                // 상세 페이지 타이틀 설정 함수
                 function initializeReportSetTagTitle(carNum) {
                     $('#reportSetTitle').text(carNum);
-                }
-
-                // 검색 입력 방식 선택
-                function searchSelect(filterColumn) {
-                    if (filterColumn === 'RESULT') {
-                        $('#searchStrGroup').hide();
-                        $('#searchStr2Group').show();
-                    } else {
-                        $('#searchStrGroup').show();
-                        $('#searchStr2Group').hide();
-                    }
                 }
 
                 // 신고 목록 초기화 함수
@@ -183,16 +171,12 @@
 				// 초기화 함수
                 function initialize() {
 
-                    // 검색 이벤트 1
+                    // 검색 이벤트
                     $('#searchStr').next().on('click', function (event) {
                         search();
                     });
 
-                    // 검색 이벤트 2
-                    $('#searchStr2').next().on('click', function (event) {
-                        search();
-                    });
-
+                    // 페이지 이동 이벤트
                     $('#pagination').find("li").on('click', function () {
                         let ul = $(this).parent();
                         let totalSize = ul.children("li").length;
@@ -220,12 +204,13 @@
                         search(pageNumber);
                     });
 
-                    $('#pageSize').on("change", function () {
-                        $('#pageNumber').val(1);
+                    // 페이지 개수 변경 이벤트
+                    $('#paginationSize').on("change", function () {
+                        $('#pageSize').val($(this).val());
                         search();
                     });
 
-                    // 신고 등록 표시
+                    // 신고 등록 상세보기 표시 이벤트
                     $('#reportTable tbody tr').on('click', function () {
 
                         let reportSeqStr = $(this).children("td:eq(0)").find('input').val();
@@ -253,10 +238,7 @@
                         $('#reportSet').show();
                     });
 
-                    $('#filterColumn').find('select[name="filterColumn"]').on('change', function () {
-                        searchSelect($(this).val());
-                    });
-
+                    // 상세보기 닫기 이벤트
                     $('#close').on('click', function () {
 
                         initializeReceiptSetTag({
@@ -285,13 +267,10 @@
                         $('#reportSet').hide();
                     });
 
-                    // 검색 방식 선택
-                    searchSelect();
-
-                    // 신고 등록 화면 감추기
+                    // 신고 등록 화면 감추기 이벤트
                     $('#reportSet').hide();
 
-                    // 신고접수 / 신고제외 / 과태료대상 버튼 이벤트 설정
+                    // 신고접수 / 신고제외 / 과태료대상 버튼 이벤트 설정 이벤트
                     $.eventFilterTagByButton('receiptStateType', search);
 
                 }

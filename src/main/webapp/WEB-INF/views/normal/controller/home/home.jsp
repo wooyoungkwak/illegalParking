@@ -78,7 +78,7 @@
 									<p class="explain">※ 데이터 Ai 자동 분석을 통해 중복 신고, 변동 단속 시간, 오류 신고 등 제외를 통하여 ${totalCount}의 신고 중 ${sendPenaltyCount}건의 신고를 담당 부서에 전달드렸습니다.</p>
 								</div>
 								<div class="col">
-									<div id="barChart" style="height: 350px; width: 100%;"></div>
+									<div id="barChart" style="height: 420px; width: 100%;"></div>
 								</div>
 							</div>
 						</div>
@@ -92,7 +92,7 @@
 
 	<!-- footer -->
 	<stripes:layout-component name="footer">
-		<footer class="py-4 bg-light">
+		<footer class="py-4 bg-dark">
 			<div class="container-fluid px-4">
 				<div class="d-flex align-items-center justify-content-between small">
 					<div class="text-muted">
@@ -194,7 +194,7 @@
                 }
 
                 // 파이 차트
-                $.drawPieChart({
+				$.drawPieChart({
                     completeCount: completeCount,
                     exceptionCount: exceptionCount,
                     penaltyCount: penaltyCount
@@ -205,9 +205,9 @@
                     receiptCounts: receiptCounts,
                     reportCounts: reportCounts
                 });
+
             });
 		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>
-
