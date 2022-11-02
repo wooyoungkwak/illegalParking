@@ -47,7 +47,13 @@
 
     <!-- javascript -->
     <stripes:layout-component name="javascript">
+        <script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
         <script src="<%=contextPath%>/resources/js/pm/map-scripts.js"></script>
+        <script type="application/javascript">
+            $(function (){
+                $.mapSelected = 'pm';
+            });
+        </script>
     </stripes:layout-component>
 
 </stripes:layout-render>

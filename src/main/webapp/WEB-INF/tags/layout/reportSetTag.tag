@@ -78,7 +78,7 @@
 						</td>
 						<td>
 							<div class="ms-5">
-								<span class="fw-bold text-decoration-underline" id="labelHow">어떻게 처리 할가요?</span>
+								<span class="fw-bold text-decoration-underline" id="labelHow">어떻게 처리 할까요?</span>
 							</div>
 						</td>
 					</tr>

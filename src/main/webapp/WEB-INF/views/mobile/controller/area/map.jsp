@@ -96,66 +96,80 @@
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 		<script type="application/javascript">
             // INTERFACE : APP TO WEB
-            function appToGps(x, y) {
-                // let bearing = $.getBearing(gpsLatitude, gpsLongitude, x, y);
+            function appToGps(_gpsLatitude, _gpsLongitude) {
                 let bearing = $.getAngle({
 					x: gpsLatitude,
 					y: gpsLongitude
 				}, {
-					x: x,
-					y: y
-				})
+					x: _gpsLatitude,
+					y: _gpsLongitude
+				});
 
 				$('#location').css({
 					'transform': 'rotate(' + (bearing) + 'deg)'
 				});
-                $('#msgBar').text(bearing);
 
-                $.gpsPoint(x, y, bearing);
-                let position = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
+                let position = new kakao.maps.LatLng(_gpsLatitude, _gpsLongitude);
                 myLocMarker.setPosition(position);
-				areaOfCurrentLocation();
-                if (isFirst) {
+                setMsgBarForAreaOfCurrentLocation(_gpsLatitude, _gpsLongitude, $.polygons);
+
+                if ($.isFirst) {
                     $.initializeMove(position);
                 }
-                isFirst = false;
+
+                $.isFirst = false;
+                gpsLatitude = _gpsLatitude;
+                gpsLongitude = _gpsLongitude;
             }
 
-			function areaOfCurrentLocation (){
-				let p = new Point(gpsLongitude,gpsLatitude);
-				let len = $.polygons.length;
+            // 현재 위치의 구역을 메시지 바에 작성하는 함수
+			function setMsgBarForAreaOfCurrentLocation (_gpsLatitude, _gpsLongitude, polygons){
+
+                let divMsgBar = $('.msg-bar');
+                if ( polygons == null || polygons.length == 0) {
+                    divMsgBar.find('p').text('현재 구역은 주차 가능한 구역입니다.');
+                    divMsgBar.css('background-color', '#FFC527B5');
+                    return;
+				}
+
+				let current_point = new Point(_gpsLongitude,_gpsLatitude);
+				let len = polygons.length;
 				let illegalType;
+
+                let msg;
+                let color;
+                let points;
+
+                let isInsideByCurrent = false;
 				for (let i = 0; i < len; i++) {
-					let points = [];
-					$.polygons[i].points.forEach(function (overlay) {
+                    points = [];
+					polygons[i].points.forEach(function (overlay) {
 						let x = overlay.x, y = overlay.y;
 						points.push(new Point(x, y));
 					})
-					illegalType = $.polygons[i].type;
-					let onePolygon = points;
-					let n = onePolygon.length;
-					let divMsgBar = $('.msg-bar');
-					let msg;
-					let color;
-					if (isInside(onePolygon, n, p)) {
-						if(illegalType === 'ILLEGAL') {
-							msg = '현재 구역은 불법주정차 구역입니다.';
-							color = '#E63636B5'
-						} else if (illegalType === 'FIVE_MINUTE') {
-							msg = '현재 구역은 5분 주차 가능한 구역입니다.';
-							color = '#FF9443B5'
-						}
 
-						divMsgBar.find('p').text(msg);
-						divMsgBar.css('background-color', color);
+					if (isInside(points, points.length, current_point)) {
+                        illegalType = polygons[i].type;
+                        isInsideByCurrent = true;
 						break;
-					} else {
-						msg = '현재 구역은 주차 가능한 구역입니다.';
-						color = '#FFC527B5'
-						divMsgBar.find('p').text(msg);
-						divMsgBar.css('background-color', color);
 					}
 				}
+
+                if ( isInsideByCurrent) {
+                    if(illegalType === 'ILLEGAL') {
+                        msg = '현재 구역은 불법주정차 구역입니다.';
+                        color = '#E63636B5'
+                    } else if (illegalType === 'FIVE_MINUTE') {
+                        msg = '현재 구역은 5분 주차 가능한 구역입니다.';
+                        color = '#FF9443B5'
+                    }
+				} else {
+                    msg = '현재 구역은 주차 가능한 구역입니다.';
+                    color = '#FFC527B5'
+				}
+
+                divMsgBar.find('p').text(msg);
+                divMsgBar.css('background-color', color);
 			}
 
             $(function () {
@@ -173,6 +187,7 @@
                     event.currentTarget.classList.remove("btn-white");
                     event.currentTarget.classList.add("btn-dark");
                     event.currentTarget.classList.add("rounded-pill");
+                    $.currentParkingSeq = 0;
                 }
 
                 // 통계 on off 이벤트 함수
@@ -189,12 +204,15 @@
                 // app 초기화
                 function initializeByMobile() {
 
-					const onOff = document.querySelector(".toggleSwitch");
-
-					onOff.onclick = () => {
-						handleChecked();
-						onOff.classList.toggle('active');
-					}
+                    // 불법 구역 통계 정보 보기 / 감추기 이벤트
+                    $('.toggleSwitch').on('click', function (){
+                        handleChecked();
+                        if ($(this).attr('class').indexOf('active') > -1 ) {
+                            $(this).removeClass('active');
+                        } else {
+                            $(this).addClass('active');
+						}
+					});
 
 					$('#option').on('click', function(){
 						alert('준비중입니다.');
@@ -203,12 +221,6 @@
                     // 불법주차 / 주차장 / 모빌리티 변경 이벤트
                     $('input:radio[name=mapSelect]').change(function (event) {
                         $.loading(true);
-                        if ($.isMobile) {
-                            $.CENTER_LATITUDE = gpsLatitude;
-                            $.CENTER_LONGITUDE = gpsLongitude;
-                            // map.panTo(new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE));
-                        }
-
                         let mapType = $('.mapType');
                         for (const type of mapType) {
                             type.addEventListener("change", handleRadioButton);

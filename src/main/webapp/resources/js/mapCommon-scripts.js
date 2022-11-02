@@ -188,6 +188,9 @@ async function coordinatesToDongCodeKakaoApi(x, y, stat){
 // }
 /* 좌표로 동코드 받기 카카오 REST API end */
 
+// 모바일 여부 확인
+$.isMobile = window.location.pathname.includes('api');
+
 let myMarker = {
     imgSrc: '/resources/assets/img/location_shadow.png',
     imgSize: new kakao.maps.Size(50,50)
@@ -195,10 +198,13 @@ let myMarker = {
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
 let myLocMarker = null;
 let beforeCodes = [];
-let isFirst = true; // 최초 인가 확인
+
+$.isFirst = true; // 최초 인가 확인
 let gpsLatitude = 0.0;
 let gpsLongitude = 0.0;
-let bearing = 0;
+let textOverlays = [];
+
+$.currentParkingSeq = 0;
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 $.getCurrentPosition = function(map) {
@@ -211,7 +217,6 @@ $.getCurrentPosition = function(map) {
                 let currentLng = `${position.coords.longitude}`; // x
                 // 지도 중심좌표를 접속위치로 변경합니다
                 let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
-                log(currentPosition, typeof(currentLat));
 
                 myLocationMarker(map, currentPosition);
 
@@ -251,7 +256,6 @@ function myLocationMarker(map, position){
     let img = document.createElement('img');
     img.id = 'location';
     img.src = `/resources/assets/img/location.png`;
-    // img.style.transform = 'rotate(' + bearing + 'deg)';
 
     outlineNode.appendChild(img);
 
@@ -278,17 +282,6 @@ function myLocationMarker(map, position){
 // $(marker.Na).css('transform','');
 // $(marker.Na).css('transform','rotateZ('+markerArray[j].azimuth+'deg)');
 // array.push(marker);
-
-
-
-$.gpsPoint = function(x, y, _bearing) {
-    gpsLatitude = x;
-    gpsLongitude = y;
-    bearing = _bearing;
-    $('#test').val(x + "," + y + " :: " + (typeof x));
-
-    log('webview', gpsLatitude, gpsLongitude);
-}
 
 // 꼭지점, 중심좌표의 법정동 코드 가져오기
 $.getDongCodesBounds = async function (map){
@@ -364,32 +357,187 @@ $.setFillColor = function(area) {
 }
 
 // 방위각 구하기
-$.getBearing = function (src_lat, src_lng, dest_lat, dest_lng) {
-    let src_lat_rad = src_lat * ( Math.PI / 180);
-    let src_lng_rad = src_lng * ( Math.PI / 180);
-    let dest_lat_rad = dest_lat * ( Math.PI / 180);
-    let dest_lng_rad = dest_lng * ( Math.PI / 180);
-
-    // 각도 거리
-    let rad_distance = 0;
-    rad_distance = Math.acos(Math.sin(src_lat_rad) *  Math.sin(dest_lat_rad) + Math.cos(src_lat_rad) *  Math.cos(dest_lat_rad) * Math.cos(src_lng_rad - dest_lng_rad));
-
-    // 목적지 이동 방향
-    let rad_bearing = Math.acos((Math.sin(dest_lat_rad) - Math.sin(src_lat_rad) * Math.cos(rad_distance)) / (Math.cos(src_lat_rad) * Math.sin(rad_distance)));
-
-    let true_bearing = 0;
-    true_bearing = rad_bearing * ( 180 / Math.PI);
-    if ( Math.sin(dest_lng_rad - src_lng_rad) < 0) {
-        true_bearing = 360 - true_bearing;
-    }
-
-    return true_bearing;
-}
-
 $.getAngle = function (center, target) {
     let dx = target.x - center.x;
     let dy = center.y - target.y ;
     let deg = Math.atan2( dy , dx ) * 180 / Math.PI;
 
     return (-deg + 450) % 360 | 0;
+}
+
+// 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다
+function getMarkerInfo(type, data) {
+    let dataObj = null;
+    if (type === 'parking') {
+        dataObj = {
+            pkName: data.prkplceNm,
+            pkAddr: data.rdnmadr,
+            pkPrice: data.parkingchrgeInfo === '유료' ? `기본 ${data.basicTime} 분 | ${data.addUnitTime} 분당 ${data.addUnitCharge}원 추가` : '',
+            pkOper: data.parkingchrgeInfo,
+            pkCount: data.prkcmprt,
+            pkPhone: data.phoneNumber,
+            pkLat: data.latitude,
+            pkLng: data.longitude
+        }
+    } else if (type === 'pm') {
+        dataObj = {
+            pmName: '-',
+            pmPrice: '-',
+            pmOper: '-',
+            pmModel: '-'
+        }
+    }
+
+    return {
+        type: type,
+        data: dataObj
+    };
+}
+
+// 마커 이미지 설정 함수
+function setImgOrigin() {
+    let imgSrc;
+
+    let type = 'parking';
+    let imageSize = new kakao.maps.Size(70, 77);
+    if ($.mapSelected === 'pm') {
+        type = 'pm';
+        let pmType = 'bike';
+        pmType = pmType === 'bike' ? 'bike' : 'kick';
+        imgSrc = {
+            normalOrigin: `/resources/assets/img/${pmType}_off.png`,
+            clickOrigin: `/resources/assets/img/${pmType}_on.png`
+        }
+    } else {
+        imageSize = new kakao.maps.Size(70, 45);
+        imgSrc = {
+            normalOrigin: '/resources/assets/img/panel_off.png',
+            clickOrigin: '/resources/assets/img/panel_on.png'
+        }
+    }
+
+    return {type: type, imgSrc: imgSrc, imgSize: imageSize}
+}
+
+// mobile 인 경우 Overlay 정보 설정 함수
+$.setOverlayInfoByMobile = function (data) {
+    webToApp.postMessage(JSON.stringify('click'));
+    let obj = getMarkerInfo($.mapSelected, data);
+    webToApp.postMessage(JSON.stringify(obj));
+}
+
+// 마커 커스텀 오버레이 추가 함수
+$.addOverlay = function (data, map, callback) {
+    let imgOrigin = setImgOrigin();
+
+    let contentNode = document.createElement('div'); // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
+    // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
+    contentNode.className = 'content_wrap';
+
+    let imgNode = document.createElement('div');
+    imgNode.id = 'img_wrap';
+
+    let img = document.createElement('img');
+
+    if ($.currentParkingSeq === data.parkingSeq) {
+        img.src = imgOrigin.imgSrc.clickOrigin;
+    } else {
+        img.src = imgOrigin.imgSrc.normalOrigin;
+    }
+
+    img.width = imgOrigin.imgSize.width;
+    img.height = imgOrigin.imgSize.height;
+    img.className = 'markerImg';
+
+    imgNode.appendChild(img);
+
+    if ($.mapSelected === 'parking') {
+        let text = '현재무료'
+        if (data.parkingchrgeInfo === '유료') text = '유료'
+        let span = document.createElement('span')
+
+        span.className = 'price-text';
+        span.appendChild(document.createTextNode(text));
+
+        if ($.currentParkingSeq == data.parkingSeq) {
+            span.style.color = 'white';
+        } else {
+            span.style.color = 'black';
+        }
+        imgNode.appendChild(span);
+    }
+
+    let position = new kakao.maps.LatLng(data.latitude, data.longitude);
+
+    imgNode.addEventListener('click', function (event) {
+        let src = $(this).children('img:first').attr('src');
+        let imgType = src.split("/").pop().replace(".png", "");
+        let isOn = imgType.split("_").pop().includes("on");
+
+        let markerImg = $('.markerImg');
+        let priceText = $('.price-text');
+        for (const img of markerImg) {
+            img.src = imgOrigin.imgSrc.normalOrigin;
+        }
+
+        if ($.mapSelected === 'parking') {
+            for (const text of priceText) {
+                text.style.color = 'black';
+            }
+        }
+
+        if (!isOn) {
+            this.children[0].src = imgOrigin.imgSrc.clickOrigin;
+            if ($.mapSelected === 'parking') {
+                this.children[1].style.color = 'white';
+            }
+            $.currentParkingSeq = data.parkingSeq;
+            map.panTo(position);
+            callback(data);
+        } else {
+            if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
+            $.currentParkingSeq = 0;
+        }
+    });
+
+    contentNode.appendChild(imgNode);
+
+    // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
+    contentNode.className = 'content_wrap';
+
+    let markerOverlay = new kakao.maps.CustomOverlay({
+        clickable: true,
+        zIndex: 0,
+        position: position,
+        content: contentNode,
+        map: map
+    });
+    textOverlays.push(markerOverlay);
+}
+
+$.initOverlay = function () {
+    if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
+    $.currentParkingSeq = 0;
+
+    if ($.mapSelected !== 'zone') {
+        let imgOrigin = setImgOrigin();
+        let markerImg = $('.markerImg');
+        let priceText = $('.price-text');
+        for (const img of markerImg) {
+            img.src = imgOrigin.imgSrc.normalOrigin;
+        }
+        if ($.mapSelected === 'parking') {
+            for (const text of priceText) {
+                text.style.color = 'black';
+            }
+        }
+    }
+}
+
+// TextOverlay 삭제 함수
+$.removeTextOverlays = function () {
+    for (const overlay of textOverlays) {
+        overlay.setMap(null);
+    }
+    textOverlays = [];
 }

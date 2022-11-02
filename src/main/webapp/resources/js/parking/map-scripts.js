@@ -45,14 +45,8 @@ $(function (callback) {
 
       if (result.success) {
         removeMarker();
-
         result.data.forEach(function(data){
-          let marker = addMarker(new kakao.maps.LatLng(data.latitude, data.longitude));
-          kakaoEvent.addListener(marker, 'click', function() {
-            map.panTo(marker.getPosition());
-            // 커스텀 오버레이 컨텐츠를 설정합니다
-            displayParkingInfo(data);
-          });
+          $.addOverlay(data, map, displayParkingInfo);
         });
       }
     }
@@ -60,7 +54,6 @@ $(function (callback) {
 
   // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
   function addMarker(position) {
-    // let imageSrc = 'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png'; // 마커 이미지 url, 스프라이트 이미지를 씁니다
     let imageSrc = '/resources/assets/img/parking.png'; // 마커 이미지 url, 스프라이트 이미지를 씁니다
     let imageSize = new kakao.maps.Size(30, 30);  // 마커 이미지의 크기
     let imageOption = {/*offset: new kakao.maps.Point(18, 55)*/}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.

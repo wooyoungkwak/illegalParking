@@ -5,7 +5,7 @@ $(function () {
     let receiptCnts = [];
 
     $.polygons = [];
-    $.isMobile = window.location.pathname.includes('api');
+
     // $.isMobile = false;
     $.CENTER_LATITUDE = 35.02035492064903;
     $.CENTER_LONGITUDE = 126.79383256393595;
@@ -20,7 +20,7 @@ $(function () {
     let mapContainer = document.getElementById('map');
     let map;
     let kakaoEvent = kakao.maps.event;
-    let textOverlays = [];
+
     let polygonStyle = {
         "draggable": true,
         "removable": true,
@@ -66,132 +66,6 @@ $(function () {
         kakaoEvent.addListener(opt.target, opt.event, opt.func);
     }
 
-    // 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다
-    function getMarkerInfo(type, data) {
-        let dataObj = null;
-        if (type === 'parking') {
-            dataObj = {
-                pkName: data.prkplceNm,
-                pkAddr: data.rdnmadr,
-                pkPrice: data.parkingchrgeInfo === '유료' ? `기본 ${data.basicTime} 분 | ${data.addUnitTime} 분당 ${data.addUnitCharge}원 추가` : '',
-                pkOper: data.parkingchrgeInfo,
-                pkCount: data.prkcmprt,
-                pkPhone: data.phoneNumber,
-                pkLat: data.latitude,
-                pkLng: data.longitude
-            }
-        } else if (type === 'pm') {
-            dataObj = {
-                pmName: '-',
-                pmPrice: '-',
-                pmOper: '-'
-            }
-        }
-
-        return {
-            type: type,
-            data: dataObj
-        };
-    }
-
-    // 마커 이미지 설정 함수
-    function setImgOrigin() {
-        let imgSrc;
-
-        let type = 'parking';
-        let imageSize = new kakao.maps.Size(70, 77);
-        if ($.mapSelected === 'pm') {
-            type = 'pm';
-            let pmType = 'bike';
-            pmType = pmType === 'bike' ? 'bike' : 'kick';
-            imgSrc = {
-                normalOrigin: `/resources/assets/img/${pmType}_off_3x.png`,
-                clickOrigin: `/resources/assets/img/${pmType}_on_3x.png`
-            }
-        } else {
-            imageSize = new kakao.maps.Size(70, 45);
-            imgSrc = {
-                normalOrigin: '/resources/assets/img/panel_off.png',
-                clickOrigin: '/resources/assets/img/panel_on.png'
-            }
-        }
-
-        return {type: type, imgSrc: imgSrc, imgSize: imageSize}
-    }
-
-    // 마커 커스텀 오버레이 추가 함수
-    function addOverlay(data) {
-        let imgOrigin = setImgOrigin();
-
-        let contentNode = document.createElement('div'); // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
-        // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
-        contentNode.className = 'content_wrap';
-
-        let imgNode = document.createElement('div');
-        imgNode.id = 'img_wrap';
-
-        let img = document.createElement('img');
-        img.src = imgOrigin.imgSrc.normalOrigin;
-        img.width = imgOrigin.imgSize.width;
-        img.height = imgOrigin.imgSize.height;
-        img.className = 'markerImg';
-
-        imgNode.appendChild(img);
-
-        if ($.mapSelected === 'parking') {
-            let text = '현재무료'
-            if (data.parkingchrgeInfo === '유료') text = '유료'
-            let span = document.createElement('span')
-
-            span.className = 'price-text';
-            span.appendChild(document.createTextNode(text));
-            imgNode.appendChild(span);
-        }
-
-        imgNode.addEventListener('click', function (event) {
-            let imgOrigin = setImgOrigin();
-            let isOn = $(this).children('img:first').attr('src').includes('panel_on');
-            let markerImg = $('.markerImg');
-            let priceText = $('.price-text');
-            for (const img of markerImg) {
-                img.src = imgOrigin.imgSrc.normalOrigin;
-            }
-            if ($.mapSelected === 'parking') {
-                for (const text of priceText) {
-                    text.style.color = 'black';
-                }
-            }
-            if (!isOn) {
-                this.children[0].src = imgOrigin.imgSrc.clickOrigin;
-                if ($.mapSelected === 'parking') this.children[1].style.color = 'white';
-                map.panTo(position);
-                if ($.isMobile) {
-                    // 커스텀 오버레이 컨텐츠를 설정합니다
-                    webToApp.postMessage(JSON.stringify('click'));
-                    let obj = getMarkerInfo(imgOrigin.type, data);
-                    webToApp.postMessage(JSON.stringify(obj));
-                }
-            } else {
-                webToApp.postMessage(JSON.stringify('click'));
-            }
-        });
-
-        contentNode.appendChild(imgNode);
-
-        // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
-        contentNode.className = 'content_wrap';
-        let position = new kakao.maps.LatLng(data.latitude, data.longitude);
-        let markerOverlay = new kakao.maps.CustomOverlay({
-            clickable: true,
-            zIndex: 0,
-            position: position,
-            content: contentNode,
-            map: map
-        });
-        textOverlays.push(markerOverlay);
-
-    }
-
     // zone 초기화 함수
     function initializeZone(opt) {
         let result = $.JJAjaxAsync(opt);
@@ -220,50 +94,7 @@ $(function () {
             target: map,
             event: 'click',
             func: function (mouseEvent) {
-                if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
-
-                // let latlng = mouseEvent.latLng;
-                // let p = new Point(latlng.getLng(), latlng.getLat());
-                // let len = overlays.length;
-                // for (let i = 0; i < len; i++) {
-                //     let points = [];
-                //     overlays[i].getPath().forEach(function (overlay) {
-                //         let x = overlay.getLng(), y = overlay.getLat();
-                //         points.push(new Point(x, y));
-                //     })
-                //     let onePolygon = points;
-                //     let n = onePolygon.length;
-                //     if (isInside(onePolygon, n, p)) {
-                //         // alert('hello')
-                //         break;
-                //     } else {
-                //     }
-                // }
-
-                // if (!!selectedMarker && selectedMarker.includes('panel_off.png')) {
-                //     selectedMarker = null
-                //     $('#img_wrap').trigger('click');
-                //     //$('.markerImg').src = selectedMarker;
-                //     // selectedMarker.setImage(selectedMarker.normalImage);
-                // }
-                // if (!!selectedMarker) {
-                //     selectedMarker.setImage(selectedMarker.normalImage);
-                //     selectedMarker = null
-                // }
-
-                if ($.mapSelected !== 'zone') {
-                    let imgOrigin = setImgOrigin();
-                    let markerImg = $('.markerImg');
-                    let priceText = $('.price-text');
-                    for (const img of markerImg) {
-                        img.src = imgOrigin.imgSrc.normalOrigin;
-                    }
-                    if ($.mapSelected === 'parking') {
-                        for (const text of priceText) {
-                            text.style.color = 'black';
-                        }
-                    }
-                }
+                $.initOverlay();
             }
         });
 
@@ -288,7 +119,6 @@ $(function () {
                         }
                     }
                 }
-
             }
         });
 
@@ -305,6 +135,14 @@ $(function () {
                 } else {
                     await $.processDongCodesBounds();
                 }
+            }
+        });
+
+        setKakaoEvent({
+            target: map,
+            event: 'dragend',
+            func: function () {
+                $.initOverlay();
             }
         });
 
@@ -329,15 +167,6 @@ $(function () {
             overlay.setMap(null);
         }
         statisticsOverlays = [];
-    }
-
-
-    // TextOverlay 삭제 함수
-    $.removeTextOverlays = function () {
-        for (const overlay of textOverlays) {
-            overlay.setMap(null);
-        }
-        textOverlays = [];
     }
 
     // 다각형을 생상하고 이벤트를 등록하는 함수입니다
@@ -439,8 +268,7 @@ $(function () {
         if (result.success) {
             $.removeTextOverlays();
             result.data.forEach(function (data) {
-                // addMarker(data);
-                addOverlay(data);
+                $.addOverlay(data, map, $.setOverlayInfoByMobile);
             });
         }
     }
