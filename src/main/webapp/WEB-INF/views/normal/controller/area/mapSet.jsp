@@ -62,7 +62,7 @@
 						</div>
 					</div>
 
-					<p id="postscript">20m : 1레벨, 50m : 3레벨, 3레벨 이하 구역이 표시. 현재 <span id="mapLevel">3레벨</span></p>
+					<p class="text-danger fs-10 m-0 mt-1 mb-1" id="postscript"> <i class="fas fa-exclamation-triangle"></i> 20m : 1레벨, 50m : 3레벨, 3레벨 이하 구역이 표시. 현재 [ <span class="text-primary fw-bold" id="mapLevel">3레벨</span> ]</p>
 
 					<layoutTags:mapSetModalTag id="areaSettingModal" typeValues="${IllegalType.values()}" enumValues="${LocationType.values()}" current=""/>
 
