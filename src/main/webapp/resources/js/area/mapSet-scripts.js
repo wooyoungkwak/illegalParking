@@ -382,7 +382,24 @@ $(function () {
         $('#btnAddOverlay').click(function () {
             $('#areaSettingModal').offcanvas('hide');
             setOverlayType('POLYGON');
+            $(this).removeClass("btn-outline-success");
+            $(this).addClass("btn-success");
+
+            $('#btnModifyOverlay').addClass("btn-outline-dark");
+            $('#btnModifyOverlay').removeClass("btn-dark");
         });
+
+        //
+        $('#btnModifyOverlay').click(function () {
+
+
+            $(this).removeClass("btn-outline-dark");
+            $(this).addClass("btn-dark");
+
+            $('#btnAddOverlay').addClass("btn-outline-success");
+            $('#btnAddOverlay').removeClass("btn-success");
+        });
+
 
         // 주정차 별 구역 조회
         $('input:radio[name=searchIllegalType]').change(async function () {

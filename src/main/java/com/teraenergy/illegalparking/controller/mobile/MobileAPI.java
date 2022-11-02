@@ -22,7 +22,6 @@ import com.teraenergy.illegalparking.model.entity.notice.domain.Notice;
 import com.teraenergy.illegalparking.model.entity.notice.service.NoticeService;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
 import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
-import com.teraenergy.illegalparking.model.entity.point.service.PointService;
 import com.teraenergy.illegalparking.model.entity.product.domain.Product;
 import com.teraenergy.illegalparking.model.entity.product.service.ProductService;
 import com.teraenergy.illegalparking.model.entity.receipt.domain.Receipt;
@@ -67,24 +66,16 @@ public class MobileAPI {
 
     private final UserService userService;
     private final UserDtoService userDtoService;
-
     private final ReceiptService receiptService;
     private final CalculateService calculateService;
     private final NoticeService noticeService;
     private final ProductService productService;
-    private final PointService pointService;
-
     private final IllegalEventService illegalEventService;
-
     private final ReportService reportService;
     private final LawDongService lawDongService;
-
     private final IllegalZoneMapperService illegalZoneMapperService;
-
     private final CommentService commentService;
-
     private final MyCarService myCarService;
-
     private final ParkingService parkingService;
 
     /**
@@ -775,48 +766,4 @@ public class MobileAPI {
         }
     }
 
-
-    /**
-     * 공공 기관의 신고 정보 요청 데이터 ~~~~
-     * 언제 부터 (startDate) ~ 언제 까지 (stopDate)
-     */
-    @PostMapping("/api/report/gets")
-    @ResponseBody
-    public Object getReports(@RequestBody String body) throws TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        String userName = jsonNode.get("id").asText();
-        String password = jsonNode.get("password").asText();
-
-        LocalDateTime startDateTime = StringUtil.convertStringToDateTime(jsonNode.get("sTime").asText(), "yyyy-MM-dd HH:mm");
-        LocalDateTime endDateTime = StringUtil.convertStringToDateTime(jsonNode.get("eTime").asText(), "yyyy-MM-dd HH:mm");
-
-        User user = userService.getByGovernmentOffice(userName, password);
-
-        List<Map<String, Object>> resultMap = Lists.newArrayList();
-
-        if (user == null) {
-            throw new TeraException(TeraExceptionCode.USER_IS_NOT_EXIST);
-        }
-
-        List<Report> reports = reportService.getByGovernmentOffice(user.getUserSeq(), startDateTime, endDateTime);
-
-        for (Report report : reports) {
-            Map<String, Object> map = Maps.newHashMap();
-            Receipt receipt = report.getReceipt();
-            map.put("userName", receipt.getUser().getName());
-            map.put("carNum", receipt.getCarNum());
-            map.put("firstFileName", receipt.getFileName());
-            map.put("secondFileName", receipt.getSecondFileName());
-            map.put("regDt", report.getRegDt());
-            map.put("secondRegDt", receipt.getSecondRegDt());
-            map.put("firstRegDt", receipt.getRegDt());
-            map.put("addr", receipt.getAddr());
-            map.put("illegalType", receipt.getIllegalZone().getIllegalEvent().getIllegalType().getValue());
-            map.put("reportState", report.getReportStateType());
-
-            resultMap.add(map);
-        }
-
-        return resultMap;
-    }
 }

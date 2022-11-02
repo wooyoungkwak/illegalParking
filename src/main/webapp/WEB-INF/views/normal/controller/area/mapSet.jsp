@@ -49,6 +49,7 @@
 								<div class="col-6 d-flex justify-content-end">
 									<div class="me-3">
 										<a class="btn btn-sm btn-outline-success" id="btnAddOverlay">구역추가</a>
+										<a class="btn btn-sm btn-outline-dark" id="btnModifyOverlay">구역수정</a>
 										<a class="btn btn-sm btn-outline-primary" id="btnSet">저장</a>
 									</div>
 								</div>
