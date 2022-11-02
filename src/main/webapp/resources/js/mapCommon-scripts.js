@@ -248,26 +248,29 @@ $.getMobileCurrentPosition = function(map) {
 
 //현재위치 마커 커스텀 오버레이
 function myLocationMarker(map, position){
-    let locationOverlay = new kakao.maps.CustomOverlay({zIndex:1, yAnchor: 3 });
+    if($.isMobile) {
+        let locationOverlay = new kakao.maps.CustomOverlay(
+            {zIndex: 1, yAnchor: 3});
 
-    let outlineNode = document.createElement('div');
-    outlineNode.className = 'outline';
+        let outlineNode = document.createElement('div');
+        outlineNode.className = 'outline';
 
-    let img = document.createElement('img');
-    img.id = 'location';
-    img.src = `/resources/assets/img/location.png`;
+        let img = document.createElement('img');
+        img.id = 'location';
+        img.src = `/resources/assets/img/location.png`;
 
-    outlineNode.appendChild(img);
+        outlineNode.appendChild(img);
 
-    let waves = document.createElement('div');
-    waves.className = 'waves';
-    outlineNode.appendChild(waves);
+        let waves = document.createElement('div');
+        waves.className = 'waves';
+        outlineNode.appendChild(waves);
 
-    // 커스텀 오버레이를 지도에 표시합니다
-    locationOverlay.setPosition(position);
-    locationOverlay.setContent(outlineNode)
-    locationOverlay.setMap(map);
-    myLocMarker = locationOverlay;
+        // 커스텀 오버레이를 지도에 표시합니다
+        locationOverlay.setPosition(position);
+        locationOverlay.setContent(outlineNode)
+        locationOverlay.setMap(map);
+        myLocMarker = locationOverlay;
+    }
     map.panTo(position);
 }
 
@@ -459,7 +462,7 @@ $.addOverlay = function (data, map, callback) {
         span.className = 'price-text';
         span.appendChild(document.createTextNode(text));
 
-        if ($.currentParkingSeq == data.parkingSeq) {
+        if ($.currentParkingSeq === data.parkingSeq) {
             span.style.color = 'white';
         } else {
             span.style.color = 'black';
@@ -473,6 +476,7 @@ $.addOverlay = function (data, map, callback) {
         let src = $(this).children('img:first').attr('src');
         let imgType = src.split("/").pop().replace(".png", "");
         let isOn = imgType.split("_").pop().includes("on");
+        data.isOn = isOn;
 
         let markerImg = $('.markerImg');
         let priceText = $('.price-text');
@@ -495,6 +499,9 @@ $.addOverlay = function (data, map, callback) {
             map.panTo(position);
             callback(data);
         } else {
+
+            $('.close').trigger('click');
+
             if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
             $.currentParkingSeq = 0;
         }

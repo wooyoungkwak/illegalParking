@@ -11,15 +11,6 @@
   z-index: 1;
 }
 
-/*.getdata {*/
-/*  position: absolute;*/
-/*  top: 370px;*/
-/*  left: 10px;*/
-/*  z-index: 1;*/
-/*}*/
-
-
-
 @media (max-width: 767px){
   /*//모바일*/
   #drawingMap, #map {
@@ -86,28 +77,6 @@
   font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
 }
 
-/*
-.custom-map-control span {
-  display: block;
-  width: 65px;
-  height: 30px;
-  float: left;
-  text-align: center;
-  line-height: 30px;
-  cursor: pointer;
-}
-*/
-.test {
-  position: absolute;
-  top: 450px;
-  right: 30px;
-  width: 284px;
-  height: 80px;
-  overflow: hidden;
-  z-index: 1;
-}
-
-
 .custom-control {
   position: absolute;
   bottom: 15%;
@@ -133,13 +102,6 @@
   margin: 12px 0;
   border: none;
 }
-/*
-
-.custom-control span:first-child {
-  border-bottom: 1px solid #bfbfbf;
-}
-/**!*/
-
 .msg-bar {
   z-index: 1;
   position: absolute;
@@ -152,22 +114,6 @@
   padding : 10px 0;
   background-color: #FFC527B5;
 }
-
-/*.custom-btn-control span img {*/
-/*  width: 48px;*/
-/*  height: 48px;*/
-/*  border: none;*/
-/*  !*margin: -5px -5px 3px;*!*/
-/*  !*filter: invert(43%) sepia(13%) saturate(814%) hue-rotate(183deg) brightness(101%) contrast(93%);*!*/
-
-/*}*/
-
-
-/*.custom-btn-control .btn {*/
-/*  !*background: #fff;*!*/
-/*  !*background: linear-gradient(#fff, #e6e6e6);*!*/
-/*}*/
-
 
 .balloon-image {
   position: relative;

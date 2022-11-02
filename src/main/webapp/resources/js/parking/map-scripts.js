@@ -1,90 +1,39 @@
-$(function (callback) {
-  let mapId;
+$(function () {
+
+  // 지도 div
+  let mapContainer = document.getElementById('map');
   let map;
-  let options;
-  let manager;
-  let kakaoEvent;
-  let markers = [];
+  let kakaoEvent = kakao.maps.event;
   let parkingOverlay = new kakao.maps.CustomOverlay({zIndex:1, yAnchor: 3 });
 
   let CENTER_LATITUDE = 35.02035492064902;
   let CENTER_LONGITUDE = 126.79383256393594;
 
-
-  // function getParking(seq) {
-  //   let result = $.JJAjaxAsync({
-  //     url: _contextPath + '/get',
-  //     data: {
-  //       parkingSeq: seq
-  //     }
-  //   });
-  //
-  // }
-
-  // 지도 위에 표시되고 있는 마커를 모두 제거합니다
-  function removeMarker() {
-    for (const marker of markers) {
-      marker.setMap(null);
-    }
-    markers = [];
+  // 카카오 맵 이벤트 설정
+  function setKakaoEvent(opt) {
+    kakaoEvent.addListener(opt.target, opt.event, opt.func);
   }
 
-  async function getsParking() {
-    let obj = await $.getDongCodesBounds(map);
-    let codes = obj.codes;
-
+  function getsParking(codes) {
     //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
-    let result;
-    if (!obj.uniqueCodesCheck) {
-      result = $.JJAjaxAsync({
-        url: _contextPath + '/gets',
-        data: {
-          codes: codes
-        }
-      });
-
-      if (result.success) {
-        removeMarker();
-        result.data.forEach(function(data){
-          $.addOverlay(data, map, displayParkingInfo);
-        });
+    let result = $.JJAjaxAsync({
+      url: _contextPath + '/gets',
+      data: {
+        codes: codes
       }
-    }
-  }
-
-  // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
-  function addMarker(position) {
-    let imageSrc = '/resources/assets/img/parking.png'; // 마커 이미지 url, 스프라이트 이미지를 씁니다
-    let imageSize = new kakao.maps.Size(30, 30);  // 마커 이미지의 크기
-    let imageOption = {/*offset: new kakao.maps.Point(18, 55)*/}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
-    let markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption);
-    let marker = new kakao.maps.Marker({
-      position: position, // 마커의 위치
-      image: markerImage
     });
 
-    marker.setMap(map); // 지도 위에 마커를 표출합니다
-    markers.push(marker);  // 배열에 생성된 마커를 추가합니다
-
-    return marker;
+    if (result.success) {
+      $.removeTextOverlays();
+      result.data.forEach(function (data) {
+        $.addOverlay(data, map, displayParkingInfo);
+      });
+      beforeCodes = codes;
+    }
   }
 
   // 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다
   function displayParkingInfo (parking) {
-
-    let obj = {
-              type: 'parking',
-              data: {
-                  pkName: parking.prkplceNm,
-                  pkAddr: parking.rdnmadr,
-                  pkPrice: `기본 ${parking.basicTime} 분 | ${parking.addUnitTime} 분당 ${parking.addUnitCharge}원 추가`,
-                  pkOper: parking.parkingchrgeInfo,
-                  pkCount: parking.prkcmprt,
-                  pkPhone: parking.phoneNumber
-              }
-          };
-    // webToApp.postMessage(JSON.stringify(obj));
-
     let contentNode = document.createElement('div'); // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
     // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
     contentNode.className = 'parkingInfo_wrap';
@@ -135,60 +84,83 @@ $(function (callback) {
     parkingOverlay.setMap(map);
   }
 
-  // 맵 초기화
-  function initialize() {
-
-    mapId = document.getElementById('map');
-
-    // mapId.style.width = "1024px";
-    // mapId.style.height = "768px";
-
-    // 지도를 표시할 지도 옵션으로  지도를 생성합니다
-    map = new kakao.maps.Map(mapId, {
+  // 카카오 초기화
+  function initializeKakao() {
+    map = {
       center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
       level: 3, // 지도의 확대 레벨
       disableDoubleClickZoom: true
+    };
+
+    // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+    map = new kakao.maps.Map(mapContainer, map);
+
+    setKakaoEvent({
+      target: map,
+      event: 'click',
+      func: function (mouseEvent) {
+        parkingOverlay.setMap(null);
+        $.initOverlay();
+      }
     });
 
-    options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
-      map: map, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
-      drawingMode: [ // Drawing Manager로 제공할 그리기 요소 모드입니다
-        kakao.maps.drawing.OverlayType.MARKER
-      ],
-      // 사용자에게 제공할 그리기 가이드 툴팁입니다
-      // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
-      guideTooltip: ['draw', 'drag', 'edit'],
-      markerOptions: {
-        draggable: true,
-        removable: true,
+    // 확대수준이 변경되거나 지도가 이동했을때 타일 이미지 로드가 모두 완료되면 발생
+    setKakaoEvent({
+      target: map,
+      event: 'idle',
+      func: async function () {
+        // 지도의  레벨을 얻어옵니다
+        let level = map.getLevel();
+
+        if (level < 4) {
+          let obj = await $.getDongCodesBounds(map);
+          // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
+          if (!obj.uniqueCodesCheck) {
+            await getsParking(obj.codes);
+          }
+        }
       }
-    }
+    });
 
-    /** DRAW EVENT */
-    // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
-    manager = new kakao.maps.drawing.DrawingManager(options);
+    // 중심 좌표나 확대 수준이 변경되면 발생한다.
+    setKakaoEvent({
+      target: map,
+      event: 'zoom_changed',
+      func: async function () {
+        // 지도의  레벨을 얻어옵니다
+        let level = map.getLevel();
 
-    /** MAP EVENT */
-    kakaoEvent = kakao.maps.event;
-
-    // 확대, 중심좌표 변경 시
-    kakaoEvent.addListener(map, 'idle', async function () {
-      // 지도의  레벨을 얻어옵니다
-      let level = map.getLevel();
-      let obj = (await $.getDongCodesBounds(map));
-
-      //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
-      if (!obj.uniqueCodesCheck) {
-        await getsParking();
-        beforeCodes = obj.codes;
+        if (level > 3) {
+          parkingOverlay.setMap(null);
+          $.removeTextOverlays();
+        } else {
+          let obj = await $.getDongCodesBounds(map);
+          if (level === 3) {
+            await getsParking(obj.codes);
+          } else {
+            if (!obj.uniqueCodesCheck) {
+              await getsParking(obj.codes);
+            }
+          }
+        }
       }
-    })
+    });
+
+    setKakaoEvent({
+      target: map,
+      event: 'dragend',
+      func: function () {
+        parkingOverlay.setMap(null);
+        $.initOverlay();
+      }
+    });
+
+    $.getCurrentPosition(map);
+
   }
 
-  initialize();
+  initializeKakao();
 
-  (async () => {
-    await getsParking();
-  })();
+
 
 });

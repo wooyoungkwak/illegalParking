@@ -313,6 +313,8 @@ $(function () {
             event: 'rightclick',
             func: function (mouseEvent) {
                 // 그리기 중이면 그리기를 취소합니다
+                $('#btnAddOverlay').addClass("btn-outline-success");
+                $('#btnAddOverlay').removeClass("btn-success");
                 manager.cancel();
             }
         });
@@ -322,6 +324,8 @@ $(function () {
             target: drawingMap,
             event: 'dblclick',
             func: function (mouseEvent) {
+                $('#btnAddOverlay').removeClass("btn-outline-success");
+                $('#btnAddOverlay').addClass("btn-success");
                 $('#areaSettingModal').offcanvas('hide');
                 setOverlayType('POLYGON');
             }
@@ -511,7 +515,6 @@ $(function () {
                 if (result.success) {
                     let index = zoneSeqs.indexOf(Number(form.zoneSeq));
                     zoneTypes[index] = form.illegalType;
-                    // log(index," :: ", zoneTypes[index]);
                     drawingPolygon(getPolygonData());
                     $('#areaSettingModal').offcanvas('hide');
                     alert("설정되었습니다.");

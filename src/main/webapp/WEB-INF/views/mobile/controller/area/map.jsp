@@ -120,13 +120,14 @@
                 $.isFirst = false;
                 gpsLatitude = _gpsLatitude;
                 gpsLongitude = _gpsLongitude;
+				$.loading(false);
             }
 
             // 현재 위치의 구역을 메시지 바에 작성하는 함수
 			function setMsgBarForAreaOfCurrentLocation (_gpsLatitude, _gpsLongitude, polygons){
 
                 let divMsgBar = $('.msg-bar');
-                if ( polygons == null || polygons.length == 0) {
+                if ( polygons == null || polygons.length === 0) {
                     divMsgBar.find('p').text('현재 구역은 주차 가능한 구역입니다.');
                     divMsgBar.css('background-color', '#FFC527B5');
                     return;
@@ -266,7 +267,7 @@
                     });
 
                     $.findMe();
-                    $.loading(false);
+
 
                 }
 

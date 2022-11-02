@@ -106,9 +106,7 @@ $(function () {
                 // 지도의  레벨을 얻어옵니다
                 let level = map.getLevel();
 
-                if (level > 3) {
-                    if ($.mapSelected === 'zone') $.removeOverlays();
-                } else {
+                if (level <= 3) {
                     let obj = await $.getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if (!obj.uniqueCodesCheck) {
@@ -133,7 +131,14 @@ $(function () {
                 if (level > 3) {
                     if ($.mapSelected === 'zone') $.removeOverlays();
                 } else {
-                    await $.processDongCodesBounds();
+                    let obj = await $.getDongCodesBounds(map);
+                    if (level === 3) {
+                        await $.processDongCodesBounds();
+                    } else {
+                        if (!obj.uniqueCodesCheck) {
+                            await $.processDongCodesBounds();
+                        }
+                    }
                 }
             }
         });

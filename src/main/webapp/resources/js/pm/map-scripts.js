@@ -1,84 +1,166 @@
-$(function (callback) {
-    let mapId;
-    let drawingMap;
-    let options;
-    let manager;
-    let kakaoEvent;
-    let marker;
+$(function () {
 
-    // 맵 초기화
-    function initialize() {
-        mapId = document.getElementById('drawingMap');
+    // 지도 div
+    let mapContainer = document.getElementById('map');
+    let map;
+    let kakaoEvent = kakao.maps.event;
+    let pmOverlay = new kakao.maps.CustomOverlay({zIndex:1, yAnchor: 3 });
 
-        // 지도를 표시할 지도 옵션으로  지도를 생성합니다
-        drawingMap = new kakao.maps.Map(mapId, {
-            center: new kakao.maps.LatLng(35.02035492064902, 126.79383256393594), // 지도의 중심좌표
-            level: 3, // 지도의 확대 레벨
-            disableDoubleClickZoom: true
-        });
+    let CENTER_LATITUDE = 35.02035492064902;
+    let CENTER_LONGITUDE = 126.79383256393594;
 
-        options = { // Drawing Manager를 생성할 때 사용할 옵션입니다
-            map: drawingMap, // Drawing Manager로 그리기 요소를 그릴 map 객체입니다
-            drawingMode: [ // Drawing Manager로 제공할 그리기 요소 모드입니다
-                kakao.maps.drawing.OverlayType.POLYGON
-            ],
-            // 사용자에게 제공할 그리기 가이드 툴팁입니다
-            // 사용자에게 도형을 그릴때, 드래그할때, 수정할때 가이드 툴팁을 표시하도록 설정합니다
-            guideTooltip: ['draw', 'drag', 'edit'],
-            polygonOptions: {
-                draggable: true,
-                removable: true,
-                editable: true,
-                strokeColor: '#a2a0a0',
-                fillColor: '#FF3333',
-                fillOpacity: 0.5,
-                hintStrokeStyle: 'dash',
-                hintStrokeOpacity: 0.5
-            }
-        }
-
-        /** DRAW EVENT */
-        // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
-        manager = new kakao.maps.drawing.DrawingManager(options);
-
-        // 폴리곤 생성 후 새로 그릴 때 생성된 폴리곤 삭제를 위해 manager 데이터 저장
-        manager.addListener('drawend', function (data) {
-
-        });
-
-        /** MAP EVENT */
-        kakaoEvent = kakao.maps.event;
-
-        // 지도에 마우스 왼쪽 클릭 이벤트
-        kakaoEvent.addListener(drawingMap, 'click', function (mouseEvent) {
-            console.log("click");
-        });
-
-        // 지도에 마우스 오른쪽 클릭 이벤트
-        kakaoEvent.addListener(drawingMap, 'rightclick', function (mouseEvent) {
-            console.log("rightclick");
-        });
-
-        // 지도에 마우스 떠블 클릭 이벤트
-        kakaoEvent.addListener(drawingMap, 'dblclick', function (mouseEvent) {
-            console.log("dblclick");
-        });
-
-        //
-        kakaoEvent.addListener(drawingMap, 'idle', function () {
-            // 지도의  레벨을 얻어옵니다
-            var level = drawingMap.getLevel();
-            log("level = ", level);
-        })
-
-        // 지도를 클릭한 위치에 표출할 마커입니다
-        marker = new kakao.maps.Marker({
-            // 지도 중심좌표에 마커를 생성합니다
-            position: drawingMap.getCenter()
-        });
-        marker.setMap(drawingMap);
+    // 카카오 맵 이벤트 설정
+    function setKakaoEvent(opt) {
+        kakaoEvent.addListener(opt.target, opt.event, opt.func);
     }
 
+    function getsPm(codes) {
+        //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
+        let result = $.JJAjaxAsync({
+            url: _contextPath + '/gets',
+            data: {
+                codes: codes
+            }
+        });
 
-    initialize();
+        if (result.success) {
+            $.removeTextOverlays();
+            result.data.forEach(function (data) {
+                $.addOverlay(data, map, displayPmInfo);
+            });
+            beforeCodes = codes;
+        }
+    }
+
+    // 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다
+    function displayPmInfo (pm) {
+        let contentNode = document.createElement('div'); // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
+        // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
+        contentNode.className = 'parkingInfo_wrap';
+
+        let infoNode = document.createElement('div');
+        infoNode.className = 'parkingInfo';
+
+        let title = document.createElement('div');
+        title.className = 'title';
+        title.appendChild(document.createTextNode(pm.prkplceNm));
+
+        let closeBtn = document.createElement('div');
+        closeBtn.className = 'close';
+        closeBtn.onclick = function () {
+            pmOverlay.setMap(null);
+        };
+        title.appendChild(closeBtn);
+
+        infoNode.appendChild(title);
+
+        let addr = document.createElement('span');
+        addr.className = 'addr';
+        addr.appendChild(document.createTextNode(pm.rdnmadr));
+        infoNode.appendChild(addr);
+
+        let jibun = document.createElement('span');
+        jibun.className = 'jibun';
+        jibun.appendChild(document.createTextNode(`(지번 : ${pm.lnmadr})`));
+        infoNode.appendChild(jibun);
+
+        let price = document.createElement('span');
+        price.className = 'price';
+        price.appendChild(document.createTextNode(`요금정보 : ${pm.parkingchrgeInfo}`));
+        infoNode.appendChild(price);
+
+        let tel = document.createElement('span');
+        tel.className = 'tel';
+        tel.appendChild(document.createTextNode(pm.phoneNumber));
+        infoNode.appendChild(tel);
+
+        contentNode.appendChild(infoNode);
+        let after = document.createElement('div');
+        after.className = 'after';
+        contentNode.appendChild(after);
+
+        pmOverlay.setPosition(new kakao.maps.LatLng(pm.latitude, pm.longitude));
+        pmOverlay.setContent(contentNode)
+        pmOverlay.setMap(map);
+    }
+
+    // 카카오 초기화
+    function initializeKakao() {
+        map = {
+            center: new kakao.maps.LatLng(CENTER_LATITUDE, CENTER_LONGITUDE), // 지도의 중심좌표
+            level: 3, // 지도의 확대 레벨
+            disableDoubleClickZoom: true
+        };
+
+        // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+        map = new kakao.maps.Map(mapContainer, map);
+
+        setKakaoEvent({
+            target: map,
+            event: 'click',
+            func: function (mouseEvent) {
+                pmOverlay.setMap(null);
+                $.initOverlay();
+            }
+        });
+
+        // 확대수준이 변경되거나 지도가 이동했을때 타일 이미지 로드가 모두 완료되면 발생
+        setKakaoEvent({
+            target: map,
+            event: 'idle',
+            func: async function () {
+                // 지도의  레벨을 얻어옵니다
+                let level = map.getLevel();
+
+                if (level < 4) {
+                    let obj = await $.getDongCodesBounds(map);
+                    // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
+                    if (!obj.uniqueCodesCheck) {
+                        await getsPm(obj.codes);
+                    }
+                }
+            }
+        });
+
+        // 중심 좌표나 확대 수준이 변경되면 발생한다.
+        setKakaoEvent({
+            target: map,
+            event: 'zoom_changed',
+            func: async function () {
+                // 지도의  레벨을 얻어옵니다
+                let level = map.getLevel();
+
+                if (level > 3) {
+                    pmOverlay.setMap(null);
+                    $.removeTextOverlays();
+                } else {
+                    let obj = await $.getDongCodesBounds(map);
+                    if (level === 3) {
+                        await getsPm(obj.codes);
+                    } else {
+                        if (!obj.uniqueCodesCheck) {
+                            await getsPm(obj.codes);
+                        }
+                    }
+                }
+            }
+        });
+
+        setKakaoEvent({
+            target: map,
+            event: 'dragend',
+            func: function () {
+                pmOverlay.setMap(null);
+                $.initOverlay();
+            }
+        });
+
+        $.getCurrentPosition(map);
+
+    }
+
+    initializeKakao();
+
+
+
 });
