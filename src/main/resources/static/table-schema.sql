@@ -246,7 +246,7 @@ CREATE TABLE user
     UserCode    BIGINT      NOT NULL,               -- 사용자 고유 체번 ( 예> 기관 사람 / 일반 사용자 구분 )
     Role        INT         NOT NULL,               -- 역할 ( USER / ADMIN / GOVERNMENT )
     PhoneNumber VARCHAR(15) NULL,                   -- 전화 번호 (모바일)
-    PhotoName   VARCHAR(100) NULL,                  -- 사진 이름 (모바일)
+    PhotoName   VARCHAR(150) NULL,                  -- 사진 이름 (모바일)
     OfficeSeq   INT NULL,                           -- 관공서 키
     IsDel       BOOLEAN     NOT NULL DEFAULT FALSE, -- 삭제 여부
     DelDt       Datetime NULL                       -- 삭제 일자
