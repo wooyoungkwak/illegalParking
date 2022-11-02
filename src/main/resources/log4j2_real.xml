@@ -5,7 +5,7 @@
         <Property name="PROFILE">home</Property>
         <Property name="LOG_PACKAGE_USER">com.young</Property>
         <Property name="LOG_PACKAGE_SPRINGBOOT">org.springframework</Property>
-        <Property name="LOG_DIR">/opt/tomcat/logs/log</Property>
+        <Property name="LOG_DIR">/home/illegalparking/log</Property>
         <Property name="LOG_NAME">log4j2</Property>
         <Property name="LOG_PATTERN">%d{hh:mm:ss} %-5level [%thread] %logger : %msg%n</Property>
     </Properties>
