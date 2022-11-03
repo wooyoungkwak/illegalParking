@@ -21,6 +21,7 @@ import com.teraenergy.illegalparking.model.entity.mycar.service.MyCarService;
 import com.teraenergy.illegalparking.model.entity.notice.domain.Notice;
 import com.teraenergy.illegalparking.model.entity.notice.service.NoticeService;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
+import com.teraenergy.illegalparking.model.entity.pm.service.PmService;
 import com.teraenergy.illegalparking.model.entity.point.enums.PointType;
 import com.teraenergy.illegalparking.model.entity.product.domain.Product;
 import com.teraenergy.illegalparking.model.entity.product.service.ProductService;
@@ -77,6 +78,7 @@ public class MobileAPI {
     private final CommentService commentService;
     private final MyCarService myCarService;
     private final ParkingService parkingService;
+    private final PmService pmService;
 
     /**
      * 사용자 로그인 하기
@@ -554,7 +556,7 @@ public class MobileAPI {
 
             // 1. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우  ( TODO : 확인이 필요 )
             Receipt oldReceipt = receiptService.getByLastOccur(user.getUserSeq(), carNum, regDt, illegalZone.getIllegalEvent().getIllegalType());
-            if ( oldReceipt != null) {
+            if (oldReceipt != null) {
                 oldReceipt.setReceiptStateType(ReceiptStateType.NOTHING);
                 receiptService.set(oldReceipt);
                 throw new TeraException(TeraExceptionCode.REPORT_OVER_TIME);
@@ -757,6 +759,29 @@ public class MobileAPI {
                     }
                 }
                 return parkingService.gets(codes);
+            } else {
+                return "";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new TeraException(TeraExceptionCode.UNKNOWN);
+        }
+    }
+
+    @PostMapping("/api/pm/gets")
+    @ResponseBody
+    public Object getsPm(Device device, @RequestBody String body) throws TeraException {
+        try {
+            if (device.isMobile()) {
+                JsonNode jsonNode = JsonUtil.toJsonNode(body);
+                List<String> codes = com.google.common.collect.Lists.newArrayList();
+                JsonNode codesArrNode = jsonNode.get("codes");
+                if (codesArrNode.isArray()) {
+                    for (JsonNode obj : codesArrNode) {
+                        codes.add(obj.asText());
+                    }
+                }
+                return pmService.gets(codes);
             } else {
                 return "";
             }

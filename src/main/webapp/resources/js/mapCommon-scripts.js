@@ -1,8 +1,8 @@
 // serialize 맵형태로 변경
-$.fn.serializeObject = function(){
+$.fn.serializeObject = function () {
     const o = {};
     const a = this.serializeArray();
-    $.each(a, function() {
+    $.each(a, function () {
         const name = $.trim(this.name),
             value = $.trim(this.value);
 
@@ -127,6 +127,7 @@ function isInside(polygon, n, p) {
     // Return true if count is odd, false otherwise
     return (count % 2 === 1); // Same as (count%2 == 1)
 }
+
 /*폴리곤 내 포함 여부 체크 end*/
 
 
@@ -146,12 +147,13 @@ function centroid(points) {
         area += f * 3;
     }
 
-    return {x : x / area, y : y / area};
+    return {x: x / area, y: y / area};
 }
+
 /*폴리곤 중심 좌표 구하기 end*/
 
 /* 좌표로 동코드 받기 카카오 REST API */
-async function coordinatesToDongCodeKakaoApi(x, y, stat){
+async function coordinatesToDongCodeKakaoApi(x, y, stat) {
     let code = '';
     let URL = `https://dapi.kakao.com/v2/local/geo/coord2regioncode.json?input_coord=WGS84&output_coord=WGS84&x=${x}&y=${y}`;
     let opt = {
@@ -193,7 +195,7 @@ $.isMobile = window.location.pathname.includes('api');
 
 let myMarker = {
     imgSrc: '/resources/assets/img/location_shadow.png',
-    imgSize: new kakao.maps.Size(50,50)
+    imgSize: new kakao.maps.Size(50, 50)
 };
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
 let myLocMarker = null;
@@ -204,11 +206,12 @@ let gpsLatitude = 0.0;
 let gpsLongitude = 0.0;
 let textOverlays = [];
 
-$.currentParkingSeq = 0;
+$.currentMarkerSeq = 0;
+$.isClickedByMaker = false;
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-$.getCurrentPosition = function(map) {
-    if(!!myLocMarker) myLocMarker.setMap(null);
+$.getCurrentPosition = function (map) {
+    if (!!myLocMarker) myLocMarker.setMap(null);
 
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -238,8 +241,8 @@ $.getCurrentPosition = function(map) {
 }
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
-$.getMobileCurrentPosition = function(map) {
-    if(!!myLocMarker) myLocMarker.setMap(null);
+$.getMobileCurrentPosition = function (map) {
+    if (!!myLocMarker) myLocMarker.setMap(null);
     gpsLatitude = gpsLatitude === 0 ? '35.01868444' : gpsLatitude.toString();
     gpsLongitude = gpsLongitude === 0 ? '126.78284599' : gpsLongitude.toString();
     let gpsPosition = new kakao.maps.LatLng(gpsLatitude, gpsLongitude);
@@ -247,8 +250,8 @@ $.getMobileCurrentPosition = function(map) {
 }
 
 //현재위치 마커 커스텀 오버레이
-function myLocationMarker(map, position){
-    if($.isMobile) {
+function myLocationMarker(map, position) {
+    if ($.isMobile) {
         let locationOverlay = new kakao.maps.CustomOverlay(
             {zIndex: 1, yAnchor: 3});
 
@@ -287,7 +290,7 @@ function myLocationMarker(map, position){
 // array.push(marker);
 
 // 꼭지점, 중심좌표의 법정동 코드 가져오기
-$.getDongCodesBounds = async function (map){
+$.getDongCodesBounds = async function (map) {
     let uniqueCodesCheck = false;
 
     // 맵 구역
@@ -350,7 +353,7 @@ $.changeOptionByMouseOut = function (area) {
 }
 
 // 주정차 타입에 따른 폴리곤 색 구별
-$.setFillColor = function(area) {
+$.setFillColor = function (area) {
     let fillColor;
     if (area.type === 'FIVE_MINUTE') fillColor = '#ff6f00';
     else if (area.type === 'ILLEGAL') fillColor = '#FF3333';
@@ -362,8 +365,8 @@ $.setFillColor = function(area) {
 // 방위각 구하기
 $.getAngle = function (center, target) {
     let dx = target.x - center.x;
-    let dy = center.y - target.y ;
-    let deg = Math.atan2( dy , dx ) * 180 / Math.PI;
+    let dy = center.y - target.y;
+    let deg = Math.atan2(dy, dx) * 180 / Math.PI;
 
     return (-deg + 450) % 360 | 0;
 }
@@ -384,10 +387,10 @@ function getMarkerInfo(type, data) {
         }
     } else if (type === 'pm') {
         dataObj = {
-            pmName: '-',
-            pmPrice: '-',
-            pmOper: '-',
-            pmModel: '-'
+            pmName: data.pmName,
+            pmPrice: data.pmPrice,
+            pmOper: data.pmOperOpenHhmm + '~' + data.pmOperCloseHhmm,
+            pmModel: data.pmId
         }
     }
 
@@ -421,9 +424,11 @@ function setImgOrigin(pmType) {
 
 // mobile 인 경우 Overlay 정보 설정 함수
 $.setOverlayInfoByMobile = function (data) {
-    webToApp.postMessage(JSON.stringify('click'));
-    let obj = getMarkerInfo($.mapSelected, data);
-    webToApp.postMessage(JSON.stringify(obj));
+    if ($.isMobile) {
+        webToApp.postMessage(JSON.stringify('click'));
+        let obj = getMarkerInfo($.mapSelected, data);
+        webToApp.postMessage(JSON.stringify(obj));
+    }
 }
 
 // 마커 커스텀 오버레이 추가 함수
@@ -435,11 +440,11 @@ $.addOverlay = function (data, map, callback) {
     contentNode.className = 'content_wrap';
 
     let imgNode = document.createElement('div');
-    imgNode.id = 'img_wrap';
+    imgNode.className = 'img_wrap';
 
     let img = document.createElement('img');
 
-    if ($.currentParkingSeq === data.parkingSeq) {
+    if ($.currentMarkerSeq === data.parkingSeq) {
         img.src = imgOrigin.imgSrc.clickOrigin;
     } else {
         img.src = imgOrigin.imgSrc.normalOrigin;
@@ -459,7 +464,7 @@ $.addOverlay = function (data, map, callback) {
         span.className = 'price-text';
         span.appendChild(document.createTextNode(text));
 
-        if ($.currentParkingSeq === data.parkingSeq) {
+        if ($.currentMarkerSeq === data.parkingSeq) {
             span.style.color = 'white';
         } else {
             span.style.color = 'black';
@@ -473,34 +478,27 @@ $.addOverlay = function (data, map, callback) {
         let src = $(this).children('img:first').attr('src');
         let imgType = src.split("/").pop().replace(".png", "");
         let isOn = imgType.split("_").pop().includes("on");
-        data.isOn = isOn;
 
-        let markerImg = $('.markerImg');
-        let priceText = $('.price-text');
-        for (const img of markerImg) {
-            img.src = imgOrigin.imgSrc.normalOrigin;
-        }
-
-        if ($.mapSelected === 'parking') {
-            for (const text of priceText) {
-                text.style.color = 'black';
-            }
-        }
+        $.initMarker();
 
         if (!isOn) {
             this.children[0].src = imgOrigin.imgSrc.clickOrigin;
             if ($.mapSelected === 'parking') {
                 this.children[1].style.color = 'white';
+                $.currentMarkerSeq = data.parkingSeq;
+            } else {
+                $.currentMarkerSeq = data.pmSeq;
             }
-            $.currentParkingSeq = data.parkingSeq;
             map.panTo(position);
             callback(data);
+            $(imgNode).children('img').addClass("active");
+            $.isClickedByMaker = true;
         } else {
-
-            $('.close').trigger('click');
-
-            if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
-            $.currentParkingSeq = 0;
+            if ($.isMobile) {
+                webToApp.postMessage(JSON.stringify('click'));
+            } else {
+                $('.close').trigger('click');
+            }
         }
     });
 
@@ -519,21 +517,39 @@ $.addOverlay = function (data, map, callback) {
     textOverlays.push(markerOverlay);
 }
 
+
+// Marker 초기화 함수
+$.initMarker = function () {
+    if ($.isClickedByMaker && $('.markerImg').length > 0) {
+        $('.markerImg').each(function () {
+            if ($(this).attr('class').indexOf('active') > -1) {
+                $(this).attr('src', $(this).attr('src').replaceAll('on', 'off'));
+                if ($.mapSelected === 'parking') {
+                    $(this).parent().children('span').css({
+                        "color": "black"
+                    });
+                }
+                $(this).removeClass('active');
+                $.currentMarkerSeq = 0;
+                $.isClickedByMaker = false;
+            }
+        });
+    }
+}
+
+// Overlay 초기화 함수
 $.initOverlay = function () {
     if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
-    $.currentParkingSeq = 0;
+    $.currentMarkerSeq = 0;
 
     if ($.mapSelected !== 'zone') {
-        // let imgOrigin = setImgOrigin();
-        let markerImg = $('.markerImg');
-        let priceText = $('.price-text');
-        for (const img of markerImg) {
-            img.src = imgOrigin.imgSrc.normalOrigin;
-        }
-        if ($.mapSelected === 'parking') {
-            for (const text of priceText) {
-                text.style.color = 'black';
-            }
+        let $markerImg = $('.markerImg');
+        if ($.isClickedByMaker && $markerImg.length > 0) {
+            $markerImg.each(function () {
+                if ($(this).attr('class').indexOf('active') > -1) {
+                    $.initMarker();
+                }
+            });
         }
     }
 }
@@ -553,18 +569,18 @@ function initializeEventTime(first, second) {
     let firstEndTimeHour = '14';
     let secondStartTimeHour = '20';
     let secondEndTimeHour = '08';
-    if(first) {
+    if (first) {
         $('#firstStartTimeHour').val(firstStartTimeHour).prop('selected', true);
         $('#firstStartTimeMinute').val('00').prop('selected', true);
 
         $('#firstEndTimeHour').val(firstEndTimeHour).prop('selected', true);
         $('#firstEndTimeMinute').val('00').prop('selected', true);
     }
-    if(second) {
-        $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected',true);
+    if (second) {
+        $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected', true);
         $('#secondStartTimeMinute').val('00').prop('selected', true);
 
-        $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected',true);
+        $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected', true);
         $('#secondEndTimeMinute').val('00').prop('selected', true);
     }
 }
@@ -579,6 +595,7 @@ $.setGroupNames = function (locationType) {
         }
         return html;
     }
+
     let result = $.JJAjaxAsync({
         url: _contextPath + '/event/group/name/get',
         data: {
@@ -597,10 +614,10 @@ $.setGroupNames = function (locationType) {
 function setEventTime(data) {
     let first = data.usedFirst;
     let second = data.usedSecond;
-    if(first === true || second === true ) {
+    if (first === true || second === true) {
         initializeEventTime(first, second);
     }
-    if(first === false) {
+    if (first === false) {
         let firstStartTime = data.firstStartTime.split(':');
         let firstEndTime = data.firstEndTime.split(':');
         $('#firstStartTimeHour').val(firstStartTime[0]).prop('selected', true);
@@ -609,7 +626,7 @@ function setEventTime(data) {
         $('#firstEndTimeHour').val(firstEndTime[0]).prop('selected', true);
         $('#firstEndTimeMinute').val(firstEndTime[1]).prop('selected', true);
     }
-    if(second === false) {
+    if (second === false) {
         let secondStartTime = data.secondStartTime.split(':');
         let secondEndTime = data.secondEndTime.split(':');
         $('#secondStartTimeHour').val(secondStartTime[0]).prop('selected', true);
@@ -625,7 +642,7 @@ function setEventHtml(data) {
     let locationType = $('#locationType');
     let btnModifyEvent = $('#btnModifyEvent');
     let usedFirst = $('#usedFirst');
-    let usedSecond= $('#usedSecond');
+    let usedSecond = $('#usedSecond');
 
     $('#offcanvasRightLabel').text(data.zoneSeq + '번 구역설정')
     if (data.eventSeq === null) {
@@ -647,7 +664,7 @@ function setEventHtml(data) {
         usedFirst.trigger('change');
         usedSecond.trigger('change');
         $('#eventSeq').val(data.eventSeq);
-        $('input:radio[name=illegalType]:input[value="'+ data.illegalType +'"]').prop('checked', true);
+        $('input:radio[name=illegalType]:input[value="' + data.illegalType + '"]').prop('checked', true);
         $.setGroupNames(data.locationType);
         locationType.val(data.locationType).prop('selected', true);
         locationType.trigger('change');
@@ -659,7 +676,7 @@ function setEventHtml(data) {
 }
 
 // 폴리곤 클릭 시 모달 창 오픈
-$.showModal = function(seq) {
+$.showModal = function (seq) {
     let result = $.JJAjaxAsync({
         url: _contextPath + '/zone/get',
         data: {
@@ -667,7 +684,7 @@ $.showModal = function(seq) {
         }
     });
 
-    if(result.success) {
+    if (result.success) {
         let data = result.data;
         $('#zoneSeq').val(data.zoneSeq);
         setEventHtml(data);

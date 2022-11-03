@@ -1,3 +1,4 @@
+
 package com.teraenergy.illegalparking.jpa;
 
 import com.teraenergy.illegalparking.model.entity.pm.domain.Pm;
@@ -26,58 +27,68 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-//@Transactional
+@Transactional
 public class SqlPm {
 
     @Autowired
     PmService pmService;
 
     @Test
-    public void insert(){
+    public void insert() {
         List<Pm> pms = Lists.newArrayList();
 
         // X :127.695368, Y :34.9421689
 //        X :127.695806, Y :34.9421754
         // X :126.793837, Y :35.0203561
 
-//        Pm KICK = new Pm();
-//        KICK.setPmId("SWING-10A-BAC-ADFAEDF");
-//        KICK.setPmName("킥보드");
-//        KICK.setPmPrice(700);
-//        KICK.setLatitude( 127.695368 );
-//        KICK.setLongitude( 34.9421689);
-//        KICK.setPmOperOpenHhmm("12:00");
-//        KICK.setPmOperCloseHhmm("18:00");
-//        KICK.setCode("26775");
-//        KICK.setPmType(PmType.KICK);
-//        pms.add(KICK);
+        Pm kick = new Pm();
+        kick.setPmId("SWING-10A-BAC-ADFAEDF");
+        kick.setPmName("킥보드");
+        kick.setPmPrice(700);
+        kick.setLatitude(34.9421689);
+        kick.setLongitude(127.695368);
+        kick.setPmOperOpenHhmm("12:00");
+        kick.setPmOperCloseHhmm("18:00");
+        kick.setCode("4623010600");
+        kick.setPmType(PmType.KICK);
+        pms.add(kick);
 
-//        Pm BIKE = new Pm();
-//        BIKE.setPmId("GER-202305-AA");
-//        BIKE.setPmName("자전거");
-//        BIKE.setPmPrice(0);
-//        BIKE.setLatitude(127.695806);
-//        BIKE.setLongitude( 34.9421689);
-//        BIKE.setPmOperOpenHhmm("00:00");
-//        BIKE.setPmOperCloseHhmm("23:00");
-//        BIKE.setCode("26775");
-//        BIKE.setPmType(PmType.BIKE);
-//        pms.add(BIKE);
+        Pm bike = new Pm();
+        bike.setPmId("GER-202305-AA");
+        bike.setPmName("자전거");
+        bike.setPmPrice(0);
+        bike.setLatitude(34.9421689);
+        bike.setLongitude(127.695806);
+        bike.setPmOperOpenHhmm("00:00");
+        bike.setPmOperCloseHhmm("23:00");
+        bike.setCode("4623010600");
+        bike.setPmType(PmType.BIKE);
+        pms.add(bike);
 
         Pm najuKick = new Pm();
         najuKick.setPmId("SWING-10A-BAC-ADFAEDF1");
         najuKick.setPmName("킥보드2");
         najuKick.setPmPrice(700);
-        najuKick.setLatitude(126.793837);
-        najuKick.setLongitude(35.0203561);
+        najuKick.setLatitude(35.0203561);
+        najuKick.setLongitude(126.793837);
         najuKick.setPmOperOpenHhmm("12:00");
         najuKick.setPmOperCloseHhmm("18:00");
-        najuKick.setCode("26775");
+        najuKick.setCode("4617013400");
         najuKick.setPmType(PmType.KICK);
         pms.add(najuKick);
 
+        Pm najuBike = new Pm();
+        najuBike.setPmId("SWING-10A-BAC-ADFAEDF1");
+        najuBike.setPmName("킥보드2");
+        najuBike.setPmPrice(700);
+        najuBike.setLatitude(35.0198785);
+        najuBike.setLongitude(126.793926);
+        najuBike.setPmOperOpenHhmm("12:00");
+        najuBike.setPmOperCloseHhmm("18:00");
+        najuBike.setCode("4617013400");
+        najuBike.setPmType(PmType.BIKE);
+        pms.add(najuBike);
 
         pmService.sets(pms);
-
     }
 }

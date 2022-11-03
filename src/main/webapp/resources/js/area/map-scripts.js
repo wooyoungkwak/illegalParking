@@ -314,7 +314,7 @@ $(function () {
             $('#msgBar').addClass('display-none');
             $.removeOverlays();
             $.removeTextOverlays();
-            url = _contextPath + '/parking/gets';
+            url = _contextPath + '/pm/gets';
             (async () => {
                 await $.getsMarker((await $.getDongCodesBounds(map)).codes);
             })();

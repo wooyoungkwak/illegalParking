@@ -94,6 +94,15 @@
 		<script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 		<script type="application/javascript">
+			function appToEvent(key, value) {
+				if (key === 'bottomSheet') {
+                    if ( $.isClickedByMaker && $('.markerImg').length > 0 ) {
+                        alert(value);
+						$.initMarker();
+                    }
+				}
+			}
+
             // INTERFACE : APP TO WEB
             function appToGps(_gpsLatitude, _gpsLongitude) {
                 let bearing = $.getAngle({
@@ -187,7 +196,7 @@
                     event.currentTarget.classList.remove("btn-white");
                     event.currentTarget.classList.add("btn-dark");
                     event.currentTarget.classList.add("rounded-pill");
-                    $.currentParkingSeq = 0;
+                    $.currentMarkerSeq = 0;
                 }
 
                 // 통계 on off 이벤트 함수
@@ -266,8 +275,6 @@
                     });
 
                     $.findMe();
-
-
                 }
 
                 initializeByMobile();

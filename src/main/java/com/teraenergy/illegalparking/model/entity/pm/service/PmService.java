@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface PmService {
 
+    Pm get(Integer pmSeq);
+
     List<Pm> gets();
 
     List<Pm> gets(List<String> codes);

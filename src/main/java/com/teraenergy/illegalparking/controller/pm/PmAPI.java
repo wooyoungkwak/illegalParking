@@ -26,16 +26,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class PmAPI {
 
-	private final ParkingService parkingService;
-
 	private final PmService pmService;
 
 	@PostMapping("/pm/get")
 	@ResponseBody
 	public Object getParking(@RequestBody String body) throws TeraException {
 		JsonNode jsonNode = JsonUtil.toJsonNode(body);
-		Integer parkingSeq = jsonNode.get("parkingSeq").asInt();
-		return parkingService.get(parkingSeq);
+		Integer pmSeq = jsonNode.get("pmSeq").asInt();
+		return pmService.get(pmSeq);
 	}
 
 	@PostMapping("/pm/gets")
@@ -49,7 +47,6 @@ public class PmAPI {
 				codes.add(obj.asText());
 			}
 		}
-//		return parkingService.gets(codes);
 		return pmService.gets(codes);
 	}
 

@@ -321,18 +321,19 @@ public class ReportServiceImpl implements ReportService {
                         pointContent += ("(으)로 부터 포상금 " + pointValue);
                         pointContent += "포인트가 제공되었습니다.";
 
-                        Calculate calculate = calculateService.getAtLast(userSeq);
-                        if (calculate == null) {
-                            calculate = new Calculate();
-                            calculate.setCurrentPointValue(pointValue);
+                        Calculate oldCalculate = calculateService.getAtLast(receipt.getUser().getUserSeq());
+                        Calculate newCalculate = new Calculate();
+                        if (oldCalculate == null) {
+                            newCalculate.setCurrentPointValue(pointValue);
                         } else {
-                            calculate.setCurrentPointValue((calculate.getCurrentPointValue() == null ? pointValue : calculate.getCurrentPointValue()) + pointValue);
+                            newCalculate.setCurrentPointValue((oldCalculate.getCurrentPointValue() == null ? 0 : oldCalculate.getCurrentPointValue()) + pointValue);
                         }
-                        calculate.setUserSeq(receipt.getUser().getUserSeq());
-                        calculate.setPointType(updatePoint.getPointType());
-                        calculate.setEventPointValue(pointValue);
-                        calculate.setLocationType(user.getGovernMentOffice().getLocationType());
-                        calculateService.set(calculate);
+
+                        newCalculate.setUserSeq(receipt.getUser().getUserSeq());
+                        newCalculate.setPointType(updatePoint.getPointType());
+                        newCalculate.setEventPointValue(pointValue);
+                        newCalculate.setLocationType(user.getGovernMentOffice().getLocationType());
+                        calculateService.set(newCalculate);
                     }
                 } else {
                     pointContent = "포인트가 모두 소진되어 제공이 불가합니다.";

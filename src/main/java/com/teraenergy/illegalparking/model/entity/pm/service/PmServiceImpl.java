@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Date : 2022-11-03
@@ -25,6 +26,15 @@ public class PmServiceImpl implements PmService{
     private final PmRepository pmRepository;
 
     private final JPAQueryFactory jpaQueryFactory;
+
+    @Override
+    public Pm get(Integer pmSeq) {
+        Optional<Pm>  optional = pmRepository.findById(pmSeq);
+        if (optional.isEmpty()) {
+            return null;
+        }
+        return optional.get();
+    }
 
     @Override
     public List<Pm> gets() {
