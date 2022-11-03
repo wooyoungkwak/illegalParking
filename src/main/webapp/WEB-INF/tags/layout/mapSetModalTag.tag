@@ -38,7 +38,7 @@
 				<div class="card-body">
 					<c:forEach items="${typeValues}" var="typeValue" varStatus="status">
 						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="illegalType" id="zone${status.index}" value="${typeValue}">
+							<input class="form-check-input" type="radio" name="illegalType" id="zone${status.index}" value="${typeValue}" ${id eq 'areaViewModal' ? 'disabled' : ''}>
 							<label class="form-check-label" for="zone${status.index}">${typeValue.value}</label>
 						</div>
 					</c:forEach>
@@ -52,23 +52,23 @@
 				<div class="card-body">
 					<div class="row">
 						<div class="col-6">
-							<select class="form-select" id="locationType" name="locationType">
+							<select class="form-select" id="locationType" name="locationType" ${id eq 'areaViewModal' ? 'disabled' : ''}>
 								<c:forEach items="${enumValues}" var="enumValue">
 									<option value="${enumValue}" <c:if test="${enumValue eq current}">selected</c:if>>${enumValue.value}</option>
 								</c:forEach>
 							</select>
 						</div>
 						<div class="col-6">
-							<select class="form-select" id="name" name="name"></select>
+							<select class="form-select" id="name" name="name" ${id eq 'areaViewModal' ? 'disabled' : ''}></select>
 						</div>
 					</div>
 				</div>
 			</div>
 
-			<div class="card mb-2">
+			<div class="card mb-2 findSelect">
 				<div class="card-header">
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="usedFirst" name="usedFirst">
+						<input class="form-check-input" type="checkbox" value="" id="usedFirst" name="usedFirst" ${id eq 'areaViewModal' ? 'disabled' : ''}>
 						<label class="form-check-label" for="usedFirst">
 							첫번째 적용시간
 						</label>
@@ -90,7 +90,7 @@
 			<div class="card">
 				<div class="card-header">
 					<div class="form-check">
-						<input class="form-check-input" type="checkbox" value="" id="usedSecond" name="usedSecond">
+						<input class="form-check-input" type="checkbox" value="" id="usedSecond" name="usedSecond" ${id eq 'areaViewModal' ? 'disabled' : ''}>
 						<label class="form-check-label" for="usedSecond">
 							두번째 적용시간
 						</label>
@@ -113,8 +113,10 @@
 		<div class="offcanvas-footer">
 			<div class="row ms-2">
 				<div class="input-group">
-					<button type="button" class="btn btn-primary" id="btnModify">등록</button>
-					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">취소</button>
+					<c:if test="${id eq 'areaSettingModal'}">
+						<button type="button" class="btn btn-primary" id="btnModifyEvent">등록</button>
+					</c:if>
+					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">${id eq 'areaViewModal' ? '닫기' : '취소'}</button>
 				</div>
 			</div>
 		</div>

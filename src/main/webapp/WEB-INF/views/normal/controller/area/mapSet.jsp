@@ -50,7 +50,9 @@
 									<div class="me-3">
 										<a class="btn btn-sm btn-outline-success" id="btnAddOverlay">구역추가</a>
 										<a class="btn btn-sm btn-outline-dark" id="btnModifyOverlay">구역수정</a>
-										<a class="btn btn-sm btn-outline-primary" id="btnSet">저장</a>
+										<a class="btn btn-sm btn-outline-primary display-none" id="btnSet">저장</a>
+										<a class="btn btn-sm btn-outline-danger display-none" id="btnModify">수정</a>
+										<a class="btn btn-sm btn-outline-warning display-none" id="btnCancel">취소</a>
 									</div>
 								</div>
 							</div>
@@ -80,6 +82,60 @@
 	<stripes:layout-component name="javascript">
 		<script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/mapSet-scripts.js"></script>
+		<script type="text/javascript">
+			// 구역 Event Time 적용시간 켜기 / 끄기 함수
+			function setTime(_this) {
+				let id = _this.id.substring(4).toLowerCase();
+				if($('#'+_this.id).is(':checked')){
+					$('#'+ id +'StartTimeHour').attr('disabled', false);
+					$('#'+ id +'StartTimeMinute').attr('disabled', false);
+					$('#'+ id +'EndTimeHour').attr('disabled', false);
+					$('#'+ id +'EndTimeMinute').attr('disabled', false);
+				} else {
+					$('#'+ id +'StartTimeHour').attr('disabled', true);
+					$('#'+ id +'StartTimeMinute').attr('disabled', true);
+					$('#'+ id +'EndTimeHour').attr('disabled', true);
+					$('#'+ id +'EndTimeMinute').attr('disabled', true);
+				}
+			}
+
+			$(function(){
+				$('#usedFirst').change(function() {
+					setTime(this);
+				});
+				$('#usedSecond').change(function() {
+					setTime(this);
+				})
+
+				//
+				$('#btnAddOverlay').click(function () {
+					$.setOverlayType('POLYGON');
+					$(this).removeClass("btn-outline-success");
+					$(this).addClass("btn-success");
+
+					$('#btnSet').removeClass('display-none');
+					$('#btnCancel').removeClass('display-none');
+					$('#btnModify').addClass('display-none');
+
+					$('#btnModifyOverlay').addClass("btn-outline-dark");
+					$('#btnModifyOverlay').removeClass("btn-dark");
+				});
+
+				//
+				$('#btnModifyOverlay').click(function () {
+					$(this).removeClass("btn-outline-dark");
+					$(this).addClass("btn-dark");
+
+					$('#btnModify').removeClass('display-none');
+					$('#btnCancel').removeClass('display-none');
+					$('#btnSet').addClass('display-none');
+
+					$('#btnAddOverlay').addClass("btn-outline-success");
+					$('#btnAddOverlay').removeClass("btn-success");
+				});
+			})
+
+		</script>
 	</stripes:layout-component>
 
 </stripes:layout-render>

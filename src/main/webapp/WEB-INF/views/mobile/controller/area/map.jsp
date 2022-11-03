@@ -14,7 +14,7 @@
 	<!-- content -->
 	<stripes:layout-component name="contents">
 		<main>
-			<div class="col">
+			<div class="row">
 				<div class="map_wrap">
 					<div id="map"></div>
 
@@ -78,9 +78,8 @@
 						<p class="fw-semibold">GPS 설정중...</p>
 					</div>
 
-				</div>
-					<%--<div class="test"> <input type="text" id="debug" value=""><input type="text" id="test" value=""> </div>--%>
 
+				</div>
 			</div>
 		</main>
 	</stripes:layout-component>

@@ -40,29 +40,29 @@ public class SqlPm {
 //        X :127.695806, Y :34.9421754
         // X :126.793837, Y :35.0203561
 
-//        Pm kick = new Pm();
-//        kick.setPmId("SWING-10A-BAC-ADFAEDF");
-//        kick.setPmName("킥보드");
-//        kick.setPmPrice(700);
-//        kick.setLatitude( 127.695368 );
-//        kick.setLongitude( 34.9421689);
-//        kick.setPmOperOpenHhmm("12:00");
-//        kick.setPmOperCloseHhmm("18:00");
-//        kick.setCode("26775");
-//        kick.setPmType(PmType.KICK);
-//        pms.add(kick);
+//        Pm KICK = new Pm();
+//        KICK.setPmId("SWING-10A-BAC-ADFAEDF");
+//        KICK.setPmName("킥보드");
+//        KICK.setPmPrice(700);
+//        KICK.setLatitude( 127.695368 );
+//        KICK.setLongitude( 34.9421689);
+//        KICK.setPmOperOpenHhmm("12:00");
+//        KICK.setPmOperCloseHhmm("18:00");
+//        KICK.setCode("26775");
+//        KICK.setPmType(PmType.KICK);
+//        pms.add(KICK);
 
-//        Pm bike = new Pm();
-//        bike.setPmId("GER-202305-AA");
-//        bike.setPmName("자전거");
-//        bike.setPmPrice(0);
-//        bike.setLatitude(127.695806);
-//        bike.setLongitude( 34.9421689);
-//        bike.setPmOperOpenHhmm("00:00");
-//        bike.setPmOperCloseHhmm("23:00");
-//        bike.setCode("26775");
-//        bike.setPmType(PmType.BIKE);
-//        pms.add(bike);
+//        Pm BIKE = new Pm();
+//        BIKE.setPmId("GER-202305-AA");
+//        BIKE.setPmName("자전거");
+//        BIKE.setPmPrice(0);
+//        BIKE.setLatitude(127.695806);
+//        BIKE.setLongitude( 34.9421689);
+//        BIKE.setPmOperOpenHhmm("00:00");
+//        BIKE.setPmOperCloseHhmm("23:00");
+//        BIKE.setCode("26775");
+//        BIKE.setPmType(PmType.BIKE);
+//        pms.add(BIKE);
 
         Pm najuKick = new Pm();
         najuKick.setPmId("SWING-10A-BAC-ADFAEDF1");

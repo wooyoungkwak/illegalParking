@@ -197,7 +197,7 @@ let myMarker = {
 };
 let markerImg = new kakao.maps.MarkerImage(myMarker.imgSrc, myMarker.imgSize);
 let myLocMarker = null;
-let beforeCodes = [];
+$.beforeCodes = [];
 
 $.isFirst = true; // 최초 인가 확인
 let gpsLatitude = 0.0;
@@ -316,10 +316,10 @@ $.getDongCodesBounds = async function (map){
     codes = [...new Set(codes)]
 
     // log('codes : ', codes);
-    // log('beforeCodes : ', beforeCodes);
+    // log('$.beforeCodes : ', $.beforeCodes);
     // log('uniqueCodesCheck : ', uniqueCodesCheck);
 
-    uniqueCodesCheck = _.isEmpty(_.xor(beforeCodes, codes));
+    uniqueCodesCheck = _.isEmpty(_.xor($.beforeCodes, codes));
 
     return {
         codes: codes,
@@ -398,15 +398,12 @@ function getMarkerInfo(type, data) {
 }
 
 // 마커 이미지 설정 함수
-function setImgOrigin() {
+function setImgOrigin(pmType) {
     let imgSrc;
-
     let type = 'parking';
     let imageSize = new kakao.maps.Size(70, 77);
     if ($.mapSelected === 'pm') {
         type = 'pm';
-        let pmType = 'bike';
-        pmType = pmType === 'bike' ? 'bike' : 'kick';
         imgSrc = {
             normalOrigin: `/resources/assets/img/${pmType}_off.png`,
             clickOrigin: `/resources/assets/img/${pmType}_on.png`
@@ -431,7 +428,7 @@ $.setOverlayInfoByMobile = function (data) {
 
 // 마커 커스텀 오버레이 추가 함수
 $.addOverlay = function (data, map, callback) {
-    let imgOrigin = setImgOrigin();
+    let imgOrigin = setImgOrigin(data.pmType);
 
     let contentNode = document.createElement('div'); // 커스텀 오버레이의 컨텐츠 엘리먼트 입니다
     // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
@@ -527,7 +524,7 @@ $.initOverlay = function () {
     $.currentParkingSeq = 0;
 
     if ($.mapSelected !== 'zone') {
-        let imgOrigin = setImgOrigin();
+        // let imgOrigin = setImgOrigin();
         let markerImg = $('.markerImg');
         let priceText = $('.price-text');
         for (const img of markerImg) {
@@ -548,3 +545,135 @@ $.removeTextOverlays = function () {
     }
     textOverlays = [];
 }
+
+
+// 구역 Event Time 초기화 함수
+function initializeEventTime(first, second) {
+    let firstStartTimeHour = '12';
+    let firstEndTimeHour = '14';
+    let secondStartTimeHour = '20';
+    let secondEndTimeHour = '08';
+    if(first) {
+        $('#firstStartTimeHour').val(firstStartTimeHour).prop('selected', true);
+        $('#firstStartTimeMinute').val('00').prop('selected', true);
+
+        $('#firstEndTimeHour').val(firstEndTimeHour).prop('selected', true);
+        $('#firstEndTimeMinute').val('00').prop('selected', true);
+    }
+    if(second) {
+        $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected',true);
+        $('#secondStartTimeMinute').val('00').prop('selected', true);
+
+        $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected',true);
+        $('#secondEndTimeMinute').val('00').prop('selected', true);
+    }
+}
+
+// 구역 Event 불법주정차 그룹 지정 함수
+$.setGroupNames = function (locationType) {
+
+    function getNamesSelectHtml(groups) {
+        let html = '';
+        for (const group of groups) {
+            html += '<option value="' + group.groupSeq + '">' + group.name + '</option>';
+        }
+        return html;
+    }
+    let result = $.JJAjaxAsync({
+        url: _contextPath + '/event/group/name/get',
+        data: {
+            locationType: locationType
+        }
+    });
+
+    if (result.success) {
+        let groups = result.data;
+        let html = getNamesSelectHtml(groups);
+        $('#name').append(html);
+    }
+}
+
+// 구역 Event Time 시간 설정 함수
+function setEventTime(data) {
+    let first = data.usedFirst;
+    let second = data.usedSecond;
+    if(first === true || second === true ) {
+        initializeEventTime(first, second);
+    }
+    if(first === false) {
+        let firstStartTime = data.firstStartTime.split(':');
+        let firstEndTime = data.firstEndTime.split(':');
+        $('#firstStartTimeHour').val(firstStartTime[0]).prop('selected', true);
+        $('#firstStartTimeMinute').val(firstStartTime[1]).prop('selected', true);
+
+        $('#firstEndTimeHour').val(firstEndTime[0]).prop('selected', true);
+        $('#firstEndTimeMinute').val(firstEndTime[1]).prop('selected', true);
+    }
+    if(second === false) {
+        let secondStartTime = data.secondStartTime.split(':');
+        let secondEndTime = data.secondEndTime.split(':');
+        $('#secondStartTimeHour').val(secondStartTime[0]).prop('selected', true);
+        $('#secondStartTimeMinute').val(secondStartTime[1]).prop('selected', true);
+
+        $('#secondEndTimeHour').val(secondEndTime[0]).prop('selected', true);
+        $('#secondEndTimeMinute').val(secondEndTime[1]).prop('selected', true);
+    }
+}
+
+// 구역 Event Form 설정 함수
+function setEventHtml(data) {
+    let locationType = $('#locationType');
+    let btnModifyEvent = $('#btnModifyEvent');
+    let usedFirst = $('#usedFirst');
+    let usedSecond= $('#usedSecond');
+
+    $('#offcanvasRightLabel').text(data.zoneSeq + '번 구역설정')
+    if (data.eventSeq === null) {
+        data.usedFirst = true;
+        data.usedSecond = true;
+
+        $('input:radio[name=illegalType]').eq(0).prop('checked', true);
+        usedFirst.prop('checked', false);
+        usedSecond.prop('checked', false);
+        $('.timeSelect').attr('disabled', true);
+        locationType.trigger('change');
+        btnModifyEvent.text('등록');
+        btnModifyEvent.addClass('btn-primary');
+        btnModifyEvent.removeClass('btn-danger');
+        locationType.trigger('change');
+    } else {
+        data.usedFirst === false ? usedFirst.prop('checked', true) : usedFirst.prop('checked', false);
+        data.usedSecond === false ? usedSecond.prop('checked', true) : usedSecond.prop('checked', false);
+        usedFirst.trigger('change');
+        usedSecond.trigger('change');
+        $('#eventSeq').val(data.eventSeq);
+        $('input:radio[name=illegalType]:input[value="'+ data.illegalType +'"]').prop('checked', true);
+        $.setGroupNames(data.locationType);
+        locationType.val(data.locationType).prop('selected', true);
+        locationType.trigger('change');
+        $('#name').val(data.groupSeq).prop('selected', true);
+        btnModifyEvent.text('수정');
+        btnModifyEvent.addClass('btn-danger');
+        btnModifyEvent.removeClass('btn-primary');
+    }
+}
+
+// 폴리곤 클릭 시 모달 창 오픈
+$.showModal = function(seq) {
+    let result = $.JJAjaxAsync({
+        url: _contextPath + '/zone/get',
+        data: {
+            zoneSeq: seq
+        }
+    });
+
+    if(result.success) {
+        let data = result.data;
+        $('#zoneSeq').val(data.zoneSeq);
+        setEventHtml(data);
+        setEventTime(data);
+    } else {
+        alert(result.msg);
+    }
+}
+

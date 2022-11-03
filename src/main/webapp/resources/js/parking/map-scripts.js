@@ -28,7 +28,7 @@ $(function () {
       result.data.forEach(function (data) {
         $.addOverlay(data, map, displayParkingInfo);
       });
-      beforeCodes = codes;
+      $.beforeCodes = codes;
     }
   }
 

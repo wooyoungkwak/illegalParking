@@ -28,7 +28,7 @@ $(function () {
             result.data.forEach(function (data) {
                 $.addOverlay(data, map, displayPmInfo);
             });
-            beforeCodes = codes;
+            $.beforeCodes = codes;
         }
     }
 
@@ -43,36 +43,8 @@ $(function () {
 
         let title = document.createElement('div');
         title.className = 'title';
-        title.appendChild(document.createTextNode(pm.prkplceNm));
+        title.appendChild(document.createTextNode(pm.name));
 
-        let closeBtn = document.createElement('div');
-        closeBtn.className = 'close';
-        closeBtn.onclick = function () {
-            pmOverlay.setMap(null);
-        };
-        title.appendChild(closeBtn);
-
-        infoNode.appendChild(title);
-
-        let addr = document.createElement('span');
-        addr.className = 'addr';
-        addr.appendChild(document.createTextNode(pm.rdnmadr));
-        infoNode.appendChild(addr);
-
-        let jibun = document.createElement('span');
-        jibun.className = 'jibun';
-        jibun.appendChild(document.createTextNode(`(지번 : ${pm.lnmadr})`));
-        infoNode.appendChild(jibun);
-
-        let price = document.createElement('span');
-        price.className = 'price';
-        price.appendChild(document.createTextNode(`요금정보 : ${pm.parkingchrgeInfo}`));
-        infoNode.appendChild(price);
-
-        let tel = document.createElement('span');
-        tel.className = 'tel';
-        tel.appendChild(document.createTextNode(pm.phoneNumber));
-        infoNode.appendChild(tel);
 
         contentNode.appendChild(infoNode);
         let after = document.createElement('div');

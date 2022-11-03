@@ -29,7 +29,7 @@ $(function () {
     };
 
     // Overlay Type 설정 함수
-    function setOverlayType(type) {
+    $.setOverlayType = function(type) {
         // 그리기 중이면 그리기를 취소합니다
         manager.cancel();
 
@@ -62,64 +62,6 @@ $(function () {
         for (const element of polygons) {
             displayArea(element);
         }
-    }
-
-    //
-    function setEventHtml(data) {
-        let locationType = $('#locationType');
-        let btnModify = $('#btnModify');
-        let usedFirst = $('#usedFirst');
-        let usedSecond= $('#usedSecond');
-
-        $('#offcanvasRightLabel').text(data.zoneSeq + '번 구역설정')
-        if (data.eventSeq === null) {
-            data.usedFirst = true;
-            data.usedSecond = true;
-
-            $('input:radio[name=illegalType]').eq(0).prop('checked', true);
-            usedFirst.prop('checked', false);
-            usedSecond.prop('checked', false);
-            $('.timeSelect').attr('disabled', true);
-            locationType.trigger('change');
-            btnModify.text('등록');
-            btnModify.addClass('btn-primary');
-            btnModify.removeClass('btn-danger');
-            locationType.trigger('change');
-        } else {
-            data.usedFirst === false ? usedFirst.prop('checked', true) : usedFirst.prop('checked', false);
-            data.usedSecond === false ? usedSecond.prop('checked', true) : usedSecond.prop('checked', false);
-            usedFirst.trigger('change');
-            usedSecond.trigger('change');
-            $('#eventSeq').val(data.eventSeq);
-            $('input:radio[name=illegalType]:input[value="'+ data.illegalType +'"]').prop('checked', true);
-            $.setGroupNames(data.locationType);
-            locationType.val(data.locationType).prop('selected', true);
-            locationType.trigger('change');
-            $('#name').val(data.groupSeq).prop('selected', true);
-            btnModify.text('수정');
-            btnModify.addClass('btn-danger');
-            btnModify.removeClass('btn-primary');
-        }
-    }
-
-    // 폴리곤 클릭 시 모달 창 오픈
-    function showModal(area) {
-        let result = initializeZone({
-            url: _contextPath + '/zone/get',
-            data: {
-                zoneSeq: area.seq
-            }
-        });
-
-        if(result.success) {
-            let data = result.data;
-            $('#zoneSeq').val(data.zoneSeq);
-            setEventHtml(data);
-            setEventTime(data);
-        } else {
-            alert(result.msg);
-        }
-
     }
 
     // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
@@ -201,7 +143,7 @@ $(function () {
                         let center = centroid(area.points);
                         let centerLatLng = new kakao.maps.LatLng(center.y, center.x);
                         drawingMap.panTo(centerLatLng);
-                        showModal(area);
+                        $.showModal(area.seq);
                     }
                 }
             });
@@ -221,57 +163,8 @@ $(function () {
                 isSetting: true
             }
         })
-        beforeCodes = codes;
+        $.beforeCodes = codes;
         drawingPolygon(getPolygonData());
-    }
-
-    // Event Time 시간 설정 함수
-    function setEventTime(data) {
-        let first = data.usedFirst;
-        let second = data.usedSecond;
-        if(first === true || second === true ) {
-            initializeEventTime(first, second);
-        }
-        if(first === false) {
-            let firstStartTime = data.firstStartTime.split(':');
-            let firstEndTime = data.firstEndTime.split(':');
-            $('#firstStartTimeHour').val(firstStartTime[0]).prop('selected', true);
-            $('#firstStartTimeMinute').val(firstStartTime[1]).prop('selected', true);
-
-            $('#firstEndTimeHour').val(firstEndTime[0]).prop('selected', true);
-            $('#firstEndTimeMinute').val(firstEndTime[1]).prop('selected', true);
-        }
-        if(second === false) {
-            let secondStartTime = data.secondStartTime.split(':');
-            let secondEndTime = data.secondEndTime.split(':');
-            $('#secondStartTimeHour').val(secondStartTime[0]).prop('selected', true);
-            $('#secondStartTimeMinute').val(secondStartTime[1]).prop('selected', true);
-
-            $('#secondEndTimeHour').val(secondEndTime[0]).prop('selected', true);
-            $('#secondEndTimeMinute').val(secondEndTime[1]).prop('selected', true);
-        }
-    }
-
-    // Event Time 초기화 함수
-    function initializeEventTime(first, second) {
-        let firstStartTimeHour = '12';
-        let firstEndTimeHour = '14';
-        let secondStartTimeHour = '20';
-        let secondEndTimeHour = '08';
-        if(first) {
-            $('#firstStartTimeHour').val(firstStartTimeHour).prop('selected', true);
-            $('#firstStartTimeMinute').val('00').prop('selected', true);
-
-            $('#firstEndTimeHour').val(firstEndTimeHour).prop('selected', true);
-            $('#firstEndTimeMinute').val('00').prop('selected', true);
-        }
-        if(second) {
-            $('#secondStartTimeHour').val(secondStartTimeHour).prop('selected',true);
-            $('#secondStartTimeMinute').val('00').prop('selected', true);
-
-            $('#secondEndTimeHour').val(secondEndTimeHour).prop('selected',true);
-            $('#secondEndTimeMinute').val('00').prop('selected', true);
-        }
     }
 
     // 카카오 초기화
@@ -315,6 +208,11 @@ $(function () {
                 // 그리기 중이면 그리기를 취소합니다
                 $('#btnAddOverlay').addClass("btn-outline-success");
                 $('#btnAddOverlay').removeClass("btn-success");
+                log(manager.getOverlays().polygon.length)
+                if(manager.getOverlays().polygon.length === 0) {
+                    $('#btnSet').addClass('display-none');
+                    $('#btnCancel').addClass('display-none');
+                }
                 manager.cancel();
             }
         });
@@ -326,8 +224,13 @@ $(function () {
             func: function (mouseEvent) {
                 $('#btnAddOverlay').removeClass("btn-outline-success");
                 $('#btnAddOverlay').addClass("btn-success");
+                $('#btnModifyOverlay').addClass("btn-outline-success");
+                $('#btnModifyOverlay').removeClass("btn-success");
+                $('#btnSet').removeClass('display-none');
+                $('#btnModify').addClass('display-none');
+                $('#btnCancel').removeClass('display-none');
                 $('#areaSettingModal').offcanvas('hide');
-                setOverlayType('POLYGON');
+                $.setOverlayType('POLYGON');
             }
         });
 
@@ -361,6 +264,12 @@ $(function () {
                 }
             }
         });
+
+        manager.addListener('drawend', function(mouseEvent) {
+            $('#btnAddOverlay').addClass("btn-outline-success");
+            $('#btnAddOverlay').removeClass("btn-success");
+        });
+
     }
 
     // zone 초기화
@@ -381,30 +290,6 @@ $(function () {
     // 초기화
     function initialize() {
         initializeKakao();
-
-        //
-        $('#btnAddOverlay').click(function () {
-            $('#areaSettingModal').offcanvas('hide');
-            setOverlayType('POLYGON');
-            $(this).removeClass("btn-outline-success");
-            $(this).addClass("btn-success");
-
-            $('#btnModifyOverlay').addClass("btn-outline-dark");
-            $('#btnModifyOverlay').removeClass("btn-dark");
-        });
-
-        //
-        $('#btnModifyOverlay').click(function () {
-
-
-            $(this).removeClass("btn-outline-dark");
-            $(this).addClass("btn-dark");
-
-            $('#btnAddOverlay').addClass("btn-outline-success");
-            $('#btnAddOverlay').removeClass("btn-success");
-        });
-
-
         // 주정차 별 구역 조회
         $('input:radio[name=searchIllegalType]').change(async function () {
             $('#areaSettingModal').offcanvas('hide');
@@ -464,13 +349,6 @@ $(function () {
             }
         });
 
-        $('#usedFirst').change(function() {
-            $.setTime(this);
-        });
-        $('#usedSecond').change(function() {
-            $.setTime(this);
-        })
-
         // 폴리곤 삭제
         $('#btnRemove').click(function () {
             if (confirm("삭제하시겠습니까?")) {
@@ -496,8 +374,8 @@ $(function () {
             }
         });
 
-        // 구역 설정
-        $('#btnModify').click(function () {
+        // 구역 이벤트 설정
+        $('#btnModifyEvent').click(function () {
             if (confirm("설정하시겠습니까?")) {
                 let form = $('#formAreaSetting').serializeObject();
                 form['usedFirst'] = !$('#usedFirst').is(':checked');
@@ -527,47 +405,6 @@ $(function () {
         $.getCurrentPosition(drawingMap);
 
     }
-
-    //
-    $.setGroupNames = function (locationType) {
-
-        function getNamesSelectHtml(groups) {
-            let html = '';
-            for (const group of groups) {
-                html += '<option value="' + group.groupSeq + '">' + group.name + '</option>';
-            }
-            return html;
-        }
-        let result = $.JJAjaxAsync({
-            url: _contextPath + '/event/group/name/get',
-            data: {
-                locationType: locationType
-            }
-        });
-
-        if (result.success) {
-            let groups = result.data;
-            let html = getNamesSelectHtml(groups);
-            $('#name').append(html);
-        }
-    }
-
-    //
-    $.setTime = function(_this) {
-        let id = _this.id.substring(4).toLowerCase();
-        if($('#'+_this.id).is(':checked')){
-            $('#'+ id +'StartTimeHour').attr('disabled', false);
-            $('#'+ id +'StartTimeMinute').attr('disabled', false);
-            $('#'+ id +'EndTimeHour').attr('disabled', false);
-            $('#'+ id +'EndTimeMinute').attr('disabled', false);
-        } else {
-            $('#'+ id +'StartTimeHour').attr('disabled', true);
-            $('#'+ id +'StartTimeMinute').attr('disabled', true);
-            $('#'+ id +'EndTimeHour').attr('disabled', true);
-            $('#'+ id +'EndTimeMinute').attr('disabled', true);
-        }
-    }
-
     //
     initialize();
 });

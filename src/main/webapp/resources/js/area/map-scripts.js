@@ -94,6 +94,7 @@ $(function () {
             target: map,
             event: 'click',
             func: function (mouseEvent) {
+                $('#areaViewModal').offcanvas('hide');
                 $.initOverlay();
             }
         });
@@ -147,6 +148,7 @@ $(function () {
             target: map,
             event: 'dragend',
             func: function () {
+                $('#areaViewModal').offcanvas('hide');
                 $.initOverlay();
             }
         });
@@ -212,6 +214,20 @@ $(function () {
                     polygon.setOptions($.changeOptionByMouseOut(area));
                 }
             });
+
+            setKakaoEvent({
+                target: polygon,
+                event: 'click',
+                func: function () {
+                    kakao.maps.event.preventMap();
+                    let center = centroid(area.points);
+                    let centerLatLng = new kakao.maps.LatLng(center.y, center.x);
+                    map.panTo(centerLatLng);
+                    $('#areaViewModal').offcanvas('show');
+                    $('.timeSelect').attr('disabled', true);
+                    $.showModal(area.seq);
+                }
+            });
         }
 
         let cnt = area.receiptCnt === undefined ? 0 : area.receiptCnt;
@@ -245,7 +261,7 @@ $(function () {
                 isSetting: false,
             }
         });
-        beforeCodes = codes;
+        $.beforeCodes = codes;
         drawingPolygon(getPolygonData());
     }
 
