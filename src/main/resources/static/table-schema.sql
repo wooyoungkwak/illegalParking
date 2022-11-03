@@ -57,6 +57,23 @@ CREATE TABLE parking
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
+-- PM (Pernal Mobility) 정보
+DROP TABLE IF EXISTS pm;
+CREATE TABLE pm
+(
+    PmSeq           INT AUTO_INCREMENT PRIMARY KEY,
+    PmId            VARCHAR(50) NULL COMMENT 'PM ID',                     -- PM ID
+    PmName          VARCHAR(20) NOT NULL COMMENT 'PM 이름',                 -- PM 이름
+    PmOperOpenHhmm  VARCHAR(5) NULL COMMENT '운영 시작 시간',                   -- 운영 시작 시간
+    PmOperCloseHhmm VARCHAR(5) NULL COMMENT '운영 종료 시간',                   -- 운영 종료 시간
+    PmType          VARCHAR(10) NOT NULL COMMENT 'PM 타입 ( KICK / BIKE )', -- PM 타입 ( KICK / BIKE )
+    PmPrice         INT         NOT NULL COMMENT '요금',                    -- 요금
+    Latitude        DECIMAL(18, 10) NULL COMMENT '위도',                    -- 위도
+    Longitude       DECIMAL(18, 10) NULL COMMENT '경도',                    -- 경도
+    Code            VARCHAR(10) NOT NULL COMMENT '법정동 코드',                -- 법정동 코드
+    IsDel           BOOLEAN     NOT NULL DEFAULT FALSE COMMENT '삭제 여부'    -- 삭제 여부
+) ENGINE = InnoDB
+  CHARSET = utf8;
 
 -- 신고 접수
 DROP TABLE IF EXISTS report;

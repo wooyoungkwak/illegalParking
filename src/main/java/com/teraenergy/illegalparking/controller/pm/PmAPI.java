@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.collect.Lists;
 import com.teraenergy.illegalparking.exception.TeraException;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
+import com.teraenergy.illegalparking.model.entity.pm.service.PmService;
 import com.teraenergy.illegalparking.util.JsonUtil;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class PmAPI {
 
 	private final ParkingService parkingService;
 
+	private final PmService pmService;
+
 	@PostMapping("/pm/get")
 	@ResponseBody
 	public Object getParking(@RequestBody String body) throws TeraException {
@@ -46,7 +49,8 @@ public class PmAPI {
 				codes.add(obj.asText());
 			}
 		}
-		return parkingService.gets(codes);
+//		return parkingService.gets(codes);
+		return pmService.gets(codes);
 	}
 
 }

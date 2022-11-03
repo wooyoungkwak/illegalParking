@@ -18,9 +18,7 @@
 	</stripes:layout-component>
 
 	<!-- side -->
-	<stripes:layout-component name="side">
-		<%--		<jsp:include page="side.jsp" flush="true"/>--%>
-	</stripes:layout-component>
+	<stripes:layout-component name="side"></stripes:layout-component>
 
 	<!-- content -->
 	<stripes:layout-component name="contents">
@@ -41,7 +39,7 @@
 									<h4 class="chart_title">신고건수</h4>
 								</div>
 								<div class="row">
-									<div id="pieChart"></div>
+									<div id="pieChart" style="align-items: start;"></div>
 									<div class="container data_info">
 										<div class="row">
 											<h5>총 신고건수</h5>

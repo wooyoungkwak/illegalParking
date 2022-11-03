@@ -131,36 +131,49 @@
                 function setBtnReceiptStateType(receiptStateType) {
                     let $btnException = $('#btnException');
                     let $btnPenalty = $('#btnPenalty');
+                    let $labelHow = $('#labelHow');
 
-                    let $exception = $btnException.parent().parent();
-                    let $penalty = $btnPenalty.parent().parent();
+                    let $exception = $btnException.parent();
+                    let $penalty = $btnPenalty.parent();
+
+                    $exception.hide();
+                    $penalty.hide();
 
                     $btnException.removeClass();
                     $btnPenalty.removeClass();
 
                     switch (receiptStateType) {
                         case 'EXCEPTION':
-                            $exception.show();
-                            $penalty.hide();
                             $btnException.addClass("btn btn-dark");
                             $btnPenalty.addClass("btn btn-outline-danger");
                             $btnException.attr('disabled', true);
                             $btnPenalty.attr('disabled', true);
+
+                            $labelHow.hide();
+                            $exception.show();
+                            $penalty.hide();
                             break;
                         case 'PENALTY':
                             $exception.hide();
                             $penalty.show();
                             $btnException.addClass("btn btn-outline-dark");
                             $btnPenalty.addClass("btn btn-danger");
-
                             $btnException.attr('disabled', true);
                             $btnPenalty.attr('disabled', true);
+
+                            $labelHow.hide();
+                            $exception.hide();
+                            $penalty.show();
                             break;
                         default:
                             $btnException.addClass("btn btn-outline-dark");
                             $btnPenalty.addClass("btn btn-outline-danger");
                             $btnException.attr('disabled', false);
                             $btnPenalty.attr('disabled', false);
+
+                            $labelHow.show();
+                            $exception.show();
+                            $penalty.show();
                             break;
                     }
 
