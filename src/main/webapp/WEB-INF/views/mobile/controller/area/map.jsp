@@ -96,9 +96,14 @@
 		<script type="application/javascript">
 			function appToEvent(key, value) {
 				if (key === 'bottomSheet') {
-                    if ( $.isClickedByMaker && $('.markerImg').length > 0 ) {
-                        alert(value);
-						$.initMarker();
+                    if ( value === 'clicked') {
+                        if ( $.isClickedByMaker && !$.isChangeMaker) {
+                            $.initMarker();
+                        }
+					} else {
+                        if ( $.isClickedByMaker) {
+                            $.initMarker();
+                        }
                     }
 				}
 			}
@@ -186,7 +191,7 @@
                 // 라디오버튼 change 이벤트 설정
                 function handleRadioButton(event) {
                     let mapType = $('.mapType');
-                    if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
+                    if ($.isMobile) webToApp.postMessage(JSON.stringify("click"));
                     for (const type of mapType) {
                         type.classList.remove("btn-dark");
                         type.classList.remove("rounded-pill");

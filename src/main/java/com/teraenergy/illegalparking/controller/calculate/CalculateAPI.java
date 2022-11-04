@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.teraenergy.illegalparking.exception.TeraException;
+import com.teraenergy.illegalparking.exception.enums.TeraExceptionCode;
 import com.teraenergy.illegalparking.model.dto.calculate.service.ProductDtoService;
 import com.teraenergy.illegalparking.model.entity.product.domain.Product;
 import com.teraenergy.illegalparking.model.entity.product.enums.Brand;
@@ -13,6 +14,7 @@ import com.teraenergy.illegalparking.model.entity.user.domain.User;
 import com.teraenergy.illegalparking.model.entity.user.service.UserService;
 import com.teraenergy.illegalparking.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,6 +35,7 @@ import java.util.stream.Collectors;
  * Description :
  */
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class CalculateAPI {
@@ -66,54 +69,76 @@ public class CalculateAPI {
     @PostMapping("/calculate/product/set")
     @ResponseBody
     public Object setProduct(@RequestBody String body) throws TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        Product product = convertProduct(jsonNode);
-        product = productService.set(product);
-        return product;
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Product product = convertProduct(jsonNode);
+            return productService.set(product);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new TeraException(TeraExceptionCode.PRODUCT_CREATE_FAIL);
+        }
     }
 
     @PostMapping("/calculate/product/sets")
     @ResponseBody
     public Object setsProduct(@RequestBody String body) throws TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        Iterator<JsonNode> iterator = jsonNode.elements();
-        List<Product> products = Lists.newArrayList();
-        while (iterator.hasNext()) {
-            products.add(convertProduct(iterator.next()));
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Iterator<JsonNode> iterator = jsonNode.elements();
+            List<Product> products = Lists.newArrayList();
+            while (iterator.hasNext()) {
+                products.add(convertProduct(iterator.next()));
+            }
+            products = productService.sets(products);
+            return products;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new TeraException(TeraExceptionCode.PRODUCT_CREATE_FAIL);
         }
-        products = productService.sets(products);
-        return products;
     }
 
     @PostMapping("/calculate/product/modify")
     @ResponseBody
     public Object modifyProduct(@RequestBody String body) throws TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        Product product = convertProduct(jsonNode);
-        return productService.set(product);
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Product product = convertProduct(jsonNode);
+            return productService.set(product);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new TeraException(TeraExceptionCode.PRODUCT_MODIFY_FAIL);
+        }
     }
 
     @PostMapping("/calculate/product/remove")
     @ResponseBody
     public Object removeProduct(@RequestBody String body) throws TeraException {
-        long num = 0;
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        Integer productSeq = jsonNode.get("productSeq").asInt();
-        return productService.remove(productSeq);
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer productSeq = jsonNode.get("productSeq").asInt();
+            return productService.remove(productSeq);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw new TeraException(TeraExceptionCode.PRODUCT_REMOVE_FAIL);
+        }
     }
 
     private Product convertProduct(JsonNode jsonNode) throws TeraException {
-        Product product = new Product();
-        if (jsonNode.get("productSeq") != null) {
-            product.setProductSeq(jsonNode.get("productSeq").asInt());
+        try {
+            Product product = new Product();
+            if (jsonNode.get("productSeq") != null) {
+                product.setProductSeq(jsonNode.get("productSeq").asInt());
+            }
+            product.setIsDel(false);
+            product.setBrand(Brand.valueOf(jsonNode.get("brand").asText()));
+            product.setName(jsonNode.get("name").asText());
+            Integer userSeq = jsonNode.get("userSeq").asInt();
+            User user = userService.get(userSeq);
+            product.setUserSeq(userSeq);
+            return product;
+        } catch (Exception e){
+            throw new TeraException(e.getMessage(), e);
         }
-        product.setIsDel(false);
-        product.setBrand(Brand.valueOf(jsonNode.get("brand").asText()));
-        product.setName(jsonNode.get("name").asText());
-        Integer userSeq = jsonNode.get("userSeq").asInt();
-        User user = userService.get(userSeq);
-        product.setUserSeq(userSeq);
-        return product;
     }
 
 }

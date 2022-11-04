@@ -227,26 +227,26 @@
 
                     // 수정 이벤트
                     $('#modify').on('click', function () {
-                        // let data = getDataByProduct();
-                        // data.productSeq = Number($('#productSeq').val());
-                        //
-                        // $.JJAjaxSync({
-                        //     url: _contextPath + "/product/modify",
-                        //     data: data,
-                        //     success: function (ret) {
-                        //         log(ret);
-                        //
-                        //         if ( ret.success ) {
-                        //             alert(" 수정 되었습니다.");
-                        //             location.href = location.href;
-                        //         } else {
-                        //             alert("등록 실패 하였습니다.");
-                        //         }
-                        //     },
-                        //     error: function (code) {
-                        //         alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
-                        //     }
-                        // });
+                        let data = getDataByProduct('data');
+                        data.productSeq = Number($('#productSeq').val());
+
+                        $.JJAjaxSync({
+                            url: _contextPath + "/product/modify",
+                            data: data,
+                            success: function (ret) {
+                                log(ret);
+
+                                if ( ret.success ) {
+                                    alert(" 수정 되었습니다.");
+                                    location.href = location.href;
+                                } else {
+                                    alert("등록 실패 하였습니다.");
+                                }
+                            },
+                            error: function (code) {
+                                alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
+                            }
+                        });
                     });
 
                     // 닫기 이벤트

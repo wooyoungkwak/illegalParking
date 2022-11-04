@@ -208,6 +208,7 @@ let textOverlays = [];
 
 $.currentMarkerSeq = 0;
 $.isClickedByMaker = false;
+$.isChangeMaker = false;
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경
 $.getCurrentPosition = function (map) {
@@ -425,7 +426,6 @@ function setImgOrigin(pmType) {
 // mobile 인 경우 Overlay 정보 설정 함수
 $.setOverlayInfoByMobile = function (data) {
     if ($.isMobile) {
-        webToApp.postMessage(JSON.stringify('click'));
         let obj = getMarkerInfo($.mapSelected, data);
         webToApp.postMessage(JSON.stringify(obj));
     }
@@ -479,24 +479,37 @@ $.addOverlay = function (data, map, callback) {
         let imgType = src.split("/").pop().replace(".png", "");
         let isOn = imgType.split("_").pop().includes("on");
 
+        if ($.isMobile) webToApp.postMessage(JSON.stringify("click"));
+
         $.initMarker();
 
         if (!isOn) {
+
+
             this.children[0].src = imgOrigin.imgSrc.clickOrigin;
             if ($.mapSelected === 'parking') {
+
+                if ( $.currentMarkerSeq != data.parkingSeq) {
+                    $.isChangeMaker = true;
+                }
+
                 this.children[1].style.color = 'white';
                 $.currentMarkerSeq = data.parkingSeq;
             } else {
+
+                if ( $.currentMarkerSeq != data.pmSeq) {
+                    $.isChangeMaker = true;
+                }
+
                 $.currentMarkerSeq = data.pmSeq;
             }
+
             map.panTo(position);
             callback(data);
             $(imgNode).children('img').addClass("active");
             $.isClickedByMaker = true;
         } else {
-            if ($.isMobile) {
-                webToApp.postMessage(JSON.stringify('click'));
-            } else {
+            if (!$.isMobile) {
                 $('.close').trigger('click');
             }
         }
@@ -534,12 +547,13 @@ $.initMarker = function () {
                 $.isClickedByMaker = false;
             }
         });
+        $.isChangeMaker = false;
     }
 }
 
 // Overlay 초기화 함수
 $.initOverlay = function () {
-    if ($.isMobile) webToApp.postMessage(JSON.stringify('click'));
+    if ($.isMobile) webToApp.postMessage(JSON.stringify("click"));
     $.currentMarkerSeq = 0;
 
     if ($.mapSelected !== 'zone') {
