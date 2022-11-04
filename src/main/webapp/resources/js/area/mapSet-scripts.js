@@ -1,4 +1,7 @@
 $(function () {
+
+    $.isModifyArea = false;
+
     let zoneSeqs = [];
     let zoneTypes = [];
     let zonePolygons = [];
@@ -37,8 +40,13 @@ $(function () {
         manager.select(kakao.maps.drawing.OverlayType[type]);
     }
 
+    $.cancelDrawing = function() {
+        // 그리기 중이면 그리기를 취소합니다
+        manager.cancel();
+    }
+
     // 생성한 Manager 의 Overlay 삭제 함수
-    function removeOverlaysOfManager() {
+    $.removeOverlaysOfManager = function() {
         let getPolygons = manager.getOverlays().polygon;
         let len = getPolygons.length;
         for (let i = 0; i < len; i++) {
@@ -138,12 +146,31 @@ $(function () {
                     // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
                     kakao.maps.event.preventMap();
 
-                    if(manager._mode === undefined || manager._mode === '') {
-                        $('#areaSettingModal').offcanvas('show');
-                        let center = centroid(area.points);
-                        let centerLatLng = new kakao.maps.LatLng(center.y, center.x);
-                        drawingMap.panTo(centerLatLng);
-                        $.showModal(area.seq);
+                    if($.isModifyArea) {
+                        log(area)
+                        let index = zoneSeqs.indexOf(Number(area.seq));
+                        zoneTypes.splice(index, 1)
+                        zoneSeqs.splice(index, 1)
+                        zoneAreas.splice(index, 1)
+                        zonePolygons.splice(index, 1);
+
+                        drawingPolygon(getPolygonData());
+
+                        manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
+
+                        manager.addListener('remove', function(e) {
+                            drawingPolygon(getPolygonData());
+                        });
+
+                    } else {
+                        if (manager._mode === undefined || manager._mode === '') {
+                            $('#areaSettingModal').offcanvas('show');
+                            let center = centroid(area.points);
+                            let centerLatLng = new kakao.maps.LatLng(center.y,
+                                center.x);
+                            drawingMap.panTo(centerLatLng);
+                            $.showModal(area.seq);
+                        }
                     }
                 }
             });
@@ -210,12 +237,12 @@ $(function () {
                 $('#btnAddOverlay').removeClass("btn-success");
                 $('#btnModifyOverlay').addClass("btn-outline-dark");
                 $('#btnModifyOverlay').removeClass("btn-dark");
-                $('#btnAddOverlay').removeClass("display-none");
-                $('#btnModifyOverlay').removeClass("display-none");
+                $('#btnAddOverlay').show();
+                $('#btnModifyOverlay').show();
                 if(manager.getOverlays().polygon.length === 0) {
-                    $('#btnSet').addClass('display-none');
-                    $('#btnCancel').addClass('display-none');
-                    $('#btnModify').addClass('display-none');
+                    $('#btnSet').hide();
+                    $('#btnCancel').hide();
+                    $('#btnModify').hide();
                 }
                 manager.cancel();
             }
@@ -226,16 +253,19 @@ $(function () {
             target: drawingMap,
             event: 'dblclick',
             func: function (mouseEvent) {
-                $('#btnAddOverlay').removeClass("btn-outline-success");
-                $('#btnAddOverlay').addClass("btn-success");
-                $('#btnModifyOverlay').addClass("btn-outline-success");
-                $('#btnModifyOverlay').removeClass("btn-success");
-                $('#btnModifyOverlay').addClass("display-none");
-                $('#btnSet').removeClass('display-none');
-                $('#btnModify').addClass('display-none');
-                $('#btnCancel').removeClass('display-none');
-                $('#areaSettingModal').offcanvas('hide');
-                $.setOverlayType('POLYGON');
+                if(!$.isModifyArea) {
+                    $.isModifyArea = false;
+                    $('#btnAddOverlay').removeClass("btn-outline-success");
+                    $('#btnAddOverlay').addClass("btn-success");
+                    $('#btnModifyOverlay').addClass("btn-outline-success");
+                    $('#btnModifyOverlay').removeClass("btn-success");
+                    $('#btnModifyOverlay').hide();
+                    $('#btnSet').show();
+                    $('#btnModify').hide();
+                    $('#btnCancel').show();
+                    $('#areaSettingModal').offcanvas('hide');
+                    $.setOverlayType('POLYGON');
+                }
             }
         });
 
@@ -300,7 +330,7 @@ $(function () {
             $('#areaSettingModal').offcanvas('hide');
             if(manager.getOverlays().polygon.length > 0){
                 if(confirm("저장하지 않은 구역은 삭제됩니다. 검색하시겠습니까?")) {
-                    removeOverlaysOfManager();
+                    $.removeOverlaysOfManager();
                 }
                 else {
                     $('input:radio[name=searchIllegalType]').eq(0).prop('checked', true)
@@ -309,11 +339,13 @@ $(function () {
             }
             searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
             if(searchIllegalType === '') {
-                $('#btnAddOverlay').show();
-                $('#btnSet').show();
+                $('#btnCancel').trigger('click');
             } else {
                 $('#btnAddOverlay').hide();
+                $('#btnModifyOverlay').hide();
+                $('#btnModify').hide();
                 $('#btnSet').hide();
+                $('#btnCancel').hide();
             }
 
             let codes = (await $.getDongCodesBounds(drawingMap)).codes;
@@ -338,6 +370,7 @@ $(function () {
                 alert('구역을 지정하시기 바랍니다.');
                 return false;
             } else {
+                $.initBtnState();
                 // 폴리곤 중심좌표를 구해서 법정동 코드 넣기
                 for (const polygon of opt.data.polygonData) {
                     let points = polygon.points;
@@ -350,7 +383,7 @@ $(function () {
                 let codes = (await $.getDongCodesBounds(drawingMap)).codes;
                 await drawingZone(codes);
                 // 생성한 폴리곤 삭제
-                removeOverlaysOfManager();
+                $.removeOverlaysOfManager();
             }
         });
 

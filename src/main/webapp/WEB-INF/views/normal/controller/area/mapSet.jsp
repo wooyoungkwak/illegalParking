@@ -105,36 +105,58 @@
 				});
 				$('#usedSecond').change(function() {
 					setTime(this);
-				})
+				});
 
 				//
 				$('#btnAddOverlay').click(function () {
+				    $.isModifyArea = false;
 					$.setOverlayType('POLYGON');
 					$(this).removeClass("btn-outline-success");
 					$(this).addClass("btn-success");
 
-					$('#btnSet').removeClass('display-none');
-					$('#btnCancel').removeClass('display-none');
-					$('#btnModify').addClass('display-none');
+					$('#btnSet').show();
+					$('#btnCancel').show();
+					$('#btnModify').hide();
 
 					$('#btnModifyOverlay').addClass("btn-outline-dark");
 					$('#btnModifyOverlay').removeClass("btn-dark");
-					$('#btnModifyOverlay').addClass("display-none");
+					$('#btnModifyOverlay').hide();
 				});
 
 				//
 				$('#btnModifyOverlay').click(function () {
+                    $.isModifyArea = true;
 					$(this).removeClass("btn-outline-dark");
 					$(this).addClass("btn-dark");
 
-					$('#btnModify').removeClass('display-none');
-					$('#btnCancel').removeClass('display-none');
-					$('#btnSet').addClass('display-none');
+					$('#btnModify').show();
+					$('#btnCancel').show();
+					$('#btnSet').hide();
 
 					$('#btnAddOverlay').addClass("btn-outline-success");
 					$('#btnAddOverlay').removeClass("btn-success");
-					$('#btnAddOverlay').addClass("display-none");
+					$('#btnAddOverlay').hide();
 				});
+
+                $('#btnCancel').click(function(){
+					$.initBtnState();
+                    $.cancelDrawing();
+                    $.removeOverlaysOfManager();
+                });
+
+                $.initBtnState = function() {
+					$.isModifyArea = false;
+					$('#btnModify').hide();
+					$('#btnCancel').hide();
+					$('#btnSet').hide();
+
+					$('#btnAddOverlay').addClass("btn-outline-success");
+					$('#btnAddOverlay').removeClass("btn-success");
+					$('#btnAddOverlay').show();
+					$('#btnModifyOverlay').addClass("btn-outline-dark");
+					$('#btnModifyOverlay').removeClass("btn-dark");
+					$('#btnModifyOverlay').show();
+				}
 			})
 
 		</script>
