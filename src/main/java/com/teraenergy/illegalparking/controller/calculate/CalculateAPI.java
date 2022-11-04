@@ -135,6 +135,8 @@ public class CalculateAPI {
             Integer userSeq = jsonNode.get("userSeq").asInt();
             User user = userService.get(userSeq);
             product.setUserSeq(userSeq);
+            product.setPointValue(jsonNode.get("pointValue").asLong());
+            product.setThumbnail(jsonNode.get("thumbnail").asText());
             return product;
         } catch (Exception e){
             throw new TeraException(e.getMessage(), e);

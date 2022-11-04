@@ -369,7 +369,7 @@ $.getAngle = function (center, target) {
     let dy = center.y - target.y;
     let deg = Math.atan2(dy, dx) * 180 / Math.PI;
 
-    return (-deg + 450) % 360 | 0;
+    return (-deg + 390) % 360 | 0;
 }
 
 // 클릭한 마커에 대한 장소 상세정보를 커스텀 오버레이로 표시하는 함수입니다

@@ -65,7 +65,7 @@ $(function () {
 
         let price = document.createElement('span');
         price.className = 'price';
-        price.appendChild(document.createTextNode(`운영시간 : ${pmOperOpenHhmm} ~ ${pmOperCloseHhmm}`));
+        price.appendChild(document.createTextNode(`운영시간 : ${pm.pmOperOpenHhmm} ~ ${pm.pmOperCloseHhmm}`));
         infoNode.appendChild(price);
 
         contentNode.appendChild(infoNode);

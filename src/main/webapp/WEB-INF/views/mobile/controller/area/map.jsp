@@ -94,6 +94,66 @@
 		<script src="<%=contextPath%>/resources/js/mapCommon-scripts.js"></script>
 		<script src="<%=contextPath%>/resources/js/area/map-scripts.js"></script>
 		<script type="application/javascript">
+
+			let tempLat1 = 0;
+            let tempLng1 = 0;
+
+			let tempLat2 = 0;
+            let tempLng2 = 0;
+
+			let tempLat3 = 0;
+            let tempLng3 = 0;
+
+            let oldBearing = 0;
+
+            function averageXY(oldLat, oldLng, newLat, newLng) {
+                if ( oldLat === 0 ) {
+                    oldLat = newLat;
+				}
+
+                if ( oldLng === 0) {
+                    oldLng = newLng;
+				}
+
+                return {
+                    lat: (oldLat + newLat) / 2,
+					lng : (oldLng + newLng) / 2
+				}
+			}
+
+            function getAngleByCalibration() {
+
+                if (tempLng2 != 0) {
+                    tempLat1 = tempLat2;
+                    tempLng1 = tempLng2;
+                }
+
+                if ( tempLng3 != 0 ) {
+                    tempLat2 = tempLat3;
+                    tempLng2 = tempLng3;
+                }
+
+                let avgXY = averageXY(tempLat2, tempLng2, tempLat3, tempLng3);
+
+                let bearing = $.getAngle({
+                    x: tempLat1,
+                    y: tempLng1
+                }, {
+                    x: avgXY.lat,
+                    y: avgXY.lng
+                });
+
+                if ( oldBearing === 0 ) oldBearing = bearing;
+
+                if ( Math.abs( oldBearing - Math.abs(bearing) )  > 10 ) {
+                    bearing = ( oldBearing + bearing ) / 2;
+                }
+
+                oldBearing = bearing;
+
+                return bearing;
+			}
+
 			function appToEvent(key, value) {
 				if (key === 'bottomSheet') {
                     if ( value === 'clicked') {
@@ -110,13 +170,8 @@
 
             // INTERFACE : APP TO WEB
             function appToGps(_gpsLatitude, _gpsLongitude) {
-                let bearing = $.getAngle({
-					x: gpsLatitude,
-					y: gpsLongitude
-				}, {
-					x: _gpsLatitude,
-					y: _gpsLongitude
-				});
+
+                let bearing = getAngleByCalibration();
 
 				$('#location').css({
 					'transform': 'rotate(' + (bearing) + 'deg)'
@@ -133,6 +188,10 @@
                 $.isFirst = false;
                 gpsLatitude = _gpsLatitude;
                 gpsLongitude = _gpsLongitude;
+
+                tempLat3 = _gpsLatitude;
+                tempLng3 = _gpsLongitude;
+
 				$.loading(false);
             }
 

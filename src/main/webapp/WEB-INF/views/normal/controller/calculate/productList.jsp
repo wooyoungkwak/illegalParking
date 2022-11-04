@@ -204,49 +204,53 @@
                         $('#productSeq').val(productSeq);
                         $('#productTable').hide();
                         $('#productAddTag').show();
+                        $('#brand').trigger('change');
                     });
 
                     // 등록 이벤트
                     $('#register').on('click', function () {
-                        $.JJAjaxSync({
-                            url: _contextPath + "/product/set",
-                            data: getDataByProduct('data'),
-                            success: function () {
-                                if (confirm(" 등록 되었습니다. \n 계속 등록 하시겠습니까? ")) {
-                                    location.href = location.href;
-                                } else {
-                                    location.href = _contextPath + '/productList';
+                        if (confirm("등록 하시겠습니까?")) {
+                            let data = getDataByProduct('data');
+                            data.thumbnail = $('#brandImg').attr('src').split('/').pop();
+                            $.JJAjaxSync({
+                                url: _contextPath + "/product/set",
+                                data: data,
+                                success: function () {
+                                    if (confirm(" 등록 되었습니다. \n 계속 등록 하시겠습니까? ")) {
+                                        location.href = location.href;
+                                    } else {
+                                        location.href = _contextPath + '/productList';
+                                    }
+                                },
+                                error: function (code) {
+                                    alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
                                 }
-                            },
-                            error: function (code) {
-                                alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
-                            }
-                        });
-
+                            });
+                        }
                     });
 
                     // 수정 이벤트
                     $('#modify').on('click', function () {
-                        let data = getDataByProduct('data');
-                        data.productSeq = Number($('#productSeq').val());
-
-                        $.JJAjaxSync({
-                            url: _contextPath + "/product/modify",
-                            data: data,
-                            success: function (ret) {
-                                log(ret);
-
-                                if ( ret.success ) {
-                                    alert(" 수정 되었습니다.");
-                                    location.href = location.href;
-                                } else {
-                                    alert("등록 실패 하였습니다.");
+                        if (confirm("수정 하시겠습니까?")) {
+                            let data = getDataByProduct('data');
+                            data.productSeq = Number($('#productSeq').val());
+                            data.thumbnail = $('#brandImg').attr('src').split('/').pop();
+                            $.JJAjaxSync({
+                                url: _contextPath + "/product/modify",
+                                data: data,
+                                success: function (ret) {
+                                    if (ret.success) {
+                                        alert(" 수정 되었습니다.");
+                                        location.href = location.href;
+                                    } else {
+                                        alert("등록 실패 하였습니다.");
+                                    }
+                                },
+                                error: function (code) {
+                                    alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
                                 }
-                            },
-                            error: function (code) {
-                                alert("등록 실패 하였습니다. (에러코드 : " + code + ")");
-                            }
-                        });
+                            });
+                        }
                     });
 
                     // 닫기 이벤트
