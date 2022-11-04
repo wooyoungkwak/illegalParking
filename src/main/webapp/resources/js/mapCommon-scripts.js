@@ -472,7 +472,7 @@ $.addOverlay = function (data, map, callback) {
         imgNode.appendChild(span);
     }
 
-    let position = new kakao.maps.LatLng(data.latitude, data.longitude);
+
 
     imgNode.addEventListener('click', function (event) {
         let src = $(this).children('img:first').attr('src');
@@ -484,7 +484,6 @@ $.addOverlay = function (data, map, callback) {
         $.initMarker();
 
         if (!isOn) {
-
 
             this.children[0].src = imgOrigin.imgSrc.clickOrigin;
             if ($.mapSelected === 'parking') {
@@ -504,7 +503,7 @@ $.addOverlay = function (data, map, callback) {
                 $.currentMarkerSeq = data.pmSeq;
             }
 
-            map.panTo(position);
+            map.panTo(new kakao.maps.LatLng(( data.latitude - 0.000680), data.longitude));
             callback(data);
             $(imgNode).children('img').addClass("active");
             $.isClickedByMaker = true;
@@ -523,7 +522,7 @@ $.addOverlay = function (data, map, callback) {
     let markerOverlay = new kakao.maps.CustomOverlay({
         clickable: true,
         zIndex: 0,
-        position: position,
+        position: new kakao.maps.LatLng(data.latitude, data.longitude),
         content: contentNode,
         map: map
     });
