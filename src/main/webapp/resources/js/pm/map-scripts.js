@@ -43,8 +43,30 @@ $(function () {
 
         let title = document.createElement('div');
         title.className = 'title';
-        title.appendChild(document.createTextNode(pm.name));
+        title.appendChild(document.createTextNode(pm.pmName));
 
+        let closeBtn = document.createElement('div');
+        closeBtn.className = 'close';
+        closeBtn.onclick = function () {
+            pmOverlay.setMap(null);
+        };
+        title.appendChild(closeBtn);
+
+        let jibun = document.createElement('span');
+        jibun.className = 'jibun';
+        jibun.appendChild(document.createTextNode(pm.pmId));
+        title.appendChild(jibun);
+        infoNode.appendChild(title);
+
+        let addr = document.createElement('span');
+        addr.className = 'addr';
+        addr.appendChild(document.createTextNode(`대여료 : ${pm.pmPrice}원`));
+        infoNode.appendChild(addr);
+
+        let price = document.createElement('span');
+        price.className = 'price';
+        price.appendChild(document.createTextNode(`운영시간 : ${pmOperOpenHhmm} ~ ${pmOperCloseHhmm}`));
+        infoNode.appendChild(price);
 
         contentNode.appendChild(infoNode);
         let after = document.createElement('div');

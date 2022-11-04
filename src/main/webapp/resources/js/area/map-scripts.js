@@ -299,26 +299,19 @@ $(function () {
         if ($.mapSelected === 'zone') {
             $('#msgBar').removeClass('display-none');
             $.removeTextOverlays();
-            (async () => {
-                $.drawingZone((await $.getDongCodesBounds(map)).codes);
-            })();
         } else if ($.mapSelected === 'parking') {
             $('#msgBar').addClass('display-none');
             $.removeOverlays();
             $.removeTextOverlays();
             url = _contextPath + '/parking/gets';
-            (async () => {
-                await $.getsMarker((await $.getDongCodesBounds(map)).codes);
-            })();
         } else if ($.mapSelected === 'pm') {
             $('#msgBar').addClass('display-none');
             $.removeOverlays();
             $.removeTextOverlays();
             url = _contextPath + '/pm/gets';
-            (async () => {
-                await $.getsMarker((await $.getDongCodesBounds(map)).codes);
-            })();
         }
+        let level = map.getLevel();
+        if(level < 4) $.processDongCodesBounds();
     }
 
     $.findMe = function () {

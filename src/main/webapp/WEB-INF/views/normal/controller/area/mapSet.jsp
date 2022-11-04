@@ -119,6 +119,7 @@
 
 					$('#btnModifyOverlay').addClass("btn-outline-dark");
 					$('#btnModifyOverlay').removeClass("btn-dark");
+					$('#btnModifyOverlay').addClass("display-none");
 				});
 
 				//
@@ -132,6 +133,7 @@
 
 					$('#btnAddOverlay').addClass("btn-outline-success");
 					$('#btnAddOverlay').removeClass("btn-success");
+					$('#btnAddOverlay').addClass("display-none");
 				});
 			})
 

@@ -24,20 +24,20 @@
     <!-- content -->
     <stripes:layout-component name="contents">
         <main>
-                    <div class="container-fluid px-4">
-                        <h1 class="mt-4">위치 보기</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active"> ${subTitle} > 위치 보기</li>
-                        </ol>
+            <div class="container-fluid px-4">
+                <h1 class="mt-4">위치 보기</h1>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item active"> ${subTitle} > 위치 보기</li>
+                </ol>
 
-                        <div class="row">
-                            <div class="col-12">
-                                <div id="map"></div>
-                            </div>
-                        </div>
-
+                <div class="row">
+                    <div class="col-12">
+                        <div id="map"></div>
                     </div>
-                </main>
+                </div>
+
+            </div>
+        </main>
     </stripes:layout-component>
 
     <!-- footer -->

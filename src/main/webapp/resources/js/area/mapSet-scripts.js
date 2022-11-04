@@ -208,10 +208,14 @@ $(function () {
                 // 그리기 중이면 그리기를 취소합니다
                 $('#btnAddOverlay').addClass("btn-outline-success");
                 $('#btnAddOverlay').removeClass("btn-success");
-                log(manager.getOverlays().polygon.length)
+                $('#btnModifyOverlay').addClass("btn-outline-dark");
+                $('#btnModifyOverlay').removeClass("btn-dark");
+                $('#btnAddOverlay').removeClass("display-none");
+                $('#btnModifyOverlay').removeClass("display-none");
                 if(manager.getOverlays().polygon.length === 0) {
                     $('#btnSet').addClass('display-none');
                     $('#btnCancel').addClass('display-none');
+                    $('#btnModify').addClass('display-none');
                 }
                 manager.cancel();
             }
@@ -226,6 +230,7 @@ $(function () {
                 $('#btnAddOverlay').addClass("btn-success");
                 $('#btnModifyOverlay').addClass("btn-outline-success");
                 $('#btnModifyOverlay').removeClass("btn-success");
+                $('#btnModifyOverlay').addClass("display-none");
                 $('#btnSet').removeClass('display-none');
                 $('#btnModify').addClass('display-none');
                 $('#btnCancel').removeClass('display-none');
