@@ -31,7 +31,7 @@ $(function () {
     };
 
     // 폴리곤 그리기
-    function drawingPolygon(polygons) {
+    function drawingPolygons(polygons) {
         $.removeOverlays();
         // 지도에 영역데이터를 폴리곤으로 표시합니다
         for (const element of polygons) {
@@ -99,6 +99,8 @@ $(function () {
             }
         });
 
+        let obj;
+
         // 확대수준이 변경되거나 지도가 이동했을때 타일 이미지 로드가 모두 완료되면 발생
         setKakaoEvent({
             target: map,
@@ -108,7 +110,7 @@ $(function () {
                 let level = map.getLevel();
 
                 if (level <= 3) {
-                    let obj = await $.getDongCodesBounds(map);
+                    obj = await $.getDongCodesBounds(map);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if (!obj.uniqueCodesCheck) {
                         if ($.mapSelected === 'zone') {
@@ -132,12 +134,11 @@ $(function () {
                 if (level > 3) {
                     if ($.mapSelected === 'zone') $.removeOverlays();
                 } else {
-                    let obj = await $.getDongCodesBounds(map);
                     if (level === 3) {
-                        await $.processDongCodesBounds();
-                    } else {
-                        if (!obj.uniqueCodesCheck) {
-                            await $.processDongCodesBounds();
+                        if ($.mapSelected === 'zone') {
+                            $.drawingZone(obj.codes);
+                        } else {
+                            await $.getsMarker(obj.codes);
                         }
                     }
                 }
@@ -262,7 +263,7 @@ $(function () {
             }
         });
         $.beforeCodes = codes;
-        drawingPolygon(getPolygonData());
+        drawingPolygons(getPolygonData());
     }
 
     // 로딩 이미지 화면 설정 함수
@@ -317,6 +318,7 @@ $(function () {
     $.findMe = function () {
         if ($.isMobile) $.getMobileCurrentPosition(map);
         else $.getCurrentPosition(map);
+        map.setLevel(3);
     }
 
     // 동코드 처리 함수

@@ -1,11 +1,8 @@
 $(function () {
 
     $.isModifyArea = false;
-
-    let zoneSeqs = [];
-    let zoneTypes = [];
-    let zonePolygons = [];
     let zoneAreas = [];
+    let zones = {};
 
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
@@ -64,7 +61,7 @@ $(function () {
     }
 
     // 폴리곤 그리기
-    function drawingPolygon(polygons) {
+    function drawingPolygons(polygons) {
         removeOverlays();
         // 지도에 영역데이터를 폴리곤으로 표시합니다
         for (const element of polygons) {
@@ -75,11 +72,11 @@ $(function () {
     // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
     function getPolygonData() {
         let areas = [];
-        for (let j = 0; j < zonePolygons.length; j++) {
+        for (let j = 0; j < zones.zonePolygons.length; j++) {
             let pointsPoly = [], obj = {};
-            let zonePolygonArr = zonePolygons[j].split(",");
-            obj.type = zoneTypes[j];
-            obj.seq = zoneSeqs[j];
+            let zonePolygonArr = zones.zonePolygons[j].split(",");
+            obj.type = zones.zoneTypes[j];
+            obj.seq = zones.zoneSeqs[j];
             for (let i = 0; i < zonePolygonArr.length - 1; i++) {
                 let pathPoints = zonePolygonArr[i].split(" ");
                 pointsPoly[i] = new Point(pathPoints[0], pathPoints[1]);
@@ -143,23 +140,20 @@ $(function () {
                 target: polygon,
                 event: 'click',
                 func: function (mouseEvent) {
-                    // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
                     kakao.maps.event.preventMap();
-
                     if($.isModifyArea) {
-                        log(area)
-                        let index = zoneSeqs.indexOf(Number(area.seq));
-                        zoneTypes.splice(index, 1)
-                        zoneSeqs.splice(index, 1)
-                        zoneAreas.splice(index, 1)
-                        zonePolygons.splice(index, 1);
-
-                        drawingPolygon(getPolygonData());
+                        let managerOverlay = manager.getOverlays().polygon;
+                        if(managerOverlay.length > 0) {
+                            manager.cancel();
+                            manager.remove(managerOverlay[0]);
+                        }
+                        polygon.setMap(null);
 
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
 
                         manager.addListener('remove', function(e) {
-                            drawingPolygon(getPolygonData());
+                            polygon.setMap(drawingMap);
+                            polygon.setOptions($.changeOptionByMouseOut(area));
                         });
 
                     } else {
@@ -191,7 +185,7 @@ $(function () {
             }
         })
         $.beforeCodes = codes;
-        drawingPolygon(getPolygonData());
+        drawingPolygons(getPolygonData());
     }
 
     // 카카오 초기화
@@ -244,7 +238,8 @@ $(function () {
                     $('#btnCancel').hide();
                     $('#btnModify').hide();
                 }
-                manager.cancel();
+                manager.cancel()
+                $.isModifyArea = false;
             }
         });
 
@@ -278,6 +273,8 @@ $(function () {
             }
         });
 
+        let obj;
+
         // 중심 좌표나 확대 수준이 변경되면 발생한다.
         setKakaoEvent({
             target: drawingMap,
@@ -289,13 +286,30 @@ $(function () {
 
                 $('#mapLevel').text(level + '레벨');
 
+                if(level <= 3 && !$.isModifyArea) {
+                    obj = await $.getDongCodesBounds(drawingMap);
+                    // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
+                    if(!obj.uniqueCodesCheck) {
+                        drawingZone(obj.codes);
+                    }
+                }
+            }
+        });
+
+        // 중심 좌표나 확대 수준이 변경되면 발생한다.
+        setKakaoEvent({
+            target: drawingMap,
+            event: 'zoom_changed',
+            func: async function () {
+                // 지도의  레벨을 얻어옵니다
+                let level = drawingMap.getLevel();
+
                 if (level > 3) {
                     removeOverlays();
                 } else {
-                    let obj = await $.getDongCodesBounds(drawingMap);
-                    // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
-                    if(obj.uniqueCodesCheck) await drawingPolygon(getPolygonData());
-                    else drawingZone(obj.codes);
+                    if (level === 3) {
+                        drawingZone(obj.codes);
+                    }
                 }
             }
         });
@@ -316,9 +330,9 @@ $(function () {
                 return result;
             }
 
-            zonePolygons = result.data.zonePolygons;
-            zoneSeqs = result.data.zoneSeqs;
-            zoneTypes = result.data.zoneTypes;
+            zones.zonePolygons = result.data.zonePolygons;
+            zones.zoneSeqs = result.data.zoneSeqs;
+            zones.zoneTypes = result.data.zoneTypes;
         }
     }
 
@@ -353,8 +367,7 @@ $(function () {
             drawingZone(codes);
         });
 
-        // 가져오기 버튼을 클릭하면 호출되는 핸들러 함수입니다
-        // Drawing Manager로 그려진 객체 데이터를 가져와 아래 지도에 표시합니다
+        // 구역 저장 함수
         $('#btnSet').click(async function () {
             $('#areaSettingModal').offcanvas('hide');
             // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
@@ -387,7 +400,14 @@ $(function () {
             }
         });
 
-        // 폴리곤 삭제
+        // 구역 수정 함수
+        $('#btnModify').click(function () {
+            if (confirm("삭제하시겠습니까?")) {
+
+            }
+        });
+
+        // 폴리곤 삭제 함수
         $('#btnRemove').click(function () {
             if (confirm("삭제하시겠습니까?")) {
                 let opt = {
@@ -399,14 +419,14 @@ $(function () {
                 let result = initializeZone(opt);
 
                 if (result.success === 'true') {
-                    let index = zoneSeqs.indexOf(Number(opt.data.zoneSeq));
-                    zoneTypes.splice(index, 1)
-                    zoneSeqs.splice(index, 1)
+                    let index = zones.zoneSeqs.indexOf(Number(opt.data.zoneSeq));
+                    zones.zoneTypes.splice(index, 1)
+                    zones.zoneSeqs.splice(index, 1)
                     zoneAreas.splice(index, 1)
-                    zonePolygons.splice(index, 1);
+                    zones.zonePolygons.splice(index, 1);
                 }
 
-                drawingPolygon(getPolygonData());
+                drawingPolygons(getPolygonData());
                 $('#areaSettingModal').offcanvas('hide');
                 alert("삭제되었습니다.");
             }
@@ -424,14 +444,14 @@ $(function () {
                 form['secondEndTime'] = $('#secondEndTimeHour').val() + ':' + $('#secondEndTimeMinute').val();
 
                 let result = initializeZone({
-                    url: _contextPath + '/zone/modify',
+                    url: _contextPath + '/event/addAndModify',
                     data: form
                 });
 
                 if (result.success) {
-                    let index = zoneSeqs.indexOf(Number(form.zoneSeq));
-                    zoneTypes[index] = form.illegalType;
-                    drawingPolygon(getPolygonData());
+                    let index = zones.zoneSeqs.indexOf(Number(form.zoneSeq));
+                    zones.zoneTypes[index] = form.illegalType;
+                    drawingPolygons(getPolygonData());
                     $('#areaSettingModal').offcanvas('hide');
                     alert("설정되었습니다.");
                 } else {

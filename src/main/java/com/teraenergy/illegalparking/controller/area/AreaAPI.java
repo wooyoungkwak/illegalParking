@@ -147,6 +147,37 @@ public class AreaAPI {
 
     @PostMapping("/area/zone/modify")
     @ResponseBody
+    public Object modify(@RequestBody String body) throws TeraException {
+        try {
+//            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+//            IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
+//            IllegalEvent illegalEvent = new IllegalEvent();
+//            illegalEvent.setIllegalType(
+//                IllegalType.valueOf(jsonNode.get("illegalType").asText()));
+////            illegalEvent.setName(jsonNode.get("name").asText());
+//            illegalEvent.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
+//            illegalEvent.setFirstStartTime(jsonNode.get("firstStartTime").asText());
+//            illegalEvent.setFirstEndTime(jsonNode.get("firstEndTime").asText());
+//            illegalEvent.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
+//            illegalEvent.setSecondStartTime(jsonNode.get("secondStartTime").asText());
+//            illegalEvent.setSecondEndTime(jsonNode.get("secondEndTime").asText());
+//            illegalEvent.setGroupSeq(jsonNode.get("name").asInt()); // name selectbox
+//            if (illegalZone.getEventSeq() != null) {
+//                illegalEvent.setEventSeq(illegalZone.getEventSeq());
+//                illegalEventService.set(illegalEvent);
+//            } else {
+//                illegalEvent = illegalEventService.set(illegalEvent);
+//                illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
+//            }
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.ZONE_MODIFY_FAIL, e);
+        }
+
+        return "";
+    }
+
+    @PostMapping("/area/event/addAndModify")
+    @ResponseBody
     public Object addAndModify(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
