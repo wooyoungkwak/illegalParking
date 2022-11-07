@@ -147,7 +147,7 @@ public class AreaAPI {
 
     @PostMapping("/area/zone/modify")
     @ResponseBody
-    public Object modifyZone(@RequestBody String body) throws TeraException {
+    public Object addAndModify(@RequestBody String body) throws TeraException {
         try {
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
@@ -164,9 +164,11 @@ public class AreaAPI {
             illegalEvent.setGroupSeq(jsonNode.get("name").asInt()); // name selectbox
             if (illegalZone.getEventSeq() != null) {
                 illegalEvent.setEventSeq(illegalZone.getEventSeq());
+                illegalEventService.set(illegalEvent);
+            } else {
+                illegalEvent = illegalEventService.set(illegalEvent);
+                illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
             }
-            illegalEvent = illegalEventService.set(illegalEvent);
-            illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
         } catch (Exception e) {
             throw new TeraException(TeraExceptionCode.ZONE_MODIFY_FAIL, e);
         }
