@@ -19,6 +19,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 /**
  * Date : 2022-11-03
@@ -116,7 +118,7 @@ public class SqlPm {
         HashMap<String, Object> point11 = Maps.newHashMap(); point11.put("lat",34.9413873);	point11.put("long", 127.6967143); point11.put("addr", "전라남도 광양시 중동");points.add(point11);
         HashMap<String, Object> point12 = Maps.newHashMap(); point12.put("lat",34.9432605);	point12.put("long", 127.6892792); point12.put("addr", "전라남도 광양시 중동");points.add(point12);
         HashMap<String, Object> point13 = Maps.newHashMap(); point13.put("lat",34.9411674);	point13.put("long", 127.6887535); point13.put("addr", "전라남도 광양시 중동");points.add(point13);
-        HashMap<String, Object> point14 = Maps.newHashMap(); point14.put("lat",34.9378326);	point14.put("long", 127.699849); point14.put("addr", "전라남도 광양시  중동");points.add(point14);
+        HashMap<String, Object> point14 = Maps.newHashMap(); point14.put("lat",34.9378326);	point14.put("long", 127.699849); point14.put("addr", "전라남도 광양시 중동");points.add(point14);
         HashMap<String, Object> point15 = Maps.newHashMap(); point15.put("lat",34.9442103);	point15.put("long", 127.7036773); point15.put("addr", "전라남도 광양시 중동");points.add(point15);
         HashMap<String, Object> point16 = Maps.newHashMap(); point16.put("lat",34.9500612);	point16.put("long", 127.6883389); point16.put("addr", "전라남도 광양시 중동");points.add(point16);
         HashMap<String, Object> point17 = Maps.newHashMap(); point17.put("lat",34.9500814);	point17.put("long", 127.6979695); point17.put("addr", "전라남도 광양시 중동");points.add(point17);
@@ -156,26 +158,29 @@ public class SqlPm {
 
         int len = 0;
 
+
         for( HashMap<String, Object> point : points) {
             Pm pm = new Pm();
+
             if (len % 2 == 1 ) {
                 pm.setPmPrice(0);
                 pm.setPmType(PmType.BIKE);
                 pm.setPmName("따릉이");
+                pm.setPmId("Bike-"+ UUID.randomUUID().toString());
             } else {
                 pm.setPmPrice(700);
                 pm.setPmType(PmType.KICK);
                 pm.setPmName("SWING");
+                pm.setPmId("SWING-"+ UUID.randomUUID().toString());
             }
 
-            pm.setPmId("SWING"+pm.toString());
-            System.out.println((String) point.get("addr"));
             LawDong lawDong = lawDongService.getFromLnmadr((String) point.get("addr"));
             pm.setCode(lawDong.getCode());
             pm.setPmOperOpenHhmm("00:00");
             pm.setPmOperCloseHhmm("23:59");
             pm.setLatitude((Double) point.get("lat"));
             pm.setLongitude((Double) point.get("long"));
+            pms.add(pm);
 
             len ++;
         }
