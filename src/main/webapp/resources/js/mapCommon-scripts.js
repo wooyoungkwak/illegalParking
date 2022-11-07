@@ -475,6 +475,7 @@ $.addOverlay = function (data, map, callback) {
 
 
     imgNode.addEventListener('click', function (event) {
+
         let src = $(this).children('img:first').attr('src');
         let imgType = src.split("/").pop().replace(".png", "");
         let isOn = imgType.split("_").pop().includes("on");
@@ -486,6 +487,9 @@ $.addOverlay = function (data, map, callback) {
         if (!isOn) {
 
             this.children[0].src = imgOrigin.imgSrc.clickOrigin;
+
+
+
             if ($.mapSelected === 'parking') {
 
                 if ( $.currentMarkerSeq != data.parkingSeq) {
@@ -506,6 +510,7 @@ $.addOverlay = function (data, map, callback) {
             map.panTo(new kakao.maps.LatLng(( data.latitude - 0.000680), data.longitude));
             callback(data);
             $(imgNode).children('img').addClass("active");
+
             $.isClickedByMaker = true;
         } else {
             if (!$.isMobile) {
@@ -535,7 +540,7 @@ $.initMarker = function () {
     if ($.isClickedByMaker && $('.markerImg').length > 0) {
         $('.markerImg').each(function () {
             if ($(this).attr('class').indexOf('active') > -1) {
-                $(this).attr('src', $(this).attr('src').replaceAll('on', 'off'));
+                $(this).attr('src', $(this).attr('src').replace('on', 'off'));
                 if ($.mapSelected === 'parking') {
                     $(this).parent().children('span').css({
                         "color": "black"
