@@ -146,6 +146,7 @@
 
                 $.initBtnState = function() {
 					$.isModifyArea = false;
+					$.isModifySuccess = false;
 					$('#btnModify').hide();
 					$('#btnCancel').hide();
 					$('#btnSet').hide();

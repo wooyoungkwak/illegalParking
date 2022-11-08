@@ -1,6 +1,8 @@
 $(function () {
 
     $.isModifyArea = false;
+    $.isModifySuccess = false;
+
     let zoneAreas = [];
     let zones = {};
 
@@ -157,15 +159,19 @@ $(function () {
                     if($.isModifyArea) {
                         let managerOverlay = manager.getOverlays().polygon;
                         if(managerOverlay.length > 0) {
+                            manager.cancel();
                             manager.remove(managerOverlay[0]);
                         }
                         polygon.setMap(null);
 
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
 
+
                         manager.addListener('remove', function(e) {
-                            polygon.setMap(drawingMap);
-                            polygon.setOptions($.changeOptionByMouseOut(area));
+                            if(!$.isModifySuccess) {
+                                polygon.setMap(drawingMap);
+                                polygon.setOptions($.changeOptionByMouseOut(area));
+                            }
                         });
 
                         modifyPolygonSeq = area.seq;
@@ -241,7 +247,9 @@ $(function () {
             event: 'rightclick',
             func: function (mouseEvent) {
                 // 그리기 중이면 그리기를 취소합니다
+                $.isModifySuccess = false;
                 $.initBtnState();
+                manager.cancel();
                 if(manager.getOverlays().polygon.length > 0) {
                     manager.remove(manager.getOverlays().polygon[0]);
                 }
@@ -255,7 +263,6 @@ $(function () {
             event: 'dblclick',
             func: function (mouseEvent) {
                 if(!$.isModifyArea) {
-                    $.isModifyArea = false;
                     $('#btnAddOverlay').removeClass("btn-outline-success");
                     $('#btnAddOverlay').addClass("btn-success");
                     $('#btnModifyOverlay').addClass("btn-outline-success");
@@ -291,6 +298,8 @@ $(function () {
                 let level = drawingMap.getLevel();
 
                 $('#mapLevel').text(level + '레벨');
+
+                log($.isModifyArea);
 
                 if(level <= 3 && !$.isModifyArea) {
                     obj = await $.getDongCodesBounds(drawingMap);
@@ -410,37 +419,39 @@ $(function () {
         $('#btnModify').click(async function () {
             let data = manager.getData();
 
-            let polygon = data[kakao.maps.drawing.OverlayType.POLYGON][0];
-            if (polygon === undefined) {
+            let managerPolygon = data[kakao.maps.drawing.OverlayType.POLYGON][0];
+            if (managerPolygon === undefined) {
                 alert('구역을 지정하시기 바랍니다.');
                 return false;
             } else {
                 if (confirm("수정하시겠습니까?")) {
-                    let polygonObj = newPolygon(polygon)
+                    let polygonObj = newPolygon(managerPolygon)
 
                     let opt = {
                         url: _contextPath + "/zone/modify",
                         data: {
-                            polygon: polygon,
+                            polygon: managerPolygon,
                             seq: modifyPolygonSeq,
                         }
                     }
 
-                    let points = polygon.points;
+                    let points = managerPolygon.points;
                     let centroidPoints = centroid(points);
-                    polygon.code = await coordinatesToDongCodeKakaoApi(
+                    managerPolygon.code = await coordinatesToDongCodeKakaoApi(
                         centroidPoints.x, centroidPoints.y);
                     let result = initializeZone(opt);
 
                     if (result.success) {
+                        $.isModifySuccess = result.success;
                         manager.remove(manager.getOverlays().polygon[0]);
-                        displayArea(polygon);
+                        polygonObj.polygon.setMap(null);
 
-                        log(result);
+                        managerPolygon.options = polygonStyle;
+                        managerPolygon.type = result.data;
+                        managerPolygon.seq = modifyPolygonSeq;
+                        displayArea(managerPolygon);
 
-                        // manager.remove(manager.getOverlays().polygon[0]);
-                        log(polygonObj);
-                        // polygonObj.polygon.setMap(drawingMap);
+                        $.isModifyArea = false;
                     }
                 }
             }

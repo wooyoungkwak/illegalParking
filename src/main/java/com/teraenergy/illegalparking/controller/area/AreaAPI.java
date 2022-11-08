@@ -140,7 +140,7 @@ public class AreaAPI {
                 stringBuilder.setLength(0);
             }
 
-            return  illegalZoneMapperService.sets(illegalZones);
+            return illegalZoneMapperService.sets(illegalZones);
 
         } catch (Exception e) {
             throw new TeraException(TeraExceptionCode.ZONE_CREATE_FAIL, e);
@@ -178,11 +178,17 @@ public class AreaAPI {
             illegalZone.setCode(polygon.get("code").asText());
 
             illegalZoneMapperService.modify(illegalZone);
+
+            String zoneType = "";
+            IllegalZone getIllegalZone = illegalZoneService.get(jsonNode.get("seq").asInt());
+            getIllegalZone.setEventSeq(getIllegalZone.getIllegalEvent().getEventSeq());
+            if (getIllegalZone.getEventSeq() == null) zoneType = "";
+            else zoneType = illegalEventService.get(getIllegalZone.getEventSeq()).getIllegalType().toString();
+
+            return zoneType;
         } catch (Exception e) {
             throw new TeraException(TeraExceptionCode.ZONE_MODIFY_FAIL, e);
         }
-
-        return "";
     }
 
     @PostMapping("/area/event/addAndModify")
@@ -318,7 +324,7 @@ public class AreaAPI {
         for (IllegalZone illegalZone : illegalZones) {
             Polygon polygon = (Polygon) new WKTReader().read(illegalZone.getPolygon());
             StringBuilder builder = new StringBuilder();
-            int first = 1;
+            int count = 1;
 //            Coordinate firstCoordinate = null;
             int coordinatesLength = polygon.getCoordinates().length;
             for (Coordinate coordinate : polygon.getCoordinates()) {
@@ -328,10 +334,10 @@ public class AreaAPI {
                 builder.append(coordinate.getX())
                     .append(" ")
                     .append(coordinate.getY());
-                if(first < coordinatesLength) {
+                if(count < coordinatesLength) {
                     builder.append(",");
                 }
-                first++;
+                count++;
             }
 //            builder.append(firstCoordinate.getX())
 //                .append(" ")

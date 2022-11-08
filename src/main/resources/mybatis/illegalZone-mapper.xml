@@ -49,7 +49,7 @@
     </select>
 
     <select id="findByGeometry" resultType="IllegalZone" parameterType="String">
-        SELECT zone.ZoneSeq, ASTEXT(zone.Polygon) as polygon, zone.isDel, zone.Code, zone.EventSeq FROM illegal_zone WHERE ST_CONTAINS( Polygon, GeomFromText(<trim prefix="'Point(" suffix=")'">${latitude} ${longitude}</trim>));
+        SELECT zone.ZoneSeq, ASTEXT(zone.Polygon) as polygon, zone.isDel, zone.Code, zone.EventSeq FROM illegal_zone zone WHERE ST_CONTAINS( Polygon, GeomFromText(<trim prefix="'Point(" suffix=")'">${latitude} ${longitude}</trim>));
     </select>
 
     <insert id="save" useGeneratedKeys="false">
