@@ -65,7 +65,7 @@
     </insert>
 
     <update id="modify" useGeneratedKeys="false">
-         UPDATE illegal_zone SET Polygon = POLYGONFROMTEXT(#{polygon}), IsDel= #{isDel} , Code= #{code}, EventSeq = #{illegalEvent.eventSeq} WHERE ZoneSeq = #{zoneSeq};
+         UPDATE illegal_zone SET Polygon = POLYGONFROMTEXT(#{polygon}), Code= #{code} WHERE ZoneSeq = #{zoneSeq};
     </update>
 
     <update id="modifyByEvent" useGeneratedKeys="false">

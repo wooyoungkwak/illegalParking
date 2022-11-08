@@ -4,6 +4,8 @@ $(function () {
     let zoneAreas = [];
     let zones = {};
 
+    let modifyPolygonSeq = '';
+
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
     let searchIllegalType = '';
@@ -95,22 +97,33 @@ $(function () {
         kakaoEvent.addListener(opt.target, opt.event, opt.func);
     }
 
-    // 다각형을 생상하고 이벤트를 등록하는 함수입니다
-    function displayArea(area) {
+    // 폴리곤 객체 생성
+    function newPolygon(area) {
         let path = $.pointsToPath(area.points);
         let style = area.options;
 
         // 다각형을 생성합니다
-        let polygon = new kakao.maps.Polygon({
-            map: drawingMap, // 다각형을 표시할 지도 객체
-            path: path,
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-            fillColor: $.setFillColor(area),
-            fillOpacity: style.fillOpacity
-        });
+        return {
+            polygon: new kakao.maps.Polygon({
+                map: drawingMap, // 다각형을 표시할 지도 객체
+                path: path,
+                strokeColor: style.strokeColor,
+                strokeOpacity: style.strokeOpacity,
+                strokeStyle: style.strokeStyle,
+                strokeWeight: style.strokeWeight,
+                fillColor: $.setFillColor(area),
+                fillOpacity: style.fillOpacity
+            }),
+            path: path
+        }
+    }
+
+    // 다각형을 생상하고 이벤트를 등록하는 함수입니다
+    function displayArea(area) {
+        let polygonObj = newPolygon(area)
+
+        let polygon = polygonObj.polygon;
+        let path = polygonObj.path;
 
         // 다각형에 mouseover 이벤트를 등록하고 이벤트가 발생하면 폴리곤의 채움색을 변경합니다
         // 지역명을 표시하는 커스텀오버레이를 지도위에 표시합니다
@@ -144,7 +157,6 @@ $(function () {
                     if($.isModifyArea) {
                         let managerOverlay = manager.getOverlays().polygon;
                         if(managerOverlay.length > 0) {
-                            manager.cancel();
                             manager.remove(managerOverlay[0]);
                         }
                         polygon.setMap(null);
@@ -155,6 +167,8 @@ $(function () {
                             polygon.setMap(drawingMap);
                             polygon.setOptions($.changeOptionByMouseOut(area));
                         });
+
+                        modifyPolygonSeq = area.seq;
 
                     } else {
                         if (manager._mode === undefined || manager._mode === '') {
@@ -227,18 +241,10 @@ $(function () {
             event: 'rightclick',
             func: function (mouseEvent) {
                 // 그리기 중이면 그리기를 취소합니다
-                $('#btnAddOverlay').addClass("btn-outline-success");
-                $('#btnAddOverlay').removeClass("btn-success");
-                $('#btnModifyOverlay').addClass("btn-outline-dark");
-                $('#btnModifyOverlay').removeClass("btn-dark");
-                $('#btnAddOverlay').show();
-                $('#btnModifyOverlay').show();
-                if(manager.getOverlays().polygon.length === 0) {
-                    $('#btnSet').hide();
-                    $('#btnCancel').hide();
-                    $('#btnModify').hide();
+                $.initBtnState();
+                if(manager.getOverlays().polygon.length > 0) {
+                    manager.remove(manager.getOverlays().polygon[0]);
                 }
-                manager.cancel()
                 $.isModifyArea = false;
             }
         });
@@ -401,9 +407,42 @@ $(function () {
         });
 
         // 구역 수정 함수
-        $('#btnModify').click(function () {
-            if (confirm("삭제하시겠습니까?")) {
+        $('#btnModify').click(async function () {
+            let data = manager.getData();
 
+            let polygon = data[kakao.maps.drawing.OverlayType.POLYGON][0];
+            if (polygon === undefined) {
+                alert('구역을 지정하시기 바랍니다.');
+                return false;
+            } else {
+                if (confirm("수정하시겠습니까?")) {
+                    let polygonObj = newPolygon(polygon)
+
+                    let opt = {
+                        url: _contextPath + "/zone/modify",
+                        data: {
+                            polygon: polygon,
+                            seq: modifyPolygonSeq,
+                        }
+                    }
+
+                    let points = polygon.points;
+                    let centroidPoints = centroid(points);
+                    polygon.code = await coordinatesToDongCodeKakaoApi(
+                        centroidPoints.x, centroidPoints.y);
+                    let result = initializeZone(opt);
+
+                    if (result.success) {
+                        manager.remove(manager.getOverlays().polygon[0]);
+                        displayArea(polygon);
+
+                        log(result);
+
+                        // manager.remove(manager.getOverlays().polygon[0]);
+                        log(polygonObj);
+                        // polygonObj.polygon.setMap(drawingMap);
+                    }
+                }
             }
         });
 

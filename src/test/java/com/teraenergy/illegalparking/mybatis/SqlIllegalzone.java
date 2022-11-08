@@ -80,17 +80,17 @@ public class SqlIllegalzone {
         illegalZoneMapperService.sets(illegalZones);
     }
 
-    @Test
-    public void update() {
-        IllegalEvent illegalEvent = illegalEventService.get(1);
-        IllegalZone illegalZone = illegalZoneMapperService.get(1);
-
-        illegalZone.setCode("1111100000");
-        illegalZoneMapperService.modify(illegalZone);
-
-        illegalZone.setIllegalEvent(illegalEvent);
-        illegalZoneMapperService.modifyByEvent(illegalZone.getZoneSeq(), illegalEvent.getEventSeq());
-    }
+//    @Test
+//    public void update() {
+//        IllegalEvent illegalEvent = illegalEventService.get(1);
+//        IllegalZone illegalZone = illegalZoneMapperService.get(1);
+//
+//        illegalZone.setCode("1111100000");
+//        illegalZoneMapperService.modify(illegalZone);
+//
+//        illegalZone.setIllegalEvent(illegalEvent);
+//        illegalZoneMapperService.modifyByEvent(illegalZone.getZoneSeq(), illegalEvent.getEventSeq());
+//    }
 
     @Test
     public void delete() {

@@ -69,6 +69,8 @@ public class AreaAPI {
 
     private final ReportStaticsService reportstaticsService;
 
+    private final ObjectMapper objectMapper;
+
     @PostMapping("/area/markers")
     @ResponseBody
     public Object markers(@RequestParam(value = "dongId", defaultValue = "1") String dongId) throws TeraException {
@@ -147,28 +149,35 @@ public class AreaAPI {
 
     @PostMapping("/area/zone/modify")
     @ResponseBody
-    public Object modify(@RequestBody String body) throws TeraException {
+    public Object modifyZone(@RequestBody String body) throws TeraException {
         try {
-//            JsonNode jsonNode = JsonUtil.toJsonNode(body);
-//            IllegalZone illegalZone = illegalZoneMapperService.get(jsonNode.get("zoneSeq").asInt());
-//            IllegalEvent illegalEvent = new IllegalEvent();
-//            illegalEvent.setIllegalType(
-//                IllegalType.valueOf(jsonNode.get("illegalType").asText()));
-////            illegalEvent.setName(jsonNode.get("name").asText());
-//            illegalEvent.setUsedFirst(jsonNode.get("usedFirst").asBoolean());
-//            illegalEvent.setFirstStartTime(jsonNode.get("firstStartTime").asText());
-//            illegalEvent.setFirstEndTime(jsonNode.get("firstEndTime").asText());
-//            illegalEvent.setUsedSecond(jsonNode.get("usedSecond").asBoolean());
-//            illegalEvent.setSecondStartTime(jsonNode.get("secondStartTime").asText());
-//            illegalEvent.setSecondEndTime(jsonNode.get("secondEndTime").asText());
-//            illegalEvent.setGroupSeq(jsonNode.get("name").asInt()); // name selectbox
-//            if (illegalZone.getEventSeq() != null) {
-//                illegalEvent.setEventSeq(illegalZone.getEventSeq());
-//                illegalEventService.set(illegalEvent);
-//            } else {
-//                illegalEvent = illegalEventService.set(illegalEvent);
-//                illegalZoneMapperService.modifyByEvent(jsonNode.get("zoneSeq").asInt(), illegalEvent.getEventSeq());
-//            }
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            JsonNode polygon = jsonNode.get("polygon");
+            JsonNode pointsArrNode = polygon.get("points");
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            if (pointsArrNode.isArray()) {
+                stringBuilder.append("POLYGON((");
+                for (JsonNode obj : pointsArrNode) {
+                    stringBuilder.append(obj.get("x").asText());
+                    stringBuilder.append(" ");
+                    stringBuilder.append(obj.get("y").asText());
+                    stringBuilder.append(",");
+                }
+
+                stringBuilder.append(pointsArrNode.get(0).get("x").asText());
+                stringBuilder.append(" ");
+                stringBuilder.append(pointsArrNode.get(0).get("y").asText());
+                stringBuilder.append("))");
+            }
+
+            IllegalZone illegalZone = new IllegalZone();
+            illegalZone.setZoneSeq(jsonNode.get("seq").asInt());
+            illegalZone.setPolygon(stringBuilder.toString());
+            illegalZone.setCode(polygon.get("code").asText());
+
+            illegalZoneMapperService.modify(illegalZone);
         } catch (Exception e) {
             throw new TeraException(TeraExceptionCode.ZONE_MODIFY_FAIL, e);
         }
@@ -271,8 +280,6 @@ public class AreaAPI {
         return illegalGroupServcie.getsNameByIllegalEvent(locationType);
     }
 
-
-
     private Map<String, Object> _getZone(JsonNode param) throws ParseException {
         String select = param.get("select").asText();
         List<String> codes = Lists.newArrayList();
@@ -311,20 +318,24 @@ public class AreaAPI {
         for (IllegalZone illegalZone : illegalZones) {
             Polygon polygon = (Polygon) new WKTReader().read(illegalZone.getPolygon());
             StringBuilder builder = new StringBuilder();
-            int first = 0;
-            Coordinate firstCoordinate = null;
+            int first = 1;
+//            Coordinate firstCoordinate = null;
+            int coordinatesLength = polygon.getCoordinates().length;
             for (Coordinate coordinate : polygon.getCoordinates()) {
-                if (first == 0) {
-                    firstCoordinate = coordinate;
-                }
+//                if (first == 0) {
+//                    firstCoordinate = coordinate;
+//                }
                 builder.append(coordinate.getX())
                     .append(" ")
-                    .append(coordinate.getY()).append(",");
+                    .append(coordinate.getY());
+                if(first < coordinatesLength) {
+                    builder.append(",");
+                }
                 first++;
             }
-            builder.append(firstCoordinate.getX())
-                .append(" ")
-                .append(firstCoordinate.getY());
+//            builder.append(firstCoordinate.getX())
+//                .append(" ")
+//                .append(firstCoordinate.getY());
 
             polygons.add(builder.toString());
             if (illegalZone.getEventSeq() == null) zoneTypes.add("");
