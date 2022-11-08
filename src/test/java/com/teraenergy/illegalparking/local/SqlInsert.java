@@ -5,6 +5,8 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Date : 2022-09-14
@@ -76,6 +78,14 @@ public class SqlInsert {
         // TODO : Excel 데이터 읽기
 
         // TODO : 데이터 저장
+    }
+
+    @Test
+    public void generateUUID() {
+        String uuid = UUID.randomUUID().toString();
+        System.out.println(uuid);
+        String abstractUUID = uuid.substring(19).toUpperCase(Locale.ROOT);
+        System.out.println(abstractUUID);
     }
 
 }

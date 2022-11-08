@@ -9,6 +9,7 @@ import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService
 import com.teraenergy.illegalparking.util.CHashMap;
 import com.teraenergy.illegalparking.util.RequestUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +35,10 @@ public class ParkingController extends ExtendsController {
     private final ParkingService parkingService;
 
     private String subTitle = "공영주차장";
+
+    @Value("${addr-api.key}")
+    String addrKey;
+
 
     @GetMapping("/parking")
     public RedirectView parking(){
@@ -117,6 +122,12 @@ public class ParkingController extends ExtendsController {
         model.addAttribute("subTitle", subTitle);
 
         return getPath("/parkingAdd");
+    }
+
+    @GetMapping("/parking/jusoPopup")
+    public String jusoPopup(Model model) {
+        model.addAttribute("key", addrKey);
+        return getPath("/jusoPopup");
     }
 
 }

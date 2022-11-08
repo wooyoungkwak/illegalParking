@@ -13,7 +13,7 @@
 			<div class="nav">
 				<div class="sb-sidenav-menu-heading">${subTitle}</div>
 				<a class="nav-link active" href="${pageContext.request.contextPath}/notice/noticeList" id="side_noticeList">
-					<div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+					<div class="sb-nav-link-icon"><i class="fas fa-bullhorn"></i></div>
 					공지 사항
 				</a>
 			</div>

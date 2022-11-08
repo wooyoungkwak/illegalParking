@@ -17,17 +17,17 @@
 				<c:choose>
 					<c:when test="${_user.role == 'GOVERNMENT'}">
 						<a class="nav-link" href="${pageContext.request.contextPath}/report/reportListByGovernment" id="side_reportListByGovernment">
-							<div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+							<div class="sb-nav-link-icon"><i class="fas fa-envelope"></i></div>
 							접수목록
 						</a>
 					</c:when>
 					<c:otherwise>
 						<a class="nav-link" href="${pageContext.request.contextPath}/report/receiptList" id="side_receiptList">
-							<div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+							<div class="sb-nav-link-icon"><i class="fas fa-upload"></i></div>
 							신고목록
 						</a>
 						<a class="nav-link" href="${pageContext.request.contextPath}/report/reportList" id="side_reportList">
-							<div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+							<div class="sb-nav-link-icon"><i class="fas fa-envelope"></i></div>
 							접수목록
 						</a>
 					</c:otherwise>

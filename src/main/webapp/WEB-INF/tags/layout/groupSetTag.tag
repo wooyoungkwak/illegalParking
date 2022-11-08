@@ -26,7 +26,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-9">
-						<i class="fas fa-table"></i>
+						<i class="fas fa-edit"></i>
 						그룹설정
 					</div>
 					<div class="col-3 d-flex justify-content-end">

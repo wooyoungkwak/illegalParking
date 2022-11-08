@@ -21,7 +21,7 @@
                     구역 설정
                 </a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/area/groupList"  id="side_groupList">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-sitemap"></i></div>
                     그룹 관리
                 </a>
             </div>

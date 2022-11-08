@@ -225,7 +225,7 @@
                             if ( _role === "ADMIN" ) {
                                 let html = '';
                                 for (let i = 0; i < value.length; i++) {
-                                    html += '<i class="far fa-hand-point-right"></i> ' + value[i] + '<br>';
+                                    html += '<sapn class="ms-2 bg-white"><i class="ms-2 me-2 far fa-comment-dots"></i> ' + value[i] + '<br></sapn>';
                                 }
                                 $('#' + key).html(html);
                             } else {

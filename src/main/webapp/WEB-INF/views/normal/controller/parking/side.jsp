@@ -17,7 +17,7 @@
                     위치 보기
                 </a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/parking/parkingList" id="side_parkingList">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-parking"></i></div>
                     주차장 목록
                 </a>
                 <a class="nav-link" href="${pageContext.request.contextPath}/parking/parkingAdd" id="side_parkingAdd">

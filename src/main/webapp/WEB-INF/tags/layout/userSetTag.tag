@@ -27,7 +27,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-9">
-						<i class="fas fa-table"></i> 관공서 상세 정보
+						<i class="fas fa-edit"></i> 관공서 상세 정보
 					</div>
 					<div class="col-3 d-flex justify-content-end">
 						<a class="btn btn-close" id="userClose"></a>
@@ -88,21 +88,45 @@
 					<div id="chartContainer"></div>
 				</div>
 				<div class="col-4">
-					<div class="border-2 row mt-2">
-						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 총 신고접수</div>
-						<div class="col-3 mb-2 border-bottom"> <span id="totalCount"></span></div>
-					</div>
-					<div class="border-2 row mt-2">
-						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 대기</div>
-						<div class="col-3 mb-2 border-bottom"> <span id="completeCount"></span></div>
-					</div>
-					<div class="border-2 row mt-2">
-						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 미처리</div>
-						<div class="col-3 mb-2 border-bottom"> <span id="exceptionCount"></span></div>
-					</div>
-					<div class="border-2 row mt-2">
-						<div class="col-3 mb-2 border-bottom d-flex justify-content-lg-end"> 처리</div>
-						<div class="col-3 mb-2 border-bottom"> <span id="penaltyCount"></span></div>
+					<div class="row mt-5">
+						<div class="col-6">
+							<table class="table table-bordered shadow-sm">
+								<tbody>
+								<tr>
+									<td class="bg-light">
+										<div class="d-flex justify-content-lg-end fw-bold text-secondary"> 총 신고접수</div>
+									</td>
+									<td class="bg-light bg-gradient">
+										<div class=" fw-bold text-primary"><span id="totalCount"></span></div>
+									</td>
+								</tr>
+								<tr>
+									<td class="bg-light bg-gradient">
+										<div class="d-flex justify-content-lg-end fw-bold text-secondary"> 대기</div>
+									</td>
+									<td class="bg-light bg-gradient">
+										<div class=" fw-bold text-primary"><span id="completeCount"></span></div>
+									</td>
+								</tr>
+								<tr>
+									<td class="bg-light bg-gradient">
+										<div class="d-flex justify-content-lg-end fw-bold text-secondary"> 미처리</div>
+									</td>
+									<td class="bg-light bg-gradient">
+										<div class=" fw-bold text-primary"><span id="exceptionCount"></span></div>
+									</td>
+								</tr>
+								<tr>
+									<td class="bg-light bg-gradient">
+										<div class="d-flex justify-content-lg-end fw-bold text-secondary"> 처리</div>
+									</td>
+									<td class="bg-light bg-gradient">
+										<div class="fw-bold text-primary"><span id="penaltyCount"></span></div>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -119,9 +143,9 @@
         // 정보 수정 이벤트
         $('#userModify').on('click', function () {
 
-            if ( confirm("정보 수정 하시겠습니까 ?") ){
+            if (confirm("정보 수정 하시겠습니까 ?")) {
                 let getData = function (id) {
-                    let arr = $('#'+id).serializeArray();
+                    let arr = $('#' + id).serializeArray();
                     let data = {};
                     $(arr).each(function (index, obj) {
                         data[obj.name] = obj.value;
@@ -129,31 +153,31 @@
                     return data;
                 }
 
-				let result = $.JJAjaxAsync({
-					url: _contextPath + '/modify',
-					data : getData('userForm')
-				});
+                let result = $.JJAjaxAsync({
+                    url: _contextPath + '/modify',
+                    data: getData('userForm')
+                });
 
                 if (result.success) {
                     alert("수정 되었습니다.");
-				} else {
+                } else {
                     alert(result.msg);
-				}
+                }
 
             }
         });
 
         // 관리 그룹 추가 이벤트
-        $('#userGroupAdd').on('click', function (){
+        $('#userGroupAdd').on('click', function () {
             $('#userGroupAddTag').show();
         });
 
         // 관리 그룹 삭제 이벤트
-		$('#addUserGroupNav a').on('click', function (){
-			if ( confirm("삭제 하시겠습니까") ) {
+        $('#addUserGroupNav a').on('click', function () {
+            if (confirm("삭제 하시겠습니까")) {
                 $(this).parent().remove();
-			}
-		});
+            }
+        });
 
         // 상세 정보 닫기 이벤트
         $('#userClose').on('click', function () {

@@ -14,17 +14,17 @@
 
 				<div class="sb-sidenav-menu-heading">${subTitle}</div>
 				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/calculateList" id="side_calculateList">
-					<div class="sb-nav-link-icon"><i class="fas fa-calculator"></i></div>
+					<div class="sb-nav-link-icon"><i class="fas fa-credit-card"></i></div>
 					결재목록
 				</a>
 
 				<div class="sb-sidenav-menu-heading">상품</div>
 				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productList" id="side_productList">
-					<div class="sb-nav-link-icon"><i class="fas fa-calculator"></i></div>
+					<div class="sb-nav-link-icon"><i class="fas fa-gift"></i></div>
 					상품목록
 				</a>
 				<a class="nav-link" href="${pageContext.request.contextPath}/calculate/productAdd" id="side_productAdd">
-					<div class="sb-nav-link-icon"><i class="fas fa-fill-drip"></i></div>
+					<div class="sb-nav-link-icon"><i class="fas fa-cart-plus"></i></div>
 					상품등록
 				</a>
 			</div>

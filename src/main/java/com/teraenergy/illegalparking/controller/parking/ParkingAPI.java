@@ -60,4 +60,12 @@ public class ParkingAPI {
         return parkingService.set(parking);
     }
 
+    @PostMapping("/parking/jusoPopup")
+    @ResponseBody
+    public Object getJusoPopup(@RequestBody String body) throws TeraException {
+        System.out.println(body);
+        return "sucess";
+    }
+
+
 }

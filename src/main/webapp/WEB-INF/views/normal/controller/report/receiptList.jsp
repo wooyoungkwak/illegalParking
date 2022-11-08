@@ -158,7 +158,7 @@
                         } else if ( key === 'comments') {
                             let  html = '';
                             for ( let i =0; value.length > i; i++) {
-                                html += '<i class="far fa-hand-point-right"></i> ' + value[i] + '<br>';
+                                html += '<sapn class="ms-2 bg-white"><i class="ms-2 me-2 far fa-comment-dots"></i> ' + value[i] + '<br></sapn>';
                             }
                             $('#' + key).html(html);
                         } else {

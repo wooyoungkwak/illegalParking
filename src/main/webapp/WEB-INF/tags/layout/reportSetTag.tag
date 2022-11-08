@@ -22,7 +22,7 @@
 			<div class="card-header">
 				<div class="row">
 					<div class="col-9">
-						<i class="fas fa-table"></i>
+						<i class="fas fa-edit"></i>
 						차량 번호 :
 						<span id="carNum" class="title"></span>
 					</div>

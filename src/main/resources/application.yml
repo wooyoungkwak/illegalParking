@@ -40,6 +40,8 @@ hibernate:
 #    key-store-type: PKCS12
 #    key-store-password: teraenergy
 #    key-alias: teraenergy
+addr-api:
+  key: devU01TX0FVVEgyMDIyMTEwODE0MDkxMTExMzE5OTA=
 ---
 # debug
 spring:

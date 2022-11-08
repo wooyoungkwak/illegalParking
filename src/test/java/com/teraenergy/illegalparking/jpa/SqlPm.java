@@ -17,10 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Date : 2022-11-03
@@ -166,7 +163,7 @@ public class SqlPm {
                 pm.setPmPrice(0);
                 pm.setPmType(PmType.BIKE);
                 pm.setPmName("따릉이");
-                pm.setPmId("Bike-"+ UUID.randomUUID().toString());
+                pm.setPmId("Bike-"+ UUID.randomUUID().toString().substring(19).toUpperCase(Locale.ROOT));
             } else {
                 pm.setPmPrice(700);
                 pm.setPmType(PmType.KICK);

@@ -13,7 +13,7 @@
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">${subTitle}</div>
                 <a class="nav-link" href="${pageContext.request.contextPath}/user/userList" id="side_userList">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    <div class="sb-nav-link-icon"><i class="fas fa-building"></i></div>
                     관공서
                 </a>
 <%--                <a class="nav-link" href="${pageContext.request.contextPath}/reporter/reporterList" id="side_reporterList">--%>
