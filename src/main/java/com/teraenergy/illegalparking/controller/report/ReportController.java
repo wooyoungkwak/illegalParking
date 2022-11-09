@@ -68,8 +68,8 @@ public class ReportController extends ExtendsController {
 
         String search = "";
         String searchStr = paramMap.getAsString("searchStr");
-        if (searchStr == null) {
-            searchStr = "";
+        if (searchStr != null) {
+            search = searchStr;
         }
 
         Integer pageNumber = paramMap.getAsInt("pageNumber");
@@ -136,8 +136,8 @@ public class ReportController extends ExtendsController {
 
         String search = "";
         String searchStr = paramMap.getAsString("searchStr");
-        if (searchStr == null) {
-            search = "";
+        if (searchStr != null) {
+            search = searchStr;
         }
 
         Integer pageNumber = paramMap.getAsInt("pageNumber");

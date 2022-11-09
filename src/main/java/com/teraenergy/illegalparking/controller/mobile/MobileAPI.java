@@ -548,11 +548,27 @@ public class MobileAPI {
 
             // 불법 주정차 구역 ( mybatis 로 가져오기 때문에 illegal_event 데이터는 따로 요청 해야함)
             IllegalZone illegalZone = illegalZoneMapperService.get(lawDong.getCode(), latitude, longitude);
-            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
-            illegalZone.setIllegalEvent(illegalEvent);
 
             // 사용자
             User user = userService.get(jsonNode.get("userSeq").asInt());
+
+            if (illegalZone == null) {
+                Receipt receipt_etc = new Receipt();
+                receipt_etc.setAddr(addr);
+                receipt_etc.setCarNum(carNum);
+                receipt_etc.setFileName(jsonNode.get("fileName").asText());
+                receipt_etc.setRegDt(regDt);
+                receipt_etc.setUser(user);
+                receipt_etc.setCode(lawDong.getCode());
+                receipt_etc.setReceiptStateType(ReceiptStateType.EXCEPTION);
+
+                receipt_etc = receiptService.set(receipt_etc);
+                _comment(receipt_etc.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA.getMessage());
+                throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA);
+            }
+
+            IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
+            illegalZone.setIllegalEvent(illegalEvent);
 
             // 1. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우  ( TODO : 확인이 필요 )
             Receipt oldReceipt = receiptService.getByLastOccur(user.getUserSeq(), carNum, regDt, illegalZone.getIllegalEvent().getIllegalType());

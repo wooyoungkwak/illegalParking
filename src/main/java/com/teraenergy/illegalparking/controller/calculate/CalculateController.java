@@ -48,6 +48,7 @@ public class CalculateController extends ExtendsController {
     private final UserService userService;
 
     private String subTitle = "결재";
+    private String subTitleByProduct = "상품";
 
     @RequestMapping("/calculate")
     public RedirectView calculate() {
@@ -198,7 +199,7 @@ public class CalculateController extends ExtendsController {
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);
         model.addAttribute("products", pages.getContent());
-        model.addAttribute("subTitle", subTitle);
+        model.addAttribute("subTitle",subTitleByProduct);
         return getPath("/productList");
     }
 
@@ -207,7 +208,7 @@ public class CalculateController extends ExtendsController {
         RequestUtil requestUtil = new RequestUtil(request);
         requestUtil.setParameterToModel(model);
 
-        model.addAttribute("subTitle", subTitle);
+        model.addAttribute("subTitle", subTitleByProduct);
         return getPath("/productAdd");
     }
 

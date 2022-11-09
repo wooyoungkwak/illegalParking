@@ -36,7 +36,7 @@
 				<div class="card mb-4 shadow-sm rounded">
 					<div class="card-header">
 						<i class="fas fa-table me-1"></i>
-						주차장 정보
+						결재 정보
 					</div>
 					<div class="card-body">
 						<form class="row mb-3 g-3">
@@ -159,10 +159,11 @@
                         search(pageNumber);
                     });
 
-                    $('#pageSize').on("change", function (){
-                        $('#pageNumber').val(1);
+                    $('#paginationSize').on("change", function (){
+                        $('#pageSize').val($(this).val());
                         search();
-                    })
+                    });
+
                 }
 
                 // 초기화 실행

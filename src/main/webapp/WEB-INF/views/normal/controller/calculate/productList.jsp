@@ -31,7 +31,7 @@
 	<stripes:layout-component name="contents">
 		<main id="productTable">
 			<div class="container-fluid px-4">
-				<h1 class="mt-4">결재목록</h1>
+				<h1 class="mt-4">상품목록</h1>
 				<ol class="breadcrumb mb-4">
 					<li class="breadcrumb-item active">${subTitle} > 상품목록</li>
 				</ol>
@@ -176,10 +176,10 @@
                     });
 
                     // 페이지 사이즈 변경 이벤트
-                    $('#pageSize').on("change", function () {
-                        $('#pageNumber').val(1);
+                    $('#paginationSize').on("change", function (){
+                        $('#pageSize').val($(this).val());
                         search();
-                    })
+                    });
 
 
                     // 제품 테이블 항목 이벤트

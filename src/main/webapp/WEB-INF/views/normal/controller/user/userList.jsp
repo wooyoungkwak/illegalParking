@@ -208,8 +208,8 @@
                     });
 
                     // 페이지 사이즈 변경 이벤트
-                    $('#pageSize').on("change", function () {
-                        $('#pageNumber').val(1);
+                    $('#paginationSize').on("change", function () {
+                        $('#pageSize').val($(this).val());
                         $.search();
                     });
 

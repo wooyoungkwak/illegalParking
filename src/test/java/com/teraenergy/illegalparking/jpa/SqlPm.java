@@ -102,15 +102,15 @@ public class SqlPm {
     public void kwangyangInsert() {
         List<HashMap<String, Object>> points = Lists.newArrayList();
 
-        HashMap<String, Object> point1 = Maps.newHashMap(); point1.put("lat",34.9411498);	point1.put("long", 127.6952444); point1.put("addr", "전라남도 광양시 중동");points.add(point1);
-        HashMap<String, Object> point2 = Maps.newHashMap(); point2.put("lat",34.9424866);	point2.put("long", 127.6961242); point2.put("addr", "전라남도 광양시 중동");points.add(point2);
-        HashMap<String, Object> point3 = Maps.newHashMap(); point3.put("lat",34.9397338);	point3.put("long", 127.6943218); point3.put("addr", "전라남도 광양시 중동");points.add(point3);
-        HashMap<String, Object> point4 = Maps.newHashMap(); point4.put("lat",34.9396986);	point4.put("long", 127.6981841); point4.put("addr", "전라남도 광양시 중동");points.add(point4);
-        HashMap<String, Object> point5 = Maps.newHashMap(); point5.put("lat",34.9411498);	point5.put("long", 127.6986884); point5.put("addr", "전라남도 광양시 중동");points.add(point5);
-        HashMap<String, Object> point6 = Maps.newHashMap(); point6.put("lat",34.941141);	point6.put("long", 127.6967679); point6.put("addr", "전라남도 광양시 중동");points.add(point6);
-        HashMap<String, Object> point7 = Maps.newHashMap(); point7.put("lat",34.9386168);	point7.put("long", 127.6964461); point7.put("addr", "전라남도 광양시 중동");points.add(point7);
-        HashMap<String, Object> point8 = Maps.newHashMap(); point8.put("lat",34.9403319);	point8.put("long", 127.6982378); point8.put("addr", "전라남도 광양시 중동");points.add(point8);
-        HashMap<String, Object> point9 = Maps.newHashMap(); point9.put("lat",34.93947);	point9.put("long", 127.6894938); point9.put("addr", "전라남도 광양시 중동");points.add(point9);
+        HashMap<String, Object> point1 = Maps.newHashMap();  point1.put("lat",34.9411498);	point1.put("long", 127.6952444); point1.put("addr", "전라남도 광양시 중동");points.add(point1);
+        HashMap<String, Object> point2 = Maps.newHashMap();  point2.put("lat",34.9424866);	point2.put("long", 127.6961242); point2.put("addr", "전라남도 광양시 중동");points.add(point2);
+        HashMap<String, Object> point3 = Maps.newHashMap();  point3.put("lat",34.9397338);	point3.put("long", 127.6943218); point3.put("addr", "전라남도 광양시 중동");points.add(point3);
+        HashMap<String, Object> point4 = Maps.newHashMap();  point4.put("lat",34.9396986);	point4.put("long", 127.6981841); point4.put("addr", "전라남도 광양시 중동");points.add(point4);
+        HashMap<String, Object> point5 = Maps.newHashMap();  point5.put("lat",34.9411498);	point5.put("long", 127.6986884); point5.put("addr", "전라남도 광양시 중동");points.add(point5);
+        HashMap<String, Object> point6 = Maps.newHashMap();  point6.put("lat",34.941141);	point6.put("long", 127.6967679); point6.put("addr", "전라남도 광양시 중동");points.add(point6);
+        HashMap<String, Object> point7 = Maps.newHashMap();  point7.put("lat",34.9386168);	point7.put("long", 127.6964461); point7.put("addr", "전라남도 광양시 중동");points.add(point7);
+        HashMap<String, Object> point8 = Maps.newHashMap();  point8.put("lat",34.9403319);	point8.put("long", 127.6982378); point8.put("addr", "전라남도 광양시 중동");points.add(point8);
+        HashMap<String, Object> point9 = Maps.newHashMap();  point9.put("lat",34.93947);	point9.put("long", 127.6894938); point9.put("addr", "전라남도 광양시 중동");points.add(point9);
         HashMap<String, Object> point10 = Maps.newHashMap(); point10.put("lat",34.9445533);	point10.put("long", 127.6982807); point10.put("addr", "전라남도 광양시 중동");points.add(point10);
         HashMap<String, Object> point11 = Maps.newHashMap(); point11.put("lat",34.9413873);	point11.put("long", 127.6967143); point11.put("addr", "전라남도 광양시 중동");points.add(point11);
         HashMap<String, Object> point12 = Maps.newHashMap(); point12.put("lat",34.9432605);	point12.put("long", 127.6892792); point12.put("addr", "전라남도 광양시 중동");points.add(point12);
@@ -184,4 +184,58 @@ public class SqlPm {
 
         pmService.sets(pms);
     }
+
+    @Test
+    public void kwangyangInsert2() {
+        List<HashMap<String, Object>> points = Lists.newArrayList();
+
+        HashMap<String, Object> point1 = Maps.newHashMap();  point1.put("lat", 34.9343181);	point1.put("long",  127.6994121); point1.put("addr",  "전라남도 광양시 중동");points.add(point1);
+        HashMap<String, Object> point2 = Maps.newHashMap();  point2.put("lat", 34.9351105);	point2.put("long",  127.7004632); point2.put("addr",  "전라남도 광양시 중동");points.add(point2);
+        HashMap<String, Object> point3 = Maps.newHashMap();  point3.put("lat", 34.9339641);	point3.put("long",  127.7005289); point3.put("addr",  "전라남도 광양시 중동");points.add(point3);
+        HashMap<String, Object> point4 = Maps.newHashMap();  point4.put("lat", 34.9335563);	point4.put("long",  127.7004538); point4.put("addr",  "전라남도 광양시 중동");points.add(point4);
+        HashMap<String, Object> point5 = Maps.newHashMap();  point5.put("lat", 34.9357799);	point5.put("long",  127.6990085); point5.put("addr",  "전라남도 광양시 중동");points.add(point5);
+        HashMap<String, Object> point6 = Maps.newHashMap();  point6.put("lat", 34.9346335);	point6.put("long",  127.6990555); point6.put("addr",  "전라남도 광양시 중동");points.add(point6);
+        HashMap<String, Object> point7 = Maps.newHashMap();  point7.put("lat", 34.9325178);	point7.put("long",  127.6919274); point7.put("addr",  "전라남도 광양시 중동");points.add(point7);
+        HashMap<String, Object> point8 = Maps.newHashMap();  point8.put("lat", 34.9328384);	point8.put("long",  127.691579);  point8.put("addr",  "전라남도 광양시 중동");points.add(point8);
+        HashMap<String, Object> point9 = Maps.newHashMap();  point9.put("lat", 34.932466);	point9.put("long",  127.692315);  point9.put("addr",  "전라남도 광양시 중동");points.add(point9);
+        HashMap<String, Object> point10 = Maps.newHashMap(); point10.put("lat",34.940397);	point10.put("long", 127.6926882); point10.put("addr", "전라남도 광양시 중동");points.add(point10);
+        HashMap<String, Object> point11 = Maps.newHashMap(); point11.put("lat",34.9405785);	point11.put("long", 127.6927255); point11.put("addr", "전라남도 광양시 중동");points.add(point11);
+        HashMap<String, Object> point12 = Maps.newHashMap(); point12.put("lat",34.9404215);	point12.put("long", 127.6922006); point12.put("addr", "전라남도 광양시 중동");points.add(point12);
+        HashMap<String, Object> point13 = Maps.newHashMap(); point13.put("lat",34.9406079);	point13.put("long", 127.6927106); point13.put("addr", "전라남도 광양시 중동");points.add(point13);
+
+        List<Pm> pms = Lists.newArrayList();
+
+        int len = 0;
+
+
+        for( HashMap<String, Object> point : points) {
+            Pm pm = new Pm();
+
+            if (len % 2 == 1 ) {
+                pm.setPmPrice(0);
+                pm.setPmType(PmType.BIKE);
+                pm.setPmName("따릉이");
+                pm.setPmId("Bike-"+ UUID.randomUUID().toString().substring(19).toUpperCase(Locale.ROOT));
+            } else {
+                pm.setPmPrice(700);
+                pm.setPmType(PmType.KICK);
+                pm.setPmName("SWING");
+                pm.setPmId("SWING-"+ UUID.randomUUID().toString());
+            }
+
+            LawDong lawDong = lawDongService.getFromLnmadr((String) point.get("addr"));
+            pm.setCode(lawDong.getCode());
+            pm.setPmOperOpenHhmm("00:00");
+            pm.setPmOperCloseHhmm("23:59");
+            pm.setLatitude((Double) point.get("lat"));
+            pm.setLongitude((Double) point.get("long"));
+            pms.add(pm);
+
+            len ++;
+        }
+
+        pmService.sets(pms);
+    }
+
+
 }
