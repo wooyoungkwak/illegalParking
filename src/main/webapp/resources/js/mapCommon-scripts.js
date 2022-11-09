@@ -214,31 +214,33 @@ $.isChangeMaker = false;
 $.getCurrentPosition = function (map) {
     if (!!myLocMarker) myLocMarker.setMap(null);
 
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                let currentLat = `${position.coords.latitude}`; // y
-                let currentLng = `${position.coords.longitude}`; // x
-                // 지도 중심좌표를 접속위치로 변경합니다
-                let currentPosition = new kakao.maps.LatLng(currentLat, currentLng);
-
-                myLocationMarker(map, currentPosition);
-
-            },
-            (error) => {
-                console.error(error);
-            },
-            {
-                enableHighAccuracy: true, // 위치정보를 가장 높은 정확도로 수신 true, 기본 false, 응답이 느리고 전력소모량 증가
-                maximumAge: 0,
-                timeout: Infinity,
-            }
-        );
-    } else {
-        let position = new kakao.maps.LatLng(35.01868444, 126.78284599);
-        alert("위치 권한을 설정하시기 바랍니다.");
-        map.panTo(position);
-    }
+    map.panTo(new kakao.maps.LatLng(35.01868444, 126.78284599));
+    return;
+    // TODO : https 를 이용한 현재 위치 이동 방법
+    //        ( teraenergy.p12 파일을 공인 인증서를 이용하여 생성 해야함 )
+    // if (navigator.geolocation) {
+    //     navigator.geolocation.getCurrentPosition(
+    //         async (position) => {
+    //             let currentLat = `${position.coords.latitude}`; // y
+    //             let currentLng = `${position.coords.longitude}`; // x
+    //             // 지도 중심좌표를 접속위치로 변경합니다
+    //             map.panTo(new kakao.maps.LatLng(currentLat, currentLng));
+    //
+    //         },
+    //         (error) => {
+    //             console.error(error);
+    //         },
+    //         {
+    //             enableHighAccuracy: true, // 위치정보를 가장 높은 정확도로 수신 true, 기본 false, 응답이 느리고 전력소모량 증가
+    //             maximumAge: 0,
+    //             timeout: Infinity,
+    //         }
+    //     );
+    // } else {
+    //     let position = new kakao.maps.LatLng(35.01868444, 126.78284599);
+    //     alert("위치 권한을 설정하시기 바랍니다.");
+    //     map.panTo(position);
+    // }
 }
 
 //geoLocation API를 활용한 현재 위치를 구하고 지도의 중심 좌표 변경

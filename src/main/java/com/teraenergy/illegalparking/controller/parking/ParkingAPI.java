@@ -13,9 +13,11 @@ import java.util.List;
 import com.teraenergy.illegalparking.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Date : 2022-09-20
@@ -60,11 +62,11 @@ public class ParkingAPI {
         return parkingService.set(parking);
     }
 
-    @PostMapping("/parking/jusoPopup")
-    @ResponseBody
-    public Object getJusoPopup(@RequestBody String body) throws TeraException {
+    @PostMapping("/api/parking/jusoPopup")
+//    @ResponseBody
+    public RedirectView getJusoPopup(@RequestBody String body) throws TeraException {
         System.out.println(body);
-        return "sucess";
+        return new RedirectView("/api/parking/jusoPopup");
     }
 
 

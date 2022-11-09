@@ -124,7 +124,7 @@ public class ParkingController extends ExtendsController {
         return getPath("/parkingAdd");
     }
 
-    @GetMapping("/parking/jusoPopup")
+    @GetMapping("/api/parking/jusoPopup")
     public String jusoPopup(Model model) {
         model.addAttribute("key", addrKey);
         return getPath("/jusoPopup");
