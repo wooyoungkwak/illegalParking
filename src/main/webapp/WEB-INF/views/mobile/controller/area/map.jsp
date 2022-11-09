@@ -123,12 +123,12 @@
 
             function getAngleByCalibration() {
 
-                if (tempLng2 != 0) {
+                if (tempLng2 !== 0) {
                     tempLat1 = tempLat2;
                     tempLng1 = tempLng2;
                 }
 
-                if ( tempLng3 != 0 ) {
+                if ( tempLng3 !== 0 ) {
                     tempLat2 = tempLat3;
                     tempLng2 = tempLng3;
                 }

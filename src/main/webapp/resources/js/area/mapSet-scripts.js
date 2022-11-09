@@ -1,12 +1,11 @@
 $(function () {
 
     $.isModifyArea = false;
-    $.isModifySuccess = false;
 
     let zoneAreas = [];
     let zones = {};
 
-    let modifyPolygonSeq = '';
+    let modifyPolygon = {};
 
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
@@ -45,6 +44,16 @@ $(function () {
         // 그리기 중이면 그리기를 취소합니다
         manager.cancel();
     }
+
+    $.undoManager = function() {
+        // 되돌릴 수 있다면
+        if (manager.undoable()) {
+            // 이전 상태로 되돌림
+            manager.undo();
+            modifyPolygon.clickPolygon.setMap(drawingMap)
+        }
+    }
+
 
     // 생성한 Manager 의 Overlay 삭제 함수
     $.removeOverlaysOfManager = function() {
@@ -163,18 +172,9 @@ $(function () {
                             manager.remove(managerOverlay[0]);
                         }
                         polygon.setMap(null);
-
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
 
-
-                        manager.addListener('remove', function(e) {
-                            if(!$.isModifySuccess) {
-                                polygon.setMap(drawingMap);
-                                polygon.setOptions($.changeOptionByMouseOut(area));
-                            }
-                        });
-
-                        modifyPolygonSeq = area.seq;
+                        modifyPolygon = {seq: area.seq, clickPolygon: polygon};
 
                     } else {
                         if (manager._mode === undefined || manager._mode === '') {
@@ -247,9 +247,9 @@ $(function () {
             event: 'rightclick',
             func: function (mouseEvent) {
                 // 그리기 중이면 그리기를 취소합니다
-                $.isModifySuccess = false;
                 $.initBtnState();
                 manager.cancel();
+                $.undoManager();
                 if(manager.getOverlays().polygon.length > 0) {
                     manager.remove(manager.getOverlays().polygon[0]);
                 }
@@ -431,7 +431,7 @@ $(function () {
                         url: _contextPath + "/zone/modify",
                         data: {
                             polygon: managerPolygon,
-                            seq: modifyPolygonSeq,
+                            seq: modifyPolygon.seq,
                         }
                     }
 
@@ -442,16 +442,14 @@ $(function () {
                     let result = initializeZone(opt);
 
                     if (result.success) {
-                        $.isModifySuccess = result.success;
                         manager.remove(manager.getOverlays().polygon[0]);
                         polygonObj.polygon.setMap(null);
 
                         managerPolygon.options = polygonStyle;
                         managerPolygon.type = result.data;
-                        managerPolygon.seq = modifyPolygonSeq;
-                        displayArea(managerPolygon);
+                        managerPolygon.seq = modifyPolygon.seq;
 
-                        $.isModifyArea = false;
+                        displayArea(managerPolygon);
                     }
                 }
             }
