@@ -474,8 +474,6 @@ $.addOverlay = function (data, map, callback) {
         imgNode.appendChild(span);
     }
 
-
-
     imgNode.addEventListener('click', function (event) {
 
         let src = $(this).children('img:first').attr('src');
@@ -489,9 +487,6 @@ $.addOverlay = function (data, map, callback) {
         if (!isOn) {
 
             this.children[0].src = imgOrigin.imgSrc.clickOrigin;
-
-
-
             if ($.mapSelected === 'parking') {
 
                 if ( $.currentMarkerSeq != data.parkingSeq) {

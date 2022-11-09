@@ -5,7 +5,7 @@ $(function () {
     let zoneAreas = [];
     let zones = {};
 
-    let modifyPolygon = {};
+    let clickedPolygon = {};
 
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
@@ -30,6 +30,22 @@ $(function () {
         "fillColor": "#000000",
         "fillOpacity": 0.5
     };
+    let beforeClickPolygon;
+    let changeOptionStroke = function (polygon) {
+
+        polygon.clickPolygon.setOptions({
+            "strokeColor": '#000000',
+            "strokeWeight": 2,
+        });
+
+        if(beforeClickPolygon) {
+            beforeClickPolygon.clickPolygon.setOptions({
+                "strokeWeight": 0,
+            })
+        }
+        beforeClickPolygon = polygon;
+
+    }
 
     // Overlay Type 설정 함수
     $.setOverlayType = function(type) {
@@ -46,11 +62,14 @@ $(function () {
     }
 
     $.undoManager = function() {
-        // 되돌릴 수 있다면
-        if (manager.undoable()) {
-            // 이전 상태로 되돌림
-            manager.undo();
-            modifyPolygon.clickPolygon.setMap(drawingMap)
+        if($.isModifyArea) {
+            // 되돌릴 수 있다면
+            if (manager.undoable()) {
+                // 이전 상태로 되돌림
+                manager.undo();
+                clickedPolygon.clickPolygon.setMap(drawingMap)
+            }
+            $.isModifyArea = false;
         }
     }
 
@@ -165,6 +184,9 @@ $(function () {
                 event: 'click',
                 func: function (mouseEvent) {
                     kakao.maps.event.preventMap();
+
+                    clickedPolygon = {seq: area.seq, clickPolygon: polygon};
+
                     if($.isModifyArea) {
                         let managerOverlay = manager.getOverlays().polygon;
                         if(managerOverlay.length > 0) {
@@ -173,8 +195,6 @@ $(function () {
                         }
                         polygon.setMap(null);
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
-
-                        modifyPolygon = {seq: area.seq, clickPolygon: polygon};
 
                     } else {
                         if (manager._mode === undefined || manager._mode === '') {
@@ -185,6 +205,7 @@ $(function () {
                             drawingMap.panTo(centerLatLng);
                             $.showModal(area.seq);
                         }
+                        changeOptionStroke(clickedPolygon);
                     }
                 }
             });
@@ -247,13 +268,12 @@ $(function () {
             event: 'rightclick',
             func: function (mouseEvent) {
                 // 그리기 중이면 그리기를 취소합니다
-                $.initBtnState();
                 manager.cancel();
                 $.undoManager();
                 if(manager.getOverlays().polygon.length > 0) {
                     manager.remove(manager.getOverlays().polygon[0]);
                 }
-                $.isModifyArea = false;
+                $.initBtnState();
             }
         });
 
@@ -263,10 +283,11 @@ $(function () {
             event: 'dblclick',
             func: function (mouseEvent) {
                 if(!$.isModifyArea) {
-                    $('#btnAddOverlay').removeClass("btn-outline-success");
-                    $('#btnAddOverlay').addClass("btn-success");
-                    $('#btnModifyOverlay').addClass("btn-outline-success");
-                    $('#btnModifyOverlay').removeClass("btn-success");
+                    // $('#btnAddOverlay').removeClass("btn-outline-success");
+                    // $('#btnAddOverlay').addClass("btn-success");
+                    // $('#btnModifyOverlay').addClass("btn-outline-success");
+                    // $('#btnModifyOverlay').removeClass("btn-success");
+                    $('#btnAddOverlay').hide();
                     $('#btnModifyOverlay').hide();
                     $('#btnSet').show();
                     $('#btnModify').hide();
@@ -283,6 +304,12 @@ $(function () {
             event: 'click',
             func: function (mouseEvent) {
                 $('#areaSettingModal').offcanvas('hide');
+
+                if(clickedPolygon) {
+                    clickedPolygon.clickPolygon.setOptions({
+                        "strokeWeight": 0,
+                    });
+                }
             }
         });
 
@@ -299,8 +326,6 @@ $(function () {
 
                 $('#mapLevel').text(level + '레벨');
 
-                log($.isModifyArea);
-
                 if(level <= 3 && !$.isModifyArea) {
                     obj = await $.getDongCodesBounds(drawingMap);
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
@@ -316,22 +341,24 @@ $(function () {
             target: drawingMap,
             event: 'zoom_changed',
             func: async function () {
-                // 지도의  레벨을 얻어옵니다
-                let level = drawingMap.getLevel();
 
-                if (level > 3) {
-                    removeOverlays();
-                } else {
-                    if (level === 3) {
-                        drawingZone(obj.codes);
+                if(!$.isModifyArea) {
+                    // 지도의  레벨을 얻어옵니다
+                    let level = drawingMap.getLevel();
+                    if (level > 3) {
+                        removeOverlays();
+                    } else {
+                        if (level === 3) {
+                            drawingZone(obj.codes);
+                        }
                     }
                 }
             }
         });
 
         manager.addListener('drawend', function(mouseEvent) {
-            $('#btnAddOverlay').addClass("btn-outline-success");
-            $('#btnAddOverlay').removeClass("btn-success");
+            // $('#btnAddOverlay').addClass("btn-outline-success");
+            // $('#btnAddOverlay').removeClass("btn-success");
         });
 
     }
@@ -431,7 +458,7 @@ $(function () {
                         url: _contextPath + "/zone/modify",
                         data: {
                             polygon: managerPolygon,
-                            seq: modifyPolygon.seq,
+                            seq: clickedPolygon.seq,
                         }
                     }
 
@@ -447,7 +474,7 @@ $(function () {
 
                         managerPolygon.options = polygonStyle;
                         managerPolygon.type = result.data;
-                        managerPolygon.seq = modifyPolygon.seq;
+                        managerPolygon.seq = clickedPolygon.seq;
 
                         displayArea(managerPolygon);
                     }

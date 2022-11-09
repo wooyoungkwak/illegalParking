@@ -181,8 +181,10 @@ public class AreaAPI {
 
             String zoneType = "";
             IllegalZone getIllegalZone = illegalZoneService.get(jsonNode.get("seq").asInt());
-            getIllegalZone.setEventSeq(getIllegalZone.getIllegalEvent().getEventSeq());
-            if (getIllegalZone.getEventSeq() == null) zoneType = "";
+            if(getIllegalZone.getIllegalEvent() == null) getIllegalZone.setEventSeq(0);
+            else getIllegalZone.setEventSeq(getIllegalZone.getIllegalEvent().getEventSeq());
+
+            if (getIllegalZone.getEventSeq() == 0) zoneType = "";
             else zoneType = illegalEventService.get(getIllegalZone.getEventSeq()).getIllegalType().toString();
 
             return zoneType;
