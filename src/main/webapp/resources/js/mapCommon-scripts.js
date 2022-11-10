@@ -254,6 +254,7 @@ $.getMobileCurrentPosition = function (map) {
 
 //현재위치 마커 커스텀 오버레이
 function myLocationMarker(map, position) {
+    $.loading(true);
     if ($.isMobile) {
         let locationOverlay = new kakao.maps.CustomOverlay(
             {zIndex: 1, yAnchor: 3});
@@ -277,7 +278,9 @@ function myLocationMarker(map, position) {
         locationOverlay.setMap(map);
         myLocMarker = locationOverlay;
     }
+    map.setLevel(3);
     map.panTo(position);
+    $.loading(false);
 }
 
 

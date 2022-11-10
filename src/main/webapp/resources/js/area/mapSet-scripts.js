@@ -195,27 +195,26 @@ $(function () {
                         if(managerOverlay.length > 0) {
                             manager.cancel();
                             manager.remove(managerOverlay[0]);
-                            // polygon.setMap(drawingMap);
-                            // polygon.setOptions($.changeOptionByMouseOut(area))
                         }
                         polygon.setMap(null);
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
+                        manager.addListener('remove', function(e) {
+                            if(!!manager.undoable()) {
+                                polygon.setMap(drawingMap);
+                                polygon.setOptions($.changeOptionByMouseOut(area));
+                            }
+                        });
 
                     } else {
                         if (manager._mode === undefined || manager._mode === '') {
                             $('#areaSettingModal').offcanvas('show');
+                            let center = centroid(area.points);
+                            drawingMap.panTo(new kakao.maps.LatLng(center.y,center.x));
                             $.showModal(area.seq);
                         }
                         changeOptionStroke(clickedPolygon);
                     }
-                    manager.addListener('remove', function(e) {
-                        if($.isModifyArea) {
-                            polygon.setMap(drawingMap);
-                            polygon.setOptions($.changeOptionByMouseOut(area));
-                        }
-                    });
-                    let center = centroid(area.points);
-                    drawingMap.panTo(new kakao.maps.LatLng(center.y,center.x));
+
                 }
             });
         overlays.push(polygon);
@@ -289,10 +288,6 @@ $(function () {
             event: 'dblclick',
             func: function (mouseEvent) {
                 if(!$.isModifyArea) {
-                    // $('#btnAddOverlay').removeClass("btn-outline-success");
-                    // $('#btnAddOverlay').addClass("btn-success");
-                    // $('#btnModifyOverlay').addClass("btn-outline-success");
-                    // $('#btnModifyOverlay').removeClass("btn-success");
                     $('#btnAddOverlay').hide();
                     $('#btnModifyOverlay').hide();
                     $('#btnSet').show();
@@ -360,11 +355,6 @@ $(function () {
                     }
                 }
             }
-        });
-
-        manager.addListener('drawend', function(mouseEvent) {
-            // $('#btnAddOverlay').addClass("btn-outline-success");
-            // $('#btnAddOverlay').removeClass("btn-success");
         });
 
     }

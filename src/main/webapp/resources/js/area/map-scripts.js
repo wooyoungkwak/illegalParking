@@ -318,7 +318,6 @@ $(function () {
     $.findMe = function () {
         if ($.isMobile) $.getMobileCurrentPosition(map);
         else $.getCurrentPosition(map);
-        map.setLevel(3);
     }
 
     // 동코드 처리 함수

@@ -111,31 +111,23 @@
 				$('#btnAddOverlay').click(function () {
 				    $.isModifyArea = false;
 					$.setOverlayType('POLYGON');
-					// $(this).removeClass("btn-outline-success");
-					// $(this).addClass("btn-success");
 					$(this).hide();
 					$('#btnSet').show();
 					$('#btnCancel').show();
 					$('#btnModify').hide();
 
-					// $('#btnModifyOverlay').addClass("btn-outline-dark");
-					// $('#btnModifyOverlay').removeClass("btn-dark");
 					$('#btnModifyOverlay').hide();
 				});
 
 				//
 				$('#btnModifyOverlay').click(function () {
                     $.isModifyArea = true;
-					// $(this).removeClass("btn-outline-dark");
-					// $(this).addClass("btn-dark");
 					$(this).hide();
 
 					$('#btnModify').show();
 					$('#btnCancel').show();
 					$('#btnSet').hide();
 
-					// $('#btnAddOverlay').addClass("btn-outline-success");
-					// $('#btnAddOverlay').removeClass("btn-success");
 					$('#btnAddOverlay').hide();
 				});
 
@@ -152,11 +144,7 @@
 					$('#btnCancel').hide();
 					$('#btnSet').hide();
 
-					// $('#btnAddOverlay').addClass("btn-outline-success");
-					// $('#btnAddOverlay').removeClass("btn-success");
 					$('#btnAddOverlay').show();
-					// $('#btnModifyOverlay').addClass("btn-outline-dark");
-					// $('#btnModifyOverlay').removeClass("btn-dark");
 					$('#btnModifyOverlay').show();
 				}
 			})
