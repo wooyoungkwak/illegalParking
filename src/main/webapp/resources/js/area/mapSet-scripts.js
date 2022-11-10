@@ -5,7 +5,7 @@ $(function () {
     let zoneAreas = [];
     let zones = {};
 
-    let clickedPolygon = {};
+    let clickedPolygon;
 
     let CENTER_LATITUDE = 35.02035492064902;
     let CENTER_LONGITUDE = 126.79383256393594;
@@ -67,8 +67,11 @@ $(function () {
             if (manager.undoable()) {
                 // 이전 상태로 되돌림
                 manager.undo();
-                clickedPolygon.clickPolygon.setMap(drawingMap)
+                if(manager.getOverlays().polygon.length > 0) {
+                    manager.remove(manager.getOverlays().polygon[0]);
+                }
             }
+            clickedPolygon.clickPolygon.setMap(drawingMap);
             $.isModifyArea = false;
         }
     }
@@ -192,6 +195,8 @@ $(function () {
                         if(managerOverlay.length > 0) {
                             manager.cancel();
                             manager.remove(managerOverlay[0]);
+                            // polygon.setMap(drawingMap);
+                            // polygon.setOptions($.changeOptionByMouseOut(area))
                         }
                         polygon.setMap(null);
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
@@ -199,14 +204,18 @@ $(function () {
                     } else {
                         if (manager._mode === undefined || manager._mode === '') {
                             $('#areaSettingModal').offcanvas('show');
-                            let center = centroid(area.points);
-                            let centerLatLng = new kakao.maps.LatLng(center.y,
-                                center.x);
-                            drawingMap.panTo(centerLatLng);
                             $.showModal(area.seq);
                         }
                         changeOptionStroke(clickedPolygon);
                     }
+                    manager.addListener('remove', function(e) {
+                        if($.isModifyArea) {
+                            polygon.setMap(drawingMap);
+                            polygon.setOptions($.changeOptionByMouseOut(area));
+                        }
+                    });
+                    let center = centroid(area.points);
+                    drawingMap.panTo(new kakao.maps.LatLng(center.y,center.x));
                 }
             });
         overlays.push(polygon);
@@ -270,9 +279,6 @@ $(function () {
                 // 그리기 중이면 그리기를 취소합니다
                 manager.cancel();
                 $.undoManager();
-                if(manager.getOverlays().polygon.length > 0) {
-                    manager.remove(manager.getOverlays().polygon[0]);
-                }
                 $.initBtnState();
             }
         });
@@ -305,7 +311,7 @@ $(function () {
             func: function (mouseEvent) {
                 $('#areaSettingModal').offcanvas('hide');
 
-                if(clickedPolygon) {
+                if(!!clickedPolygon) {
                     clickedPolygon.clickPolygon.setOptions({
                         "strokeWeight": 0,
                     });
