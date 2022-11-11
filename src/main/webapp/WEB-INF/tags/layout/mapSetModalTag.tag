@@ -26,7 +26,7 @@
 
 		<div class="offcanvas-header">
 			<h5 class="offcanvas-title" id="offcanvasRightLabel">구역설정</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+			<button type="button" class="btn-close canvasClose" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 		</div>
 
 		<div class="offcanvas-body">
@@ -116,7 +116,7 @@
 					<c:if test="${id eq 'areaSettingModal'}">
 						<button type="button" class="btn btn-primary" id="btnModifyEvent">등록</button>
 					</c:if>
-					<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="offcanvas">${id eq 'areaViewModal' ? '닫기' : '취소'}</button>
+					<button type="button" class="btn btn-outline-secondary canvasClose" data-bs-dismiss="offcanvas" id="btnClose">${id eq 'areaViewModal' ? '닫기' : '취소'}</button>
 				</div>
 			</div>
 		</div>
@@ -130,5 +130,17 @@
            let locationType = $(this).val();
             $.setGroupNames(locationType);
 		});
+
+		$('.canvasClose').click(function(){
+			$.changeOptionStroke();
+		});
+
+		$(document).keydown(function(event) {
+			if ( event.keyCode === 27 || event.which === 27 ) {
+				$.changeOptionStroke();
+			}
+		});
+
 	});
+
 </script>

@@ -31,23 +31,23 @@ $(function () {
         "fillOpacity": 0.5
     };
     let beforeClickPolygon;
-    let changeOptionStroke = function (polygon) {
-
+    $.changeOptionStroke = function (polygon) {
         if ( polygon !== undefined) {
-            polygon.clickPolygon.setOptions({
+            polygon.setOptions({
                 "strokeColor": '#000000',
                 "strokeWeight": 2,
             });
 
             if (beforeClickPolygon) {
-                beforeClickPolygon.clickPolygon.setOptions({
-                    "strokeWeight": 0,
-                });
+                if(JSON.stringify(polygon.getPath()) !== JSON.stringify(beforeClickPolygon.getPath())) {
+                    beforeClickPolygon.setOptions({
+                        "strokeWeight": 0,
+                    });
+                }
             }
-
             beforeClickPolygon = polygon;
-        } else {
-            beforeClickPolygon.clickPolygon.setOptions({
+        } else if (beforeClickPolygon) {
+            beforeClickPolygon.setOptions({
                 "strokeWeight": 0,
             });
 
@@ -93,6 +93,7 @@ $(function () {
     function removeOverlays() {
         let len = overlays.length, i = 0;
         for (; i < len; i++) {
+
             overlays[i].setMap(null);
         }
         overlays = [];
@@ -196,7 +197,6 @@ $(function () {
                     clickedPolygon = {seq: area.seq, clickPolygon: polygon};
 
                     if($.isModifyArea) {
-
                         isDrawPolygonAfterEvent = true;
                         let managerOverlay = manager.getOverlays().polygon[0];
                         if(managerOverlay !== undefined) {
@@ -215,9 +215,9 @@ $(function () {
                             drawingMap.panTo(new kakao.maps.LatLng(center.y,center.x));
                             $.showModal(area.seq);
                         }
-                        changeOptionStroke(clickedPolygon);
+                        log('click', clickedPolygon.clickPolygon);
+                        $.changeOptionStroke(clickedPolygon.clickPolygon);
                     }
-
                 }
             });
         overlays.push(polygon);
@@ -327,7 +327,7 @@ $(function () {
                 $('#areaSettingModal').offcanvas('hide');
 
                 if(clickedPolygon) {
-                    changeOptionStroke();
+                    $.changeOptionStroke();
                 }
             }
         });
@@ -351,6 +351,9 @@ $(function () {
                     if(!obj.uniqueCodesCheck) {
                         drawingZone(obj.codes);
                     }
+                    if(beforeClickPolygon) {
+                        $.changeOptionStroke(beforeClickPolygon);
+                    }
                 }
             }
         });
@@ -360,7 +363,6 @@ $(function () {
             target: drawingMap,
             event: 'zoom_changed',
             func: async function () {
-
                 if(!$.isModifyArea) {
                     // 지도의  레벨을 얻어옵니다
                     let level = drawingMap.getLevel();
@@ -368,9 +370,7 @@ $(function () {
                         removeOverlays();
                     } else {
                         if (level === 3) {
-                            drawingZone(obj.codes);
-                            let clickedPolygon = '';
-                            changeOptionStroke(clickedPolygon);
+                            await drawingZone(obj.codes);
                         }
                     }
                 }
@@ -550,6 +550,11 @@ $(function () {
                 }
             }
         });
+
+        $.SetMaxLevel = function(lev) {
+            drawingMap.setMaxLevel(lev);
+        }
+
 
         $.getCurrentPosition(drawingMap);
 

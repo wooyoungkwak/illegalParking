@@ -109,6 +109,7 @@
 
 				//
 				$('#btnAddOverlay').click(function () {
+					$.SetMaxLevel(3);
 				    $.isModifyArea = false;
 					$.setOverlayType('POLYGON');
 					$(this).hide();
@@ -121,6 +122,7 @@
 
 				//
 				$('#btnModifyOverlay').click(function () {
+					$.SetMaxLevel(3);
                     $.isModifyArea = true;
 					$(this).hide();
 
@@ -142,6 +144,7 @@
                 });
 
                 $.initBtnState = function() {
+					$.SetMaxLevel(10);
 					$.isModifyArea = false;
 					$('#btnModify').hide();
 					$('#btnCancel').hide();
