@@ -150,6 +150,7 @@ public class UserServiceImpl implements UserService {
                     .where(QUser.user.username.eq(userName))
                     .where(QUser.user.password.eq(_password))
                     .where(QUser.user.role.eq(Role.USER))
+                    .where(QUser.user.isDel.isFalse())
                     .fetchOne() != null) {
                 return true;
             }
