@@ -33,24 +33,32 @@ $(function () {
     let beforeClickPolygon;
     let changeOptionStroke = function (polygon) {
 
-        polygon.clickPolygon.setOptions({
-            "strokeColor": '#000000',
-            "strokeWeight": 2,
-        });
+        if ( polygon !== undefined) {
+            polygon.clickPolygon.setOptions({
+                "strokeColor": '#000000',
+                "strokeWeight": 2,
+            });
 
-        if(beforeClickPolygon) {
+            if (beforeClickPolygon) {
+                beforeClickPolygon.clickPolygon.setOptions({
+                    "strokeWeight": 0,
+                });
+            }
+
+            beforeClickPolygon = polygon;
+        } else {
             beforeClickPolygon.clickPolygon.setOptions({
                 "strokeWeight": 0,
-            })
-        }
-        beforeClickPolygon = polygon;
+            });
 
+            beforeClickPolygon = undefined;
+        }
     }
 
     // Overlay Type 설정 함수
     $.setOverlayType = function(type) {
         // 그리기 중이면 그리기를 취소합니다
-        manager.cancel();
+        $.cancelDrawing();
 
         // 클릭한 그리기 요소 타입을 선택합니다
         manager.select(kakao.maps.drawing.OverlayType[type]);
@@ -63,15 +71,10 @@ $(function () {
 
     $.undoManager = function() {
         if($.isModifyArea) {
-            // 되돌릴 수 있다면
-            if (manager.undoable()) {
-                // 이전 상태로 되돌림
-                manager.undo();
-                if(manager.getOverlays().polygon.length > 0) {
-                    manager.remove(manager.getOverlays().polygon[0]);
-                }
+            if(manager.getOverlays().polygon.length > 0) {
+                manager.remove(manager.getOverlays().polygon[0]);
             }
-            clickedPolygon.clickPolygon.setMap(drawingMap);
+            isDrawPolygonAfterEvent = false;
             $.isModifyArea = false;
         }
     }
@@ -151,6 +154,8 @@ $(function () {
         }
     }
 
+
+
     // 다각형을 생상하고 이벤트를 등록하는 함수입니다
     function displayArea(area) {
         let polygonObj = newPolygon(area)
@@ -191,20 +196,18 @@ $(function () {
                     clickedPolygon = {seq: area.seq, clickPolygon: polygon};
 
                     if($.isModifyArea) {
-                        let managerOverlay = manager.getOverlays().polygon;
-                        if(managerOverlay.length > 0) {
-                            manager.cancel();
-                            manager.remove(managerOverlay[0]);
+
+                        isDrawPolygonAfterEvent = true;
+                        let managerOverlay = manager.getOverlays().polygon[0];
+                        if(managerOverlay !== undefined) {
+                            $.cancelDrawing();
+                            manager.remove(managerOverlay);
                         }
                         polygon.setMap(null);
                         manager.put(kakao.maps.drawing.OverlayType.POLYGON, path);
-                        manager.addListener('remove', function(e) {
-                            if(!!manager.undoable()) {
-                                polygon.setMap(drawingMap);
-                                polygon.setOptions($.changeOptionByMouseOut(area));
-                            }
-                        });
 
+                        areaByAfterEvent = area;
+                        polygonByAfterEvent = polygon;
                     } else {
                         if (manager._mode === undefined || manager._mode === '') {
                             $('#areaSettingModal').offcanvas('show');
@@ -235,6 +238,15 @@ $(function () {
         })
         $.beforeCodes = codes;
         drawingPolygons(getPolygonData());
+    }
+
+    let areaByAfterEvent;
+    let polygonByAfterEvent;
+    let isDrawPolygonAfterEvent = false;
+
+    function drawPolygonAfterEvent() {
+        polygonByAfterEvent.setMap(drawingMap);
+        polygonByAfterEvent.setOptions($.changeOptionByMouseOut(areaByAfterEvent));
     }
 
     // 카카오 초기화
@@ -269,15 +281,23 @@ $(function () {
         };
         manager = new kakao.maps.drawing.DrawingManager(options);
 
+        manager.addListener('remove', function(e) {
+           if (isDrawPolygonAfterEvent) drawPolygonAfterEvent();
+        });
+
         // 지도에 마우스 오른쪽 클릭 이벤트를 등록합니다
         // 선을 그리고있는 상태에서 마우스 오른쪽 클릭 이벤트가 발생하면 그리기를 종료합니다
         setKakaoEvent({
             target: drawingMap,
             event: 'rightclick',
             func: function (mouseEvent) {
-                // 그리기 중이면 그리기를 취소합니다
-                manager.cancel();
-                $.undoManager();
+                if ($.isModifyArea) {
+                    $.undoManager();
+                } else {
+                    // 그리기 중이면 그리기를 취소합니다
+                    $.cancelDrawing();
+                    $.removeOverlaysOfManager();
+                }
                 $.initBtnState();
             }
         });
@@ -306,10 +326,8 @@ $(function () {
             func: function (mouseEvent) {
                 $('#areaSettingModal').offcanvas('hide');
 
-                if(!!clickedPolygon) {
-                    clickedPolygon.clickPolygon.setOptions({
-                        "strokeWeight": 0,
-                    });
+                if(clickedPolygon) {
+                    changeOptionStroke();
                 }
             }
         });
@@ -351,6 +369,8 @@ $(function () {
                     } else {
                         if (level === 3) {
                             drawingZone(obj.codes);
+                            let clickedPolygon = '';
+                            changeOptionStroke(clickedPolygon);
                         }
                     }
                 }
@@ -407,7 +427,6 @@ $(function () {
 
         // 구역 저장 함수
         $('#btnSet').click(async function () {
-            $('#areaSettingModal').offcanvas('hide');
             // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
             let data = manager.getData();
             let opt = {
@@ -465,6 +484,7 @@ $(function () {
                     let result = initializeZone(opt);
 
                     if (result.success) {
+                        isDrawPolygonAfterEvent = false;
                         manager.remove(manager.getOverlays().polygon[0]);
                         polygonObj.polygon.setMap(null);
 

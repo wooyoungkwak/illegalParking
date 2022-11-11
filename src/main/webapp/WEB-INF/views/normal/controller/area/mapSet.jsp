@@ -132,10 +132,13 @@
 				});
 
                 $('#btnCancel').click(function(){
-					$.undoManager();
-					$.initBtnState();
-                    $.cancelDrawing();
-                    $.removeOverlaysOfManager();
+                    if ( $.isModifyArea ) {
+                        $.undoManager();
+                    } else {
+                        $.cancelDrawing();
+                        $.removeOverlaysOfManager();
+                    }
+                    $.initBtnState();
                 });
 
                 $.initBtnState = function() {
