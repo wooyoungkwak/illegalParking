@@ -215,11 +215,16 @@ $(function () {
                             drawingMap.panTo(new kakao.maps.LatLng(center.y,center.x));
                             $.showModal(area.seq);
                         }
-                        log('click', clickedPolygon.clickPolygon);
                         $.changeOptionStroke(clickedPolygon.clickPolygon);
                     }
                 }
             });
+
+        if(beforeClickPolygon) {
+            if (JSON.stringify(beforeClickPolygon.getPath()) === JSON.stringify(path)) {
+                $.changeOptionStroke(polygon);
+            }
+        }
         overlays.push(polygon);
     }
 
@@ -350,9 +355,6 @@ $(function () {
                     // 법정동 코드 변동이 없다면 폴리곤만 표시, 변동 있다면 다시 호출
                     if(!obj.uniqueCodesCheck) {
                         drawingZone(obj.codes);
-                    }
-                    if(beforeClickPolygon) {
-                        $.changeOptionStroke(beforeClickPolygon);
                     }
                 }
             }
