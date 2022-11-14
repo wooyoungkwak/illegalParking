@@ -1,16 +1,10 @@
 $(function () {
-    let zoneSeqs = [];
-    let zoneTypes = [];
-    let zonePolygons = [];
-    let receiptCnts = [];
-
     $.polygons = [];
 
     // $.isMobile = false;
     $.CENTER_LATITUDE = 35.02035492064903;
     $.CENTER_LONGITUDE = 126.79383256393595;
     $.mapSelected = 'zone';
-    $.searchIllegalType = '';
 
     let url = '';
 
@@ -21,15 +15,6 @@ $(function () {
     let map;
     let kakaoEvent = kakao.maps.event;
 
-    let polygonStyle = {
-        "draggable": true,
-        "removable": true,
-        "editable": true,
-        "strokeWeight": 0,
-        "fillColor": "#000000",
-        "fillOpacity": 0.5
-    };
-
     // 폴리곤 그리기
     function drawingPolygons(polygons) {
         $.removeOverlays();
@@ -38,27 +23,6 @@ $(function () {
             $.polygons.push(element);
             $.displayArea(element);
         }
-    }
-
-    // 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
-    function getPolygonData() {
-        let areas = [];
-        for (let j = 0; j < zonePolygons.length; j++) {
-            let pointsPoly = [], obj = {};
-            let zonePolygonArr = zonePolygons[j].split(",");
-            obj.type = zoneTypes[j];
-            obj.seq = zoneSeqs[j];
-            obj.receiptCnt = receiptCnts[j];
-            for (let i = 0; i < zonePolygonArr.length - 1; i++) {
-                let pathPoints = zonePolygonArr[i].split(" ");
-                pointsPoly[i] = new Point(pathPoints[0], pathPoints[1]);
-                obj.points = pointsPoly;
-            }
-            obj.coordinate = 'wgs84';
-            obj.options = polygonStyle;
-            areas.push(obj);
-        }
-        return areas;
     }
 
     // 카카오 맵 이벤트 설정
@@ -71,10 +35,10 @@ $(function () {
         let result = $.JJAjaxAsync(opt);
 
         if (result.success) {
-            zonePolygons = result.data.zonePolygons;
-            zoneSeqs = result.data.zoneSeqs;
-            zoneTypes = result.data.zoneTypes;
-            receiptCnts = result.data.receiptCnts;
+            zones.zonePolygons = result.data.zonePolygons;
+            zones.zoneSeqs = result.data.zoneSeqs;
+            zones.zoneTypes = result.data.zoneTypes;
+            zones.receiptCnts = result.data.receiptCnts;
         }
     }
 
@@ -94,7 +58,10 @@ $(function () {
             target: map,
             event: 'click',
             func: function (mouseEvent) {
-                $('#areaViewModal').offcanvas('hide');
+                if($.beforeClickPolygon) {
+                    $('#areaViewModal').offcanvas('hide');
+                    $.changeOptionStroke();
+                }
                 $.initOverlay();
             }
         });
@@ -190,7 +157,7 @@ $(function () {
             strokeOpacity: style.strokeOpacity,
             strokeStyle: style.strokeStyle,
             strokeWeight: style.strokeWeight,
-            fillColor: $.setFillColor(area),
+            fillColor: $.setFillColor(area.type),
             fillOpacity: style.fillOpacity
         });
 
@@ -212,7 +179,7 @@ $(function () {
                 target: polygon,
                 event: 'mouseout',
                 func: function () {
-                    polygon.setOptions($.changeOptionByMouseOut(area));
+                    polygon.setOptions($.changeOptionByMouseOut(area.type));
                 }
             });
 
@@ -221,6 +188,9 @@ $(function () {
                 event: 'click',
                 func: function () {
                     kakao.maps.event.preventMap();
+
+                    $.changeOptionStroke(polygon);
+
                     let center = centroid(area.points);
                     let centerLatLng = new kakao.maps.LatLng(center.y, center.x);
                     map.panTo(centerLatLng);
@@ -229,6 +199,11 @@ $(function () {
                     $.showModal(area.seq);
                 }
             });
+            if($.beforeClickPolygon) {
+                if (JSON.stringify($.beforeClickPolygon.getPath()) === JSON.stringify(path)) {
+                    $.changeOptionStroke(polygon);
+                }
+            }
         }
 
         let cnt = area.receiptCnt === undefined ? 0 : area.receiptCnt;
@@ -249,21 +224,24 @@ $(function () {
 
     // 동코드를 이용해서 zone 그리기 함수
     $.drawingZone = function (codes) {
+        let searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
         let select = SELECT_TYPE_AND_DONG;
-        if ($.searchIllegalType === '') select = SELECT_DONG;
+        if (searchIllegalType === '') select = SELECT_DONG;
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
 
-        initializeZone({
+        let result = $.JJAjaxAsync({
             url: _contextPath + '/zone/gets',
             data: {
                 select: select,
-                illegalType: $.searchIllegalType,
+                illegalType: searchIllegalType,
                 codes: codes,
                 isSetting: false,
             }
         });
-        $.beforeCodes = codes;
-        drawingPolygons(getPolygonData());
+        if(result.success) {
+            $.beforeCodes = codes;
+            drawingPolygons($.getPolygonData(result.data));
+        }
     }
 
     // 로딩 이미지 화면 설정 함수
@@ -327,6 +305,7 @@ $(function () {
             $.drawingZone((await $.getDongCodesBounds(map)).codes);
         } else {
             $.getsMarker((await $.getDongCodesBounds(map)).codes);
+
         }
         $.loading(false);
     };
@@ -347,7 +326,6 @@ $(function () {
     }
 
     $.changeIllegalType = async function () {
-        $.searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
         $.drawingZone((await $.getDongCodesBounds(map)).codes);
     }
 

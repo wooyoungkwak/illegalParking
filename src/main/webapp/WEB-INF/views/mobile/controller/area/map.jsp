@@ -301,12 +301,12 @@
                         $.mapSelected = event.target.id;
                         $.changeMapType();
 						if(this.id === 'zone') {
-							$('#onOffBtn').removeClass('display-none');
-							$('.notice-board').removeClass('display-none');
+							$('#onOffBtn').show();
+							$('.notice-board').show();
 						}
 						else {
-							$('#onOffBtn').addClass('display-none');
-                            $('.notice-board').addClass('display-none');
+							$('#onOffBtn').hide();
+                            $('.notice-board').hide();
 						}
                         $.loading(false);
                     });

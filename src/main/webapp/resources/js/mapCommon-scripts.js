@@ -351,18 +351,18 @@ $.pointsToPath = function (points) {
 }
 
 // 다각형에 마우스아웃 이벤트가 발생했을 때 변경할 채우기 옵션입니다
-$.changeOptionByMouseOut = function (area) {
+$.changeOptionByMouseOut = function (type) {
     return {
-        fillColor: $.setFillColor(area), // 채우기 색깔입니다
+        fillColor: $.setFillColor(type), // 채우기 색깔입니다
         fillOpacity: 0.5 // 채우기 불투명도 입니다
     };
 }
 
 // 주정차 타입에 따른 폴리곤 색 구별
-$.setFillColor = function (area) {
+$.setFillColor = function (type) {
     let fillColor;
-    if (area.type === 'FIVE_MINUTE') fillColor = '#ff6f00';
-    else if (area.type === 'ILLEGAL') fillColor = '#FF3333';
+    if (type === 'FIVE_MINUTE') fillColor = '#ff6f00';
+    else if (type === 'ILLEGAL') fillColor = '#FF3333';
     else fillColor = '#00afff';
 
     return fillColor;
@@ -492,7 +492,7 @@ $.addOverlay = function (data, map, callback) {
             this.children[0].src = imgOrigin.imgSrc.clickOrigin;
             if ($.mapSelected === 'parking') {
 
-                if ( $.currentMarkerSeq != data.parkingSeq) {
+                if ( $.currentMarkerSeq !== data.parkingSeq) {
                     $.isChangeMaker = true;
                 }
 
@@ -500,7 +500,7 @@ $.addOverlay = function (data, map, callback) {
                 $.currentMarkerSeq = data.parkingSeq;
             } else {
 
-                if ( $.currentMarkerSeq != data.pmSeq) {
+                if ( $.currentMarkerSeq !== data.pmSeq) {
                     $.isChangeMaker = true;
                 }
 
@@ -668,6 +668,7 @@ function setEventHtml(data) {
         data.usedSecond = true;
 
         $('input:radio[name=illegalType]').eq(0).prop('checked', true);
+        $('#locationType option:eq(0)').prop('selected', true);
         usedFirst.prop('checked', false);
         usedSecond.prop('checked', false);
         $('.timeSelect').attr('disabled', true);
@@ -703,6 +704,7 @@ $.showModal = function (seq) {
     });
 
     if (result.success) {
+        $.SetMaxLevel($.LEVEL_THREE);
         let data = result.data;
         $('#zoneSeq').val(data.zoneSeq);
         setEventHtml(data);
@@ -710,5 +712,60 @@ $.showModal = function (seq) {
     } else {
         alert(result.msg);
     }
+}
+
+//클릭한 구역 테두리 변경 함수
+$.beforeClickPolygon = undefined;
+$.changeOptionStroke = function (polygon) {
+    if ( polygon !== undefined) {
+        polygon.setOptions({
+            "strokeColor": '#000000',
+            "strokeWeight": 2,
+        });
+
+        if ($.beforeClickPolygon) {
+            if(JSON.stringify(polygon.getPath()) !== JSON.stringify($.beforeClickPolygon.getPath())) {
+                $.beforeClickPolygon.setOptions({
+                    "strokeWeight": 0,
+                });
+            }
+        }
+        $.beforeClickPolygon = polygon;
+    } else if ($.beforeClickPolygon) {
+        $.beforeClickPolygon.setOptions({
+            "strokeWeight": 0,
+        });
+
+        $.beforeClickPolygon = undefined;
+    }
+}
+
+let polygonStyle = {
+    "draggable": true,
+    "removable": true,
+    "editable": true,
+    "strokeWeight": 0,
+    "fillColor": "#000000",
+    "fillOpacity": 0.5
+};
+// 가져온 zone 데이터 카카오 폴리곤 형식으로 변경
+$.getPolygonData = function(zones) {
+    let areas = [];
+    for (let j = 0; j < zones.zonePolygons.length; j++) {
+        let pointsPoly = [], obj = {};
+        let zonePolygonArr = zones.zonePolygons[j].split(",");
+        obj.type = zones.zoneTypes[j];
+        obj.seq = zones.zoneSeqs[j];
+        obj.receiptCnt = zones.receiptCnts[j];
+        for (let i = 0; i < zonePolygonArr.length - 1; i++) {
+            let pathPoints = zonePolygonArr[i].split(" ");
+            pointsPoly[i] = new Point(pathPoints[0], pathPoints[1]);
+            obj.points = pointsPoly;
+        }
+        obj.coordinate = 'wgs84';
+        obj.options = polygonStyle;
+        areas.push(obj);
+    }
+    return areas;
 }
 

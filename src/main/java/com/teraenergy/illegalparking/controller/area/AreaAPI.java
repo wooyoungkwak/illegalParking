@@ -327,12 +327,8 @@ public class AreaAPI {
             Polygon polygon = (Polygon) new WKTReader().read(illegalZone.getPolygon());
             StringBuilder builder = new StringBuilder();
             int count = 1;
-//            Coordinate firstCoordinate = null;
             int coordinatesLength = polygon.getCoordinates().length;
             for (Coordinate coordinate : polygon.getCoordinates()) {
-//                if (first == 0) {
-//                    firstCoordinate = coordinate;
-//                }
                 builder.append(coordinate.getX())
                     .append(" ")
                     .append(coordinate.getY());
@@ -341,9 +337,6 @@ public class AreaAPI {
                 }
                 count++;
             }
-//            builder.append(firstCoordinate.getX())
-//                .append(" ")
-//                .append(firstCoordinate.getY());
 
             polygons.add(builder.toString());
             if (illegalZone.getEventSeq() == null) zoneTypes.add("");
