@@ -80,8 +80,9 @@ $.addUserGroupList = function (userGroupDto) {
     $('#addUserGroupNav').append(createHtml(userGroupDto));
 }
 
-// 관리 그룹 리스트 이벤트 연결
+// 관리 그룹 리스트 이벤트 연결 함수
 $.bindUserGroupNavEvent = function (){
+
     $('#addUserGroupNav a').on('click', function (){
         if ( confirm("삭제 하시겠습니까") ) {
 
@@ -96,9 +97,75 @@ $.bindUserGroupNavEvent = function (){
 
             if (result.success) {
                 $(this).parent().remove();
+                $.setStatics();
             } else {
                 alert("삭제를 실패 하였습니다.");
             }
         }
     });
+}
+
+// userSetTag 의 통계 정보 초기화 함수
+$.initializeStatics = function (opt) {
+    $('#totalCount').text(opt.totalCount + " 건");           // 총 신고 접수 건수
+    $('#completeCount').text(opt.completeCount + " 건");     // 대기 건수
+    $('#exceptionCount').text(opt.exceptionCount + " 건");   // 미처리 건수
+    $('#penaltyCount').text(opt.penaltyCount + " 건");       // 처리 건수
+
+    // 차트 ( 대기 / 미처리 / 처리 건수 )
+    $.drawPieChart(opt);
+}
+
+// 사용자 설정 태그 초기화 함수
+$.initializeUserSetTag = function (opt) {
+    $('#userSeq').val(opt.userSeq);
+    $('#officeName').val(opt.officeName);
+    $('#locationType').val(opt.locationType);
+    $('#userName').val(opt.userName);
+    $('#password').val(opt.password);
+
+    $.initializeStatics(opt);
+
+    let userGroupDtos = opt.userGroupDtos;
+
+    if ( userGroupDtos != undefined) {
+        for ( let i = 0; i < userGroupDtos.length; i++) {
+            $.addUserGroupList(userGroupDtos[i]);
+        }
+    }
+
+    // 관리 그룹 리스트 이벤트 연결
+    $.bindUserGroupNavEvent();
+}
+
+// 통계 데이터 설정
+$.setStatics = function () {
+    $.loading.start();
+    let staticResult = $.JJAjaxAsync({
+        url: _contextPath + "/../report/statics/get",
+        data: {
+            userSeq: $('#userSeq').val()
+        }
+    });
+
+    if (staticResult.success ) {
+        $.initializeStatics(staticResult.data);
+    }
+
+    $.loading.stop();
+}
+
+// 로딩 이미지 화면 설정 함수
+$.loading = {
+    start: function(){
+        $('.wrap-loading').show();
+    } ,
+    immediatelyStop: function (){
+        $('.wrap-loading').hide();
+    },
+    stop: function() {
+        setTimeout(function () {
+            $('.wrap-loading').hide();
+        }, 500);
+    }
 }

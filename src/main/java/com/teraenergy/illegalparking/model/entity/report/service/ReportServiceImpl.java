@@ -112,7 +112,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search) {
+    public Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search, List<Integer> zoneSeqs) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
 
         if (search != null && search.length() > 0) {
@@ -127,6 +127,10 @@ public class ReportServiceImpl implements ReportService {
                     query.where(QReport.report.receipt.user.name.contains(search));
                     break;
             }
+        }
+
+        if (zoneSeqs != null) {
+            query.where(QReport.report.receipt.illegalZone.zoneSeq.in(zoneSeqs));
         }
 
         query.where(QReport.report.isDel.isFalse());

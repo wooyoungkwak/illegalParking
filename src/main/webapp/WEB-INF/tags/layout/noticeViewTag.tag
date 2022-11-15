@@ -59,6 +59,7 @@
 						<div class="col-12 d-flex justify-content-lg-start">
 							<div class="input-group">
 								<a class="btn btn-primary" id="modify">수정</a>
+								<a class="btn btn-danger" id="remove">삭제</a>
 								<a class="btn btn-outline-dark" id="close">닫기</a>
 							</div>
 						</div>
@@ -83,6 +84,11 @@
         // 수정
         $('#modify').on('click', function () {
             $.changeNoticeModify();
+        });
+
+        // 삭제
+        $('#remove').on('click', function () {
+            $.removeNotice();
         });
 
     });

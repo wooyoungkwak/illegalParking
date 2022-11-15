@@ -74,6 +74,9 @@
             closeUseGroupAddTag();
         });
 
+
+
+
         // 관리 그룹 추가 이벤트
         $('#createUserGroupAdd').on('click', function () {
             let userGroup = $.getData('userGroupAddForm');
@@ -93,6 +96,7 @@
 
             if (result.success) {
                 $.addUserGroupList(result.data);
+                $.setStatics();
                 $.bindUserGroupNavEvent();
             } else {
                 alert("등록 실패 하였습니다. \n" + result.msg);

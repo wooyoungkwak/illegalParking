@@ -122,12 +122,6 @@
             $('#noticeSeq').val(opt.noticeSeq);
             $('#subject').val(opt.subject);
             $('#noticeType').val(opt.noticeType);
-            // let split = opt.content.split('\n');
-            //
-            // let html = '';
-            // for (let i = 0; i < split.length; i++) {
-            //     html += '<p>' + split[i] + '</p>';
-            // }
             editor.setHTML(opt.html);
         }
 

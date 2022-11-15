@@ -30,7 +30,7 @@ public interface ReportService {
 
     Integer getsOverlabCount(String carNum);
 
-    Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search);
+    Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search, List<Integer> zoneSeqs);
 
     int getSizeForReport(List<IllegalZone> illegalZones);
 

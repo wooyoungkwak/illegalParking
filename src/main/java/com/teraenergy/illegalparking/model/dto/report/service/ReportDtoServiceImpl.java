@@ -152,8 +152,8 @@ public class ReportDtoServiceImpl implements ReportDtoService {
     }
 
     @Override
-    public Page<ReportDto> getsFromReport(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search) throws TeraException {
-        Page<Report> reportPage = reportService.gets(pageNumber, pageSize, reportStateType, filterColumn, search);
+    public Page<ReportDto> getsFromReport(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search, List<Integer> zoneSeqs) throws TeraException {
+        Page<Report> reportPage = reportService.gets(pageNumber, pageSize, reportStateType, filterColumn, search, zoneSeqs);
 
         List<ReportDto> reportDtos = Lists.newArrayList();
         for (Report report : reportPage.getContent()) {

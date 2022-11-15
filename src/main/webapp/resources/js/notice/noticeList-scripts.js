@@ -59,6 +59,19 @@ $.changeNoticeModify = function () {
     $('#noticeView').hide();
 };
 
+// 공지사항 삭제 함수
+$.removeNotice = function (noticeSeq) {
+    let result = $.JJAjaxAsync({
+        url: _contextPath + '/remove',
+        noticeSeq: noticeSeq
+    });
+
+    if ( result.success ) {
+        $('#noticeView').hide();
+        $('#noticeMain').show();
+    }
+}
+
 // 높이 조절
 $.setDivHeight = function (id, max) {
     let objSet = $('#'+id);

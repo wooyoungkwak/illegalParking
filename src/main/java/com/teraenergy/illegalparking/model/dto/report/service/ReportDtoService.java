@@ -32,7 +32,7 @@ public interface ReportDtoService {
 
     ReceiptDetailDto getFromReceiptDetailDto(Integer receiptSeq) throws TeraException;
 
-    Page<ReportDto> getsFromReport(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search) throws TeraException;
+    Page<ReportDto> getsFromReport(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search, List<Integer> zoneSeqs) throws TeraException;
 
     ReportDetailDto getFromReportDetailDto(int reportSeq) throws TeraException;
 

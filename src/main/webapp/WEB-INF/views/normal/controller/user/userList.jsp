@@ -100,6 +100,17 @@
 			</div>
 		</main>
 
+		<div class="wrap-loading">
+			<div style="position: absolute; margin-left: 45%; top: 45%;">
+				<div class="row">
+					<span>로딩중...</span>
+				</div>
+				<div class="spinner-border" style="width: 2.5rem; height: 2.5rem; " role="status">
+					<span class="visually-hidden"></span>
+				</div>
+			</div>
+		</div>
+
 		<layoutTags:userSetTag items="${LocationType.values()}"/>
 
 		<layoutTags:userAddTag id="userAddModal" enumValues="${LocationType.values()}"/>
@@ -127,37 +138,6 @@
                         $('#searchStrGroup').show();
                         $('#searchStr2Group').hide();
                     }
-                }
-
-                // 사용자 설정 태그 초기화 함수
-                function initializeUserSetTag(userGovernmentDto) {
-                    $('#userSeq').val(userGovernmentDto.userSeq);
-                    $('#officeName').val(userGovernmentDto.officeName);
-                    $('#locationType').val(userGovernmentDto.locationType);
-                    $('#userName').val(userGovernmentDto.userName);
-                    $('#password').val(userGovernmentDto.password);
-
-                    $('#totalCount').text(userGovernmentDto.totalCount + " 건");
-                    $('#completeCount').text(userGovernmentDto.completeCount + " 건");
-                    $('#exceptionCount').text(userGovernmentDto.exceptionCount + " 건");
-                    $('#penaltyCount').text(userGovernmentDto.penaltyCount + " 건");
-
-                    // example
-					userGovernmentDto.completeCount = 1;
-
-                    // 차트
-                    $.drawPieChart(userGovernmentDto);
-
-                    let userGroupDtos = userGovernmentDto.userGroupDtos;
-
-                    if ( userGroupDtos != undefined) {
-                        for ( let i = 0; i < userGroupDtos.length; i++) {
-                            $.addUserGroupList(userGroupDtos[i]);
-                        }
-                    }
-
-					// 관리 그룹 리스트 이벤트 연결
-                    $.bindUserGroupNavEvent();
                 }
 
                 // 초기화 함수
@@ -241,7 +221,7 @@
                             userGovernmentDto.userGroupDtos = result.data;
                         }
 
-                        initializeUserSetTag(userGovernmentDto);
+                        $.initializeUserSetTag(userGovernmentDto);
 
                         $('#userMain').hide();
                         $('#userSet').show();
@@ -267,6 +247,7 @@
 
                     $('#userAddModal').hide();
                     $('#userSet').hide();
+					$.loading.immediatelyStop();
                 }
 
                 // 검색 2 숨기기
