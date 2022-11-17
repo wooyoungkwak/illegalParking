@@ -225,6 +225,10 @@ $(function () {
     // 동코드를 이용해서 zone 그리기 함수
     $.drawingZone = function (codes) {
         let searchIllegalType = $('input:radio[name=searchIllegalType]:checked').val();
+        if (searchIllegalType === undefined) {
+            searchIllegalType = '';
+        }
+
         let select = SELECT_TYPE_AND_DONG;
         if (searchIllegalType === '') select = SELECT_DONG;
         //기존에 조회된 법정동 코드와 새로운 코드가 다르다면 db 조회
