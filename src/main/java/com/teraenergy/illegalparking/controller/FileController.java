@@ -144,8 +144,9 @@ public class FileController {
             FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
             String fileName = (String) resultMap.get(KEY_FILENAME);
             File file = new File(resourcePath + "/" + fileName);
-            file.setReadable(true);
-            file.setWritable(true);
+            file.setReadable(true, false);
+            file.setWritable(true, false);
+            file.setExecutable(true, false);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(fis.readAllBytes());
 
