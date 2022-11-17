@@ -144,6 +144,8 @@ public class FileController {
             FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
             String fileName = (String) resultMap.get(KEY_FILENAME);
             File file = new File(resourcePath + "/" + fileName);
+            file.setReadable(true);
+            file.setWritable(true);
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(fis.readAllBytes());
 
@@ -188,8 +190,6 @@ public class FileController {
                 FileInputStream fis = (FileInputStream) resultMap.get("fileInputStream");
                 XSSFWorkbook book = new XSSFWorkbook(fis);
                 XSSFSheet sheet = book.getSheetAt(0);
-
-
             }
 
             resultMap.remove(KEY_FILEINPUTSTREAM);
