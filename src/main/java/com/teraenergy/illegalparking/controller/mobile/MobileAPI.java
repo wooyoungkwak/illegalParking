@@ -533,6 +533,10 @@ public class MobileAPI {
     @ResponseBody
     public Object setReceipt(@RequestBody String body) throws TeraException {
         try {
+            if ( body.length() == 0) {
+                throw new TeraException(TeraExceptionCode.UNKNOWN);
+            }
+
             JsonNode jsonNode = JsonUtil.toJsonNode(body);
             double latitude = jsonNode.get("latitude").asDouble();      // 위도
             double longitude = jsonNode.get("longitude").asDouble();    // 경도
@@ -544,7 +548,7 @@ public class MobileAPI {
 
             String carNum = jsonNode.get("carNum").asText();    // 차량 번호
             String regDtStr = jsonNode.get("regDt").asText();   // 신고 시간 (문자)
-            LocalDateTime regDt = StringUtil.convertStringToDateTime(regDtStr, "yyyy-MM-dd HH:mm"); // 신고 시간 (LocalDateTime 변환)
+            LocalDateTime regDt = StringUtil.convertStringToDateTime(regDtStr, "yyyy-MM-dd HH:mm:ss"); // 신고 시간 (LocalDateTime 변환)
 
             // 불법 주정차 구역 ( mybatis 로 가져오기 때문에 illegal_event 데이터는 따로 요청 해야함)
             IllegalZone illegalZone = illegalZoneMapperService.get(lawDong.getCode(), latitude, longitude);
@@ -552,6 +556,7 @@ public class MobileAPI {
             // 사용자
             User user = userService.get(jsonNode.get("userSeq").asInt());
 
+            // 1. 불법 주정자 지역 체크 ( 불법 주정차 지역 인가? )
             if (illegalZone == null) {
                 Receipt receipt_etc = new Receipt();
                 receipt_etc.setAddr(addr);
@@ -570,7 +575,7 @@ public class MobileAPI {
             IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
             illegalZone.setIllegalEvent(illegalEvent);
 
-            // 1. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우  ( TODO : 확인이 필요 )
+            // 2. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우  ( TODO : 확인이 필요 )
             Receipt oldReceipt = receiptService.getByLastOccur(user.getUserSeq(), carNum, regDt, illegalZone.getIllegalEvent().getIllegalType());
             if (oldReceipt != null) {
                 oldReceipt.setReceiptStateType(ReceiptStateType.NOTHING);
@@ -594,23 +599,8 @@ public class MobileAPI {
                 receipt.setSecondRegDt(regDt);
             }
 
-            // 2. 불법 주정자 지역 체크 ( 불법 주정차 지역 인가? )
-            if (illegalZone == null) {
-                receipt = new Receipt();
-                receipt.setAddr(addr);
-                receipt.setCarNum(carNum);
-                receipt.setFileName(jsonNode.get("fileName").asText());
-                receipt.setRegDt(regDt);
-                receipt.setUser(user);
-                receipt.setCode(lawDong.getCode());
-                receipt.setReceiptStateType(ReceiptStateType.EXCEPTION);
-
-                receipt = receiptService.set(receipt);
-                _comment(receipt.getReceiptSeq(), TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA.getMessage());
-                throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_AREA);
-            }
-
             // 3. 불법 주정차 시간 체크 ( 신고 시간 내 인가 ? )
+            // 3-1. 첫번째 시간 체크
             String dateStr = regDtStr.split(" ")[0];
             if (!illegalZone.getIllegalEvent().isUsedFirst()) {
                 LocalDateTime fs = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getFirstStartTime(), "yyyy-MM-dd HH:mm");
@@ -630,7 +620,7 @@ public class MobileAPI {
                     throw new TeraException(TeraExceptionCode.ILLEGAL_PARKING_NOT_CRACKDOWN_TIME);
                 }
             }
-
+            // 3-2. 두번째 시간 체크
             if (!illegalZone.getIllegalEvent().isUsedSecond()) {
                 LocalDateTime ss = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getSecondStartTime(), "yyyy-MM-dd HH:mm");
                 LocalDateTime se = StringUtil.convertStringToDateTime(dateStr + " " + illegalZone.getIllegalEvent().getSecondEndTime(), "yyyy-MM-dd HH:mm");
@@ -684,6 +674,8 @@ public class MobileAPI {
             // 신고 일 때 기본의 접수 확인 의 방식
             // * 기존 방식 : 신고 접수 일때 현재 시간 기준으로 11분 전까지 (또는 16분 전까지)
             // * TODO : 사장님 요청에 의한 변경 .... ( 확인 후 적용 )
+
+            String message = "불법주정차 위반에 신고 되었습니다.\n 1분내로 차를 이동하여 주차하시길 바랍니다. ";
             if (receiptService.isExist(user.getUserSeq(), carNum, regDt, lawDong.getCode(), illegalEvent.getIllegalType())) {
                 // 신고시간 기준으로 11분 (16분) 사이에 신고차량 번호로 신고등록이 있었나?
                 receipt.setReceiptStateType(ReceiptStateType.REPORT);
@@ -694,19 +686,19 @@ public class MobileAPI {
                 report.setReceipt(receipt);
                 report.setReportStateType(ReportStateType.COMPLETE);
                 reportService.set(report);
+                message = "불법주정차 과태료 대상 접수되어 해당부서에서 검토중입니다. ";
             } else {
                 receipt.setReceiptStateType(ReceiptStateType.OCCUR);
                 receipt = receiptService.set(receipt);
+                message = "불법주정차 위반에 신고 되었습니다.\n 1분내로 차를 이동하여 주차하시길 바랍니다. ";
+            }
 
-                MyCar car = myCarService.getByAlarm(carNum);
-                if (car != null) {
-                    User carUser = userService.get(car.getUserSeq());
-                    String phoneNumber = carUser.getPhoneNumber();
-                    String message = "불법주정차 위반에 신고 되었습니다.\n 1분내로 차를 이동하여 주차하시길 바랍니다. ";
-
-                    // TODO : 문자 서비스 ..
-                    Sms.sendSMS(phoneNumber, message);
-                }
+            /** 문자 서비스 ... */
+            MyCar car = myCarService.getByAlarm(carNum);
+            if (car != null) {
+                User carUser = userService.get(car.getUserSeq());
+                String phoneNumber = carUser.getPhoneNumber();
+                Sms.sendSMS(phoneNumber, message);
             }
 
             return receipt.getReceiptStateType().getValue() + "가(이) 등록 되었습니다.";

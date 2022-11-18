@@ -108,7 +108,7 @@ public class AreaAPI {
     @ResponseBody
     public Object setZone(@RequestBody Map<String, Object> param) throws TeraException {
         try {
-            List<Map<String, Object>> polygons = (List<Map<String, Object>>) param.get("polygonData");
+            List<Map<String, Object>> polygons = (List<Map<String, Object>>) param.get("polygon");
             List<IllegalZone> illegalZones = Lists.newArrayList();
             StringBuilder stringBuilder;
 

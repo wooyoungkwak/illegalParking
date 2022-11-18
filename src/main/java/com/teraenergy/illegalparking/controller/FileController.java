@@ -12,6 +12,7 @@ import com.teraenergy.illegalparking.model.entity.lawdong.service.LawDongService
 import com.teraenergy.illegalparking.model.entity.parking.domain.Parking;
 import com.teraenergy.illegalparking.model.entity.parking.service.ParkingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -44,6 +45,7 @@ import java.util.*;
  * Project : illegalParking
  * Description :
  */
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = "/files")
 @Controller
@@ -144,11 +146,13 @@ public class FileController {
             FileInputStream fis = (FileInputStream) resultMap.get(KEY_FILEINPUTSTREAM);
             String fileName = (String) resultMap.get(KEY_FILENAME);
             File file = new File(resourcePath + "/" + fileName);
-            file.setReadable(true, false);
-            file.setWritable(true, false);
-            file.setExecutable(true, false);
+
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(fis.readAllBytes());
+
+            if (resourcePath.equals("/fileUpload/")) {
+                Runtime.getRuntime().exec("chmod -R 666 " + file);
+            }
 
             resultMap.remove(KEY_FILEINPUTSTREAM);
             resultMap.put(KEY_RESULT, "success");

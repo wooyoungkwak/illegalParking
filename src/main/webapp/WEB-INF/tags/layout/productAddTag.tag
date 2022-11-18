@@ -74,7 +74,6 @@
 	$(function (){
         // 브랜드 변경 이벤트 ( 제품 이미지 변경 )
         $('#brand').on('change', function () {
-            log(111111111111);
             switch ($(this).val()) {
                 case "STARBUGS":
                     $('#brandImg').attr('src', "http://49.50.166.205:8090/americano.jpg");
