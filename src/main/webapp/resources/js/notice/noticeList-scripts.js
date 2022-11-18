@@ -61,22 +61,30 @@ $.changeNoticeModify = function () {
 
 // 공지사항 삭제 함수
 $.removeNotice = function (noticeSeq) {
-    let result = $.JJAjaxAsync({
-        url: _contextPath + '/remove',
-        noticeSeq: noticeSeq
-    });
+    if (noticeSeq === undefined) {
+        alert("삭제 할 수 없습니다.");
+        return;
+    }
 
-    if ( result.success ) {
-        $('#noticeView').hide();
-        $('#noticeMain').show();
+    if (confirm("삭제 하시겠습니까?")) {
+        let result = $.JJAjaxAsync({
+            url: _contextPath + '/remove',
+            noticeSeq: noticeSeq
+        });
+
+        if (result.success) {
+            $.search();
+        } else {
+            alert("삭제 할 수 없습니다.");
+        }
     }
 }
 
 // 높이 조절
 $.setDivHeight = function (id, max) {
-    let objSet = $('#'+id);
+    let objSet = $('#' + id);
 
-    if ( objSet.height() < max) {
+    if (objSet.height() < max) {
         objSet.css({
             "height": "450px"
         });

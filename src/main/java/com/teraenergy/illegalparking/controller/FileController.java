@@ -150,6 +150,7 @@ public class FileController {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             fileOutputStream.write(fis.readAllBytes());
 
+            // 파일 권한 설정 ( 리눅스 인 경우의 fileUpload 경로 )
             if (resourcePath.equals("/fileUpload/")) {
                 Runtime.getRuntime().exec("chmod -R 666 " + file);
             }

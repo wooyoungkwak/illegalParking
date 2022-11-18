@@ -62,6 +62,7 @@ public enum TeraExceptionCode implements TeraErrCode {
     POINT_GET_FAIL("포인트 정보를 가져오는데 실패 하였습니다."),
     NOTICE_SET_FAIL("공지사항 정보 등록을 실패 하였습니다."),
     NOTICE_GET_FAIL("공지사항 정보를 가져오는데 실패 하였습니다."),
+    NOTICE_REMOVE_FAIL("공지사항 삭제를 실패 하였습니다."),
     MYPAGE_GET_FAIL("내 페이지 정보를 가져오는데 실패 하였습니다."),
 
 

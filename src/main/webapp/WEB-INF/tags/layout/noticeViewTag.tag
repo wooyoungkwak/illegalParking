@@ -88,7 +88,7 @@
 
         // 삭제
         $('#remove').on('click', function () {
-            $.removeNotice();
+            $.removeNotice($('#noticeSeqView').val());
         });
 
     });

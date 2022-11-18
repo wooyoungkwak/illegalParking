@@ -227,7 +227,6 @@
                     // 글작성 / 글보기 숨김
                     $('#noticeSet').hide();
                     $('#noticeView').hide();
-
                 }
 
                 // 초기화

@@ -64,10 +64,15 @@ public class NoticeAPI {
     @PostMapping("/notice/remove")
     @ResponseBody
     public Object remove(@RequestBody String body) throws  TeraException {
-        JsonNode jsonNode = JsonUtil.toJsonNode(body);
-        Integer noticeSeq = jsonNode.get("noticeSeq").asInt();
-        Notice notice = noticeService.get(noticeSeq);
-        notice.setDel(true);
-        return noticeService.set(notice);
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer noticeSeq = jsonNode.get("noticeSeq").asInt();
+            Notice notice = noticeService.get(noticeSeq);
+            notice.setDel(true);
+            notice.setDelDt(LocalDateTime.now());
+            return noticeService.set(notice);
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.NOTICE_REMOVE_FAIL, e);
+        }
     }
 }
