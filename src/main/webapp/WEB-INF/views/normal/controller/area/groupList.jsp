@@ -31,7 +31,7 @@
     <stripes:layout-component name="contents">
         <main id="groupMain">
             <div class="container-fluid px-4">
-                <h1 class="mt-4">불법주정차 구역</h1>
+                <h1 class="mt-4">그룹 관리</h1>
                 <ol class="breadcrumb mb-4">
                     <li class="breadcrumb-item active">${subTitle} > 그룹관리</li>
                 </ol>

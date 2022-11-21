@@ -48,7 +48,7 @@
 						<a class="nav-link" id="navparking" href="${pageContext.request.contextPath}/parking" tabindex="-1" aria-disabled="true">공영주차장</a>
 					</li>
 					<li class="nav-item me-5">
-						<a class="nav-link" id="navpm" href="${pageContext.request.contextPath}/pm" tabindex="-1" aria-disabled="true">전동 킥보드</a>
+						<a class="nav-link" id="navpm" href="${pageContext.request.contextPath}/pm" tabindex="-1" aria-disabled="true">PM</a>
 					</li>
 					<li class="nav-item me-5">
 						<a class="nav-link" id="navcalculate" href="${pageContext.request.contextPath}/calculate" tabindex="-1" aria-disabled="true">결재</a>

@@ -686,6 +686,9 @@ public class MobileAPI {
                 report.setReceipt(receipt);
                 report.setReportStateType(ReportStateType.COMPLETE);
                 reportService.set(report);
+
+                _deleteCommentByOneMinute(receipt.getReceiptSeq());
+
                 message = "불법주정차 과태료 대상 접수되어 해당부서에서 검토중입니다. ";
             } else {
                 receipt.setReceiptStateType(ReceiptStateType.OCCUR);
@@ -749,6 +752,14 @@ public class MobileAPI {
         comment.setReceiptSeq(receiptSeq);
         comment.setRegDt(LocalDateTime.now());
         comment.setContent(content);
+        commentService.set(comment);
+    }
+
+    // 1분 이후 접수가 필요합니다. 삭제
+    public void _deleteCommentByOneMinute(Integer receiptSeq) {
+        Comment comment = commentService.getByOneMinute(receiptSeq);
+        comment.setDel(true);
+        comment.setDelDt(LocalDateTime.now());
         commentService.set(comment);
     }
 

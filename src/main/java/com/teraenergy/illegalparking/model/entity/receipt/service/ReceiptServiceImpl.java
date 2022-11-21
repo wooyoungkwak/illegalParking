@@ -225,7 +225,7 @@ public class ReceiptServiceImpl implements ReceiptService {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.user.userSeq.eq(userSeq));
         query.where(QReceipt.receipt.carNum.eq(carNum));
-        query.where(QReceipt.receipt.receiptStateType.ne(ReceiptStateType.NOTHING));
+        query.where(QReceipt.receipt.receiptStateType.eq(ReceiptStateType.OCCUR));
         query.where(QReceipt.receipt.regDt.before(diffTime));
         query.where(QReceipt.receipt.isDel.isFalse());
         query.orderBy(QReceipt.receipt.receiptSeq.desc());

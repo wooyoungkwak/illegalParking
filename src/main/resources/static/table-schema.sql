@@ -133,6 +133,8 @@ CREATE TABLE comment
     CommentSeq INT AUTO_INCREMENT PRIMARY KEY,
     ReceiptSeq INT         NOT NULL, -- 신고 키
     Content    VARCHAR(50) NOT NULL, -- 댓글
+    IsDel      Boolean     NOT NULL, -- 삭제여부
+    DelDt      Datetime,             -- 삭제 일자
     RegDt      Datetime              -- 등록 일자
 ) ENGINE = InnoDB
   CHARSET = utf8;

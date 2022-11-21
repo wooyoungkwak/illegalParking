@@ -32,4 +32,9 @@ public class Comment {
     @Column
     LocalDateTime regDt = LocalDateTime.now();
 
+    @Column (nullable = false)
+    boolean isDel = false;
+
+    @Column
+    LocalDateTime delDt;
 }
