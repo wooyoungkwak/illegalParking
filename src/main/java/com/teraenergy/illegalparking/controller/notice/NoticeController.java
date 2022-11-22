@@ -31,6 +31,7 @@ public class NoticeController extends ExtendsController {
     private final NoticeService noticeService;
 
     private String subTitle = "공지사항";
+    private String defaultPathName = "notice";
 
     @GetMapping("/notice")
     public RedirectView notice() {
@@ -52,9 +53,9 @@ public class NoticeController extends ExtendsController {
 
         String filterColumnStr = paramMap.getAsString("filterColumn");
         NoticeFilterColumn filterColumn;
-        if(filterColumnStr == null) {
+        if (filterColumnStr == null) {
             filterColumn = NoticeFilterColumn.SUBJECT;
-        } else  {
+        } else {
             filterColumn = NoticeFilterColumn.valueOf(filterColumnStr);
         }
 
@@ -73,7 +74,7 @@ public class NoticeController extends ExtendsController {
         }
 
         Integer pageSize = paramMap.getAsInt("pageSize");
-        if ( pageSize == null) {
+        if (pageSize == null) {
             pageSize = 10;
         }
 
@@ -86,13 +87,13 @@ public class NoticeController extends ExtendsController {
 
         int offsetPage = pageNumber - 1;
 
-        if (offsetPage >= (totalPages-2)) {
-            offsetPage = totalPages-2;
+        if (offsetPage >= (totalPages - 2)) {
+            offsetPage = totalPages - 2;
         } else {
             if (totalPages > 3) isEndOver = true;
         }
 
-        if ( offsetPage < 1) {
+        if (offsetPage < 1) {
             offsetPage = 1;
         } else {
             if (offsetPage > 1 && totalPages > 3) isBeginOver = true;
@@ -103,8 +104,8 @@ public class NoticeController extends ExtendsController {
         model.addAttribute("isBeginOver", isBeginOver);
         model.addAttribute("isEndOver", isEndOver);
         model.addAttribute("notices", pages.getContent());
-           model.addAttribute("subTitle", subTitle);
-
+        model.addAttribute("subTitle", subTitle);
+        model.addAttribute("defaultPathName", defaultPathName);
         return getPath("/noticeList");
     }
 

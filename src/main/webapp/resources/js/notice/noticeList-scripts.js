@@ -45,41 +45,6 @@ $.initializeNoticeView = function (opt) {
     $('#contentView').replaceWith(content);
 }
 
-// 공지사항 수정 함수
-$.changeNoticeModify = function () {
-    let data = {
-        noticeSeq: $('#noticeSeqView').val(),
-        subject: $('#subjectView').val(),
-        noticeType: $('#noticeTypeView').val(),
-        html: $('#contentView').text().trim(),
-    };
-
-    $.initializeNoticeSet(data);
-    $('#noticeSet').show();
-    $('#noticeView').hide();
-};
-
-// 공지사항 삭제 함수
-$.removeNotice = function (noticeSeq) {
-    if (noticeSeq === undefined) {
-        alert("삭제 할 수 없습니다.");
-        return;
-    }
-
-    if (confirm("삭제 하시겠습니까?")) {
-        let result = $.JJAjaxAsync({
-            url: _contextPath + '/remove',
-            noticeSeq: noticeSeq
-        });
-
-        if (result.success) {
-            $.search();
-        } else {
-            alert("삭제 할 수 없습니다.");
-        }
-    }
-}
-
 // 높이 조절
 $.setDivHeight = function (id, max) {
     let objSet = $('#' + id);

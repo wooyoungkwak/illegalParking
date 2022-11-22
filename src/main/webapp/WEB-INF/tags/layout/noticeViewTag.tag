@@ -45,9 +45,9 @@
 							</div>
 						</div>
 					</div>
-					<div class="row mb-3 mt-0">
+					<div class="row mb-3 mt-0 pb-2 border-bottom">
 						<div class="col ms-5 ps-4">
-							<input type="text" id="regDtView" name="regDtView" class="h6" style="border: 0px; background: #ffffff; color: #999999; font-size: 14px;" disabled>
+							<input type="text" id="regDtView" name="regDtView" class="h6" style="border: 0px; background: #ffffff; color: #999999; font-size: 11px;" disabled>
 						</div>
 					</div>
 					<div class="row mb-2">
@@ -76,19 +76,61 @@
 <script type="application/javascript">
     $(function () {
 
+        // 공지사항 수정 함수
+        function changeNoticeModify () {
+            let result = $.JJAjaxAsync({
+				url: _contextPath + '/get',
+				data: {
+                    noticeSeq: $('#noticeSeqView').val()
+				}
+			});
+
+            if ( result.success ) {
+                $.initializeNoticeSet(result.data);
+                $('#noticeSet').show();
+                $('#noticeView').hide();
+			} else {
+                alert(result.msg);
+			}
+        }
+
+        // 공지사항 삭제 함수
+        function removeNotice (noticeSeq) {
+            if (noticeSeq === undefined) {
+                alert("삭제 할 수 없습니다.");
+                return;
+            }
+
+            if (confirm("삭제 하시겠습니까?")) {
+
+                let result = $.JJAjaxAsync({
+                    url: _contextPath + '/remove',
+                    data: {
+                        noticeSeq: noticeSeq
+                    }
+                });
+
+                if (result.success) {
+                    $.search();
+                } else {
+                    alert("삭제 할 수 없습니다.");
+                }
+            }
+        }
+
         // 공시 사항 보기 닫기 이벤트
         $('#noticeViewClose, #close').on('click', function () {
             $.closeNoticeView();
-        })
+        });
 
         // 수정
         $('#modify').on('click', function () {
-            $.changeNoticeModify();
+            changeNoticeModify();
         });
 
         // 삭제
         $('#remove').on('click', function () {
-            $.removeNotice($('#noticeSeqView').val());
+            removeNotice($('#noticeSeqView').val());
         });
 
     });

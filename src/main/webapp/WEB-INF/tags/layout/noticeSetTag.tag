@@ -118,6 +118,7 @@
             register('noticeSetForm');
         });
 
+        // 글작성 에디터 초기화 함수
         $.initializeNoticeSet = function (opt) {
             $('#noticeSeq').val(opt.noticeSeq);
             $('#subject').val(opt.subject);
@@ -130,6 +131,12 @@
             let data = $.getData(id);
             data.html = editor.getHTML();
             data.content = data.html.replaceAll('<p>', '').replaceAll('</p>', '\n').replaceAll('<br>', '\n');
+            data.content = data.content.replaceAll('<table>', '').replaceAll('</table>', '');
+            data.content = data.content.replaceAll('<thead>', '').replaceAll('</thead>', '');
+            data.content = data.content.replaceAll('<th>', '').replaceAll('</th>', '\n');
+            data.content = data.content.replaceAll('<tbody>', '').replaceAll('</tbody>', '');
+            data.content = data.content.replaceAll('<td>', '').replaceAll('</td>', '');
+            data.content = data.content.replaceAll('<tr>', '').replaceAll('</tr>', '\n');
             data.userSeq = _userSeq;
 
             let result = $.JJAjaxAsync({

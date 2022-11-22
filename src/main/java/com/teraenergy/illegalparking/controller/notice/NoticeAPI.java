@@ -32,6 +32,19 @@ public class NoticeAPI {
     private final UserService userService;
     private final NoticeService noticeService;
 
+    @PostMapping("/notice/get")
+    @ResponseBody
+    public Object get(@RequestBody String body) throws TeraException {
+
+        try {
+            JsonNode jsonNode = JsonUtil.toJsonNode(body);
+            Integer noticeSeq = jsonNode.get("noticeSeq").asInt();
+            return noticeService.get(noticeSeq);
+        } catch (Exception e) {
+            throw new TeraException(TeraExceptionCode.NOTICE_GET_FAIL);
+        }
+    }
+
     @PostMapping("/notice/set")
     @ResponseBody
     public Object set(@RequestBody String body) throws TeraException {
