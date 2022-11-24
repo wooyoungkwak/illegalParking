@@ -124,10 +124,11 @@ public class ReceiptServiceImpl implements ReceiptService {
 
     // 신고 목록에서 - 중복 회수
     @Override
-    public int getsOverlabCount(Integer user, String carNum) {
+    public int getsOverlabCount(Integer user, String carNum, LocalDateTime regDt) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReceipt.receipt);
         query.where(QReceipt.receipt.user.userSeq.eq(user));
         query.where(QReceipt.receipt.carNum.eq(carNum));
+        query.where(QReceipt.receipt.regDt.before(regDt));
         return query.fetch().size();
     }
 

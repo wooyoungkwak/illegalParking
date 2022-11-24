@@ -105,9 +105,10 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Integer getsOverlabCount(String carNum) {
+    public Integer getsOverlabCount(String carNum, LocalDateTime regDt) {
         JPAQuery query = jpaQueryFactory.selectFrom(QReport.report);
         query.where(QReport.report.receipt.carNum.eq(carNum));
+        query.where(QReport.report.receipt.regDt.before(regDt));
         return query.fetch().size();
     }
 

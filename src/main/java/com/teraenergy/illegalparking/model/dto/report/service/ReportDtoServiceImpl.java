@@ -29,6 +29,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             }
 
             receiptDto.setName(receipt.getUser().getName());
-            receiptDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum()));
+            receiptDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum(), receipt.getRegDt()));
             receiptDto.setRegDt(receipt.getRegDt());
             receiptDto.setReceiptStateType(receipt.getReceiptStateType());
 
@@ -117,7 +118,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             receiptDetailDto.setCarNum(receipt.getCarNum());
         }
 
-        receiptDetailDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum())); // 중복 횟수
+        receiptDetailDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum(), receipt.getRegDt())); // 중복 횟수
         receiptDetailDto.setRegDt(receipt.getRegDt());
         receiptDetailDto.setReceiptStateType(receipt.getReceiptStateType());
 
@@ -165,7 +166,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
             reportDto.setRegDt(report.getRegDt());
             reportDto.setReportStateType(report.getReportStateType());
 
-            reportDto.setOverlapCount(reportService.getsOverlabCount(report.getReceipt().getCarNum()));
+            reportDto.setOverlapCount(reportService.getsOverlabCount(report.getReceipt().getCarNum(), report.getReceipt().getRegDt()));
             if (report.getReportUserSeq() != null) {
                 User user = userService.get(report.getReportUserSeq());
                 reportDto.setGovernmentName(user.getGovernMentOffice().getName());
@@ -200,7 +201,7 @@ public class ReportDtoServiceImpl implements ReportDtoService {
         reportDetailDto.setReportStateType(report.getReportStateType());    // 신고기관
 
         Receipt receipt = report.getReceipt();
-        reportDetailDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum())); // 중복 횟수
+        reportDetailDto.setOverlapCount(receiptService.getsOverlabCount(receipt.getUser().getUserSeq(), receipt.getCarNum(), receipt.getRegDt())); // 중복 횟수
         reportDetailDto.setRegDt(receipt.getSecondRegDt());     // 접수시간 ( 접수시간 : 두번째 신고가 발생 시간 )
         reportDetailDto.setCarNum(receipt.getCarNum());         // 차량번호
         reportDetailDto.setAddr(receipt.getAddr());             // 위치

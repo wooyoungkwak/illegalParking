@@ -575,7 +575,45 @@ public class MobileAPI {
             IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
             illegalZone.setIllegalEvent(illegalEvent);
 
-            // 2. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우
+            // 2. 최초 신고 이후 1분 이후 10분이내 추가 신고가 된 경우
+            // 2.1 신고 시간이 지난 후에 신고 한 경우
+            Receipt receipt;
+            switch (illegalZone.getIllegalEvent().getIllegalType()) {
+                case ILLEGAL:
+                    if (LocalDateTime.now().plusMinutes(11).isAfter(regDt)) {
+                        receipt = new Receipt();
+                        receipt.setAddr(addr);
+                        receipt.setCarNum(carNum);
+                        receipt.setFileName(jsonNode.get("fileName").asText());
+                        receipt.setRegDt(regDt);
+                        receipt.setUser(user);
+                        receipt.setCode(lawDong.getCode());
+                        receipt.setReceiptStateType(ReceiptStateType.FORGET);
+                        receiptService.set(receipt);
+
+                        _comment(receipt.getReceiptSeq(), TeraExceptionCode.REPORT_OVER_TIME.getMessage());
+                        throw new TeraException(TeraExceptionCode.REPORT_OVER_TIME);
+                    }
+                    break;
+                case FIVE_MINUTE:
+                    if (LocalDateTime.now().plusMinutes(16).isAfter(regDt)) {
+                        receipt = new Receipt();
+                        receipt.setAddr(addr);
+                        receipt.setCarNum(carNum);
+                        receipt.setFileName(jsonNode.get("fileName").asText());
+                        receipt.setRegDt(regDt);
+                        receipt.setUser(user);
+                        receipt.setCode(lawDong.getCode());
+                        receipt.setReceiptStateType(ReceiptStateType.FORGET);
+                        receiptService.set(receipt);
+
+                        _comment(receipt.getReceiptSeq(), TeraExceptionCode.REPORT_OVER_TIME.getMessage());
+                        throw new TeraException(TeraExceptionCode.REPORT_OVER_TIME);
+                    }
+                    break;
+            }
+
+            // 2.2 최초신고 이후 1분 이후 10분이내 추가 신고가 된 경우
             Receipt oldReceipt = receiptService.getByLastOccur(user.getUserSeq(), carNum, regDt, illegalZone.getIllegalEvent().getIllegalType());
             if (oldReceipt != null) {
                 oldReceipt.setReceiptStateType(ReceiptStateType.NOTHING);
@@ -583,7 +621,7 @@ public class MobileAPI {
                 throw new TeraException(TeraExceptionCode.REPORT_OVER_TIME);
             }
 
-            Receipt receipt = receiptService.getByCarNumAndBetweenNow(user.getUserSeq(), carNum, LocalDateTime.now());
+            receipt = receiptService.getByCarNumAndBetweenNow(user.getUserSeq(), carNum, LocalDateTime.now());
 
             if (receipt == null) {
                 receipt = new Receipt();

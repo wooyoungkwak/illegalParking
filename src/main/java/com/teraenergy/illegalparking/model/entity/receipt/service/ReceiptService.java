@@ -34,7 +34,7 @@ public interface ReceiptService {
 
     List<Receipt> gets(String carNum);
 
-    int getsOverlabCount(Integer user, String carNum);
+    int getsOverlabCount(Integer user, String carNum, LocalDateTime regDt);
 
     List<Receipt> gets(LocalDateTime now, LocalDateTime old, ReceiptStateType receiptStateType, IllegalType illegalType);
 

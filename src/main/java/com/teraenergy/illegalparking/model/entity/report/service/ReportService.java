@@ -28,7 +28,7 @@ public interface ReportService {
 
     List<Report> gets();
 
-    Integer getsOverlabCount(String carNum);
+    Integer getsOverlabCount(String carNum, LocalDateTime regDt);
 
     Page<Report> gets(int pageNumber, int pageSize, ReportStateType reportStateType, ReportFilterColumn filterColumn, String search, List<Integer> zoneSeqs);
 
