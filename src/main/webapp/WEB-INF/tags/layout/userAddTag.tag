@@ -73,6 +73,9 @@
     $(function () {
         // 관공서 사용자 추가
         $('#createUser').on('click', function () {
+            if (!confirm("등록하시겠습니까?")) {
+                return;
+			}
 
             let getData = function (id) {
                 let arr = $('#'+id).serializeArray();
@@ -85,15 +88,15 @@
             }
 
             let result = $.JJAjaxAsync({
-            	uri: _contextPath + "/set",
+                url: _contextPath + "/set",
             	data: getData('userAddForm')
             });
 
-            // if ( result.success == true) {
-            //     $.search();
-            // } else {
-            // 	alert(result.msg);
-            // }
+            if ( result.success == true) {
+                $.search();
+            } else {
+            	alert(result.msg);
+            }
 
         });
     });
