@@ -575,7 +575,7 @@ public class MobileAPI {
             IllegalEvent illegalEvent = illegalEventService.get(illegalZone.getEventSeq());
             illegalZone.setIllegalEvent(illegalEvent);
 
-            // 2. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우  ( TODO : 확인이 필요 )
+            // 2. 최초신고 이후 1분 이후 10분이내 추가 신고가 된경우
             Receipt oldReceipt = receiptService.getByLastOccur(user.getUserSeq(), carNum, regDt, illegalZone.getIllegalEvent().getIllegalType());
             if (oldReceipt != null) {
                 oldReceipt.setReceiptStateType(ReceiptStateType.NOTHING);
@@ -758,6 +758,9 @@ public class MobileAPI {
     // 1분 이후 접수가 필요합니다. 삭제
     public void _deleteCommentByOneMinute(Integer receiptSeq) {
         Comment comment = commentService.getByOneMinute(receiptSeq);
+        if ( comment == null) {
+            return;
+        }
         comment.setDel(true);
         comment.setDelDt(LocalDateTime.now());
         commentService.set(comment);

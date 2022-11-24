@@ -91,7 +91,7 @@ CREATE TABLE report
   CHARSET = utf8;
 
 
--- 신고
+-- 신고 등록
 DROP TABLE IF EXISTS receipt;
 CREATE TABLE receipt
 (
@@ -278,7 +278,7 @@ DROP TABLE IF EXISTS user_group;
 CREATE TABLE user_group
 (
     UserGroupSeq BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    UserSeq      INT NOT NULL, -- 사용자 키
+    UserSeq      INT NOT NULL, -- 사용자 키`
     GroupSeq     INT NOT NULL  -- 그룹 키
 ) ENGINE = InnoDB
   CHARSET = utf8;
@@ -305,6 +305,7 @@ CREATE TABLE environment
 ) ENGINE = InnoDB
   CHARSET = utf8;
 
+-- 공지 사항 ( 및 소식 )
 DROP TABLE IF EXISTS notice;
 CREATE TABLE notice
 (
