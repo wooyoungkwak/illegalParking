@@ -91,6 +91,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public List<Notice> getsAtFive() {
         JPAQuery query = jpaQueryFactory.selectFrom(QNotice.notice);
+        query.where(QNotice.notice.isDel.isFalse());
         query.orderBy(QNotice.notice.noticeType.desc());
         query.orderBy(QNotice.notice.noticeSeq.desc());
         query.limit(5);
@@ -100,6 +101,7 @@ public class NoticeServiceImpl implements NoticeService{
     @Override
     public List<Notice> getsAtFive(int offset, int limit) {
         JPAQuery query = jpaQueryFactory.selectFrom(QNotice.notice);
+        query.where(QNotice.notice.isDel.isFalse());
         query.orderBy(QNotice.notice.noticeType.desc());
         query.orderBy(QNotice.notice.noticeSeq.desc());
         query.offset(offset);
