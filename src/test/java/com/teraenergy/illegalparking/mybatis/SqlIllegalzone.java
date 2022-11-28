@@ -9,15 +9,24 @@ import com.teraenergy.illegalparking.model.entity.illegalEvent.service.IllegalEv
 import com.teraenergy.illegalparking.model.entity.illegalzone.domain.IllegalZone;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneMapperService;
 import com.teraenergy.illegalparking.model.entity.illegalzone.service.IllegalZoneService;
+import com.teraenergy.illegalparking.util.StringUtil;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.ParseException;
+import org.locationtech.jts.io.WKTReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -30,7 +39,7 @@ import java.util.List;
 @ActiveProfiles(value = "debug")
 @SpringBootTest(classes = ApplicationTests.class)
 @RunWith(SpringRunner.class)
-@Transactional
+//@Transactional
 public class SqlIllegalzone {
 
     @Autowired
@@ -52,7 +61,7 @@ public class SqlIllegalzone {
     }
 
     @Test
-    public void insertOne(){
+    public void insertOne() {
         IllegalZone illegalZone = new IllegalZone();
         illegalZone.setPolygon("POLYGON((126.567668343956 33.451276403135246,126.56935715259203 33.45123719996867,126.56834423197559 33.451621366446425,126.56966217559021 33.45045386564941,126.567668343956 33.451276403135246))");
         illegalZone.setCode("5013032000");
@@ -100,58 +109,80 @@ public class SqlIllegalzone {
 
     @Test
     void select() {
-        try {
-            List<IllegalZone> illegalZones = illegalZoneService.gets();
-            System.out.println(objectMapper.writeValueAsString(illegalZones));
-
-//            List<String> codes = Lists.newArrayList();
-//            codes.add("1111100000");
-//            codes.add("5013032026");
-//            List<IllegalZone> illegalZones = illegalZoneMapperService.getsByCode(codes);
+//        try {
+//            List<IllegalZone> illegalZones = illegalZoneService.gets();
 //            System.out.println(objectMapper.writeValueAsString(illegalZones));
-
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-
-//        if( !illegalZones.isEmpty()) {
-//            IllegalZone illegalZone = illegalZones.get(0);
 //
+////            List<String> codes = Lists.newArrayList();
+////            codes.add("1111100000");
+////            codes.add("5013032026");
+////            List<IllegalZone> illegalZones = illegalZoneMapperService.getsByCode(codes);
+////            System.out.println(objectMapper.writeValueAsString(illegalZones));
+//
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+
+        LocalDateTime startTime = LocalDateTime.now();
+
+
+        List<IllegalZone> illegalZones = illegalZoneService.gets();
+
+        if (!illegalZones.isEmpty()) {
+            IllegalZone illegalZone = illegalZones.get(0);
+
 //            GeometryFactory geometryFactory = new GeometryFactory();
-//            Point polyInnerPoint = geometryFactory.createPoint(new Coordinate(126.56866907996265,33.451180712229686));
-//            Point polyInnerPoint2 = geometryFactory.createPoint(new Coordinate(126.56915449563454,33.450893887400085));
-//            Point polyInnerPoint3 = geometryFactory.createPoint(new Coordinate(126.56826037812841,33.45117928982703));
-//            Point polyInnerPoint4 = geometryFactory.createPoint(new Coordinate(126.56816407185906,33.451079778302194));
-//            Point polyOuterPoint = geometryFactory.createPoint(new Coordinate(126.56916190732109,33.45157011423124));
-//            Point polyOuterPoint2 = geometryFactory.createPoint(new Coordinate(126.56652326588099,33.45011835549815));
-//            Point polyOuterPoint3 = geometryFactory.createPoint(new Coordinate(126.56601552728885,33.450567380165516));
-//
-//            System.out.println("seq = " + illegalZone.getZoneSeq());
-//            System.out.println(illegalZone.getPolygon());
-//
+
+//            Point polyInnerPoint = geometryFactory.createPoint(new Coordinate(126.7936133, 35.0191631));
+//            Point polyInnerPoint2 = geometryFactory.createPoint(new Coordinate(126.7936284, 35.0196371));
+//            Point polyInnerPoint3 = geometryFactory.createPoint(new Coordinate(126.7936222, 35.0197501));
+//            Point polyInnerPoint4 = geometryFactory.createPoint(new Coordinate(126.7936031, 35.0199252));
+//            Point polyInnerPoint5 = geometryFactory.createPoint(new Coordinate(126.7916735, 35.0205684));
+//            Point polyInnerPoint6 = geometryFactory.createPoint(new Coordinate(126.7916886, 35.0206192));
+//            Point polyInnerPoint7 = geometryFactory.createPoint(new Coordinate(126.7922889, 35.0206205));
+//            Point polyInnerPoint8 = geometryFactory.createPoint(new Coordinate(126.7923496, 35.0206148));
+//            Point polyInnerPoint9 = geometryFactory.createPoint(new Coordinate(126.792455, 35.0206217));
+//            Point polyInnerPoint10 = geometryFactory.createPoint(new Coordinate(126.7927074, 35.0206219));
+
 //            Polygon polygon;
 //            try {
 //                polygon = (Polygon) new WKTReader().read(String.format(illegalZone.getPolygon()));
 //            } catch (ParseException e) {
 //                throw new RuntimeException(e);
 //            }
-//
-//            boolean innerWithin = polyInnerPoint.within     (polygon);
-//            boolean innerWithin2 = polyInnerPoint2.within   (polygon);
-//            boolean innerWithin3 = polyInnerPoint3.within   (polygon);
-//            boolean innerWithin4 = polyInnerPoint4.within   (polygon);
-//            boolean outerWithin = polyOuterPoint.within     (polygon);
-//            boolean outerWithin2 = polyOuterPoint2.within   (polygon);
-//            boolean outerWithin3 = polyOuterPoint3.within   (polygon);
-//
-//            System.out.println("innerWithin :" + innerWithin);
+
+//            boolean innerWithin = polyInnerPoint.within(polygon);
+//            boolean innerWithin2 = polyInnerPoint2.within(polygon);
+//            boolean innerWithin3 = polyInnerPoint3.within(polygon);
+//            boolean innerWithin4 = polyInnerPoint4.within(polygon);
+//            boolean innerWithin5 = polyInnerPoint5.within(polygon);
+//            boolean innerWithin6 = polyInnerPoint6.within(polygon);
+//            boolean innerWithin7 = polyInnerPoint7.within(polygon);
+//            boolean innerWithin8 = polyInnerPoint8.within(polygon);
+//            boolean innerWithin9 = polyInnerPoint9.within(polygon);
+//            boolean innerWithin10 = polyInnerPoint10.within(polygon);
+
+//            System.out.println("innerWithin :"  + innerWithin);
 //            System.out.println("innerWithin2 :" + innerWithin2);
 //            System.out.println("innerWithin3 :" + innerWithin3);
 //            System.out.println("innerWithin4 :" + innerWithin4);
-//            System.out.println("outerWithin :" + outerWithin);
-//            System.out.println("outerWithin2 :" + outerWithin2);
-//            System.out.println("outerWithin3 :" + outerWithin3);
-//        }
+//            System.out.println("innerWithin5 :" + innerWithin5);
+//            System.out.println("innerWithin6 :" + innerWithin6);
+//            System.out.println("innerWithin7 :" + innerWithin7);
+//            System.out.println("innerWithin8 :" + innerWithin8);
+//            System.out.println("innerWithin9 :" + innerWithin9);
+//            System.out.println("innerWithin10 :" + innerWithin10);
+
+
+            LocalDateTime endTime = startTime.plusNanos(843137163L);
+
+
+            System.out.println("시작 시간 = " + StringUtil.convertDatetimeToString(startTime, "yyyy-MM-dd hh:mm:ss.SSS"));
+            System.out.println("종료 시간 = " + StringUtil.convertDatetimeToString(endTime, "yyyy-MM-dd hh:mm:ss.SSS"));
+            Duration duration = Duration.between(startTime, endTime);
+            System.out.println("소요 시간 = 0." + duration.getNano());
+
+        }
 
     }
 }

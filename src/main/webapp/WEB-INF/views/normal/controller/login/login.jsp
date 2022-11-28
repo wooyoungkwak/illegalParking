@@ -21,6 +21,9 @@
                             <img class="logo" src="/resources/assets/img/logo_login.png">
                         </div>
                         <div class="row">
+                            <div class="d-flex justify-content-center h2 text-white mb-5">불법주정차 신고관리</div>
+                        </div>
+                        <div class="row">
                             <form method="post" id="FormLogin" action="/loginProcess">
                                 <div class="form-floating mb-2">
                                     <h5 class="input_labels">아이디</h5>

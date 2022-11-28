@@ -43,8 +43,8 @@ public class MyInfoAPI {
         JsonNode requestJson = JsonUtil.toJsonNode(body);
         Integer userSeq = requestJson.get("userSeq").asInt();
         User user = userService.get(userSeq);
-        UserDto userDto = userDtoService.get(user);
-        return userDto;
+        user.setDecryptPassword();
+        return user;
     }
 
     @PostMapping("/myInfo/set")

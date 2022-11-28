@@ -7,6 +7,9 @@
 <%@ attribute name="placeholder" type="java.lang.String" required="false" %>
 
 <c:if test="${title != null}">
-    <label for="${id}" class="form-label">${title}</label>
+	<label for="${id}" class="form-label">${title}</label>
 </c:if>
-<input id="${id}" type="password" class="form-control" name="${id}" value="${value}" ${option} placeholder="${placeholder}">
+<div class="input-group align-content-center">
+	<input id="${id}" type="password" class="form-control" name="${id}" value="${value}" ${option} placeholder="${placeholder}">
+	<div id="eye" style="position:absolute; left:90%; margin: 8px; z-index: 99999;"><i class="fa fa-eye-slash fa-lg"></i></div>
+</div>

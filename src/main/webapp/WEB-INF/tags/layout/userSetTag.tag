@@ -59,7 +59,10 @@
 				<div class="row mb-2">
 					<div class="col-1 d-flex justify-content-lg-end"><label class="mt-2">패스워드 : </label></div>
 					<div class="col-3">
-						<input class="form-control" type="text" id="password" name="password">
+						<div class="input-group">
+							<input class="form-control" type="password" id="password" name="password">
+							<div id="eye" style="position:absolute; left:87%; margin: 8px; z-index: 99999;"><i class="fa fa-eye-slash fa-lg"></i></div>
+						</div>
 					</div>
 				</div>
 			</form>
@@ -139,6 +142,22 @@
 <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 <script type="application/javascript">
     $(function () {
+
+        let setPasswoardUi = function () {
+            let $eyeIcon = $('#eye').children();
+            let className = $eyeIcon.attr('class');
+            if (className.indexOf('fa-eye-slash') > -1) {
+                $eyeIcon.attr('class', className.replace('fa-eye-slash', 'fa-eye'));
+                $('#password').attr('type',"text");
+            } else {
+                $eyeIcon.attr('class', className.replace('fa-eye', 'fa-eye-slash'));
+                $('#password').attr('type','password');
+            }
+        };
+
+        $('#eye').on('click', function (){
+            setPasswoardUi();
+        });
 
         // 정보 수정 이벤트
         $('#userModify').on('click', function () {
