@@ -1,6 +1,5 @@
 -- 불법 주정차 데이터 베이스
-CREATE
-DATABASE IF NOT EXISTS illegal_parking;
+CREATE DATABASE IF NOT EXISTS illegal_parking;
 
 -- 법정동코드
 DROP TABLE IF EXISTS law_dong;
