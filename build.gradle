@@ -8,6 +8,7 @@ plugins {
 group = 'com.teraenergy'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
     mavenCentral()
@@ -23,8 +24,4 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-tasks.withType(JavaCompile){
-    options.encoding = "UTF-8"
-}
-
-apply from : "initProject.gradle" 
+apply from : "initProject.gradle"
